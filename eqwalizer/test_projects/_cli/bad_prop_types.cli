@@ -1,0 +1,6 @@
+check/src/misc.erl:639
+check/src/strict_complex_types.erl:10
+check_gradual/src/gradual_complex_types.erl:10
+debug/src/types1.erl:309
+debug/src/types1.erl:314
+Total: 5

@@ -1,0 +1,16 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(behave).                           |         |
+                                           |         |
+-callback foo() -> behave1:test().         | INVALID | Unknown id: behave1:test/0
+
+                                           |         |
+-type invalid() :: _T.                     | INVALID | _T: Type variable is unbound.
+
+                                           |         |
+-callback use_invalid() -> invalid().      |         |
+                                           |         |
+-callback use_invalid2() -> invalid().     |         |

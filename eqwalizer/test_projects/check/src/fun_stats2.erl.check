@@ -1,0 +1,20 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(fun_stats2).                       |         |
+-typing([eqwalizer]).                      |         |
+                                           |         |
+-export([                                  |         |
+  errors/1                                 |         |
+]).                                        |         |
+                                           |         |
+-spec errors(atom()) -> ok.                |         |
+errors(Atom) ->                            | ERROR   |
+  _ = 1 + Atom,                            |         | Atom.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  _ = binary_to_atom(Atom),                |         |
+  _ = "" ++ Atom,                          |         |
+  ok.                                      |         |

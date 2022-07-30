@@ -1,0 +1,88 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(expand).                           |         |
+                                           |         |
+-export([                                  |         |
+    mk_bin_tree/1, mk_bin_tree_typo/1,     |         |
+    tuple_box/1, fun_with_rec_constraints/……         |
+    uses_ty_w_unbound_var/2, uses_ty_w_unb……         |
+    uses_trans_unbound_var/2, mk_bad_rec/0 |         |
+]).                                        |         |
+                                           |         |
+-export_type([bad_opaque/0, rec_box/0, bad……         |
+                                           |         |
+-type bin_tree() ::                        |         |
+      {leaf, atom()}                       |         |
+    | {node, bin_tree(), bin_tree()}.      |         |
+                                           |         |
+-type box(A) :: {box, A}.                  |         |
+                                           |         |
+-spec mk_bin_tree(atom()) -> bin_tree().   |         |
+mk_bin_tree(A) -> {leaf, A}.               | OK      |
+                                           |         |
+-spec mk_bin_tree_typo(atom())             | INVALID |
+    -> types1:bin_tree_typo().             |         | Unknown id: types1:bin_tree_typo/0
+
+mk_bin_tree_typo(A) -> {leaf, A}.          | NO SPEC |
+                                           |         |
+-spec tuple_box(Tuple) -> TupleBox when    |         |
+    Tuple :: {A, B}, TupleBox :: {box(A), ……         |
+tuple_box({A, B}) -> {{box, A}, {box, B}}. | OK      |
+                                           |         |
+-spec fun_with_rec_constraints() ->        | INVALID |
+    Rec when Rec :: {rec, Rec}.            |         | Recursive constraint: Rec
+
+fun_with_rec_constraints() ->              | NO SPEC |
+    {rec, fun_with_rec_constraints()}.     |         |
+                                           |         |
+-record(rec_box, {box :: box(atom())}).    |         |
+-type rec_box() :: #rec_box{}.             |         |
+                                           |         |
+-type w_unbound_var() :: {_A, _B}.         | INVALID | _A: Type variable is unbound.
+
+-type trans_unbound_var()                  | INVALID | trans_unbound_var/0 references type with invalid definition: w_unbound_var/0
+
+    :: w_unbound_var().                    |         |
+                                           |         |
+-spec uses_ty_w_unbound_var(_A, _B) ->     | INVALID | uses_ty_w_unbound_var/2 references type with invalid definition: w_unbound_var/0
+
+    w_unbound_var().                       |         |
+uses_ty_w_unbound_var(A, B) -> {A, B}.     | NO SPEC |
+                                           |         |
+-spec uses_trans_unbound_var(_A, _B) ->    | INVALID | uses_trans_unbound_var/2 references type with invalid definition: trans_unbound_var/0
+
+    trans_unbound_var().                   |         |
+uses_trans_unbound_var(A, B) -> {A, B}.    | NO SPEC |
+                                           |         |
+-type w_unbound_var2()                     | INVALID | _A: Type variable is unbound.
+
+    :: _A.                                 |         |
+                                           |         |
+-spec uses_ty_w_unbound_var2() ->          | INVALID | uses_ty_w_unbound_var2/0 references type with invalid definition: w_unbound_var2/0
+
+    w_unbound_var2().                      |         |
+uses_ty_w_unbound_var2() -> 1.             | NO SPEC |
+                                           |         |
+-record(bad_ref, {                         | INVALID |
+    ref :: undefined_mod:ref()             |         | Unknown id: undefined_mod:ref/0
+
+}).                                        |         |
+-type bad_ref() :: #bad_ref{}.             | INVALID | bad_ref/0 references type with invalid definition: #bad_ref{}
+
+                                           |         |
+-opaque bad_opaque() :: bad_opaque().      | INVALID | recursive type bad_opaque/0 is not productive
+
+                                           |         |
+-record(bad_rec, {id :: unknown:id()}).    | INVALID | Unknown id: unknown:id/0
+
+-spec mk_bad_rec() -> #bad_rec{}.          | INVALID | mk_bad_rec/0 references type with invalid definition: #bad_rec{}
+
+mk_bad_rec() -> #bad_rec{}.                | NO SPEC |
+                                           |         |
+-spec double_constrain(Thing) -> Thing     | INVALID | Type variable 'Thing' is constrained multiple times, please remove the extra constraints
+
+  when Thing :: pid(), Thing :: atom().    |         |
+double_constrain(X) -> X.                  | NO SPEC |

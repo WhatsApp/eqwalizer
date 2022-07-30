@@ -1,0 +1,3 @@
+{application, check_gradual,
+  [{description, "check_gradual"}, {vsn, "inplace"}, {applications, [eqwalizer, kernel, stdlib]}]
+}.

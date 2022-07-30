@@ -1,0 +1,52 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(neg).                              |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+%% Gradualizer:                            |         |
+%% https://git.io/JLjXd                    |         |
+-spec foo(A) -> A.                         |         |
+foo(X) -> {X, X}.                          | ERROR   | {X, X}.
+                                           |         | Expected: A
+                                           |         | Got     : {A, A}
+                                           |         |
+-spec atom_id_e(atom()) -> number().       |         |
+atom_id_e(X) ->                            | ERROR   |
+    X.                                     |         | X.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+                                           |         |
+-spec foo(any(), A) -> A.                  |         |
+foo(X, _) -> X.                            | ERROR   | X.
+                                           |         | Expected: A
+                                           |         | Got     : any()
+                                           |         |
+-spec match(any()) -> {atom(), atom()}.    |         |
+match(X) ->                                | ERROR   |
+    {ok, _} = X.                           |         | match_expr.
+                                           |         | Expected: {atom(), atom()}
+                                           |         | Got     : {'ok', any()}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {'ok', any()} is not a subtype of {atom(), atom()}
+                                           |         |   because
+                                           |         |   any() is not a subtype of atom()
+                                           |         |
+-spec concat1() -> list().                 |         |
+concat1() -> [1] ++ 1.                     | ERROR   | 1.
+                                           |         | Expected: [any()]
+                                           |         | Got     : number()
+                                           |         |
+-spec concat2(X, X) -> list().             |         |
+concat2(X, X) -> [1] ++ X.                 | ERROR   | X.
+                                           |         | Expected: [any()]
+                                           |         | Got     : X
+                                           |         |
+-spec concat3(X, X) -> list().             |         |
+concat3(X, X) -> [1] ++ X.                 | ERROR   | X.
+                                           |         | Expected: [any()]
+                                           |         | Got     : X

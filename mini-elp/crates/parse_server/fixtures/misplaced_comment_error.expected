@@ -1,0 +1,47 @@
+{attribute,{0,0},file,{"fixtures/misplaced_comment_error.erl",0}}.
+
+{attribute,{216,248},module,misplaced_comment_error}.
+
+{function,{251,327},
+          bad_hint_arg,0,
+          [{clause,{251,327},
+                   [],[],
+                   [{call,{271,327},
+                          {atom,{271,274},get},
+                          [{atom,{320,323},key}]}]}]}.
+
+{function,
+    {330,464},
+    bad_hint_comprehension,0,
+    [{clause,
+         {330,464},
+         [],[],
+         [{match,
+              {363,374},
+              {var,{360,362},'L0'},
+              {cons,
+                  {365,374},
+                  {integer,{366,367},1},
+                  {cons,
+                      {367,374},
+                      {integer,{369,370},2},
+                      {cons,
+                          {370,374},
+                          {integer,{372,373},3},
+                          {nil,{373,374}}}}}},
+          {match,
+              {381,458},
+              {var,{378,380},'L1'},
+              {lc,{383,458},
+                  {var,{389,390},'X'},
+                  [{generate,
+                       {394,401},
+                       {var,{394,395},'X'},
+                       {var,{399,401},'L0'}},
+                   {op,{449,454},
+                       '>',
+                       {var,{449,450},'X'},
+                       {integer,{453,454},1}}]}},
+          {var,{462,464},'L1'}]}]}.
+
+{eof,{466,466}}.

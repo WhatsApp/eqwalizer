@@ -1,0 +1,82 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(strict_receive).                   |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec receive_number1()                    |         |
+      -> number().                         |         |
+receive_number1() ->                       | ERROR   |
+  receive                                  |         |
+    {number, N} -> N;                      |         | N.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+    N when is_number(N) -> N               |         |
+  end.                                     |         |
+                                           |         |
+-spec receive_number2()                    |         |
+      -> number().                         |         |
+receive_number2() ->                       | ERROR   |
+  Res = receive                            |         |
+    {number, N} -> N;                      |         |
+    N when is_number(N) -> N               |         |
+  end,                                     |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+                                           |         |
+-spec receive_number_timeout1()            |         |
+      -> number().                         |         |
+receive_number_timeout1() ->               | ERROR   |
+  receive                                  |         |
+    {number, N} -> N;                      |         | N.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+    N when is_number(N) -> N               |         |
+  after 100 ->                             |         |
+    0                                      |         |
+  end.                                     |         |
+                                           |         |
+-spec receive_number_timeout2()            |         |
+      -> number().                         |         |
+receive_number_timeout2() ->               | ERROR   |
+  Res = receive                            |         |
+    {number, N} -> N;                      |         |
+    N when is_number(N) -> N               |         |
+  after 100 ->                             |         |
+    0                                      |         |
+  end,                                     |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+                                           |         |
+-spec sleep1(pos_integer()) -> ok.         |         |
+sleep1(T) ->                               | OK      |
+  receive                                  |         |
+  after T -> ok                            |         |
+  end.                                     |         |
+                                           |         |
+-spec sleep2a(timeout()) -> ok.            |         |
+sleep2a(T) ->                              | OK      |
+  receive                                  |         |
+  after T -> ok                            |         |
+  end.                                     |         |
+                                           |         |
+-spec sleep2b(timeout()) -> ok.            |         |
+sleep2b(T) ->                              | OK      |
+  Res =                                    |         |
+    receive                                |         |
+    after T -> ok                          |         |
+    end,                                   |         |
+  Res.                                     |         |
+                                           |         |
+-spec sleep3_neg(atom()) -> ok.            |         |
+sleep3_neg(T) ->                           | ERROR   |
+  receive                                  |         |
+  after T -> ok                            |         | T.
+                                           |         | Expected: timeout()
+                                           |         | Got     : atom()
+  end.                                     |         |

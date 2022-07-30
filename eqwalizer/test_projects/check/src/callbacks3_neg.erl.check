@@ -1,0 +1,25 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(callbacks3_neg).                   |         |
+-export([                                  |         |
+    init/1,                                |         |
+    handle_call/3,                         |         |
+    handle_cast/2                          |         |
+]).                                        |         |
+-behavior(gen_server).                     | ERROR   | Incorrect return type for implementation of gen_server:handle_cast/2. Expected: {'noreply', any()} | {'noreply', any(), timeout() | 'hibernate' | {'continue', any()}} | {'stop', any(), any()}, Got: 'wrong_ret'.
+                                           |         | 
+                                           |         |   'wrong_ret' is not a subtype of {'noreply', any()} | {'noreply', any(), timeout() | 'hibernate' | {'continue', any()}} | {'stop', any(), any()}
+                                           |         |   because
+                                           |         |   'wrong_ret' is not a subtype of {'noreply', any()}
+                                           |         |
+init([]) -> {ok, []}.                      | NO SPEC |
+                                           |         |
+handle_call(_, _From, State) ->            | NO SPEC |
+    {reply, ok, State}.                    |         |
+                                           |         |
+-spec handle_cast(ok, ok) -> wrong_ret.    |         |
+handle_cast(_, _) ->                       | OK      |
+    wrong_ret.                             |         |

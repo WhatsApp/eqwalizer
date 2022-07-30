@@ -1,0 +1,30 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(dynamic_catch).                    |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec foo() -> {ok, atom()}.               |         |
+foo() -> {ok, foo}.                        | OK      |
+                                           |         |
+-spec test01_pos() -> atom().              |         |
+test01_pos() ->                            | OK      |
+  case catch foo() of                      |         |
+    {ok, A} -> A;                          |         |
+    {err, A} -> A                          |         |
+  end.                                     |         |
+                                           |         |
+-spec test02_neg() -> binary().            |         |
+test02_neg() ->                            | ERROR   |
+  case catch foo() of                      |         |
+    {ok, A} -> A;                          |         | A.
+                                           |         | Expected: binary()
+                                           |         | Got     : dynamic() | atom()
+                                           |         | 
+                                           |         |   dynamic() | atom() is not a subtype of binary()
+                                           |         |   because
+                                           |         |   atom() is not a subtype of binary()
+    {err, A} -> A                          |         |
+  end.                                     |         |

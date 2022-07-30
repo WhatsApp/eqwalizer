@@ -1,0 +1,37 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(apply_none).                       |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec mk_fun() -> fun((any()) -> any()).   |         |
+mk_fun() ->                                | OK      |
+    Fun = erlang:error(not_implemented),   |         |
+    Fun.                                   |         |
+                                           |         |
+-spec apply_my_fun(any()) -> any().        |         |
+apply_my_fun(Arg) ->                       | OK      |
+    Fun = mk_fun(),                        |         |
+    Fun(Arg).                              |         |
+                                           |         |
+-spec apply_my_fun_inline(any()) -> any(). |         |
+apply_my_fun_inline(Arg) ->                | OK      |
+    Fun = erlang:error(not_implemented),   |         |
+    Fun(Arg).                              |         |
+                                           |         |
+-spec apply_none1(any()) -> nok.           |         |
+apply_none1(F)                             | OK      |
+    when is_function(F, 1),                |         |
+    is_function(F, 2) ->                   |         |
+    F(a).                                  |         |
+                                           |         |
+-spec apply_none2(none()) -> none().       |         |
+apply_none2(F) -> F(ok).                   | OK      |
+                                           |         |
+-spec apply_none3(none()) -> none().       |         |
+apply_none3(F) ->                          | OK      |
+    Res = F(ok),                           |         |
+    Res.                                   |         |

@@ -1,0 +1,208 @@
+error: expected_subtype
+   ┌─ app_a/src/app_a_errors_generated.erl:13:10
+   │
+13 │ foo() -> wrong_ret.
+   │          ^^^^^^^^^ 'wrong_ret'.
+Expected: 'foo'
+Got     : 'wrong_ret'
+
+
+error: expected_subtype
+    ┌─ app_a/src/app_a_lists.erl:581:5
+    │
+581 │     flatmap(fun thing_to_list/1, List).
+    │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ flatmap(thing_to_list/1, List).
+Expected: string()
+Got     : [any()]
+
+
+error: recursive_constraint
+    ┌─ app_a/src/app_a_lists.erl:593:29
+    │
+593 │       DeepList :: [term() | DeepList],
+    │                             ^^^^^^^^ Recursive constraint: DeepList
+
+
+error: recursive_constraint
+    ┌─ app_a/src/app_a_lists.erl:600:29
+    │
+600 │       DeepList :: [term() | DeepList],
+    │                             ^^^^^^^^ Recursive constraint: DeepList
+
+
+error: recursive_constraint
+    ┌─ app_a/src/app_a_lists.erl:618:29
+    │
+618 │       DeepList :: [term() | DeepList].
+    │                             ^^^^^^^^ Recursive constraint: DeepList
+
+
+error: expected_subtype
+     ┌─ app_a/src/app_a_lists.erl:1119:36
+     │
+1119 │    lists:reverse(umerge3_1(L1, [H2 | H3], T2, H2, [], T3, H3), []).
+     │                                    ^^^^^ H3.
+Expected: [any()]
+Got     : any()
+
+
+error: expected_subtype
+     ┌─ app_a/src/app_a_lists.erl:1310:5
+     │
+1310 │     filtermap(F, L).
+     │     ^^^^^^^^^^^^^^^
+     │     │
+     │     filtermap(eqwalizer:dynamic_cast(F), L).
+Expected: [T | X]
+Got     : [any()]
+
+     │     
+
+  [any()] is not a subtype of [T | X]
+  because
+  any() is not a subtype of T | X
+
+error: expected_subtype
+     ┌─ app_a/src/app_a_lists.erl:1310:15
+     │
+1310 │     filtermap(F, L).
+     │               ^
+     │               │
+     │               F.
+Expected: fun((any()) -> boolean() | {'true', any()})
+Got     : fun((T) -> boolean() | {'true', X})
+
+     │               
+
+  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((any()) -> boolean() | {'true', any()})
+  because
+  any() is not a subtype of T
+
+error: type_alias_is_non_productive
+   ┌─ app_a/src/app_a_mod2.erl:27:1
+   │
+27 │ -type invalid() :: invalid().
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ recursive type invalid/0 is not productive
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a_mod2.erl:36:9
+   │
+36 │     1 + an_atom,
+   │         ^^^^^^^ 'an_atom'.
+Expected: number()
+Got     : 'an_atom'
+
+
+error: expected_subtype
+   ┌─ app_b/src/app_b.erl:21:5
+   │
+21 │     L.
+   │     ^ L.
+Expected: T
+Got     : [T]
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:14:5
+   │
+14 │     ?OK.
+   │     ^^^ 'error'.
+Expected: 'ok'
+Got     : 'error'
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:18:5
+   │
+18 │     error.
+   │     ^^^^^ 'error'.
+Expected: 'ok'
+Got     : 'error'
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:22:13
+   │
+22 │     _ = 3 * an_atom, ok.
+   │             ^^^^^^^ 'an_atom'.
+Expected: number()
+Got     : 'an_atom'
+
+
+error: redundant_fixme
+   ┌─ app_a/src/app_a.erl:60:5
+   │
+60 │     % eqwalizer:fixme redundant issue should be reported
+   │     ^^^^^^^^^^^^^^^^^ redundant fixme
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:82:5
+   │
+82 │     X.
+   │     ^
+   │     │
+   │     X.
+Expected: #S{k_ok => any(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
+Got     : #S{k_extra => any(), k_ok => any(), k_req1 => any(), k_req2 => any(), k_wrong1 => pid(), k_wrong2 => pid()}
+
+   │     
+
+These associations do not match:
+
+  #S{
++    k_extra  => ...
+-    k_req1   := ...
++    k_req1   => ...
+-    k_req2   := ...
++    k_req2   => ...
+-    k_req3   := ...
+     ...
+  }
+
+error: expected_subtype
+    ┌─ app_a/src/app_a.erl:106:5
+    │
+106 │     X.
+    │     ^
+    │     │
+    │     X.
+Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+Got     : id(#S{a := 'va', b := #S{c := #S{d => atom()}}})
+
+    │     
+
+  id(#S{a := 'va', b := #S{c := #S{d => atom()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'b':
+  #S{a := 'va', b := #S{c := #S{d => atom()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'c':
+  #S{c := #S{d => atom()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  because
+  #S{d => atom()} is not a subtype of id(#S{d := atom(), e := atom()})
+
+error: expected_subtype
+    ┌─ app_a/src/app_a.erl:129:5
+    │
+129 │     X.
+    │     ^
+    │     │
+    │     X.
+Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+Got     : id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}})
+
+    │     
+
+  id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'b':
+  #S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'c':
+  #S{c := #S{d := pid(), e := pid()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  because
+  #S{d := pid(), e := pid()} is not a subtype of id(#S{d := atom(), e := atom()})
+
+18 ERRORS

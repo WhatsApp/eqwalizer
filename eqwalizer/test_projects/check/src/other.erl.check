@@ -1,0 +1,54 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(other).                            |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+% occurrence typing                        |         |
+-spec clauses(any()) ->                    |         |
+    atom() | number().                     |         |
+clauses(X) ->                              | OK      |
+    case X of                              |         |
+        ok -> X;                           |         |
+        1 -> X                             |         |
+    end.                                   |         |
+                                           |         |
+-spec inter                                |         |
+    (ok) -> nok;                           |         |
+    (nok) -> ok.                           |         |
+inter(ok) -> nok;                          | OK      |
+inter(nok) -> ok.                          |         |
+                                           |         |
+-spec slice_inter1(ok) -> nok.             |         |
+slice_inter1(ok) -> inter(ok).             | OK      |
+                                           |         |
+-spec slice_inter2(ok) -> nok.             |         |
+slice_inter2(ok) ->                        | OK      |
+    other:inter(ok).                       |         |
+                                           |         |
+-spec get_inter1() ->                      |         |
+    any().                                 |         |
+get_inter1() ->                            | ERROR   |
+    fun inter/1.                           |         | Unbound var: inter/1
+
+                                           |         |
+-spec get_inter2() ->                      |         |
+    any().                                 |         |
+get_inter2() ->                            | ERROR   |
+    fun other:inter/1.                     |         | Unbound var: other:inter/1
+
+                                           |         |
+% logger:metadata() is automatically       |         |
+% approximated                             |         |
+-spec any_as_metadata_neg(any()) ->        |         |
+    logger:metadata().                     |         |
+any_as_metadata_neg(M) -> M.               | ERROR   | M.
+                                           |         | Expected: logger:metadata()
+                                           |         | Got     : any()
+                                           |         | 
+                                           |         |   any() is not a subtype of logger:metadata()
+                                           |         |   because
+                                           |         |   any() is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}

@@ -1,0 +1,3 @@
+{application, third_party,
+  [{description, "third_party"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
+}.

@@ -1,0 +1,210 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(subtype_neg).                      |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-type ab() :: a | b.                       |         |
+-type pair_diff_elems() ::                 |         |
+    {a, b} | {b, a}.                       |         |
+-type pair_ab() ::                         |         |
+    {ab(), ab()}.                          |         |
+                                           |         |
+-spec f01(any()) -> {A, A}.                |         |
+f01(X) -> X.                               | ERROR   | X.
+                                           |         | Expected: {A, A}
+                                           |         | Got     : any()
+                                           |         |
+-spec f02(any()) -> atom().                |         |
+f02(X) -> X.                               | ERROR   | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : any()
+                                           |         |
+-spec f03 (fun((atom()) -> any())) ->      |         |
+           fun((any()) -> atom()).         |         |
+f03(F) -> F.                               | ERROR   | F.
+                                           |         | Expected: fun((any()) -> atom())
+                                           |         | Got     : fun((atom()) -> any())
+                                           |         | 
+                                           |         |   fun((atom()) -> any()) is not a subtype of fun((any()) -> atom())
+                                           |         |   because
+                                           |         |   any() is not a subtype of atom()
+                                           |         |
+-spec f04(a | b | c) -> (a | b).           |         |
+f04(X) -> X.                               | ERROR   | X.
+                                           |         | Expected: 'a' | 'b'
+                                           |         | Got     : 'a' | 'b' | 'c'
+                                           |         | 
+                                           |         |   'a' | 'b' | 'c' is not a subtype of 'a' | 'b'
+                                           |         |   because
+                                           |         |   'c' is not a subtype of 'a' | 'b'
+                                           |         |   because
+                                           |         |   'c' is not a subtype of 'a'
+                                           |         |
+-spec f05(a | b) -> none() | none().       |         |
+f05(X) -> X.                               | ERROR   | X.
+                                           |         | Expected: none()
+                                           |         | Got     : 'a' | 'b'
+                                           |         |
+-spec f06({a | b, a | b}) ->               |         |
+    {a, b} | {b, a}.                       |         |
+f06(X) -> X.                               | ERROR   | X.
+                                           |         | Expected: {'a', 'b'} | {'b', 'a'}
+                                           |         | Got     : {'a' | 'b', 'a' | 'b'}
+                                           |         | 
+                                           |         |   {'a' | 'b', 'a' | 'b'} is not a subtype of {'a', 'b'} | {'b', 'a'}
+                                           |         |   because
+                                           |         |   at tuple index 1:
+                                           |         |   {'a' | 'b', 'a' | 'b'} is not a subtype of {'a', 'b'}
+                                           |         |   because
+                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   because
+                                           |         |   'b' is not a subtype of 'a'
+                                           |         |
+-spec f07(pair_ab()) ->                    |         |
+    pair_diff_elems().                     |         |
+f07(X) -> X.                               | ERROR   | X.
+                                           |         | Expected: pair_diff_elems()
+                                           |         | Got     : pair_ab()
+                                           |         | 
+                                           |         |   pair_ab() is not a subtype of pair_diff_elems()
+                                           |         |   because
+                                           |         |   {ab(), ab()} is not a subtype of pair_diff_elems()
+                                           |         |   because
+                                           |         |   {ab(), ab()} is not a subtype of {'a', 'b'} | {'b', 'a'}
+                                           |         |   because
+                                           |         |   at tuple index 1:
+                                           |         |   {ab(), ab()} is not a subtype of {'a', 'b'}
+                                           |         |
+-spec f08({none(), none()}) -> none().     |         |
+f08(X) -> X.                               | ERROR   | X.
+                                           |         | Expected: none()
+                                           |         | Got     : {none(), none()}
+                                           |         |
+-spec map01(map()) -> #{}.                 |         |
+map01(M) -> M.                             | ERROR   | M.
+                                           |         | Expected: shape map #S{}
+                                           |         | Got     : dict  map #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |
+-spec map02(#{a => atom()})                |         |
+        -> #{a := atom()}.                 |         |
+map02(M) -> M.                             | ERROR   | M.
+                                           |         | Expected: #S{a := atom()}
+                                           |         | Got     : #S{a => atom()}
+                                           |         | 
+                                           |         | These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | -    a := ...
+                                           |         | +    a => ...
+                                           |         |   }
+                                           |         |
+-spec map03(#{a := atom(), b := atom()})   |         |
+        -> #{a => atom()}.                 |         |
+map03(M) -> M.                             | ERROR   | M.
+                                           |         | Expected: #S{a => atom()}
+                                           |         | Got     : #S{a := atom(), b := atom()}
+                                           |         | 
+                                           |         | These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | +    b := ...
+                                           |         |      ...
+                                           |         |   }
+                                           |         |
+-spec map05(#{                             |         |
+    a | b => a | b | c                     |         |
+}) -> #{                                   |         |
+    a := a | b,                            |         |
+    b => a | b                             |         |
+}.                                         |         |
+map05(M) -> M.                             | ERROR   | M.
+                                           |         | Expected: shape map #S{a := 'a' | 'b', b => 'a' | 'b'}
+                                           |         | Got     : dict  map #D{'a' | 'b' => 'a' | 'b' | 'c'}
+                                           |         |
+-spec map06(#{any() => integer()})         |         |
+        -> #{atom() => integer()}.         |         |
+map06(M) -> M.                             | ERROR   | M.
+                                           |         | Expected: #D{atom() => number()}
+                                           |         | Got     : #D{any() => number()}
+                                           |         | 
+                                           |         |   #D{any() => number()} is not a subtype of #D{atom() => number()}
+                                           |         |   because
+                                           |         |   any() is not a subtype of atom()
+                                           |         |
+-spec map07(#{atom() => any()})            |         |
+        -> #{atom() => integer()}.         |         |
+map07(M) -> M.                             | ERROR   | M.
+                                           |         | Expected: #D{atom() => number()}
+                                           |         | Got     : #D{atom() => any()}
+                                           |         | 
+                                           |         |   #D{atom() => any()} is not a subtype of #D{atom() => number()}
+                                           |         |   because
+                                           |         |   any() is not a subtype of number()
+                                           |         |
+-spec map08(#{atom() => any()})            |         |
+        -> #{}.                            |         |
+map08(M) -> M.                             | ERROR   | M.
+                                           |         | Expected: shape map #S{}
+                                           |         | Got     : dict  map #D{atom() => any()}
+                                           |         |
+-spec tuple1                               |         |
+    (tuple()) -> {any()}.                  |         |
+tuple1(X) -> X.                            | ERROR   | X.
+                                           |         | Expected: {any()}
+                                           |         | Got     : tuple()
+                                           |         |
+-spec any_fun(any()) -> fun().             |         |
+any_fun(F) -> F.                           | ERROR   | F.
+                                           |         | Expected: fun()
+                                           |         | Got     : any()
+                                           |         |
+-spec f10() -> {tuple(), ok}.              |         |
+f10() ->                                   | ERROR   |
+    {{}, error}.                           |         | {{}, 'error'}.
+                                           |         | Expected: {tuple(), 'ok'}
+                                           |         | Got     : {{}, 'error'}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {{}, 'error'} is not a subtype of {tuple(), 'ok'}
+                                           |         |   because
+                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |
+-spec f11() -> {[pid()], ok}.              |         |
+f11() ->                                   | ERROR   |
+    {[], error}.                           |         | {[], 'error'}.
+                                           |         | Expected: {[pid()], 'ok'}
+                                           |         | Got     : {[], 'error'}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {[], 'error'} is not a subtype of {[pid()], 'ok'}
+                                           |         |   because
+                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |
+-spec f12() -> {iolist(), ok}.             |         |
+f12() ->                                   | ERROR   |
+    {[], error}.                           |         | {[], 'error'}.
+                                           |         | Expected: {iolist(), 'ok'}
+                                           |         | Got     : {[], 'error'}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {[], 'error'} is not a subtype of {iolist(), 'ok'}
+                                           |         |   because
+                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |
+-spec nil_1([a]) -> [].                    |         |
+nil_1(L) -> L.                             | ERROR   | L.
+                                           |         | Expected: []
+                                           |         | Got     : ['a']
+                                           |         |
+-spec nil_2([a] | [none()]) -> [].         |         |
+nil_2(L) -> L.                             | ERROR   | L.
+                                           |         | Expected: []
+                                           |         | Got     : ['a'] | [none()]
+                                           |         | 
+                                           |         |   ['a'] | [none()] is not a subtype of []
+                                           |         |   because
+                                           |         |   ['a'] is not a subtype of []

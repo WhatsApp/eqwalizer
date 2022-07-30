@@ -1,0 +1,16 @@
+%%% Copyright (c) Meta Platforms, Inc. and affiliates. All rights reserved.
+%%%
+%%% This source code is licensed under the Apache 2.0 license found in
+%%% the LICENSE file in the root directory of this source tree.
+
+{application, eqwalizer_rebar3, [
+    {description, "Rebar3 eqWAlizer plugin"},
+    {vsn, "0.9.0"},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {env, []},
+    {modules, []}
+]}.

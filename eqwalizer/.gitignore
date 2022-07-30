@@ -1,0 +1,14 @@
+.ast/
+.bloop/
+.bsp/
+.cache/
+.idea/
+.metals/
+dumps/
+target/
+tools/
+*.iml
+*.build_info
+rebar.lock
+metals.sbt
+elp-ast/

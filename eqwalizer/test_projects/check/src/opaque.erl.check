@@ -1,0 +1,343 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(opaque).                           |         |
+                                           |         |
+-export_type([opair/2, o_cycle/0, contrava……         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+%% naive handling of opaque types          |         |
+%% (D27986305)                             |         |
+-opaque opair(A, B) :: {A, B}.             |         |
+                                           |         |
+-spec swap(opair(A, B))                    |         |
+      -> opair(B, A).                      |         |
+swap({A, B}) -> {B, A}.                    | OK      |
+                                           |         |
+-spec otp_1_neg(sets:set({ok, error})) ->  |         |
+  sets:set({ok, ok}).                      |         |
+otp_1_neg(X) ->                            | ERROR   |
+  X.                                       |         | X.
+                                           |         | Expected: sets:set({'ok', 'ok'})
+                                           |         | Got     : sets:set({'ok', 'error'})
+                                           |         | 
+                                           |         |   sets:set({'ok', 'error'}) is not a subtype of sets:set({'ok', 'ok'})
+                                           |         |   because
+                                           |         |   at tuple index 2:
+                                           |         |   {'ok', 'error'} is not a subtype of {'ok', 'ok'}
+                                           |         |   because
+                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |
+-spec test1_neg(misc:o()) -> ok.           |         |
+test1_neg({X}) -> X.                       | ERROR   | X.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : any()
+                                           |         |
+-spec test2_neg(misc:o()) -> ok.           |         |
+test2_neg(X=#{a := b}) -> X.               | ERROR   | X.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : #D{any() => any()}
+                                           |         |
+-spec test3_neg(misc:o()) -> tuple().      |         |
+test3_neg(X) -> X.                         | ERROR   | X.
+                                           |         | Expected: tuple()
+                                           |         | Got     : misc:o()
+                                           |         |
+-spec to_any(misc:o()) -> any().           |         |
+to_any(X) -> X.                            | OK      |
+                                           |         |
+-spec use_to_any(misc:o()) ->              |         |
+  tuple().                                 |         |
+use_to_any(X) ->                           | OK      |
+  X2 = to_any(X),                          |         |
+  case X2 of                               |         |
+    X2 when is_tuple(X2) -> X2             |         |
+  end.                                     |         |
+                                           |         |
+-spec test4(misc:o()) -> none().           |         |
+test4(X) ->                                | OK      |
+  _ = case X of                            |         |
+        X2 when is_tuple(X2) ->            |         |
+          X2                               |         |
+      end,                                 |         |
+  throw(not_implemented).                  |         |
+                                           |         |
+-spec test4_neg(misc:o()) -> none().       |         |
+test4_neg(X) ->                            | ERROR   |
+  case X of                                |         |
+        X2 when is_tuple(X2) ->            |         |
+          X2                               |         | X2.
+                                           |         | Expected: none()
+                                           |         | Got     : misc:o()
+  end.                                     |         |
+                                           |         |
+-spec test5_neg(misc:o()) -> tuple().      |         |
+test5_neg(X) ->                            | ERROR   |
+  Res = X,                                 |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: tuple()
+                                           |         | Got     : misc:o()
+                                           |         |
+-spec test6(misc:o()) -> misc:o().         |         |
+test6(X) -> X.                             | OK      |
+                                           |         |
+-record(tbox, {                            |         |
+  field :: misc:o()                        |         |
+}).                                        |         |
+                                           |         |
+-spec test7(misc:o()) -> #tbox{}.          |         |
+test7(X) ->                                | OK      |
+  #tbox{field = X}.                        |         |
+                                           |         |
+-spec test8(#tbox{}) -> misc:o().          |         |
+test8(#tbox{field = X}) ->                 | OK      |
+  X.                                       |         |
+                                           |         |
+-spec test9_neg(misc:o_rec()) -> ok.       |         |
+test9_neg({rec}) -> ok.                    | OK      |
+                                           |         |
+-spec test10(                              |         |
+    misc:rec_w_opaque_field()              |         |
+) -> ok.                                   |         |
+test10({rec_w_opaque_field,                | OK      |
+  {_, _}}                                  |         |
+) -> ok.                                   |         |
+                                           |         |
+-spec test11_neg(                          |         |
+    misc:rec_w_opaque_field()              |         |
+) -> {ok}.                                 |         |
+test11_neg({rec_w_opaque_field,            | ERROR   |
+  {X}}                                     |         |
+) -> X.                                    |         | X.
+                                           |         | Expected: {'ok'}
+                                           |         | Got     : any()
+                                           |         |
+-spec test12_neg(                          |         |
+    misc:o()                               |         |
+) -> ok.                                   |         |
+test12_neg(X) when X =:= #{} -> ok.        | OK      |
+                                           |         |
+-spec test13_neg(misc:o()) -> boolean().   |         |
+test13_neg(X) when X =:= {ok} -> true;     | OK      |
+test13_neg(_) -> false.                    |         |
+                                           |         |
+-spec test14_neg(misc:o()) -> true.        |         |
+test14_neg(X) -> X =:= {ok}.               | ERROR   | _ =:= _.
+                                           |         | Expected: 'true'
+                                           |         | Got     : boolean()
+                                           |         |
+-spec test15(misc:o()) ->                  |         |
+  misc:o() | a.                            |         |
+test15(X) ->                               | OK      |
+  ttt(X, a).                               |         |
+                                           |         |
+-spec test16(misc:o() | a) ->              |         |
+  misc:o() | a.                            |         |
+test16(X) -> X.                            | OK      |
+                                           |         |
+-spec test17_neg(misc:o() | a) ->          |         |
+  {ok} | a.                                |         |
+test17_neg(X) -> X.                        | ERROR   | X.
+                                           |         | Expected: {'ok'} | 'a'
+                                           |         | Got     : misc:o() | 'a'
+                                           |         | 
+                                           |         |   misc:o() | 'a' is not a subtype of {'ok'} | 'a'
+                                           |         |   because
+                                           |         |   misc:o() is not a subtype of {'ok'} | 'a'
+                                           |         |   because
+                                           |         |   misc:o() is not a subtype of {'ok'}
+                                           |         |
+-spec test18_neg(                          |         |
+    misc:o() | a                           |         |
+) -> misc:o().                             |         |
+test18_neg(X) -> X.                        | ERROR   | X.
+                                           |         | Expected: misc:o()
+                                           |         | Got     : misc:o() | 'a'
+                                           |         | 
+                                           |         |   misc:o() | 'a' is not a subtype of misc:o()
+                                           |         |   because
+                                           |         |   'a' is not a subtype of misc:o()
+                                           |         |
+-spec test19(                              |         |
+    {misc:o() | a}                         |         |
+) -> misc:o() | a.                         |         |
+test19({X}) -> X.                          | OK      |
+                                           |         |
+-spec test20_neg(                          |         |
+    misc:o() | a                           |         |
+) -> misc:o().                             |         |
+test20_neg(X) -> X.                        | ERROR   | X.
+                                           |         | Expected: misc:o()
+                                           |         | Got     : misc:o() | 'a'
+                                           |         | 
+                                           |         |   misc:o() | 'a' is not a subtype of misc:o()
+                                           |         |   because
+                                           |         |   'a' is not a subtype of misc:o()
+                                           |         |
+                                           |         |
+-spec ttt(T, T) -> T.                      |         |
+ttt(T, T) -> T.                            | OK      |
+                                           |         |
+-spec test21(misc:o()) -> misc:o().        |         |
+test21(X) ->                               | OK      |
+  ttt(X, X).                               |         |
+                                           |         |
+-spec test22(misc:o()) ->                  |         |
+  misc:o() | a.                            |         |
+test22(X) ->                               | OK      |
+  ttt(X, a).                               |         |
+                                           |         |
+-opaque o_cycle() :: misc:o_cycle().       |         |
+                                           |         |
+-spec use_o_cycle1(misc:o_cycle()) ->      |         |
+  opaque:o_cycle().                        |         |
+use_o_cycle1(X) -> X.                      | OK      |
+                                           |         |
+-spec use_o_cycle2(opaque:o_cycle()) ->    |         |
+  misc:o_cycle().                          |         |
+use_o_cycle2(X) -> X.                      | OK      |
+                                           |         |
+-opaque contravariant(T)                   | INVALID | T. Type vars in aliases are not allowed in function parameter position.
+
+                :: fun((T) -> ok).         |         |
+                                           |         |
+-spec use_contra_neg(fun((ok) -> ok))      | INVALID | use_contra_neg/1 references type with invalid definition: contravariant/1
+
+      -> contravariant(ok).                |         |
+use_contra_neg(X) -> X.                    | NO SPEC |
+                                           |         |
+-spec test23_wip(misc:o()) -> {ok}.        |         |
+test23_wip(X)                              | ERROR   |
+  when element(1, {X})                     |         |
+    =:= element(1, {{ok}}) ->              |         |
+  X.                                       |         | X.
+                                           |         | Expected: {'ok'}
+                                           |         | Got     : misc:o()
+                                           |         |
+-spec test24_neg(misc:o()) -> any().       |         |
+test24_neg(X)                              | OK      |
+  when X =:= self() ->                     |         |
+    X.                                     |         |
+                                           |         |
+-spec test25(misc:o()) -> any().           |         |
+test25(X)                                  | OK      |
+  when {{X}} =:= {self()} ->               |         |
+  X.                                       |         |
+                                           |         |
+-spec test26_neg(misc:o()) -> any().       |         |
+test26_neg(X)                              | OK      |
+  when X < ok ->                           |         |
+  X.                                       |         |
+                                           |         |
+-spec test27_wip(misc:o()) -> any().       |         |
+test27_wip(X)                              | OK      |
+  when {} < hd([X]) ->                     |         |
+  X.                                       |         |
+                                           |         |
+-spec test28(misc:o()) -> any().           |         |
+test28(X)                                  | OK      |
+  when {} < hd([[X]]) ->                   |         |
+  X.                                       |         |
+                                           |         |
+-spec get_stacktrace1() -> term().         |         |
+get_stacktrace1() ->                       | OK      |
+  case                                     |         |
+    erlang:process_info(                   |         |
+      self(),                              |         |
+      current_stacktrace                   |         |
+    )                                      |         |
+  of                                       |         |
+    {current_stacktrace, ST} ->            |         |
+      case ST of                           |         |
+        [                                  |         |
+          Z={_,                            |         |
+            _,                             |         |
+            _,                             |         |
+            _}                             |         |
+          | _Tl                            |         |
+        ] -> Z                             |         |
+      end                                  |         |
+  end.                                     |         |
+                                           |         |
+-spec get_stacktrace2() -> term().         |         |
+get_stacktrace2() ->                       | OK      |
+  case                                     |         |
+    erlang:process_info(                   |         |
+      self(),                              |         |
+      current_stacktrace                   |         |
+    )                                      |         |
+  of                                       |         |
+    {current_stacktrace, [                 |         |
+      Z={_,                                |         |
+        _,                                 |         |
+        _,                                 |         |
+        _}                                 |         |
+      | _Tl]} -> Z                         |         |
+  end.                                     |         |
+                                           |         |
+                                           |         |
+-spec test29_neg(misc:o()) -> any().       |         |
+test29_neg(X) when X =:= {1.0} ->          | OK      |
+  ok.                                      |         |
+                                           |         |
+-spec test30_neg(misc:o()) -> any().       |         |
+test30_neg(X) when X =:= "" ->             | OK      |
+  ok.                                      |         |
+                                           |         |
+-spec test31_neg(misc:o()) -> any().       |         |
+test31_neg(X) when X =:= [a|improper] ->   | OK      |
+  ok.                                      |         |
+                                           |         |
+-spec test32_neg(misc:o()) -> any().       |         |
+test32_neg(X) when X =:= #{1 => 1} ->      | OK      |
+  ok.                                      |         |
+                                           |         |
+-spec test33_neg(misc:o()) -> any().       |         |
+test33_neg(X) when X =:= #{1 => 1} ->      | OK      |
+  ok.                                      |         |
+                                           |         |
+-spec test34_neg(misc:o()) -> any().       |         |
+test34_neg(X) when X =:= <<>> ->           | OK      |
+  ok.                                      |         |
+                                           |         |
+-record(rec, {field :: string()}).         |         |
+                                           |         |
+-spec test35_neg(misc:o()) -> any().       |         |
+test35_neg(X) when X =:= #rec.field ->     | OK      |
+  ok.                                      |         |
+                                           |         |
+-spec ints_o_neg([misc:int_result_o()])    |         |
+      -> [integer()].                      |         |
+ints_o_neg([]) -> [];                      | ERROR   |
+ints_o_neg([F | Fs]) ->                    |         |
+  case F() of                              |         | F.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: misc:int_result_o()
+    {ok, I} -> [I | ints_o_neg(Fs)];       |         |
+    error -> ints_o_neg(Fs)                |         |
+  end.                                     |         |
+                                           |         |
+% we don't check unions                    |         |
+% for opacity violations                   |         |
+-spec ints_o_neg2([                        |         |
+  misc:int_result_o()                      |         |
+  | misc:int_result_o()                    |         |
+]) ->                                      |         |
+  [integer()].                             |         |
+ints_o_neg2([]) -> [];                     | ERROR   |
+ints_o_neg2([F | Fs]) ->                   |         |
+  case F() of                              |         | F.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: misc:int_result_o()
+    {ok, I} -> [I | ints_o_neg2(Fs)];      |         |
+    error -> ints_o_neg2(Fs)               |         |
+  end.                                     |         |
+                                           |         |
+-type invalid() :: _T.                     | INVALID | _T: Type variable is unbound.
+
+                                           |         |
+-opaque o_trans_invalid() :: invalid().    | INVALID | o_trans_invalid/0 references type with invalid definition: invalid/0
+

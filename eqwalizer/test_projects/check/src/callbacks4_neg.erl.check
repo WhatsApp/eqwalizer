@@ -1,0 +1,12 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(callbacks4_neg).                   |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-behaviour(nonexistent).                   | ERROR   | Behaviour does not exist: nonexistent
+
+                                           |         |
+unspecced() -> ok.                         | NO SPEC |

@@ -1,0 +1,122 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(guards_simple).                    |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec atom_pos_1(any()) -> atom().         |         |
+atom_pos_1(X) when is_atom(X) -> X.        | OK      |
+                                           |         |
+-spec atom_pos_2(any()) -> atom().         |         |
+atom_pos_2(X) ->                           | OK      |
+    if                                     |         |
+        is_atom(X) -> X                    |         |
+    end.                                   |         |
+                                           |         |
+-spec atom_pos_3(any()) -> atom().         |         |
+atom_pos_3(X) ->                           | OK      |
+    case X of                              |         |
+        Y when is_atom(Y) -> Y             |         |
+    end.                                   |         |
+                                           |         |
+-spec atom_neg_1(any()) -> atom().         |         |
+atom_neg_1(X) when is_number(X) -> X.      | ERROR   | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec atom_neg_2(any()) -> atom().         |         |
+atom_neg_2(X) ->                           | ERROR   |
+    if                                     |         |
+        is_list(X) -> X                    |         | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : [any()]
+    end.                                   |         |
+                                           |         |
+-spec atom_neg_3(any()) -> atom().         |         |
+atom_neg_3(X) ->                           | ERROR   |
+    case X of                              |         |
+        Y when is_tuple(Y) -> Y            |         | Y.
+                                           |         | Expected: atom()
+                                           |         | Got     : tuple()
+    end.                                   |         |
+                                           |         |
+-spec boolean_pos_1(any()) -> boolean().   |         |
+boolean_pos_1(X) when is_boolean(X) -> X.  | OK      |
+                                           |         |
+-spec boolean_pos_2(any()) -> boolean().   |         |
+boolean_pos_2(X) ->                        | OK      |
+    if                                     |         |
+        is_boolean(X) -> X                 |         |
+    end.                                   |         |
+                                           |         |
+-spec boolean_pos_3(any()) -> boolean().   |         |
+boolean_pos_3(X) ->                        | OK      |
+    case X of                              |         |
+        Y when is_boolean(Y) -> Y          |         |
+    end.                                   |         |
+                                           |         |
+-spec boolean_neg_1(any()) -> boolean().   |         |
+boolean_neg_1(X) when is_atom(X) -> X.     | ERROR   | X.
+                                           |         | Expected: boolean()
+                                           |         | Got     : atom()
+                                           |         |
+-spec boolean_neg_2(any()) -> boolean().   |         |
+boolean_neg_2(X) ->                        | ERROR   |
+    if                                     |         |
+        is_atom(X) -> X                    |         | X.
+                                           |         | Expected: boolean()
+                                           |         | Got     : atom()
+    end.                                   |         |
+                                           |         |
+-spec boolean_neg_3(any()) -> boolean().   |         |
+boolean_neg_3(X) ->                        | ERROR   |
+    case X of                              |         |
+        Y when is_atom(Y) -> Y             |         | Y.
+                                           |         | Expected: boolean()
+                                           |         | Got     : atom()
+    end.                                   |         |
+                                           |         |
+-spec float_pos(any()) -> float().         |         |
+float_pos(X) when is_float(X) -> X.        | OK      |
+                                           |         |
+-spec float_neg(any()) -> float().         |         |
+float_neg(X) when is_boolean(X) -> X.      | ERROR   | X.
+                                           |         | Expected: number()
+                                           |         | Got     : 'false' | 'true'
+                                           |         |
+-spec integer_pos(any()) -> integer().     |         |
+integer_pos(X) when is_integer(X) -> X.    | OK      |
+                                           |         |
+-spec integer_neg(any()) -> integer().     |         |
+integer_neg(X) when is_boolean(X) -> X.    | ERROR   | X.
+                                           |         | Expected: number()
+                                           |         | Got     : 'false' | 'true'
+                                           |         |
+-spec pid_pos(any()) -> pid().             |         |
+pid_pos(X) when is_pid(X) -> X.            | OK      |
+                                           |         |
+-spec pid_neg(any()) -> pid().             |         |
+pid_neg(X) when is_number(X) -> X.         | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : number()
+                                           |         |
+-spec port_pos(any()) -> port().           |         |
+port_pos(X) when is_port(X) -> X.          | OK      |
+                                           |         |
+-spec port_neg(any()) -> pid().            |         |
+port_neg(X) when is_reference(X) -> X.     | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : reference()
+                                           |         |
+-spec reference_pos(any()) -> port().      |         |
+reference_pos(X) when is_reference(X) -> X…… ERROR   | X.
+                                           |         | Expected: port()
+                                           |         | Got     : reference()
+                                           |         |
+-spec reference_neg(any()) -> pid().       |         |
+reference_neg(X) when is_port(X) -> X.     | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : port()

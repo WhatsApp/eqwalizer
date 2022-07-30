@@ -1,0 +1,103 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(approx).                           |         |
+                                           |         |
+-export([                                  |         |
+    use_unspecced0/0,                      |         |
+    use_unspecced1/1,                      |         |
+    report_later_error/0,                  |         |
+    test_trans_invalid1_neg/1,             |         |
+    test_trans_invalid2_neg/1,             |         |
+    test_trans_invalid3_neg/1, test_opaque……         |
+]).                                        |         |
+                                           |         |
+unspecced0() ->                            | OK      |
+    ok.                                    |         |
+                                           |         |
+unspecced1(foo) ->                         | OK      |
+    bar.                                   |         |
+                                           |         |
+-spec use_unspecced0() ->                  |         |
+    {none(), foo}.                         |         |
+use_unspecced0() ->                        | OK      |
+    X = unspecced0(),                      |         |
+    {X, foo}.                              |         |
+                                           |         |
+-spec use_unspecced1(any()) -> [atom()].   |         |
+use_unspecced1(Arg) ->                     | OK      |
+    unspecced1(Arg).                       |         |
+                                           |         |
+-spec report_later_error() -> ok.          |         |
+report_later_error() ->                    | ERROR   |
+    X = unspecced1(bar),                   |         |
+    {X, X}.                                |         | {X, X}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic(), dynamic()}
+                                           |         |
+-type trans_invalid() ::                   | INVALID |
+generics_with_unions:type_var_from_nowhere……         | Unknown id: generics_with_unions:type_var_from_nowhere/0
+
+                                           |         |
+-spec test_trans_invalid1_neg(             | INVALID | test_trans_invalid1_neg/1 references type with invalid definition: trans_invalid/0
+
+    trans_invalid()                        |         |
+) -> nok.                                  |         |
+test_trans_invalid1_neg(X) ->              |         |
+  X().                                     |         |
+                                           |         |
+-spec test_trans_invalid2_neg(             | INVALID | test_trans_invalid2_neg/1 references type with invalid definition: trans_invalid/0
+
+    trans_invalid()                        |         |
+) -> nok.                                  |         |
+test_trans_invalid2_neg(#{k := Z}) ->      |         |
+  Z.                                       |         |
+                                           |         |
+-spec test_trans_invalid3_neg(             | INVALID | test_trans_invalid3_neg/1 references type with invalid definition: trans_invalid/0
+
+    trans_invalid()                        |         |
+) -> nok.                                  |         |
+test_trans_invalid3_neg([Z]) ->            |         |
+  Z.                                       |         |
+                                           |         |
+-spec test_opaque_as_fun_neg(              |         |
+    misc:o() | fun((any()) -> none())) ->  |         |
+    pid().                                 |         |
+test_opaque_as_fun_neg(X) -> X(ok).        | ERROR   | X.
+                                           |         | Expected fun type with arity 1
+                                           |         | Got: misc:o() | fun((any()) -> none())
+                                           |         |
+-spec union_list_1(                        |         |
+    string(), eqwalizer:dynamic()          |         |
+) -> anything.                             |         |
+union_list_1(S, Dyn) ->                    | ERROR   |
+  [_H, Dyn2] = [S, Dyn],                   |         |
+  Dyn2.                                    |         | Dyn2.
+                                           |         | Expected: 'anything'
+                                           |         | Got     : string()
+                                           |         |
+-spec dyn_union_1(                         |         |
+    none(), eqwalizer:dynamic()            |         |
+) -> ok.                                   |         |
+dyn_union_1(N, D) ->                       | ERROR   |
+  Res = case D of                          |         |
+          1 -> N;                          |         |
+          2 -> D                           |         |
+        end,                               |         |
+  eqwalizer:reveal_type(Res),              |         | dynamic()
+
+  Res.                                     |         |
+                                           |         |
+-spec dyn_union_2(                         |         |
+    none(), eqwalizer:dynamic()            |         |
+) -> ok.                                   |         |
+dyn_union_2(N, D) ->                       | ERROR   |
+  Res = case D of                          |         |
+          2 -> D;                          |         |
+          1 -> N                           |         |
+        end,                               |         |
+  eqwalizer:reveal_type(Res),              |         | none()
+
+  Res.                                     |         |

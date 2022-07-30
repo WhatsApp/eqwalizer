@@ -1,0 +1,3 @@
+{application, parse_error_a,
+  [{description, "example app to show how we handle parse errors"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
+}.

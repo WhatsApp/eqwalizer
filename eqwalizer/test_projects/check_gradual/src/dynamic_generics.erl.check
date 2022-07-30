@@ -1,0 +1,197 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(dynamic_generics).                 |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+%% used later as                           |         |
+%% a producer of dynamic values            |         |
+dyn_val() -> erlang:error(dynamic).        | OK      |
+                                           |         |
+dyn_fun(_X) -> erlang:error(dynamic).      | OK      |
+                                           |         |
+dyn_fun(_X, _Y) -> erlang:error(dynamic).  | OK      |
+                                           |         |
+-spec inc(number()) -> number().           |         |
+inc(I) -> I + 1.                           | OK      |
+                                           |         |
+-spec add(number(), number())              |         |
+-> number().                               |         |
+add(X, Y) -> X + Y.                        | OK      |
+                                           |         |
+-spec case01() -> [number()].              |         |
+case01() ->                                | OK      |
+  Ns = dyn_val(),                          |         |
+  lists:map(fun inc/1, Ns).                |         |
+                                           |         |
+-spec case02_neg() -> ok.                  |         |
+case02_neg() ->                            | ERROR   |
+  Ns = dyn_val(),                          |         |
+  lists:map(fun inc/1, Ns).                |         | lists:map(inc/1, Ns).
+                                           |         | Expected: 'ok'
+                                           |         | Got     : [number()]
+                                           |         |
+-spec case03() -> [number()].              |         |
+case03() ->                                | OK      |
+  Ns = [0, 1, 2],                          |         |
+  lists:map(fun dyn_fun/1, Ns).            |         |
+                                           |         |
+-spec case04_neg() -> ok.                  |         |
+case04_neg() ->                            | ERROR   |
+  Ns = [0, 1, 2],                          |         |
+  lists:map(fun dyn_fun/1, Ns).            |         | lists:map(dyn_fun/1, Ns).
+                                           |         | Expected: 'ok'
+                                           |         | Got     : [dynamic()]
+                                           |         |
+-spec case05() -> number().                |         |
+case05() ->                                | OK      |
+  Ns = dyn_val(),                          |         |
+  lists:foldl(fun add/2, 0, Ns).           |         |
+                                           |         |
+-spec case05_neg() -> ok.                  |         |
+case05_neg() ->                            | ERROR   |
+  Ns = dyn_val(),                          |         |
+  lists:foldl(fun add/2, 0, Ns).           |         | lists:foldl(add/2, 0, Ns).
+                                           |         | Expected: 'ok'
+                                           |         | Got     : number()
+                                           |         |
+-spec case06() -> number().                |         |
+case06() ->                                | OK      |
+  Ns = [0, 1, 2],                          |         |
+  Acc = dyn_val(),                         |         |
+  lists:foldl(fun add/2, Acc, Ns).         |         |
+                                           |         |
+-spec case07() -> none().                  |         |
+case07() ->                                | ERROR   |
+  Ns = [0, 1, 2],                          |         |
+  Acc = dyn_val(),                         |         |
+  lists:foldl(fun add/2, Acc, Ns).         |         | lists:foldl(add/2, Acc, Ns).
+                                           |         | Expected: none()
+                                           |         | Got     : dynamic() | number()
+                                           |         | 
+                                           |         |   dynamic() | number() is not a subtype of none()
+                                           |         |   because
+                                           |         |   number() is not a subtype of none()
+                                           |         |
+-spec case08_neg() -> ok.                  |         |
+case08_neg() ->                            | ERROR   |
+  Ns = [0, 1, 2],                          |         |
+  Acc = dyn_val(),                         |         |
+  Res = lists:foldl(fun add/2, Acc, Ns),   |         |
+  {Res}.                                   |         | {Res}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic() | number()}
+                                           |         |
+-spec case09_neg() -> ok.                  |         |
+case09_neg() ->                            | ERROR   |
+  Ns = [0, 1, 2],                          |         |
+  Acc = "string",                          |         |
+  lists:foldl(fun dyn_fun/2, Acc, Ns).     |         | lists:foldl(dyn_fun/2, Acc, Ns).
+                                           |         | Expected: 'ok'
+                                           |         | Got     : dynamic() | string()
+                                           |         | 
+                                           |         |   dynamic() | string() is not a subtype of 'ok'
+                                           |         |   because
+                                           |         |   string() is not a subtype of 'ok'
+                                           |         |
+-spec fapply(fun((T) -> U), T) -> U.       |         |
+fapply(F, X) ->                            | OK      |
+  ZZ = F(X),                               |         |
+  ZZ.                                      |         |
+                                           |         |
+-spec case10_neg() -> ok.                  |         |
+case10_neg() ->                            | ERROR   |
+  fapply(fun inc/1, dyn_val()).            |         | fapply(inc/1, dyn_val()).
+                                           |         | Expected: 'ok'
+                                           |         | Got     : number()
+                                           |         |
+-spec case11_neg(X) -> X.                  |         |
+case11_neg(X) ->                           | ERROR   |
+  Res = fapply(fun dyn_fun/1, X),          |         |
+  {Res}.                                   |         | {Res}.
+                                           |         | Expected: X
+                                           |         | Got     : {dynamic()}
+                                           |         |
+-spec named1() -> [integer()].             |         |
+named1() ->                                | OK      |
+  lists:map(                               |         |
+    fun                                    |         |
+      Fib(N) when N < 2 ->                 |         |
+        1;                                 |         |
+      Fib(N) ->                            |         |
+        Fib(N - 2) + Fib(N - 1)            |         |
+    end,                                   |         |
+    [1, 2, 3]                              |         |
+  ).                                       |         |
+                                           |         |
+-spec named2_neg() -> [integer()].         |         |
+named2_neg() ->                            | ERROR   |
+  lists:map(                               |         | lists:map(fun, [1, 2, 3]).
+                                           |         | Expected: [number()]
+                                           |         | Got     : [number() | 'three']
+                                           |         | 
+                                           |         |   [number() | 'three'] is not a subtype of [number()]
+                                           |         |   because
+                                           |         |   number() | 'three' is not a subtype of number()
+                                           |         |   because
+                                           |         |   'three' is not a subtype of number()
+    fun                                    |         |
+      Fib(N) when N < 2                    |         |
+        -> 1;                              |         |
+      Fib(3) ->                            |         |
+        three;                             |         |
+      Fib(N) ->                            |         |
+        Fib(N - 2) + Fib(N - 1)            |         |
+    end,                                   |         |
+    [1, 2, 3]                              |         |
+  ).                                       |         |
+                                           |         |
+-spec named3_neg() -> [integer()].         |         |
+named3_neg() ->                            | OK      |
+  lists:map(                               |         |
+    fun                                    |         |
+      Fib(N) when N < 2                    |         |
+        -> 1;                              |         |
+      Fib(N) ->                            |         |
+        Fib(undefined) + Fib(N - 1)        |         |
+    end,                                   |         |
+    [1, 2, 3]                              |         |
+  ).                                       |         |
+                                           |         |
+-spec step(                                |         |
+    number(),                              |         |
+    none | {some, number()}                |         |
+) -> none | {some, number()}.              |         |
+step(X, none) when X > 100 -> {some, X};   | OK      |
+step(_, none) -> none;                     |         |
+step(X, {some, Acc}) when Acc == 1000 ->   |         |
+  step(X, none);                           |         |
+step(X, {some, Acc}) ->                    |         |
+  {some, X + Acc}.                         |         |
+                                           |         |
+-spec game1([number()])                    |         |
+      -> none | {some, number()}.          |         |
+game1(L) ->                                | OK      |
+  lists:foldl(fun step/2, {some, 0}, L).   |         |
+                                           |         |
+-spec game2([number()])                    |         |
+      -> none | {some, number()}.          |         |
+game2(L) ->                                | OK      |
+  lists:foldl(                             |         |
+    fun                                    |         |
+      Step(X, none) when X > 100 ->        |         |
+        {some, X};                         |         |
+      Step(_, none) ->                     |         |
+        none;                              |         |
+      Step(X, {some, Acc})                 |         |
+        when Acc == 1000 ->                |         |
+        Step(X, none);                     |         |
+      Step(X, {some, Acc}) ->              |         |
+        {some, X + Acc}                    |         |
+    end,                                   |         |
+    {some, 0},                             |         |
+    L                                      |         |
+  ).                                       |         |

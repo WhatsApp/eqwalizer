@@ -1,0 +1,31 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(use_dynamic_gradual).              |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec use_dynamic_type                     |         |
+    (eqwalizer:dynamic()) -> {atom()}.     |         |
+use_dynamic_type(Dyn) -> {Dyn}.            | OK      |
+                                           |         |
+-spec use_dynamic_type_neg                 |         |
+    (eqwalizer:dynamic()) -> {atom()}.     |         |
+use_dynamic_type_neg(Dyn) ->               | ERROR   |
+  {erlang:atom_to_binary(Dyn)}.            |         | {erlang:atom_to_binary(Dyn)}.
+                                           |         | Expected: {atom()}
+                                           |         | Got     : {binary()}
+                                           |         | 
+                                           |         |   at tuple index 1:
+                                           |         |   {binary()} is not a subtype of {atom()}
+                                           |         |   because
+                                           |         |   binary() is not a subtype of atom()
+                                           |         |
+-spec use_cast(any()) -> {atom()}.         |         |
+use_cast(A) ->                             | OK      |
+  Dyn = eqwalizer:dynamic_cast(A),         |         |
+  {Dyn}.                                   |         |

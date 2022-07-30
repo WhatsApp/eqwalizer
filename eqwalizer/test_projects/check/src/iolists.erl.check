@@ -1,0 +1,103 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(iolists).                          |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec mk_io_list1(                         |         |
+    byte() | binary() | iolist()           |         |
+) -> iolist().                             |         |
+mk_io_list1(X) ->                          | OK      |
+    [X].                                   |         |
+                                           |         |
+-spec first(iolist()) ->                   |         |
+byte() | binary() | iolist().              |         |
+first(IoList)                              | OK      |
+    when is_binary(IoList) -> IoList;      |         |
+first([H|_]) -> H.                         |         |
+                                           |         |
+-spec refine_as_list(iolist()) ->          |         |
+byte() | binary() | iolist().              |         |
+refine_as_list(IoList)                     | OK      |
+    when is_list(IoList) ->                |         |
+    IoList;                                |         |
+refine_as_list(IoList)                     |         |
+    when is_binary(IoList) ->              |         |
+    binary_to_list(IoList).                |         |
+                                           |         |
+-spec refine1([any()], iolist()) ->        |         |
+[byte() | binary() | iolist()].            |         |
+refine1(X, X) -> X.                        | OK      |
+                                           |         |
+-spec refine2(iolist(), [any()]) ->        |         |
+    [byte() | binary() | iolist()].        |         |
+refine2(X, X) -> X.                        | OK      |
+                                           |         |
+-spec refine3(any(), iolist()) ->          |         |
+    [byte() | binary() | iolist()].        |         |
+refine3(X, X) -> X.                        | OK      |
+                                           |         |
+-spec refine4(iolist(), any()) ->          |         |
+    [byte() | binary() | iolist()].        |         |
+refine4(X, X) -> X.                        | OK      |
+                                           |         |
+-spec refine5(                             |         |
+    iolist(), [atom() | binary()]          |         |
+) -> [binary()].                           |         |
+refine5(X, X) -> X.                        | ERROR   | X.
+                                           |         | Expected: [binary()]
+                                           |         | Got     : [atom() | binary()]
+                                           |         | 
+                                           |         |   [atom() | binary()] is not a subtype of [binary()]
+                                           |         |   because
+                                           |         |   atom() | binary() is not a subtype of binary()
+                                           |         |   because
+                                           |         |   atom() is not a subtype of binary()
+                                           |         |
+-spec refine6_neg(                         |         |
+    iolist(), [atom() | binary()]          |         |
+) -> [atom()].                             |         |
+refine6_neg(X, X) -> X.                    | ERROR   | X.
+                                           |         | Expected: [atom()]
+                                           |         | Got     : [atom() | binary()]
+                                           |         | 
+                                           |         |   [atom() | binary()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   binary() is not a subtype of atom()
+                                           |         |
+-spec refine_to_empty1(                    |         |
+    iolist(), [atom()]                     |         |
+) -> [].                                   |         |
+refine_to_empty1(X, X) -> X.               | ERROR   | X.
+                                           |         | Expected: []
+                                           |         | Got     : [atom()]
+                                           |         |
+-spec refine_to_empty2(                    |         |
+    [atom()], iolist()                     |         |
+) -> [].                                   |         |
+refine_to_empty2(X, X) -> X.               | OK      |
+                                           |         |
+-spec head_or([A], A) -> A.                |         |
+head_or([A], _) -> A;                      | OK      |
+head_or([_], A) -> A.                      |         |
+                                           |         |
+-spec io_list_head(iolist()) ->            |         |
+    binary() | iolist() | number().        |         |
+io_list_head(X) when is_list(X)            | OK      |
+    -> head_or(X, X).                      |         |
+                                           |         |
+-spec ioio(iolist(), A) -> A.              |         |
+ioio(_, A) ->  A.                          | OK      |
+                                           |         |
+-spec test() -> atom().                    |         |
+test() -> ioio([<<>>], ok).                | OK      |
+                                           |         |
+-spec test2_neg(iolist()) -> wrong_ret.    |         |
+test2_neg(X) -> X.                         | ERROR   | X.
+                                           |         | Expected: 'wrong_ret'
+                                           |         | Got     : iolist()

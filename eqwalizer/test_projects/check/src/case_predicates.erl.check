@@ -1,0 +1,162 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(case_predicates).                  |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec my_apply(term(), term())             |         |
+      -> ok | not_ok.                      |         |
+my_apply(X, Y) ->                          | ERROR   |
+  case {is_atom(X), is_atom(Y)} of         |         |
+    {true, true} -> aa(X, Y);              |         | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : any()
+    {true, _} -> a(X);                     |         |
+    {_, true} -> a(Y);                     |         |
+    _ -> not-ok                            |         |
+  end.                                     |         |
+                                           |         |
+-spec aa(atom(), atom()) -> ok.            |         |
+aa(_, _) -> ok.                            | OK      |
+                                           |         |
+-spec a(atom()) -> ok.                     |         |
+a(_) -> ok.                                | OK      |
+                                           |         |
+-spec is_registered(any()) -> boolean().   |         |
+is_registered(X) ->                        | OK      |
+  case is_atom(X) of                       |         |
+    true -> undefined =/= whereis(X);      |         |
+    false -> false                         |         |
+  end.                                     |         |
+                                           |         |
+-spec a_zero1(                             |         |
+    atom() | fun((atom()) -> atom()),      |         |
+    atom()                                 |         |
+) -> atom().                               |         |
+a_zero1(AF, A) ->                          | OK      |
+  case is_function(AF) of                  |         |
+    true -> AF(A);                         |         |
+    false -> A                             |         |
+  end.                                     |         |
+                                           |         |
+-spec a_zero1a(                            |         |
+    atom() | fun((atom()) -> atom()),      |         |
+    atom()                                 |         |
+) -> atom().                               |         |
+a_zero1a(AF, A) ->                         | OK      |
+  Res =                                    |         |
+    case is_function(AF) of                |         |
+      true -> AF(A);                       |         |
+      false -> A                           |         |
+    end,                                   |         |
+  Res.                                     |         |
+                                           |         |
+-spec a_zero2(                             |         |
+    atom() | fun((atom()) -> atom()),      |         |
+    atom()                                 |         |
+) -> atom().                               |         |
+a_zero2(AF, A) ->                          | OK      |
+  case is_function(AF) of                  |         |
+    false -> A;                            |         |
+    true -> AF(A)                          |         |
+  end.                                     |         |
+                                           |         |
+-spec a_zero2a(                            |         |
+    atom() | fun((atom()) -> atom()),      |         |
+    atom()                                 |         |
+) -> atom().                               |         |
+a_zero2a(AF, A) ->                         | OK      |
+  Res =                                    |         |
+    case is_function(AF) of                |         |
+      false -> A;                          |         |
+      _ -> AF(A)                           |         |
+    end,                                   |         |
+  Res.                                     |         |
+                                           |         |
+-spec a_zero3(                             |         |
+    atom() | fun((atom()) -> atom()),      |         |
+    atom()                                 |         |
+) -> atom().                               |         |
+a_zero3(AF, A) ->                          | OK      |
+  case is_function(AF, 1) of               |         |
+    true -> AF(A);                         |         |
+    false -> A                             |         |
+  end.                                     |         |
+                                           |         |
+-spec a_zero3a(                            |         |
+    atom() | fun((atom()) -> atom()),      |         |
+    atom()                                 |         |
+) -> atom().                               |         |
+a_zero3a(AF, A) ->                         | OK      |
+  Res =                                    |         |
+    case is_function(AF, 1) of             |         |
+      true -> AF(A);                       |         |
+      false -> A                           |         |
+    end,                                   |         |
+  Res.                                     |         |
+                                           |         |
+-spec wrap1(                               |         |
+    atom() | pid()                         |         |
+) -> {a, atom()} | {p, pid()}.             |         |
+wrap1(X) ->                                | OK      |
+  Res =                                    |         |
+    case is_atom(X) of                     |         |
+      true -> {a, X};                      |         |
+      false -> {p, X}                      |         |
+    end,                                   |         |
+  Res.                                     |         |
+                                           |         |
+-spec wrap2(                               |         |
+    atom() | pid()                         |         |
+) -> {a, atom()} | {p, pid()}.             |         |
+wrap2(X) ->                                | OK      |
+  case is_atom(X) of                       |         |
+    true -> {a, X};                        |         |
+    false -> {p, X}                        |         |
+  end.                                     |         |
+                                           |         |
+-spec wrap3_neg(                           |         |
+    atom() | pid() | reference()           |         |
+) -> {a, atom()} | {p, pid()}.             |         |
+wrap3_neg(X) ->                            | ERROR   |
+  case is_atom(X) of                       |         |
+    true -> {a, X};                        |         |
+    false -> {p, X}                        |         | {'p', X}.
+                                           |         | Expected: {'a', atom()} | {'p', pid()}
+                                           |         | Got     : {'p', none() | pid() | reference()}
+                                           |         | 
+                                           |         |   {'p', none() | pid() | reference()} is not a subtype of {'a', atom()} | {'p', pid()}
+                                           |         |   because
+                                           |         |   at tuple index 1:
+                                           |         |   {'p', none() | pid() | reference()} is not a subtype of {'a', atom()}
+                                           |         |   because
+                                           |         |   'p' is not a subtype of 'a'
+  end.                                     |         |
+                                           |         |
+-spec wrap4(                               |         |
+    atom() | pid()                         |         |
+) -> {a, atom()} | {p, pid()}.             |         |
+wrap4(X) ->                                | OK      |
+  case is_pid(X) of                        |         |
+    true -> {p, X};                        |         |
+    false -> {a, X}                        |         |
+  end.                                     |         |
+                                           |         |
+-spec wrap5(                               |         |
+    supervisor:child() | restarting        |         |
+) -> {p, pid()} | undefined.               |         |
+wrap5(X) ->                                | ERROR   |
+  case is_pid(X) of                        |         |
+    true -> {p, X};                        |         |
+    _ -> X                                 |         | X.
+                                           |         | Expected: {'p', pid()} | 'undefined'
+                                           |         | Got     : 'undefined' | none() | 'restarting'
+                                           |         | 
+                                           |         |   'undefined' | none() | 'restarting' is not a subtype of {'p', pid()} | 'undefined'
+                                           |         |   because
+                                           |         |   'restarting' is not a subtype of {'p', pid()} | 'undefined'
+                                           |         |   because
+                                           |         |   'restarting' is not a subtype of {'p', pid()}
+  end.                                     |         |

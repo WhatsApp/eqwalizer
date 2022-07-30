@@ -1,0 +1,68 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(strict_complex_types).             |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-type complex_map() :: #{                  |         |
+  id := integer(),                         |         |
+  {secret, id} => integer(),               |         |
+  atom() => any()                          |         |
+}.                                         |         |
+                                           |         |
+-spec mk_complex_map()                     |         |
+      -> complex_map().                    |         |
+mk_complex_map() ->                        | OK      |
+  #{id => 1}.                              |         |
+                                           |         |
+-spec mk_complex_map_neg()                 |         |
+      -> complex_map().                    |         |
+mk_complex_map_neg() ->                    | ERROR   |
+  undefined.                               |         | 'undefined'.
+                                           |         | Expected: complex_map()
+                                           |         | Got     : 'undefined'
+                                           |         | 
+                                           |         |   'undefined' is not a subtype of complex_map()
+                                           |         |   because
+                                           |         |   'undefined' is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |
+-spec use_complex_map1(complex_map())      |         |
+      -> complex_map().                    |         |
+use_complex_map1(Map) ->                   | ERROR   |
+  eqwalizer:reveal_type(Map),              |         | complex_map()
+
+  Map.                                     |         |
+                                           |         |
+-spec use_complex_map2([complex_map()])    |         |
+      -> [complex_map()].                  |         |
+use_complex_map2(List) ->                  | ERROR   |
+  eqwalizer:reveal_type(List),             |         | [complex_map()]
+
+  List.                                    |         |
+                                           |         |
+-spec use_complex_map3()                   |         |
+      -> integer().                        |         |
+use_complex_map3() ->                      | ERROR   |
+  Map = mk_complex_map(),                  |         |
+  maps:get(id, Map).                       |         | maps:get('id', Map).
+                                           |         | Expected: number()
+                                           |         | Got     : eqwalizer:dynamic()
+                                           |         | 
+                                           |         |   eqwalizer:dynamic() is not a subtype of number()
+                                           |         |   because
+                                           |         |   any() is not a subtype of number()
+                                           |         |
+-spec use_complex_map4_neg()               |         |
+      -> integer().                        |         |
+use_complex_map4_neg() ->                  | ERROR   |
+  Map = mk_complex_map(),                  |         |
+  lists:nth(7, Map).                       |         | Map.
+                                           |         | Expected: [T]
+                                           |         | Got     : complex_map()
+                                           |         | 
+                                           |         |   complex_map() is not a subtype of [T]
+                                           |         |   because
+                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not a subtype of [T]

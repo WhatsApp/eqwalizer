@@ -1,0 +1,69 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(gradual_lambdas).                  |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec n_lambda_1                           |         |
+    () -> done.                            |         |
+n_lambda_1() ->                            | OK      |
+  DoWork =                                 |         |
+    fun Loop(N) ->                         |         |
+      case N >= 10 of                      |         |
+        true -> done;                      |         |
+        false -> Loop(N + 1)               |         |
+      end                                  |         |
+    end,                                   |         |
+  DoWork(1).                               |         |
+                                           |         |
+-spec n_lambda_2                           |         |
+    () -> number().                        |         |
+n_lambda_2() ->                            | OK      |
+  DoWork =                                 |         |
+    fun Loop(N) ->                         |         |
+      case N >= 10 of                      |         |
+        true -> done;                      |         |
+        false -> Loop(N + 1)               |         |
+      end                                  |         |
+    end,                                   |         |
+  DoWork(1).                               |         |
+                                           |         |
+-spec n_lambda_3_neg                       |         |
+    (atom()) -> number().                  |         |
+n_lambda_3_neg(A) ->                       | ERROR   |
+  DoWork =                                 |         |
+    fun Loop(N) ->                         |         |
+      case N >= 10 of                      |         |
+        true -> A + 1;                     |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+        false -> Loop(N + 1)               |         |
+      end                                  |         |
+    end,                                   |         |
+  DoWork(1).                               |         |
+                                           |         |
+-spec n_lambda_4_neg                       |         |
+    () -> number().                        |         |
+n_lambda_4_neg() ->                        | ERROR   |
+  DoWork =                                 |         |
+    fun Loop(N) ->                         |         |
+      case N >= 10 of                      |         |
+        true -> done;                      |         |
+        false -> Loop(N + 1)               |         |
+      end                                  |         |
+    end,                                   |         |
+  DoWork().                                |         | DoWork.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: fun((dynamic()) -> dynamic())
+                                           |         |
+-spec lambda_app() -> number().            |         |
+lambda_app() ->                            | OK      |
+  Res = (fun                               |         |
+    Fib(N) when N < 2 ->                   |         |
+      1;                                   |         |
+    Fib(N) ->                              |         |
+      Fib(N - 2) + Fib(N - 1)              |         |
+  end)(4),                                 |         |
+  Res.                                     |         |

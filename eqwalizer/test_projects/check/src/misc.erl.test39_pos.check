@@ -1,0 +1,6 @@
+ 178 -spec test39_pos                           |         |
+ 179     ({atom(), atom()} | number())          |         |
+ 180   -> {atom(), atom()}.                     |         |
+ 181 test39_pos({X, Y}) -> {X, Y};              | OK      |
+ 182 test39_pos(_) -> {a, b}.                   |         |
+ 183                                            |         |

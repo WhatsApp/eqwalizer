@@ -1,0 +1,82 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(any_fun_type).                     |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+% fun() is like f0() | f1() | f3() ...     |         |
+-type f0() :: fun(() -> any()).            |         |
+-type f1() :: fun((any()) -> any()).       |         |
+-type f2() ::                              |         |
+    fun((any(), any()) -> any()).          |         |
+-type f3() ::                              |         |
+    fun((any(), any(), any()) -> any()).   |         |
+                                           |         |
+-spec f0_to_f_any_pos(f0()) -> fun().      |         |
+f0_to_f_any_pos(F) -> F.                   | OK      |
+                                           |         |
+-spec f1_to_f_any_pos(f1()) -> fun().      |         |
+f1_to_f_any_pos(F) -> F.                   | OK      |
+                                           |         |
+-spec fs_to_f_any_pos(                     |         |
+    f0() | f1() | f2() | f3()              |         |
+) -> fun().                                |         |
+fs_to_f_any_pos(F) -> F.                   | OK      |
+                                           |         |
+-spec to_f_any_pos(                        |         |
+    fun((any(), any()) -> pid())           |         |
+) -> fun().                                |         |
+to_f_any_pos(F) -> F.                      | OK      |
+                                           |         |
+-spec to_f_any_neg1(                       |         |
+    fun((atom()) -> pid())                 |         |
+) -> fun().                                |         |
+to_f_any_neg1(F) -> F.                     | ERROR   | F.
+                                           |         | Expected: fun()
+                                           |         | Got     : fun((atom()) -> pid())
+                                           |         |
+-spec to_f_any_neg2(                       |         |
+    f0 | fun((atom()) -> pid()) | f1       |         |
+) -> fun().                                |         |
+to_f_any_neg2(F) -> F.                     | ERROR   | F.
+                                           |         | Expected: fun()
+                                           |         | Got     : 'f0' | fun((atom()) -> pid()) | 'f1'
+                                           |         |
+-spec f_any_to_f0_neg(fun()) -> f0.        |         |
+f_any_to_f0_neg(F) -> F.                   | ERROR   | F.
+                                           |         | Expected: 'f0'
+                                           |         | Got     : fun()
+                                           |         |
+-spec guard01_pos(any()) -> fun().         |         |
+guard01_pos(F)                             | OK      |
+    when is_function(F, 1) -> F.           |         |
+                                           |         |
+-spec guard02_pos(any()) -> f1().          |         |
+guard02_pos(F)                             | OK      |
+    when is_function(F, 1) -> F.           |         |
+                                           |         |
+-spec guard03_neg(any()) -> f2().          |         |
+guard03_neg(F)                             | ERROR   |
+    when is_function(F, 1) -> F.           |         | F.
+                                           |         | Expected: f2()
+                                           |         | Got     : fun((any()) -> any())
+                                           |         | 
+                                           |         |   fun((any()) -> any()) is not a subtype of f2()
+                                           |         |   because
+                                           |         |   fun((any()) -> any()) is not a subtype of fun((any(), any()) -> any())
+                                           |         |
+-spec a_to_a(none()) -> a.                 |         |
+a_to_a(a) -> a.                            | OK      |
+                                           |         |
+-spec unsound() -> any().                  |         |
+unsound() ->                               | OK      |
+    F = fun a_to_a/1,                      |         |
+    if                                     |         |
+        is_function(F, 1) ->               |         |
+            F(3);                          |         |
+        true ->                            |         |
+            a                              |         |
+    end.                                   |         |

@@ -1,0 +1,36 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(types2).                           |         |
+                                           |         |
+-export_type([                             |         |
+    my_remote_number/0,                    |         |
+    unknown_remote_number/0,               |         |
+    my_boolean_unary_fun/0,                |         |
+    o/1,                                   |         |
+    recur/0,                               |         |
+    recur_invalid/1                        |         |
+]).                                        |         |
+                                           |         |
+-type my_remote_number() ::                | INVALID |
+    forms1:my_number().                    |         | Unknown id: forms1:my_number/0
+
+                                           |         |
+-type unknown_remote_number() ::           | INVALID |
+    unknown:my_number().                   |         | Unknown id: unknown:my_number/0
+
+                                           |         |
+-type my_boolean_unary_fun() ::            | INVALID | my_boolean_unary_fun/0 references type with invalid definition: types1:my_unary_fun/2
+
+types1:my_unary_fun(boolean(), boolean()). |         |
+                                           |         |
+-opaque o(X) :: {X}.                       |         |
+                                           |         |
+-type recur() :: {recur()} | o(x).         |         |
+                                           |         |
+-type recur_invalid(X) :: o(               | INVALID | recursive type recur_invalid/1 is not productive
+
+  recur_invalid(recur_invalid(X))          |         |
+).                                         |         |

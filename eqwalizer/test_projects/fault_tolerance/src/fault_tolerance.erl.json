@@ -1,0 +1,1156 @@
+{
+  "fault_tolerance": [
+    {
+      "range": {
+        "start": 473,
+        "end": 477
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'true'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'true'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 499,
+        "end": 504
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'false'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'false'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 585,
+        "end": 586
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'false' | none()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": "  'false' | none() is not a subtype of number()\n  because\n  'false' is not a subtype of number()"
+    },
+    {
+      "range": {
+        "start": 648,
+        "end": 652
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'true'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'true'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 670,
+        "end": 671
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'false' | none()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": "  'false' | none() is not a subtype of number()\n  because\n  'false' is not a subtype of number()"
+    },
+    {
+      "range": {
+        "start": 761,
+        "end": 762
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "1",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 793,
+        "end": 794
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "2",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 827,
+        "end": 828
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "3",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 859,
+        "end": 860
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "4",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 933,
+        "end": 934
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "1",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 960,
+        "end": 961
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "2",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 987,
+        "end": 988
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "3",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1014,
+        "end": 1015
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "4",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1041,
+        "end": 1042
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "5",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1249,
+        "end": 1301
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(b_to_n(eqwalizer:dynamic_cast(N))))",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1276,
+        "end": 1297
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "b_to_n(eqwalizer:dynamic_cast(N))",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1290,
+        "end": 1291
+      },
+      "lineAndCol": null,
+      "message": "Expected: boolean()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "N",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1370,
+        "end": 1371
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: any()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "F",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1381,
+        "end": 1382
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: any()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "F",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1388,
+        "end": 1394
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : {dynamic(), dynamic()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "{X, Y}",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1490,
+        "end": 1510
+      },
+      "lineAndCol": null,
+      "message": "fun with arity 2 used as fun with 1 arguments",
+      "uri": "https://fburl.com/eqwalizer_fun_arity_mismatch",
+      "code": "fun_arity_mismatch",
+      "expressionOrNull": "fun",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1527,
+        "end": 1528
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : [none()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1537,
+        "end": 1538
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1741,
+        "end": 1743
+      },
+      "lineAndCol": null,
+      "message": "Expected: [T]\nGot     : #D{dynamic() => dynamic()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M1",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1749,
+        "end": 1751
+      },
+      "lineAndCol": null,
+      "message": "Expected: [T]\nGot     : #D{dynamic() => dynamic()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M2",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1759,
+        "end": 1762
+      },
+      "lineAndCol": null,
+      "message": "Expected: #D{dynamic() => dynamic()}\nGot     : [none()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1855,
+        "end": 1856
+      },
+      "lineAndCol": null,
+      "message": "Expected: #D{any() => any()}\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1874,
+        "end": 1875
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "V",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1886,
+        "end": 1887
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "V",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1997,
+        "end": 1998
+      },
+      "lineAndCol": null,
+      "message": "Expected: #D{any() => any()}\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2014,
+        "end": 2015
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "V",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2024,
+        "end": 2025
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "V",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2153,
+        "end": 2155
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "L1",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2163,
+        "end": 2165
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "L2",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2175,
+        "end": 2178
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : [dynamic()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2278,
+        "end": 2279
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2290,
+        "end": 2291
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Y",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2297,
+        "end": 2298
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Z",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2393,
+        "end": 2403
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "T",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2412,
+        "end": 2422
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "H",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2430,
+        "end": 2433
+      },
+      "lineAndCol": null,
+      "message": "Expected: [atom()]\nGot     : [dynamic() | any()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": "  [dynamic() | any()] is not a subtype of [atom()]\n  because\n  dynamic() | any() is not a subtype of atom()\n  because\n  any() is not a subtype of atom()"
+    },
+    {
+      "range": {
+        "start": 2509,
+        "end": 2510
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: boolean()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "F",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2528,
+        "end": 2529
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2548,
+        "end": 2549
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2638,
+        "end": 2639
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2657,
+        "end": 2658
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2745,
+        "end": 2746
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "F",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2757,
+        "end": 2758
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2819,
+        "end": 2911
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : [dynamic()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "[ || ]",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2834,
+        "end": 2873
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : #S{a := 'b', c := number()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "#{..}",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2862,
+        "end": 2863
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'd'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'d'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2901,
+        "end": 2904
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : {dynamic()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "{X}",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3003,
+        "end": 3004
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Y",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3022,
+        "end": 3023
+      },
+      "lineAndCol": null,
+      "message": "Expected: binary()\nGot     : [any()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "L",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3031,
+        "end": 3034
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : [binary()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3128,
+        "end": 3129
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "B",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3140,
+        "end": 3143
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3205,
+        "end": 3206
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'a'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3234,
+        "end": 3235
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'b'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'b'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3244,
+        "end": 3246
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : #D{'id' => number()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M1",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3244,
+        "end": 3251
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "_ + _",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3249,
+        "end": 3251
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : #D{'id' => number()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M2",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3325,
+        "end": 3326
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3332,
+        "end": 3333
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "S",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3342,
+        "end": 3343
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "B",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3342,
+        "end": 3347
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "_ + _",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3415,
+        "end": 3416
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "F",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3485,
+        "end": 3486
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3525,
+        "end": 3526
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'a'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3536,
+        "end": 3539
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : dynamic() | []",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": "  dynamic() | [] is not a subtype of atom()\n  because\n  [] is not a subtype of atom()"
+    },
+    {
+      "range": {
+        "start": 3605,
+        "end": 3606
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3649,
+        "end": 3650
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3715,
+        "end": 3716
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'a'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3732,
+        "end": 3735
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : number() | []",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3872,
+        "end": 3875
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : pid()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Pid",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3887,
+        "end": 3889
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Id",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3897,
+        "end": 3900
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : #rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3987,
+        "end": 3989
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Id",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3997,
+        "end": 4007
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "...#rec.id",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4066,
+        "end": 4070
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "<<..>>",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4078,
+        "end": 4081
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : #rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4161,
+        "end": 4211
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(_ ++ _))",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4185,
+        "end": 4203
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : [dynamic()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "_ ++ _",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4202,
+        "end": 4203
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'a'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4252,
+        "end": 4257
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "<<..>>",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4271,
+        "end": 4272
+      },
+      "lineAndCol": null,
+      "message": "Expected: [any()]\nGot     : 'b'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'b'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4366,
+        "end": 4401
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast([N]))",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4390,
+        "end": 4393
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : [dynamic()]",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "[N]",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4418,
+        "end": 4455
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(<<..>>))",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4442,
+        "end": 4447
+      },
+      "lineAndCol": null,
+      "message": "Expected: atom()\nGot     : binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "<<..>>",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4474,
+        "end": 4476
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : []",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "[]",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4533,
+        "end": 4534
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'a'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4537,
+        "end": 4538
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : 'b'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'b'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4585,
+        "end": 4618
+      },
+      "lineAndCol": null,
+      "message": "use_invalid/1 references type with invalid definition: loop/0",
+      "uri": "https://fburl.com/eqwalizer_reference_to_invalid_type",
+      "code": "reference_to_invalid_type",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4901,
+        "end": 4906
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : 'error'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "'error'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4963,
+        "end": 4980
+      },
+      "lineAndCol": null,
+      "message": "redundant fixme",
+      "uri": "https://fburl.com/eqwalizer_redundant_fixme",
+      "code": "redundant_fixme",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    }
+  ]
+}

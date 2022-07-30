@@ -1,0 +1,58 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(dynamic_local_funs).               |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec sum([{number(), number()}])          |         |
+      -> [number()].                       |         |
+sum(L) ->                                  | OK      |
+  F = fun({N1, N2}) -> N1 + N2 end,        |         |
+  lists:map(F, L).                         |         |
+                                           |         |
+-spec fold1                                |         |
+([{number(), number()}]) -> number().      |         |
+fold1(L) ->                                | OK      |
+  F = fun({N1, N2}, Acc) ->                |         |
+    N1 + N2 + Acc                          |         |
+  end,                                     |         |
+  lists:foldl(F, 0, L).                    |         |
+                                           |         |
+-spec fold2_neg                            |         |
+([{number(), number()}]) -> atom().        |         |
+fold2_neg(L) ->                            | ERROR   |
+  F = fun({N1, N2}, Acc) ->                |         |
+    N1 + N2 + Acc                          |         |
+  end,                                     |         |
+  lists:foldl(F, 0, L).                    |         | lists:foldl(F, 0, L).
+                                           |         | Expected: atom()
+                                           |         | Got     : dynamic() | number()
+                                           |         | 
+                                           |         |   dynamic() | number() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   number() is not a subtype of atom()
+                                           |         |
+-spec fold3_neg                            |         |
+([{number(), number()}]) -> number().      |         |
+fold3_neg(L) ->                            | ERROR   |
+  F = fun({N1, N2}, Acc) ->                |         |
+    N1 + N2 + binary_to_atom(Acc)          |         | erlang:binary_to_atom(Acc).
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  end,                                     |         |
+  lists:foldl(F, 0, L).                    |         |
+                                           |         |
+-spec test() -> fun((a) -> b).             |         |
+test() ->                                  | OK      |
+  X = fun(a) -> b end,                     |         |
+  X.                                       |         |
+                                           |         |
+-spec test_arity_neg() -> fun((a) -> b).   |         |
+test_arity_neg() ->                        | ERROR   |
+  X = fun(a, _) -> b end,                  |         |
+  X.                                       |         | X.
+                                           |         | Expected: fun(('a') -> 'b')
+                                           |         | Got     : fun((dynamic(), dynamic()) -> dynamic())

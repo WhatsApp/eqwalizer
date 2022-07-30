@@ -1,0 +1,472 @@
+{
+  "refine": [
+    {
+      "range": {
+        "start": 330,
+        "end": 331
+      },
+      "lineAndCol": null,
+      "message": "Expected: none()\nGot     : _B",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 404,
+        "end": 405
+      },
+      "lineAndCol": null,
+      "message": "Expected: {none(), none()}\nGot     : {B, A}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  at tuple index 1:\n  {B, A} is not a subtype of {none(), none()}\n  because\n  B is not a subtype of none()"
+    },
+    {
+      "range": {
+        "start": 490,
+        "end": 491
+      },
+      "lineAndCol": null,
+      "message": "Expected: none()\nGot     : #D{atom() => atom()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "M",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 588,
+        "end": 589
+      },
+      "lineAndCol": null,
+      "message": "Expected: fun((A | B) -> none())\nGot     : fun((B | A) -> A)",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "F",
+      "explanationOrNull": "  fun((B | A) -> A) is not a subtype of fun((A | B) -> none())\n  because\n  A is not a subtype of none()"
+    },
+    {
+      "range": {
+        "start": 701,
+        "end": 702
+      },
+      "lineAndCol": null,
+      "message": "Expected: fun((A | atom()) -> none())\nGot     : fun((atom() | A) -> A)",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "F",
+      "explanationOrNull": "  fun((atom() | A) -> A) is not a subtype of fun((A | atom()) -> none())\n  because\n  A is not a subtype of none()"
+    },
+    {
+      "range": {
+        "start": 1514,
+        "end": 1515
+      },
+      "lineAndCol": null,
+      "message": "Expected: U\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1682,
+        "end": 1683
+      },
+      "lineAndCol": null,
+      "message": "Expected: U\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1874,
+        "end": 1875
+      },
+      "lineAndCol": null,
+      "message": "Expected: U\nGot     : _T",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2081,
+        "end": 2084
+      },
+      "lineAndCol": null,
+      "message": "Expected: none()\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Val",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2194,
+        "end": 2200
+      },
+      "lineAndCol": null,
+      "message": "Expected: {none(), none()}\nGot     : {number(), binary()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "{X, Y}",
+      "explanationOrNull": "  at tuple index 1:\n  {number(), binary()} is not a subtype of {none(), none()}\n  because\n  number() is not a subtype of none()"
+    },
+    {
+      "range": {
+        "start": 2374,
+        "end": 2380
+      },
+      "lineAndCol": null,
+      "message": "Expected: {none(), none()}\nGot     : {number(), atom()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "{N, A}",
+      "explanationOrNull": "  at tuple index 1:\n  {number(), atom()} is not a subtype of {none(), none()}\n  because\n  number() is not a subtype of none()"
+    },
+    {
+      "range": {
+        "start": 2616,
+        "end": 2617
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : ['a' | 'b']",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2695,
+        "end": 2696
+      },
+      "lineAndCol": null,
+      "message": "Expected: ['a']\nGot     : ['a' | 'b']",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  ['a' | 'b'] is not a subtype of ['a']\n  because\n  'a' | 'b' is not a subtype of 'a'\n  because\n  'b' is not a subtype of 'a'"
+    },
+    {
+      "range": {
+        "start": 2820,
+        "end": 2821
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : ['a' | 'b']",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2900,
+        "end": 2901
+      },
+      "lineAndCol": null,
+      "message": "Expected: ['a']\nGot     : ['a' | 'b']",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  ['a' | 'b'] is not a subtype of ['a']\n  because\n  'a' | 'b' is not a subtype of 'a'\n  because\n  'b' is not a subtype of 'a'"
+    },
+    {
+      "range": {
+        "start": 3074,
+        "end": 3077
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : {'cons', 'nil' | my_list()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3288,
+        "end": 3289
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3392,
+        "end": 3393
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3518,
+        "end": 3519
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3642,
+        "end": 3643
+      },
+      "lineAndCol": null,
+      "message": "Expected: pid()\nGot     : {any(), any()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3735,
+        "end": 3736
+      },
+      "lineAndCol": null,
+      "message": "Expected: none()\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "R",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3828,
+        "end": 3829
+      },
+      "lineAndCol": null,
+      "message": "Expected: none()\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "R",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4074,
+        "end": 4075
+      },
+      "lineAndCol": null,
+      "message": "Expected: #my_rec{}\nGot     : tuple()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "R",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4175,
+        "end": 4176
+      },
+      "lineAndCol": null,
+      "message": "Expected: {'not_my_rec', any(), any()}\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "R",
+      "explanationOrNull": "  at tuple index 1:\n  {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', any(), any()}\n  because\n  'my_rec' is not a subtype of 'not_my_rec'"
+    },
+    {
+      "range": {
+        "start": 4232,
+        "end": 4249
+      },
+      "lineAndCol": null,
+      "message": "Unknown id: unknown:unknown/0",
+      "uri": "https://fburl.com/eqwalizer_unknown_id",
+      "code": "unknown_id",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4254,
+        "end": 4314
+      },
+      "lineAndCol": null,
+      "message": "record_as_tuple7_neg/1 references type with invalid definition: #bad_rec{}",
+      "uri": "https://fburl.com/eqwalizer_reference_to_invalid_type",
+      "code": "reference_to_invalid_type",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4545,
+        "end": 4546
+      },
+      "lineAndCol": null,
+      "message": "Expected: #my_rec{}\nGot     : {'my_rec', atom(), number()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "R",
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}\n  because\n  atom() is not a subtype of number()"
+    },
+    {
+      "range": {
+        "start": 4817,
+        "end": 4818
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4927,
+        "end": 4928
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4983,
+        "end": 4984
+      },
+      "lineAndCol": null,
+      "message": "Expected: T\nGot     : fun((T) -> 'ok')",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5043,
+        "end": 5044
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5254,
+        "end": 5255
+      },
+      "lineAndCol": null,
+      "message": "Expected: #my_rec{}\nGot     : {'my_rec', atom(), number()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}\n  because\n  atom() is not a subtype of number()"
+    },
+    {
+      "range": {
+        "start": 5466,
+        "end": 5467
+      },
+      "lineAndCol": null,
+      "message": "Expected: {'my_rec', atom(), number()}\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), number()}\n  because\n  number() is not a subtype of atom()"
+    },
+    {
+      "range": {
+        "start": 5710,
+        "end": 5711
+      },
+      "lineAndCol": null,
+      "message": "Expected: {'my_rec', atom(), T}\nGot     : #my_rec{}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), T}\n  because\n  number() is not a subtype of atom()"
+    },
+    {
+      "range": {
+        "start": 5774,
+        "end": 5784
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom() | number()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "ttt1(X, 1)",
+      "explanationOrNull": "  atom() | number() is not a subtype of number()\n  because\n  atom() is not a subtype of number()"
+    },
+    {
+      "range": {
+        "start": 5845,
+        "end": 5846
+      },
+      "lineAndCol": null,
+      "message": "Expected: {'my_rec', any(), any()}\nGot     : #my_rec{} | 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  #my_rec{} | 'a' is not a subtype of {'my_rec', any(), any()}\n  because\n  'a' is not a subtype of {'my_rec', any(), any()}"
+    },
+    {
+      "range": {
+        "start": 6036,
+        "end": 6037
+      },
+      "lineAndCol": null,
+      "message": "Expected: binary()\nGot     : 'undefined' | binary()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "B",
+      "explanationOrNull": "  'undefined' | binary() is not a subtype of binary()\n  because\n  'undefined' is not a subtype of binary()"
+    },
+    {
+      "range": {
+        "start": 7258,
+        "end": 7270
+      },
+      "lineAndCol": null,
+      "message": "Undef key `id`. Type: shape()",
+      "uri": "https://fburl.com/eqwalizer_undefined_key",
+      "code": "undefined_key",
+      "expressionOrNull": "S",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 7683,
+        "end": 7687
+      },
+      "lineAndCol": null,
+      "message": "atom()",
+      "uri": "https://fburl.com/eqwalizer_reveal_type",
+      "code": "reveal_type",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    }
+  ]
+}

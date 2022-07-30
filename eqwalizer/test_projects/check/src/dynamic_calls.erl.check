@@ -1,0 +1,195 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(dynamic_calls).                    |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-record(rec, {                             |         |
+    method :: fun((atom()) -> pid())       |         |
+}).                                        |         |
+                                           |         |
+-spec test_01_pos(fun((a) -> b), a) -> b.  |         |
+test_01_pos(F, X) -> F(X).                 | OK      |
+                                           |         |
+-spec test_02_neg(                         |         |
+    fun((a) -> b),                         |         |
+    a                                      |         |
+) -> pid().                                |         |
+test_02_neg(F, X) ->                       | ERROR   |
+    F(X).                                  |         | F(X).
+                                           |         | Expected: pid()
+                                           |         | Got     : 'b'
+                                           |         |
+-spec test_03_pos(                         |         |
+    #rec{},                                |         |
+    atom()                                 |         |
+) -> pid().                                |         |
+test_03_pos(                               | OK      |
+    #rec{method = Method},                 |         |
+    Atom                                   |         |
+) ->                                       |         |
+    Method(Atom).                          |         |
+                                           |         |
+-spec test_04_neg(                         |         |
+    #rec{}                                 |         |
+) -> number().                             |         |
+test_04_neg(Rec) ->                        | ERROR   |
+    (Rec#rec.method)(atom).                |         | (...#rec.method)('atom').
+                                           |         | Expected: number()
+                                           |         | Got     : pid()
+                                           |         |
+-spec test_05_pos(#rec{}) -> pid().        |         |
+test_05_pos(Rec) ->                        | OK      |
+    Meth = Rec#rec.method,                 |         |
+    Res = Meth(atom),                      |         |
+    Res.                                   |         |
+                                           |         |
+-spec test_06_neg(fun((a) -> b)) -> any(). |         |
+test_06_neg(F) -> F(1, 2).                 | ERROR   | F.
+                                           |         | Expected fun type with arity 2
+                                           |         | Got: fun(('a') -> 'b')
+                                           |         |
+-spec test_07_pos() -> ok.                 |         |
+test_07_pos() ->                           | OK      |
+    F = fun ret_ok/0,                      |         |
+    F().                                   |         |
+                                           |         |
+-spec test_07_neg() -> pid().              |         |
+test_07_neg() ->                           | ERROR   |
+    F = fun ret_ok/0,                      |         |
+    F().                                   |         | F().
+                                           |         | Expected: pid()
+                                           |         | Got     : 'ok'
+                                           |         |
+-spec test_08_neg() -> any().              |         |
+test_08_neg() ->                           | ERROR   |
+    F = fun ret_ok/0,                      |         |
+    F(1).                                  |         | F.
+                                           |         | Expected fun type with arity 1
+                                           |         | Got: fun(() -> 'ok')
+                                           |         |
+-spec test_09_neg() -> any().              |         |
+test_09_neg() ->                           | ERROR   |
+    F = fun unspecced/0,                   |         | Unbound var: unspecced/0
+
+    F().                                   |         |
+                                           |         |
+-spec test_10_neg() -> ok.                 |         |
+test_10_neg() ->                           | ERROR   |
+    (fun ret_ok/0)(1, 2).                  |         | ret_ok/0.
+                                           |         | Expected fun type with arity 2
+                                           |         | Got: fun(() -> 'ok')
+                                           |         |
+-spec test_11_neg(                         |         |
+    fun((a1 | a2) -> r1 | r2)              |         |
+    | fun((a2 | a3) -> r2 | r3)            |         |
+) -> ok.                                   |         |
+test_11_neg(FUnion) ->                     | ERROR   |
+    (FUnion)(false).                       |         | 'false'.
+                                           |         | Expected: 'a1' | 'a2'
+                                           |         | Got     : 'false'
+                                           |         | 
+                                           |         |   'false' is not a subtype of 'a1' | 'a2'
+                                           |         |   because
+                                           |         |   'false' is not a subtype of 'a1'
+                                           |         |
+% 'e' tests exercise elaboration instead o……         |
+-spec test_11e_neg(                        |         |
+    fun((a1 | a2) -> r1 | r2)              |         |
+    | fun((a2 | a3) -> r2 | r3)            |         |
+) -> ok.                                   |         |
+test_11e_neg(FUnion) ->                    | ERROR   |
+    Res = (FUnion)(false),                 |         | 'false'.
+                                           |         | Expected: 'a1' | 'a2'
+                                           |         | Got     : 'false'
+                                           |         | 
+                                           |         |   'false' is not a subtype of 'a1' | 'a2'
+                                           |         |   because
+                                           |         |   'false' is not a subtype of 'a1'
+    Res.                                   |         |
+                                           |         |
+-spec test_12_pos(                         |         |
+    fun((a1 | a2) -> r1 | r2)              |         |
+    | fun((a2 | a3) -> r2 | r3)            |         |
+) -> r1.                                   |         |
+test_12_pos(FUnion) ->                     | ERROR   |
+    (FUnion)(a2).                          |         | FUnion('a2').
+                                           |         | Expected: 'r1'
+                                           |         | Got     : 'r1' | 'r2'
+                                           |         | 
+                                           |         |   'r1' | 'r2' is not a subtype of 'r1'
+                                           |         |   because
+                                           |         |   'r2' is not a subtype of 'r1'
+                                           |         |
+-spec test_12e_pos(                        |         |
+    fun((a1 | a2) -> r1 | r2)              |         |
+    | fun((a2 | a3) -> r2 | r3)            |         |
+) -> r1.                                   |         |
+test_12e_pos(FUnion) ->                    | ERROR   |
+    Res = (FUnion)(a2),                    |         |
+    Res.                                   |         | Res.
+                                           |         | Expected: 'r1'
+                                           |         | Got     : 'r1' | 'r2' | 'r2' | 'r3'
+                                           |         | 
+                                           |         |   'r1' | 'r2' | 'r2' | 'r3' is not a subtype of 'r1'
+                                           |         |   because
+                                           |         |   'r2' is not a subtype of 'r1'
+                                           |         |
+-spec test_13_neg(                         |         |
+    fun((a) -> b) | z                      |         |
+) -> b.                                    |         |
+test_13_neg(F) ->                          | ERROR   |
+    (F)(a).                                |         | F.
+                                           |         | Expected fun type with arity 1
+                                           |         | Got: fun(('a') -> 'b') | 'z'
+                                           |         |
+-spec test_13e_neg(                        |         |
+    fun((a) -> b) | z                      |         |
+) -> b.                                    |         |
+test_13e_neg(F) ->                         | ERROR   |
+    Res = (F)(a),                          |         | F.
+                                           |         | Expected fun type with arity 1
+                                           |         | Got: fun(('a') -> 'b') | 'z'
+    Res.                                   |         |
+                                           |         |
+-spec test_14_pos(                         |         |
+    fun((a1) -> r1 | r2) |                 |         |
+    (fun((a1 | a2) -> r1 | r2) |           |         |
+      fun((a1 | a3) -> r2))                |         |
+    ) -> r1 | r2.                          |         |
+test_14_pos(FUnion) ->                     | OK      |
+    FUnion(a1).                            |         |
+                                           |         |
+-spec test_14e_pos(                        |         |
+    fun((a1) -> r1 | r2) |                 |         |
+    (fun((a1 | a2) -> r1 | r2) |           |         |
+      fun((a1 | a3) -> r2))                |         |
+    ) -> r1 | r2.                          |         |
+test_14e_pos(FUnion) ->                    | OK      |
+    Res = FUnion(a1),                      |         |
+    Res.                                   |         |
+                                           |         |
+-spec test_15_neg(                         |         |
+    fun((a) -> b) | fun(() -> b)           |         |
+) -> b.                                    |         |
+test_15_neg(F) ->                          | ERROR   |
+    (F)(a).                                |         | F.
+                                           |         | Expected fun type with arity 1
+                                           |         | Got: fun(('a') -> 'b') | fun(() -> 'b')
+                                           |         |
+-spec test_15e_neg(                        |         |
+    fun((a) -> b) | fun(() -> b)           |         |
+) -> b.                                    |         |
+test_15e_neg(F) ->                         | ERROR   |
+    Res = (F)(a),                          |         | F.
+                                           |         | Expected fun type with arity 1
+                                           |         | Got: fun(('a') -> 'b') | fun(() -> 'b')
+    Res.                                   |         |
+                                           |         |
+-spec ret_ok() -> ok.                      |         |
+ret_ok() -> ok.                            | OK      |
+                                           |         |
+unspecced() -> ok.                         | NO SPEC |

@@ -1,0 +1,66 @@
+   1 %%% Copyright (c) Meta Platforms, Inc. and……         |
+   2 %%%                                        |         |
+   3 %%% This source code is licensed under the……         |
+   4 %%% the LICENSE file in the root directory……         |
+   5                                            |         |
+   6 -module(as_pat).                           |         |
+   7                                            |         |
+   8 -compile([export_all, nowarn_export_all]). |         |
+   9                                            |         |
+  10 -record(box_a, {a :: atom()}).             |         |
+  11 -record(box_b, {b :: binary()}).           |         |
+  12 -record(box_n, {n :: number()}).           |         |
+  13                                            |         |
+  14 -type abn() :: atom() | binary() | number(……         |
+  15                                            |         |
+  16 -type box() :: #box_a{}                    |         |
+  17              | #box_b{}                    |         |
+  18              | #box_n{}.                   |         |
+  19                                            |         |
+  20 -spec box_a(atom()) -> #box_a{}.           |         |
+  21 box_a(A) -> #box_a{a = A}.                 | OK      |
+  22                                            |         |
+  23 -spec unbox_a(#box_a{}) -> atom().         |         |
+  24 unbox_a(#box_a{a = A}) -> A.               | OK      |
+  25                                            |         |
+  26 -spec box_n(number()) -> #box_n{}.         |         |
+  27 box_n(N) -> #box_n{n = N}.                 | OK      |
+  28                                            |         |
+  29 -spec unbox_n(#box_n{}) -> number().       |         |
+  30 unbox_n(#box_n{n = N}) -> N.               | OK      |
+  31                                            |         |
+  32 -spec box_b(binary()) -> #box_b{}.         |         |
+  33 box_b(B) -> #box_b{b = B}.                 | OK      |
+  34                                            |         |
+  35 -spec unbox_b(#box_b{}) -> binary().       |         |
+  36 unbox_b({b, B}) -> B.                      | OK      |
+  37                                            |         |
+  38 -spec unbox(box()) -> abn().               |         |
+  39 unbox(#box_a{a = A}) -> A;                 | OK      |
+  40 unbox(#box_b{b = B}) -> B;                 |         |
+  41 unbox(#box_n{n = N}) -> N.                 |         |
+  42                                            |         |
+  43 -spec unboxL(box()) -> abn().              |         |
+  44 unboxL(BA = #box_a{}) -> unbox_a(BA);      | OK      |
+  45 unboxL(BB = #box_b{}) -> unbox_b(BB);      |         |
+  46 unboxL(BN = #box_n{}) -> unbox_n(BN).      |         |
+  47                                            |         |
+  48 -spec unboxL_neg(box()) -> abn().          |         |
+  49 unboxL_neg(BA = #box_a{}) -> unbox_a(BA);  | ERROR   |
+  50 unboxL_neg(BB = #box_b{}) -> unbox_b(BB);  |         |
+  51 unboxL_neg(BN = #box_n{}) -> unbox_a(BN).  |         | BN.
+                                                |         | Expected: #box_a{}
+                                                |         | Got     : #box_n{}
+  52                                            |         |
+  53 -spec unboxR(box()) -> abn().              |         |
+  54 unboxR(#box_a{} = BA) -> unbox_a(BA);      | OK      |
+  55 unboxR(#box_b{} = BB) -> unbox_b(BB);      |         |
+  56 unboxR(#box_n{} = BN) -> unbox_n(BN).      |         |
+  57                                            |         |
+  58 -spec unboxR_neg(box()) -> abn().          |         |
+  59 unboxR_neg(#box_a{} = BA) -> unbox_a(BA);  | ERROR   |
+  60 unboxR_neg(#box_b{} = BB) -> unbox_b(BB);  |         |
+  61 unboxR_neg(#box_n{} = BN) -> unbox_b(BN).  |         | BN.
+                                                |         | Expected: #box_b{}
+                                                |         | Got     : #box_n{}
+

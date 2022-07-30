@@ -1,0 +1,17 @@
+error: type_alias_is_non_productive
+   ┌─ app_a/src/app_a_mod2.erl:27:1
+   │
+27 │ -type invalid() :: invalid().
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ recursive type invalid/0 is not productive
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a_mod2.erl:36:9
+   │
+36 │     1 + an_atom,
+   │         ^^^^^^^ 'an_atom'.
+Expected: number()
+Got     : 'an_atom'
+
+
+2 ERRORS

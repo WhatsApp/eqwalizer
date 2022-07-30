@@ -1,0 +1,33 @@
+{
+  "recursive_type_deps1:expr/0": [
+    "recursive_type_deps1:expr_var/0",
+    "recursive_type_deps1:expr_call/0",
+    "recursive_type_deps1:expr_tuple/0"
+  ],
+  "recursive_type_deps1:expr_call/0": [
+    "recursive_type_deps1:expr/0"
+  ],
+  "recursive_type_deps1:expr_tuple/0": [
+    "recursive_type_deps1:expr/0"
+  ],
+  "recursive_type_deps1:expr_var/0": [
+    
+  ],
+  "recursive_type_deps1:leaf/-1": [
+    
+  ],
+  "recursive_type_deps1:my_int_list/0": [
+    "recursive_type_deps1:my_int_list/0"
+  ],
+  "recursive_type_deps1:node/-1": [
+    "recursive_type_deps1:tree/0",
+    "recursive_type_deps1:tree/0"
+  ],
+  "recursive_type_deps1:tree/0": [
+    "recursive_type_deps1:leaf/-1",
+    "recursive_type_deps1:node/-1"
+  ],
+  "recursive_type_deps1:tree2/0": [
+    "recursive_type_deps2:tree/0"
+  ]
+}

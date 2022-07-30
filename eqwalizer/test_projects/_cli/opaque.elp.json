@@ -1,0 +1,220 @@
+{
+  "opaque": [
+    {
+      "range": {
+        "start": 585,
+        "end": 586
+      },
+      "lineAndCol": null,
+      "message": "Expected: sets:set({'ok', 'ok'})\nGot     : sets:set({'ok', 'error'})",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  sets:set({'ok', 'error'}) is not a subtype of sets:set({'ok', 'ok'})\n  because\n  at tuple index 2:\n  {'ok', 'error'} is not a subtype of {'ok', 'ok'}\n  because\n  'error' is not a subtype of 'ok'"
+    },
+    {
+      "range": {
+        "start": 640,
+        "end": 641
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 703,
+        "end": 704
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'ok'\nGot     : #D{any() => any()}",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 761,
+        "end": 762
+      },
+      "lineAndCol": null,
+      "message": "Expected: tuple()\nGot     : misc:o()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1194,
+        "end": 1196
+      },
+      "lineAndCol": null,
+      "message": "Expected: none()\nGot     : misc:o()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X2",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1272,
+        "end": 1275
+      },
+      "lineAndCol": null,
+      "message": "Expected: tuple()\nGot     : misc:o()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Res",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 1770,
+        "end": 1771
+      },
+      "lineAndCol": null,
+      "message": "Expected: {'ok'}\nGot     : any()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2009,
+        "end": 2019
+      },
+      "lineAndCol": null,
+      "message": "Expected: 'true'\nGot     : boolean()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "_ =:= _",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2217,
+        "end": 2218
+      },
+      "lineAndCol": null,
+      "message": "Expected: {'ok'} | 'a'\nGot     : misc:o() | 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  misc:o() | 'a' is not a subtype of {'ok'} | 'a'\n  because\n  misc:o() is not a subtype of {'ok'} | 'a'\n  because\n  misc:o() is not a subtype of {'ok'}"
+    },
+    {
+      "range": {
+        "start": 2288,
+        "end": 2289
+      },
+      "lineAndCol": null,
+      "message": "Expected: misc:o()\nGot     : misc:o() | 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  misc:o() | 'a' is not a subtype of misc:o()\n  because\n  'a' is not a subtype of misc:o()"
+    },
+    {
+      "range": {
+        "start": 2430,
+        "end": 2431
+      },
+      "lineAndCol": null,
+      "message": "Expected: misc:o()\nGot     : misc:o() | 'a'",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": "  misc:o() | 'a' is not a subtype of misc:o()\n  because\n  'a' is not a subtype of misc:o()"
+    },
+    {
+      "range": {
+        "start": 2806,
+        "end": 2863
+      },
+      "lineAndCol": null,
+      "message": "T. Type vars in aliases are not allowed in function parameter position.",
+      "uri": "https://fburl.com/eqwalizer_type_var_in_parameter_position",
+      "code": "type_var_in_parameter_position",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 2867,
+        "end": 2927
+      },
+      "lineAndCol": null,
+      "message": "use_contra_neg/1 references type with invalid definition: contravariant/1",
+      "uri": "https://fburl.com/eqwalizer_reference_to_invalid_type",
+      "code": "reference_to_invalid_type",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 3063,
+        "end": 3064
+      },
+      "lineAndCol": null,
+      "message": "Expected: {'ok'}\nGot     : misc:o()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "X",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4713,
+        "end": 4714
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: misc:int_result_o()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "F",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 4984,
+        "end": 4985
+      },
+      "lineAndCol": null,
+      "message": "Expected fun type with arity 0\nGot: misc:int_result_o()",
+      "uri": "https://fburl.com/eqwalizer_expected_fun_type",
+      "code": "expected_fun_type",
+      "expressionOrNull": "F",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5066,
+        "end": 5087
+      },
+      "lineAndCol": null,
+      "message": "_T: Type variable is unbound.",
+      "uri": "https://fburl.com/eqwalizer_unbound_type_var",
+      "code": "unbound_type_var",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5090,
+        "end": 5126
+      },
+      "lineAndCol": null,
+      "message": "o_trans_invalid/0 references type with invalid definition: invalid/0",
+      "uri": "https://fburl.com/eqwalizer_reference_to_invalid_type",
+      "code": "reference_to_invalid_type",
+      "expressionOrNull": null,
+      "explanationOrNull": null
+    }
+  ]
+}

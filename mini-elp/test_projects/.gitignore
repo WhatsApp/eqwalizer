@@ -1,0 +1,5 @@
+.idea
+*build_info.etf
+*wa.build_info
+*_build/
+*rebar.lock

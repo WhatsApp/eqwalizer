@@ -1,0 +1,68 @@
+jobs:
+  linux-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: "actions/checkout@v2"
+      - name: Set up GraalVM
+        uses: "DeLaGuardo/setup-graalvm@5.0"
+        with:
+          graalvm: '22.1.0'
+          java: 'java11'
+      - name: Install Native Image Plugin
+        run: gu install native-image
+      - name: Set up rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Assemble eqwalizer.jar
+        run: "cd eqwalizer; sbt assembly"
+      - name: Assemble eqwalizer binary
+        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
+      - name: Test elp
+        run: "cd mini-elp && cargo test --workspace"
+      - name: Assemble elp
+        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release"
+      - name: Add elp to path
+        run: 'echo "$GITHUB_WORKSPACE/mini-elp/target/release" >> $GITHUB_PATH'
+      - name: Test eqwalizer
+        run: 'cd eqwalizer && sbt test'
+      - name: Upload eqwalizer.jar
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: eqwalizer.jar
+          path: eqwalizer/target/scala-2.13/eqwalizer.jar
+  macos-ci:
+    needs:
+      - linux-ci
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: "actions/checkout@v2"
+      - name: Set up GraalVM
+        uses: "DeLaGuardo/setup-graalvm@5.0"
+        with:
+          graalvm: '22.1.0'
+          java: 'java11'
+      - name: Install Native Image Plugin
+        run: gu install native-image
+      - name: Install erlang + rebar3
+        run: brew install erlang rebar3
+      - name: Set up rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Download eqwalizer.jar
+        uses: "actions/download-artifact@v2"
+        with:
+          name: eqwalizer.jar
+          path: eqwalizer/target/scala-2.13
+      - name: Assemble eqwalizer binary
+        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
+      - name: Test elp
+        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo test --workspace"
+      - name: Assemble elp
+        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release"
+name: eqWAlizer CI
+on:
+  push: {}

@@ -1,0 +1,3 @@
+{application, debug,
+  [{description, "wip"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
+}.

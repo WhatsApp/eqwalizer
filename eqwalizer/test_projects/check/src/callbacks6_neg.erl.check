@@ -1,0 +1,21 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(callbacks6_neg).                   |         |
+-compile([export_all, nowarn_export_all]). |         |
+-behavior(behave).                         | ERROR   | Missing implementation for behave callback use_invalid/0
+                                           |         | ---
+                                           |         | Missing implementation for behave callback use_invalid2/0
+                                           |         |
+-spec use_invalid() -> ok.                 |         |
+use_invalid() -> ok.                       | OK      |
+                                           |         |
+% unspecced                                |         |
+use_invalid2() -> ok.                      | NO SPEC |
+                                           |         |
+-spec use_use_invalid2_neg() -> ok.        |         |
+use_use_invalid2_neg() ->                  | ERROR   |
+  use_invalid2().                          |         | Unbound var: use_invalid2/0
+

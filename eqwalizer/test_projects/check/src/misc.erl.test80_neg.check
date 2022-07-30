@@ -1,0 +1,12 @@
+ 394 -spec test80_neg(any()) -> atom().         |         |
+ 395 test80_neg(Timeout) ->                     | ERROR   |
+ 396     receive                                |         |
+ 397         X -> X                             |         | X.
+                                                |         | Expected: atom()
+                                                |         | Got     : any()
+                                                |         | 
+                                                |         | See https://fburl.com/eqwalizer_expected_subtype
+ 398     after Timeout ->                       |         |
+ 399         default                            |         |
+ 400     end.                                   |         |
+ 401                                            |         |

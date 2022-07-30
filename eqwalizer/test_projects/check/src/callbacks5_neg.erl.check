@@ -1,0 +1,27 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(callbacks5_neg).                   |         |
+-export([                                  |         |
+  init/1,                                  |         |
+  handle_call/3,                           |         |
+  handle_cast/2,                           |         |
+  format_status/2                          |         |
+]).                                        |         |
+-behavior(gen_server).                     | ERROR   | Parameter 1 in implementation of gen_server:format_status/2 has no overlap with expected parameter type. Expected: 'normal' | 'terminate', Got: 'bad'.
+
+                                           |         |
+init([]) -> {ok, []}.                      | NO SPEC |
+                                           |         |
+handle_call(_, _From, State) ->            | NO SPEC |
+  {reply, ok, State}.                      |         |
+                                           |         |
+-spec handle_cast(ok, ok) ->               |         |
+  {stop, ok, ok}.                          |         |
+handle_cast(_, _) ->                       | OK      |
+  {stop, ok, ok}.                          |         |
+                                           |         |
+-spec format_status(bad, term())->term().  |         |
+format_status(_, _) -> ok.                 | OK      |

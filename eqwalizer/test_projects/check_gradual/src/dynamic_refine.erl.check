@@ -1,0 +1,212 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(dynamic_refine).                   |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+dyn_val() -> erlang:error(dynamic).        | OK      |
+                                           |         |
+-spec occ01() -> b.                        |         |
+occ01() ->                                 | OK      |
+  Arg = dyn_val(),                         |         |
+  case Arg of                              |         |
+    a -> b;                                |         |
+    B -> B                                 |         |
+  end.                                     |         |
+                                           |         |
+-spec occ01_elab() -> b.                   |         |
+occ01_elab() ->                            | OK      |
+  Dyn = dyn_val(),                         |         |
+  Res = case Dyn of                        |         |
+          a -> b;                          |         |
+          B -> B                           |         |
+        end,                               |         |
+  Res.                                     |         |
+                                           |         |
+-spec occ02() -> integer().                |         |
+occ02() ->                                 | OK      |
+  Dyn = dyn_val(),                         |         |
+  case Dyn of                              |         |
+    a -> 0;                                |         |
+    {_, I} -> I                            |         |
+  end.                                     |         |
+                                           |         |
+occ02_cl(a) -> 0;                          | OK      |
+occ02_cl({_, I}) -> I.                     |         |
+                                           |         |
+-spec occ03() -> binary().                 |         |
+occ03() ->                                 | OK      |
+  Dyn = dyn_val(),                         |         |
+  case Dyn of                              |         |
+    {a, A} -> atom_to_binary(A);           |         |
+    {_, B} -> B                            |         |
+  end.                                     |         |
+                                           |         |
+occ03_cl({a, A}) -> atom_to_binary(A);     | OK      |
+occ03_cl({_, B}) -> B.                     |         |
+                                           |         |
+-spec occ04() -> binary().                 |         |
+occ04() ->                                 | OK      |
+  Dyn = dyn_val(),                         |         |
+  case Dyn of                              |         |
+    A when is_atom(A) ->                   |         |
+      atom_to_binary(A);                   |         |
+    B ->                                   |         |
+      B                                    |         |
+  end.                                     |         |
+                                           |         |
+occ04_cl(A) when is_atom(A) ->             | OK      |
+  atom_to_binary(A);                       |         |
+occ04_cl(B) ->                             |         |
+  B.                                       |         |
+                                           |         |
+-spec occ04_if() -> binary().              |         |
+occ04_if() ->                              | OK      |
+  Dyn = dyn_val(),                         |         |
+  if                                       |         |
+    is_atom(Dyn) -> atom_to_binary(Dyn);   |         |
+    true -> Dyn                            |         |
+  end.                                     |         |
+                                           |         |
+-spec occ04_if1() -> binary().             |         |
+occ04_if1() ->                             | OK      |
+  Dyn = dyn_val(),                         |         |
+  if                                       |         |
+    is_binary(Dyn) -> Dyn;                 |         |
+    true -> atom_to_binary(Dyn)            |         |
+  end.                                     |         |
+                                           |         |
+-spec refine_any1_neg(any()) -> ok.        |         |
+refine_any1_neg(Arg) ->                    | ERROR   |
+  if                                       |         |
+    % Arg is refined as [any()] here       |         |
+    is_list(Arg) -> {Arg}                  |         | {Arg}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {[any()]}
+  end.                                     |         |
+                                           |         |
+-spec refine_todo1_neg() -> ok.            |         |
+refine_todo1_neg() ->                      | ERROR   |
+  Dyn = dyn_val(),                         |         |
+  if                                       |         |
+    % It would be better to have           |         |
+    % Dyn refined as [dynamic()] here      |         |
+    is_list(Dyn) -> {Dyn}                  |         | {Dyn}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic()}
+  end.                                     |         |
+                                           |         |
+-spec refine_any2_neg(any()) -> ok.        |         |
+refine_any2_neg(Arg) ->                    | ERROR   |
+  if                                       |         |
+    % Arg is refined as binary() here      |         |
+    is_binary(Arg) -> {Arg}                |         | {Arg}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {binary()}
+  end.                                     |         |
+                                           |         |
+-spec refine_todo2_neg() -> ok.            |         |
+refine_todo2_neg() ->                      | ERROR   |
+  Dyn = dyn_val(),                         |         |
+  if                                       |         |
+    % It would be better to have           |         |
+    % Dyn refined as binary here           |         |
+    is_binary(Dyn) -> {Dyn};               |         | {Dyn}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic()}
+    true -> ok                             |         |
+  end.                                     |         |
+                                           |         |
+-spec mixed1                               |         |
+(any(), boolean()) -> ok.                  |         |
+mixed1(Arg, UseOrig) ->                    | ERROR   |
+  Mixed =                                  |         |
+    if                                     |         |
+      UseOrig -> Arg;                      |         |
+      true -> dyn_val()                    |         |
+    end,                                   |         |
+  {Mixed}.                                 |         | {Mixed}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic() | any()}
+                                           |         |
+-spec mixed2                               |         |
+  (any(), boolean()) -> ok.                |         |
+mixed2(Arg, UseDyn) ->                     | ERROR   |
+  Mixed =                                  |         |
+    if                                     |         |
+      UseDyn -> dyn_val();                 |         |
+      true -> Arg                          |         |
+    end,                                   |         |
+  {Mixed}.                                 |         | {Mixed}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic() | any()}
+                                           |         |
+-spec mixed3                               |         |
+  (boolean(), boolean()) -> ok.            |         |
+mixed3(Arg, UseOrig) ->                    | ERROR   |
+  Mixed =                                  |         |
+    if                                     |         |
+      UseOrig -> Arg;                      |         |
+      true -> dyn_val()                    |         |
+    end,                                   |         |
+  {Mixed}.                                 |         | {Mixed}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic() | boolean()}
+                                           |         |
+-spec mixed4                               |         |
+  (binary(), boolean()) -> ok.             |         |
+mixed4(Arg, UseDyn) ->                     | ERROR   |
+  Mixed =                                  |         |
+    if                                     |         |
+      UseDyn -> dyn_val();                 |         |
+      true -> Arg                          |         |
+    end,                                   |         |
+  {Mixed}.                                 |         | {Mixed}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic() | binary()}
+                                           |         |
+-spec mixed5                               |         |
+  (binary() | atom(), boolean()) -> ok.    |         |
+mixed5(Arg, Flag) ->                       | ERROR   |
+  Mixed1 =                                 |         |
+    if                                     |         |
+      Flag -> Arg;                         |         |
+      true -> dyn_val()                    |         |
+    end,                                   |         |
+  Mixed2 =                                 |         |
+    if                                     |         |
+      Flag -> Mixed1;                      |         |
+      true -> dyn_val()                    |         |
+    end,                                   |         |
+  {Mixed2}.                                |         | {Mixed2}.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {dynamic() | binary() | atom()}
+                                           |         |
+-spec dyn_union_1(                         |         |
+    [eqwalizer:dynamic()] | error          |         |
+) -> [number()].                           |         |
+dyn_union_1(U) when is_list(U) ->          | OK      |
+  U.                                       |         |
+                                           |         |
+-spec use_private_record_neg() -> ok.      |         |
+use_private_record_neg() ->                | ERROR   |
+  Rec = records:mk_foo_pos(),              |         |
+  {foo, _Id, Name} = Rec,                  |         |
+  eqwalizer:reveal_type(Name),             |         | atom()
+
+  Name.                                    |         |
+                                           |         |
+refine_map_update1(#{key := _Val} = M) ->  | OK      |
+  M#{key := my_value};                     |         |
+refine_map_update1(Other) ->               |         |
+  Other.                                   |         |
+                                           |         |
+refine_map_update2(                        | OK      |
+    Val, #{key := _Val} = M                |         |
+) ->                                       |         |
+  M#{key := Val};                          |         |
+refine_map_update2(_, Other) ->            |         |
+  Other.                                   |         |

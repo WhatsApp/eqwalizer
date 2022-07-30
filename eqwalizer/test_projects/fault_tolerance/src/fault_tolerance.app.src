@@ -1,0 +1,3 @@
+{application, fault_tolerance,
+    [{description, "fault_tolerance"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
+}.

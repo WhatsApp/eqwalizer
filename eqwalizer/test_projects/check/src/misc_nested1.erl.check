@@ -1,0 +1,11 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(misc_nested1).                     |         |
+                                           |         |
+-export([foo/0]).                          |         |
+                                           |         |
+-spec foo() -> ok.                         |         |
+foo() -> ok.                               | OK      |

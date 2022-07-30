@@ -1,0 +1,11 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(misc_lib).                         |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec boolean_id(boolean()) -> boolean().  |         |
+boolean_id(B) -> B.                        | OK      |

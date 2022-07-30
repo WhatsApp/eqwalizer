@@ -1,0 +1,47 @@
+[
+  {
+    "file": "check/src/fun_stats.erl",
+    "includes": [
+      {
+        "line": 26,
+        "target_path": "check/include/my_header.hrl"
+      }
+    ]
+  },
+  {
+    "file": "check/src/index1.erl",
+    "includes": [
+      {
+        "line": 13,
+        "target_path": "check/include/my_header.hrl"
+      }
+    ]
+  },
+  {
+    "file": "check/src/my_header.erl",
+    "includes": [
+      {
+        "line": 10,
+        "target_path": "check/include/my_header.hrl"
+      }
+    ]
+  },
+  {
+    "file": "debug/src/debug_header.erl",
+    "includes": [
+      {
+        "line": 8,
+        "target_path": "debug/include/debug_header.hrl"
+      }
+    ]
+  },
+  {
+    "file": "misc/src/app_env.erl",
+    "includes": [
+      {
+        "line": 10,
+        "target_path": "check/include/my_header.hrl"
+      }
+    ]
+  }
+]

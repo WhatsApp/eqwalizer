@@ -1,0 +1,4 @@
+                              direct        transitive    total         
+invalid records             : 5             6             11            
+invalid aliases and opaques : 10            46            56             
+invalid specs               : 45            5             50            

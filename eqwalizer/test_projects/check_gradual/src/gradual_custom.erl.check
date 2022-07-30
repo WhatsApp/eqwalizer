@@ -1,0 +1,235 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(gradual_custom).                   |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec app_env1_gradual() -> number().      |         |
+app_env1_gradual() ->                      | OK      |
+  Res = application:get_env(app1),         |         |
+  case Res of                              |         |
+    undefined -> 0;                        |         |
+    {ok, N} -> N                           |         |
+  end.                                     |         |
+                                           |         |
+-spec app_env1_gradual_neg()               |         |
+-> number().                               |         |
+app_env1_gradual_neg() ->                  | ERROR   |
+  application:get_env(app1).               |         | application:get_env('app1').
+                                           |         | Expected: number()
+                                           |         | Got     : 'undefined' | {'ok', dynamic()}
+                                           |         |
+-spec app_env2_gradual() -> number().      |         |
+app_env2_gradual() ->                      | OK      |
+  Res = application:get_env(app1, key1),   |         |
+  case Res of                              |         |
+    undefined -> 0;                        |         |
+    {ok, N} -> N                           |         |
+  end.                                     |         |
+                                           |         |
+-spec app_env2_gradual_neg()               |         |
+-> number().                               |         |
+app_env2_gradual_neg() ->                  | ERROR   |
+  application:get_env(app1, key1).         |         | application:get_env('app1', 'key1').
+                                           |         | Expected: number()
+                                           |         | Got     : 'undefined' | {'ok', dynamic()}
+                                           |         |
+-spec app_env3_gradual() -> number().      |         |
+app_env3_gradual() ->                      | OK      |
+  A = app1,                                |         |
+  K = key,                                 |         |
+  U = undefined,                           |         |
+  application:get_env(A, K, U).            |         |
+                                           |         |
+-spec flatten1_gradual() -> [atom()].      |         |
+flatten1_gradual() ->                      | OK      |
+  In = [a, [b, c]],                        |         |
+  lists:flatten(In).                       |         |
+                                           |         |
+-spec flatten1_gradual_neg() -> atom().    |         |
+flatten1_gradual_neg() ->                  | ERROR   |
+  In = [a, [b, c]],                        |         |
+  lists:flatten(In).                       |         | lists:flatten(In).
+                                           |         | Expected: atom()
+                                           |         | Got     : ['a' | 'b' | 'c']
+                                           |         |
+-spec flatten2_gradual() -> [atom()].      |         |
+flatten2_gradual() ->                      | OK      |
+  In = [a, [b, c]],                        |         |
+  Tail = [x, y, z],                        |         |
+  lists:flatten(In, Tail).                 |         |
+                                           |         |
+-spec flatten2_gradual_neg() -> atom().    |         |
+flatten2_gradual_neg() ->                  | ERROR   |
+  In = [a, [b, c]],                        |         |
+  Tail = [x, y, z],                        |         |
+  lists:flatten(In, Tail).                 |         | lists:flatten(In, Tail).
+                                           |         | Expected: atom()
+                                           |         | Got     : ['a' | 'b' | 'c' | 'x' | 'y' | 'z']
+                                           |         |
+-spec file_consult() -> [anything].        |         |
+file_consult() ->                          | OK      |
+  {ok, Res} = file:consult(some_file),     |         |
+  Res.                                     |         |
+                                           |         |
+-spec file_consult_neg() -> nok.           |         |
+file_consult_neg() ->                      | ERROR   |
+  file:consult(some_file).                 |         | file:consult('some_file').
+                                           |         | Expected: 'nok'
+                                           |         | Got     : {'ok', [dynamic()]} | {'error', 'terminated' | 'badarg' | file:posix() | 'system_limit' | {number(), atom(), any()}}
+                                           |         |
+-spec abs1() ->                            |         |
+  anything.                                |         |
+abs1() ->                                  | ERROR   |
+  abs(dynamic()).                          |         | erlang:abs(dynamic()).
+                                           |         | Expected: 'anything'
+                                           |         | Got     : number()
+                                           |         |
+-spec abs2_neg() ->                        |         |
+  anything.                                |         |
+abs2_neg() ->                              | ERROR   |
+  N = case rand:uniform(2) of              |         |
+        1 -> dynamic();                    |         |
+        2 -> a                             |         |
+      end,                                 |         |
+  abs(N).                                  |         | N.
+                                           |         | Expected: number()
+                                           |         | Got     : dynamic() | 'a'
+                                           |         | 
+                                           |         |   dynamic() | 'a' is not a subtype of number()
+                                           |         |   because
+                                           |         |   'a' is not a subtype of number()
+                                           |         |
+dynamic() ->                               | OK      |
+  ok.                                      |         |
+                                           |         |
+-spec ets_lookup_1(term()) ->              |         |
+  [{whatev} | {2}].                        |         |
+ets_lookup_1(Any) ->                       | OK      |
+  ets:lookup(tab, Any).                    |         |
+                                           |         |
+-spec ets_lookup_2_neg(term()) -> pid().   |         |
+ets_lookup_2_neg(Any) ->                   | ERROR   |
+  ets:lookup(tab, Any).                    |         | ets:lookup('tab', Any).
+                                           |         | Expected: pid()
+                                           |         | Got     : [dynamic()]
+                                           |         |
+-spec ets_lookup_3_neg(term()) -> pid().   |         |
+ets_lookup_3_neg(Any) ->                   | ERROR   |
+  ets:lookup("not atom", Any).             |         | string_lit.
+                                           |         | Expected: ets:tab()
+                                           |         | Got     : string()
+                                           |         |
+-spec ets_lookup_4(term()) ->              |         |
+  [tuple()].                               |         |
+ets_lookup_4(Any) ->                       | OK      |
+  ets:lookup(tab, Any).                    |         |
+                                           |         |
+-spec ets_tab2list_1(atom()) ->            |         |
+  [tuple()].                               |         |
+ets_tab2list_1(Atom) ->                    | OK      |
+  ets:tab2list(Atom).                      |         |
+                                           |         |
+-spec ets_tab2list_2(atom()) ->            |         |
+  [{whatev} | {2}].                        |         |
+ets_tab2list_2(Atom) ->                    | OK      |
+  ets:tab2list(Atom).                      |         |
+                                           |         |
+-spec ets_tab2list_3_neg() -> term().      |         |
+ets_tab2list_3_neg() ->                    | ERROR   |
+  ets:tab2list("not atom").                |         | string_lit.
+                                           |         | Expected: ets:tab()
+                                           |         | Got     : string()
+                                           |         |
+-spec maps_without_1                       |         |
+    (eqwalizer:dynamic()) ->               |         |
+  #{atom() => y | z}.                      |         |
+maps_without_1(Dyn) ->                     | OK      |
+  maps:without(                            |         |
+    [Dyn],                                 |         |
+    #{a => y, b => z}                      |         |
+  ).                                       |         |
+                                           |         |
+-spec maps_without_2_neg                   |         |
+    (eqwalizer:dynamic()) ->               |         |
+  wrong_ret.                               |         |
+maps_without_2_neg(Dyn) ->                 | ERROR   |
+  maps:without(                            |         | maps:without(['a'], Dyn).
+                                           |         | Expected: 'wrong_ret'
+                                           |         | Got     : #D{dynamic() => dynamic()}
+    [a],                                   |         |
+    Dyn                                    |         |
+  ).                                       |         |
+                                           |         |
+-spec maps_without_3_neg                   |         |
+    (none()) ->                            |         |
+  wrong_ret.                               |         |
+maps_without_3_neg(None) ->                | OK      |
+  maps:without(                            |         |
+    [a, b],                                |         |
+    None                                   |         |
+  ).                                       |         |
+                                           |         |
+-spec maps_with_1                          |         |
+    (eqwalizer:dynamic()) ->               |         |
+  #{atom() => y | z}.                      |         |
+maps_with_1(Dyn) ->                        | OK      |
+  maps:with(                               |         |
+    [Dyn],                                 |         |
+    #{a => y, b => z}                      |         |
+  ).                                       |         |
+                                           |         |
+-spec maps_with_2_neg                      |         |
+    (eqwalizer:dynamic()) ->               |         |
+  wrong_ret.                               |         |
+maps_with_2_neg(Dyn) ->                    | ERROR   |
+  maps:with(                               |         | maps:with(['a'], Dyn).
+                                           |         | Expected: 'wrong_ret'
+                                           |         | Got     : #D{dynamic() => dynamic()}
+    [a],                                   |         |
+    Dyn                                    |         |
+  ).                                       |         |
+                                           |         |
+-spec maps_with_3                          |         |
+    (none()) ->                            |         |
+  wrong_ret.                               |         |
+maps_with_3(None) ->                       | OK      |
+  maps:with(                               |         |
+    [a, b],                                |         |
+    None                                   |         |
+  ).                                       |         |
+                                           |         |
+-spec filename_join_2_dyn1                 |         |
+    (eqwalizer:dynamic()) -> ok.           |         |
+filename_join_2_dyn1(Dyn) ->               | ERROR   |
+  Res = filename:join("path", Dyn),        |         |
+  eqwalizer:reveal_type(Res),              |         | file:filename_all()
+
+  Res.                                     |         |
+                                           |         |
+-spec filename_join_2_dyn2                 |         |
+    (eqwalizer:dynamic()) -> ok.           |         |
+filename_join_2_dyn2(Dyn) ->               | ERROR   |
+  Res = filename:join(Dyn, Dyn),           |         |
+  eqwalizer:reveal_type(Res),              |         | file:filename_all()
+
+  Res.                                     |         |
+                                           |         |
+-spec filename_join_1_dyn1                 |         |
+    (eqwalizer:dynamic()) -> ok.           |         |
+filename_join_1_dyn1(Dyn) ->               | ERROR   |
+  Res = filename:join(["path", Dyn]),      |         |
+  eqwalizer:reveal_type(Res),              |         | file:filename_all()
+
+  Res.                                     |         |
+                                           |         |
+-spec filename_join_1_dyn2                 |         |
+    (eqwalizer:dynamic()) -> ok.           |         |
+filename_join_1_dyn2(Dyn) ->               | ERROR   |
+  Res = filename:join([Dyn, Dyn]),         |         |
+  eqwalizer:reveal_type(Res),              |         | file:filename_all()
+
+  Res.                                     |         |

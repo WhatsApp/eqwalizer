@@ -1,0 +1,9 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(my_behaviour).                     |         |
+                                           |         |
+-callback init(term()) ->                  |         |
+  {ok, [], callbacks1_pos:ty()}.           |         |

@@ -1,0 +1,225 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(expr1).                            |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-record(test_rec, {id}).                   |         |
+                                           |         |
+id(X) ->                                   | NO SPEC |
+    X.                                     |         |
+                                           |         |
+atom_lit() ->                              | NO SPEC |
+    atom.                                  |         |
+                                           |         |
+int_lit() ->                               | NO SPEC |
+    1.                                     |         |
+                                           |         |
+float_lit() ->                             | NO SPEC |
+    1.0.                                   |         |
+                                           |         |
+char_lit() ->                              | NO SPEC |
+    $c.                                    |         |
+                                           |         |
+string_lit() ->                            | NO SPEC |
+    "".                                    |         |
+                                           |         |
+match() ->                                 | NO SPEC |
+    X = 1,                                 |         |
+    X.                                     |         |
+                                           |         |
+tuple() ->                                 | NO SPEC |
+    {tuple, 1}.                            |         |
+                                           |         |
+nil() ->                                   | NO SPEC |
+    [].                                    |         |
+                                           |         |
+cons(H, T) ->                              | NO SPEC |
+    [H | T].                               |         |
+                                           |         |
+binary() ->                                | NO SPEC |
+    <<>>.                                  |         |
+                                           |         |
+un_op(X) ->                                | NO SPEC |
+    not X.                                 |         |
+                                           |         |
+bin_op(X, Y) ->                            | NO SPEC |
+    X andalso Y.                           |         |
+                                           |         |
+record_create() ->                         | NO SPEC |
+    #test_rec{}.                           |         |
+                                           |         |
+record_update(Rec) ->                      | NO SPEC |
+    Rec#test_rec{id = 1}.                  |         |
+                                           |         |
+record_select(Rec) ->                      | NO SPEC |
+    Rec#test_rec.id.                       |         |
+                                           |         |
+record_index() ->                          | NO SPEC |
+    #test_rec.id.                          |         |
+                                           |         |
+map_create() ->                            | NO SPEC |
+    #{id => 1}.                            |         |
+                                           |         |
+map_update(M) ->                           | NO SPEC |
+    M#{id => 1}.                           |         |
+                                           |         |
+call1(X) ->                                | NO SPEC |
+    id(X).                                 |         |
+                                           |         |
+call2(X) ->                                | NO SPEC |
+    terms1:id(X).                          |         |
+                                           |         |
+list_comp1() ->                            | NO SPEC |
+    [X || X <- [1, 2, 3]].                 |         |
+                                           |         |
+list_comp2() ->                            | NO SPEC |
+    [X || <<X>> <= <<1, 2, 3>>].           |         |
+                                           |         |
+binary_comp1() ->                          | NO SPEC |
+    << X || X <- [1, 2, 3] >>.             |         |
+                                           |         |
+binary_comp2() ->                          | NO SPEC |
+    << X || <<X>> <= <<1, 2, 3>> >>.       |         |
+                                           |         |
+dynamic_call1(F, Arg) ->                   | NO SPEC |
+    F(Arg).                                |         |
+                                           |         |
+dynamic_call2(M, F, Arg) ->                | NO SPEC |
+    M:F(Arg).                              |         |
+                                           |         |
+block(X) ->                                | NO SPEC |
+    begin id(X) end.                       |         |
+                                           |         |
+if_exp(X, Y, Z) ->                         | NO SPEC |
+    if                                     |         |
+        X -> Y;                            |         |
+        true -> Z                          |         |
+    end.                                   |         |
+                                           |         |
+case_exp(B) ->                             | NO SPEC |
+    case B of                              |         |
+        true -> false;                     |         |
+        false -> true                      |         |
+    end.                                   |         |
+                                           |         |
+try_exp(E) ->                              | NO SPEC |
+    try                                    |         |
+        E                                  |         |
+    catch                                  |         |
+        Y -> Y                             |         |
+    end.                                   |         |
+                                           |         |
+anon_fun() ->                              | NO SPEC |
+    fun (X) -> X end.                      |         |
+                                           |         |
+named_fun() ->                             | NO SPEC |
+    fun _Fun(X) -> X end.                  |         |
+                                           |         |
+fun_lit() ->                               | NO SPEC |
+    fun anon_fun/0.                        |         |
+                                           |         |
+remote_fun_lit() ->                        | NO SPEC |
+    fun terms1:anon_fun/0.                 |         |
+                                           |         |
+dyn_fun(M, F) ->                           | NO SPEC |
+    fun M:F/0.                             |         |
+                                           |         |
+dyn_call1(M) ->                            | NO SPEC |
+    M:start().                             |         |
+                                           |         |
+dyn_call2(M, F, X, Y) ->                   | NO SPEC |
+    M:F(X, Y).                             |         |
+                                           |         |
+%%%% Patterns                              |         |
+                                           |         |
+match_pat(_X = x, _Y = x) -> ok.           | NO SPEC |
+                                           |         |
+wildcard_pat(_) -> ok.                     | NO SPEC |
+                                           |         |
+tuple_pat({_, _}) -> ok.                   | NO SPEC |
+                                           |         |
+nil_pat([]) -> ok.                         | NO SPEC |
+                                           |         |
+cons_pat([X|Y]) -> {X, Y}.                 | NO SPEC |
+                                           |         |
+lit_pat1(1) -> ok.                         | NO SPEC |
+lit_pat2(1.0) -> ok.                       | NO SPEC |
+lit_pat3($c) -> ok.                        | NO SPEC |
+                                           |         |
+atom_pat(ok) -> nok.                       | NO SPEC |
+                                           |         |
+string_pat("ok") -> ok.                    | NO SPEC |
+                                           |         |
+bin_pat(<<>>) -> bin.                      | NO SPEC |
+                                           |         |
+unop_pat(-1) -> 1.                         | NO SPEC |
+                                           |         |
+binop_pat(3 + 5) -> 0.                     | NO SPEC |
+                                           |         |
+record_pat(#test_rec{}) -> test_rec.       | NO SPEC |
+                                           |         |
+record_index_pat(#test_rec.id) -> test_rec…… NO SPEC |
+                                           |         |
+map_pat(#{id := _X}) -> id.                | NO SPEC |
+                                           |         |
+%%% Guards                                 |         |
+                                           |         |
+var_guard(X, Y) when X -> Y.               | NO SPEC |
+                                           |         |
+tuple_guard(X, Y) when {X, Y} -> Y.        | NO SPEC |
+                                           |         |
+nil_guard(_X, Y) when [] -> Y.             | NO SPEC |
+                                           |         |
+cons_guard(X, Y) when [X | Y] -> Y.        | NO SPEC |
+                                           |         |
+bin_guard(_X, Y) when <<>> -> Y.           | NO SPEC |
+                                           |         |
+unop_guard(X, Y) when -X -> Y.             | NO SPEC |
+                                           |         |
+binop_guard(X, Y) when X + Y -> Y.         | NO SPEC |
+                                           |         |
+record_guard(_X, Y)                        | NO SPEC |
+    when #test_rec{} -> Y.                 |         |
+                                           |         |
+record_index_guard(_X, Y)                  | NO SPEC |
+    when #test_rec.id -> Y.                |         |
+                                           |         |
+record_field_guard(X)                      | NO SPEC |
+    when X#test_rec.id -> ok.              |         |
+                                           |         |
+map_guard(_X)                              | NO SPEC |
+    when #{} -> ok.                        |         |
+                                           |         |
+map_update_guard(X)                        | NO SPEC |
+    when X#{id := 3} -> ok.                |         |
+                                           |         |
+call_guard(X)                              | NO SPEC |
+    when is_number(X) -> ok.               |         |
+                                           |         |
+remote_call_guard(X)                       | NO SPEC |
+    when erlang:is_number(X) -> ok.        |         |
+                                           |         |
+atom_guard(_X)                             | NO SPEC |
+    when ok -> ok.                         |         |
+                                           |         |
+string_guard(_X)                           | NO SPEC |
+    when "string" -> ok.                   |         |
+                                           |         |
+lit_guard(_X)                              | NO SPEC |
+    when $c -> ok.                         |         |
+                                           |         |
+list_concat(X, Y) -> X ++ Y.               | NO SPEC |
+                                           |         |
+list_subtract(X, Y) -> X -- Y.             | NO SPEC |
+                                           |         |
+string_prefix("prefix" ++ S) -> S.         | NO SPEC |
+                                           |         |
+dyn_call3(F) ->                            | NO SPEC |
+    lists:F(2, 3).                         |         |
+                                           |         |
+empty_receive(Timeout) ->                  | NO SPEC |
+    receive after Timeout -> ok end.       |         |

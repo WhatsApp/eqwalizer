@@ -1,0 +1,35 @@
+** Manual **
+app_env
+  get_mine, steal
+approx
+  unspecced0
+callbacks4_neg
+  unspecced
+callbacks6_neg
+  use_invalid2
+dynamic_calls
+  unspecced
+dynamic_generics
+  dyn_val
+dynamic_refine
+  dyn_val
+expr1
+  anon_fun, atom_lit, binary, binary_comp1, binary_comp2, char_lit, float_lit, fun_lit, int_lit, list_comp1, list_comp2, map_create, match, named_fun, nil, record_create, record_index, remote_fun_lit, string_lit, tuple
+fun_stats
+  wn_en_sn, wn_en_sy, wn_ey_sn, wy_en_sn, wy_ey_sn
+gradual_custom
+  dynamic
+gradual_overloaded
+  dynamic
+misc
+  test54_unspecced
+** Generated **
+===
+MANUAL:
+ private:  4
+ exported: 32
+ total:    36
+GENERATED:
+ private:  0
+ exported: 0
+ total:    0

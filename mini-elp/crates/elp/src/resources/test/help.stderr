@@ -1,0 +1,28 @@
+elp
+
+USAGE:
+    elp [FLAGS] [COMMAND] [COMMAND_OPTIONS]
+
+FLAGS:
+    -h, --help                 Print this help
+    --as profile               Rebar3 profile to pickup (default is test)
+
+COMMANDS:
+    version                    Print version
+    help                       Print this help
+    parse-all                  Dump ast for all files in a project for specified rebar.config file
+        --project              Path to directory with rebar project
+        --to                   Path to a directory where to dump .etf/.beam files
+        --offset-positions     Emit positions as {StartByte, EndByte} rather than {Line, Col}
+        --module               Only process indicated module(s) (can be repeated)
+    eqwalize <module>          Eqwalize specified module
+        --project              Path to directory with rebar project (defaults to `.`)
+        --fast                 Refresh AST information for only the specified module
+    eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
+        --project              Path to directory with rebar project (defaults to `.`)
+        --format json          Show diagnostics in JSON format
+
+ENV VARS:
+    ELP_EQWALIZER_PATH         Path to the eqwalizer executable, otherwise local one is used
+
+

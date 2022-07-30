@@ -1,0 +1,568 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(fault_tolerance).                  |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+% eqwalizer:ignore                         |         |
+-behaviour(gen_server).                    |         |
+                                           |         |
+-spec b_to_n(boolean()) ->                 |         |
+  number().                                |         |
+b_to_n(false) ->                           | OK      |
+  0;                                       |         |
+b_to_n(true) ->                            |         |
+  1.                                       |         |
+                                           |         |
+-spec b_to_n1(boolean()) ->                |         |
+  number().                                |         |
+b_to_n1(true) ->                           | ERROR   |
+  true;                                    |         | 'true'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'true'
+b_to_n1(false) ->                          |         |
+  false.                                   |         | 'false'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'false'
+                                           |         |
+-spec b_to_n2(boolean()) ->                |         |
+  number().                                |         |
+b_to_n2(true) ->                           | ERROR   |
+  1;                                       |         |
+b_to_n2(A) ->                              |         |
+  A.                                       |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : 'false' | none()
+                                           |         | 
+                                           |         |   'false' | none() is not a subtype of number()
+                                           |         |   because
+                                           |         |   'false' is not a subtype of number()
+                                           |         |
+-spec b_to_n3(boolean()) ->                |         |
+  number().                                |         |
+b_to_n3(true) ->                           | ERROR   |
+  true;                                    |         | 'true'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'true'
+b_to_n3(A) ->                              |         |
+  A.                                       |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : 'false' | none()
+                                           |         | 
+                                           |         |   'false' | none() is not a subtype of number()
+                                           |         |   because
+                                           |         |   'false' is not a subtype of number()
+                                           |         |
+-spec opacity_tolerance                    |         |
+    (atom(), misc:o()) -> atom().          |         |
+opacity_tolerance(a, _) ->                 | ERROR   |
+  1;                                       |         | 1.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+opacity_tolerance(b, _) ->                 |         |
+  2;                                       |         | 2.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+opacity_tolerance(_, {_}) ->               |         |
+  3;                                       |         | 3.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+opacity_tolerance(c, _) ->                 |         |
+  4.                                       |         | 4.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec too_many_errors                      |         |
+    (atom()) -> atom().                    |         |
+too_many_errors(a) ->                      | ERROR   |
+  1;                                       |         | 1.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+too_many_errors(b) ->                      |         |
+  2;                                       |         | 2.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+too_many_errors(c) ->                      |         |
+  3;                                       |         | 3.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+too_many_errors(d) ->                      |         |
+  4;                                       |         | 4.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+too_many_errors(e) ->                      |         |
+  5;                                       |         | 5.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+too_many_errors(f) ->                      |         |
+  6;                                       |         |
+too_many_errors(g) ->                      |         |
+  7;                                       |         |
+too_many_errors(h) ->                      |         |
+  8;                                       |         |
+too_many_errors(i) ->                      |         |
+  9;                                       |         |
+too_many_errors(j) ->                      |         |
+  10.                                      |         |
+                                           |         |
+-spec visible_cast                         |         |
+    (number()) -> number().                |         |
+visible_cast(N) ->                         | ERROR   |
+  erlang:atom_to_binary(                   |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(b_to_n(eqwalizer:dynamic_cast(N)))).
+                                           |         | Expected: number()
+                                           |         | Got     : binary()
+    b_to_n(                                |         | b_to_n(eqwalizer:dynamic_cast(N)).
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+      N                                    |         | N.
+                                           |         | Expected: boolean()
+                                           |         | Got     : number()
+    )                                      |         |
+  ).                                       |         |
+                                           |         |
+-spec expected_fun(any()) ->               |         |
+  number().                                |         |
+expected_fun(F) ->                         | ERROR   |
+  X = F(),                                 |         | F.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: any()
+  Y = F(),                                 |         | F.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: any()
+  {X, Y}.                                  |         | {X, Y}.
+                                           |         | Expected: number()
+                                           |         | Got     : {dynamic(), dynamic()}
+                                           |         |
+-spec lambda_arity([number()], atom()) ->  |         |
+  number().                                |         |
+lambda_arity(Ns, A) ->                     | ERROR   |
+  X = lists:map(fun(_X, _Y) -> 1 end, Ns), |         | fun.
+                                           |         | fun with arity 2 used as fun with 1 arguments
+  Y =                                      |         |
+    X +                                    |         | X.
+                                           |         | Expected: number()
+                                           |         | Got     : [none()]
+      A,                                   |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  Y.                                       |         |
+                                           |         |
+%% SUBTLE/INTERESTING CASES %%             |         |
+%% More errors are reported comparing      |         |
+%% to "sentinel" approach.                 |         |
+                                           |         |
+-spec lists_append                         |         |
+    (map(), map()) -> map().               |         |
+lists_append(M1, M2) ->                    | ERROR   |
+  Res = lists:append(                      |         |
+    M1,                                    |         | M1.
+                                           |         | Expected: [T]
+                                           |         | Got     : #D{dynamic() => dynamic()}
+    M2                                     |         | M2.
+                                           |         | Expected: [T]
+                                           |         | Got     : #D{dynamic() => dynamic()}
+  ),                                       |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: #D{dynamic() => dynamic()}
+                                           |         | Got     : [none()]
+                                           |         |
+-spec maps_update1                         |         |
+    (any(), atom(), atom()) -> atom().     |         |
+maps_update1(M, K, V) ->                   | ERROR   |
+  M1 = M#{                                 |         | M.
+                                           |         | Expected: #D{any() => any()}
+                                           |         | Got     : any()
+    K :=                                   |         |
+      V +                                  |         | V.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+        V},                                |         | V.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  M1.                                      |         |
+                                           |         |
+% Similar                                  |         |
+-spec maps_update2                         |         |
+    (any(), atom(), atom()) -> atom().     |         |
+maps_update2(M, K, V) ->                   | ERROR   |
+  M1 = M#{                                 |         | M.
+                                           |         | Expected: #D{any() => any()}
+                                           |         | Got     : any()
+    K =>                                   |         |
+    V +                                    |         | V.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+      V},                                  |         | V.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  M1.                                      |         |
+                                           |         |
+% Similar                                  |         |
+-spec lists_flatten                        |         |
+    (any(), any()) -> atom().              |         |
+lists_flatten(L1, L2) ->                   | ERROR   |
+  Res =                                    |         |
+    lists:flatten(                         |         |
+      L1,                                  |         | L1.
+                                           |         | Expected: [any()]
+                                           |         | Got     : any()
+      L2                                   |         | L2.
+                                           |         | Expected: [any()]
+                                           |         | Got     : any()
+    ),                                     |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: atom()
+                                           |         | Got     : [dynamic()]
+                                           |         |
+%% Code coverage                           |         |
+                                           |         |
+-spec block                                |         |
+    (any(), any()) -> atom().              |         |
+block(X, Y) ->                             | ERROR   |
+  begin                                    |         |
+    Z =                                    |         |
+      X +                                  |         | X.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+        Y,                                 |         | Y.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+    Z                                      |         | Z.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+  end.                                     |         |
+                                           |         |
+-spec cons                                 |         |
+    (any(), any()) -> [atom()].            |         |
+cons(H, T) ->                              | ERROR   |
+  Res = lists:append(                      |         |
+    [H |                                   |         | T.
+                                           |         | Expected: [any()]
+                                           |         | Got     : any()
+      T],                                  |         |
+    [T |                                   |         | H.
+                                           |         | Expected: [any()]
+                                           |         | Got     : any()
+      H]                                   |         |
+  ),                                       |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: [atom()]
+                                           |         | Got     : [dynamic() | any()]
+                                           |         | 
+                                           |         |   [dynamic() | any()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   dynamic() | any() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   any() is not a subtype of atom()
+                                           |         |
+-spec 'case'                               |         |
+    (boolean(), atom()) -> number().       |         |
+'case'(F, A) ->                            | ERROR   |
+  case F() of                              |         | F.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: boolean()
+    true -> A + 1;                         |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+    false -> A - 1                         |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  end.                                     |         |
+                                           |         |
+-spec 'if'                                 |         |
+    (boolean(), atom()) -> number().       |         |
+'if'(F, A) ->                              | ERROR   |
+  if                                       |         |
+    F -> A + 1;                            |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+    true -> A - 1                          |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  end.                                     |         |
+                                           |         |
+-spec dyn_call                             |         |
+    (module(), atom()) -> ok.              |         |
+dyn_call(M, F) ->                          | ERROR   |
+  M:F(                                     |         |
+    F + 1,                                 |         | F.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+    -M                                     |         | M.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  ).                                       |         |
+                                           |         |
+-spec comprehensions1() -> ok.             |         |
+comprehensions1() ->                       | ERROR   |
+  [X ||                                    |         | [ || ].
+                                           |         | Expected: 'ok'
+                                           |         | Got     : [dynamic()]
+    X <- #{                                |         | #{..}.
+                                           |         | Expected: [any()]
+                                           |         | Got     : #S{a := 'b', c := number()}
+      a => b,                              |         |
+      c => d + 1                           |         | 'd'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'd'
+    },                                     |         |
+    atom_to_binary(                        |         |
+      {X}                                  |         | {X}.
+                                           |         | Expected: atom()
+                                           |         | Got     : {dynamic()}
+    )].                                    |         |
+                                           |         |
+-spec comprehensions2([any()]) -> ok.      |         |
+comprehensions2(L) ->                      | ERROR   |
+  Res = [                                  |         |
+    atom_to_binary(Y) ||                   |         | Y.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+    <<Y>> <= L                             |         | L.
+                                           |         | Expected: binary()
+                                           |         | Got     : [any()]
+  ],                                       |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : [binary()]
+                                           |         |
+-spec comprehensions3(binary()) -> ok.     |         |
+comprehensions3(B) ->                      | ERROR   |
+  Res =                                    |         |
+    <<Y || Y <-                            |         |
+      B                                    |         | B.
+                                           |         | Expected: [any()]
+                                           |         | Got     : binary()
+    >>,                                    |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : binary()
+                                           |         |
+-spec maps(map()) ->                       |         |
+  ok.                                      |         |
+maps(M) ->                                 | ERROR   |
+  M1 = M                                   |         |
+    #{id := a + 1},                        |         | 'a'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'a'
+  M2 = M                                   |         |
+    #{id := b + 2},                        |         | 'b'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'b'
+  M1 + M2.                                 |         | M1.
+                                           |         | Expected: number()
+                                           |         | Got     : #D{'id' => number()}
+                                           |         | ---
+                                           |         | M2.
+                                           |         | Expected: number()
+                                           |         | Got     : #D{'id' => number()}
+                                           |         | ---
+                                           |         | _ + _.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : number()
+                                           |         |
+-spec binary1(atom(), atom()) -> atom().   |         |
+binary1(A, S) ->                           | ERROR   |
+  B = <<                                   |         |
+    A:                                     |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+    S                                      |         | S.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+  >>,                                      |         |
+  B + 1.                                   |         | B.
+                                           |         | Expected: number()
+                                           |         | Got     : binary()
+                                           |         | ---
+                                           |         | _ + _.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec 'catch'(atom()) -> atom().           |         |
+'catch'(F) ->                              | ERROR   |
+  Res =                                    |         |
+    catch F(),                             |         | F.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: atom()
+  Res.                                     |         |
+                                           |         |
+-spec try1(atom()) -> atom().              |         |
+try1(A) ->                                 | ERROR   |
+  Res = try                                |         |
+    A()                                    |         | A.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: atom()
+  catch _ ->                               |         |
+    []                                     |         |
+  after                                    |         |
+    1 + a                                  |         | 'a'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'a'
+  end,                                     |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: atom()
+                                           |         | Got     : dynamic() | []
+                                           |         | 
+                                           |         |   dynamic() | [] is not a subtype of atom()
+                                           |         |   because
+                                           |         |   [] is not a subtype of atom()
+                                           |         |
+-spec try2(atom()) -> atom().              |         |
+try2(A) ->                                 | ERROR   |
+  Res = try                                |         |
+          A()                              |         | A.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: atom()
+        of                                 |         |
+          {_} ->                           |         |
+            A + 1                          |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+        catch _ ->                         |         |
+          []                               |         |
+        after                              |         |
+          1 + a                            |         | 'a'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'a'
+        end,                               |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: atom()
+                                           |         | Got     : number() | []
+                                           |         |
+-record(rec, {                             |         |
+  id :: integer(),                         |         |
+  pid :: pid()                             |         |
+}).                                        |         |
+                                           |         |
+-spec rec1(pid(), integer()) -> atom().    |         |
+rec1(Pid, Id) ->                           | ERROR   |
+  Res = #rec{                              |         |
+    id = Pid,                              |         | Pid.
+                                           |         | Expected: number()
+                                           |         | Got     : pid()
+    pid = Id                               |         | Id.
+                                           |         | Expected: pid()
+                                           |         | Got     : number()
+  },                                       |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: atom()
+                                           |         | Got     : #rec{}
+                                           |         |
+-spec rec2(#rec{}, integer()) -> pid().    |         |
+rec2(Rec, Id) ->                           | ERROR   |
+  Res = Rec#rec{                           |         |
+    pid = Id                               |         | Id.
+                                           |         | Expected: pid()
+                                           |         | Got     : number()
+  },                                       |         |
+  Res#rec.id.                              |         | ...#rec.id.
+                                           |         | Expected: pid()
+                                           |         | Got     : number()
+                                           |         |
+-spec rec3() -> atom().                    |         |
+rec3() ->                                  | ERROR   |
+  Res = #rec{                              |         |
+    _ = <<>>                               |         | <<..>>.
+                                           |         | Expected: number()
+                                           |         | Got     : binary()
+  },                                       |         |
+  Res.                                     |         | Res.
+                                           |         | Expected: atom()
+                                           |         | Got     : #rec{}
+                                           |         |
+-spec receive1()                           |         |
+      -> number().                         |         |
+receive1() ->                              | ERROR   |
+  receive                                  |         |
+    {N} ->                                 |         |
+      atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(_ ++ _)).
+                                           |         | Expected: number()
+                                           |         | Got     : binary()
+        [N]                                |         | _ ++ _.
+                                           |         | Expected: atom()
+                                           |         | Got     : [dynamic()]
+          ++ a                             |         | 'a'.
+                                           |         | Expected: [any()]
+                                           |         | Got     : 'a'
+      );                                   |         |
+    N ->                                   |         |
+      atom_to_binary(                      |         |
+        <<N>>                              |         | <<..>>.
+                                           |         | Expected: [any()]
+                                           |         | Got     : binary()
+          ++ b                             |         | 'b'.
+                                           |         | Expected: [any()]
+                                           |         | Got     : 'b'
+      )                                    |         |
+  end.                                     |         |
+                                           |         |
+-spec receive2()                           |         |
+      -> number().                         |         |
+receive2() ->                              | ERROR   |
+  receive                                  |         |
+    {N} ->                                 |         |
+      atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast([N])).
+                                           |         | Expected: number()
+                                           |         | Got     : binary()
+        [N]                                |         | [N].
+                                           |         | Expected: atom()
+                                           |         | Got     : [dynamic()]
+      );                                   |         |
+    N ->                                   |         |
+      atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(<<..>>)).
+                                           |         | Expected: number()
+                                           |         | Got     : binary()
+        <<N>>                              |         | <<..>>.
+                                           |         | Expected: atom()
+                                           |         | Got     : binary()
+      )                                    |         |
+  after 10 ->                              |         |
+    []                                     |         | [].
+                                           |         | Expected: number()
+                                           |         | Got     : []
+  end.                                     |         |
+                                           |         |
+-spec same_line() -> number().             |         |
+same_line() ->                             | ERROR   |
+  a + b.                                   |         | 'a'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'a'
+                                           |         | ---
+                                           |         | 'b'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'b'
+                                           |         |
+% eqwalizer:ignore                         |         |
+-type loop() :: loop().                    |         |
+                                           |         |
+-spec use_invalid(loop()) -> none().       | INVALID | use_invalid/1 references type with invalid definition: loop/0
+
+use_invalid(Dyn) ->                        |         |
+  Dyn.                                     |         |
+                                           |         |
+-spec fixmes(atom()) -> ok.                |         |
+fixmes(Atom) ->                            | OK      |
+  % eqwalizer:fixme                        |         |
+  _ = Atom + 2,                            |         |
+  % eqwalizer:fixme                        |         |
+  erlang:list_to_binary(Atom),             |         |
+  % eqwalizer:fixme                        |         |
+  error.                                   |         |
+                                           |         |
+-spec fixmes_neg(atom()) -> ok.            |         |
+fixmes_neg(Atom) ->                        | ERROR   |
+  % eqwalizer:fixme                        |         |
+  _ = Atom + 2,                            |         |
+  error.                                   |         | 'error'.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : 'error'
+                                           |         |
+-spec redundant_fixme() -> ok.             |         |
+redundant_fixme() ->                       | OK      |
+  % eqwalizer:fixme                        |         | redundant fixme
+
+  ok.                                      |         |

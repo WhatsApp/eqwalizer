@@ -1,0 +1,14 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(my_header).                        |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+                                           |         |
+-include("my_header.hrl").                 |         |
+                                           |         |
+% some stuff                               |         |
+-spec good_fun() -> atom().                |         |
+good_fun() -> ok.                          | OK      |

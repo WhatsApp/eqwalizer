@@ -1,0 +1,48 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(strict_fun).                       |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-record(fun_wrap1, {                       |         |
+  inner_fun :: fun()                       |         |
+}).                                        |         |
+                                           |         |
+-record(fun_wrap2, {                       |         |
+  inner_fun :: fun((atom()) -> atom())     |         |
+}).                                        |         |
+                                           |         |
+-spec mk_fun_wrap1a() -> #fun_wrap1{}.     |         |
+mk_fun_wrap1a() ->                         | OK      |
+  #fun_wrap1{inner_fun =                   |         |
+    fun mk_fun_wrap1a/0                    |         |
+  }.                                       |         |
+                                           |         |
+-spec mk_fun_wrap1b() -> #fun_wrap1{}.     |         |
+mk_fun_wrap1b() ->                         | ERROR   |
+  #fun_wrap1{inner_fun =                   |         |
+    fun lists:filter/2                     |         | lists:filter/2.
+                                           |         | Expected: fun()
+                                           |         | Got     : fun((fun((T) -> boolean()), [T]) -> [T])
+  }.                                       |         |
+                                           |         |
+-spec mk_fun_wrap2(fun()) ->               |         |
+  #fun_wrap2{}.                            |         |
+mk_fun_wrap2(F) ->                         | ERROR   |
+  #fun_wrap2{inner_fun = F}.               |         | F.
+                                           |         | Expected: fun((atom()) -> atom())
+                                           |         | Got     : fun()
+                                           |         |
+-spec filter_any(fun(), list()) -> list(). |         |
+filter_any(F, L) ->                        | ERROR   |
+  lists:filter(F, L).                      |         | F.
+                                           |         | Expected: fun((T) -> boolean())
+                                           |         | Got     : fun()
+                                           |         |
+-spec fun_apply(fun(), atom()) -> atom().  |         |
+fun_apply(F, A) ->                         | ERROR   |
+  F(A).                                    |         | F.
+                                           |         | Expected fun type with arity 1
+                                           |         | Got: fun()

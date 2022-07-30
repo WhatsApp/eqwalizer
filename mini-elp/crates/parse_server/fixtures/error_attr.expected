@@ -1,0 +1,29 @@
+[
+    ParseError {
+        path: "fixtures/error_attr.erl",
+        location: Some(
+            TextRange(
+                239..244,
+            ),
+        ),
+        msg: "-error(\"alamakota\").",
+    },
+    ParseError {
+        path: "fixtures/error_attr.erl",
+        location: Some(
+            TextRange(
+                261..266,
+            ),
+        ),
+        msg: "badly formed 'error'",
+    },
+    ParseError {
+        path: "fixtures/error_attr.erl",
+        location: Some(
+            TextRange(
+                286..291,
+            ),
+        ),
+        msg: "badly formed 'error'",
+    },
+]

@@ -1,0 +1,10 @@
+error: expected_subtype
+   ┌─ parse_error_a/src/parse_error_a.erl:20:5
+   │
+20 │     X.
+   │     ^ X.
+Expected: atom()
+Got     : [number()]
+
+
+1 ERROR

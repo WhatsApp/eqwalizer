@@ -1,0 +1,13 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(detached_specs1).                  |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec foo() -> atom().                     |         |
+-spec bar() -> atom().                     |         |
+foo() -> foo.                              | OK      |
+bar() -> bar.                              | OK      |

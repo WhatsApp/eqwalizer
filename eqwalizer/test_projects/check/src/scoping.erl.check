@@ -1,0 +1,115 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(scoping).                          |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec foo() -> any().                      |         |
+foo() -> atom.                             | OK      |
+                                           |         |
+-spec bar() -> any().                      |         |
+bar() -> number.                           | OK      |
+                                           |         |
+-spec test01() ->                          |         |
+    {tuple | triple, atom(), number()}.    |         |
+test01() ->                                | OK      |
+    Marker = case bar() of                 |         |
+        {A, N} when                        |         |
+            is_atom(A),                    |         |
+            is_number(N) ->                |         |
+                tuple;                     |         |
+        {A, N, _} when                     |         |
+            is_atom(A),                    |         |
+            is_number(N) ->                |         |
+                triple                     |         |
+    end,                                   |         |
+    {Marker, A, N}.                        |         |
+                                           |         |
+-spec test02() ->                          |         |
+    {an | na,                              |         |
+     atom() | number(),                    |         |
+     atom() | number()}.                   |         |
+test02() ->                                | OK      |
+    {X, Y} = {foo(), bar()},               |         |
+    Marker = if                            |         |
+                 is_atom(X),               |         |
+                 is_number(Y) ->           |         |
+                     an;                   |         |
+                 is_number(X),             |         |
+                 is_atom(Y) ->             |         |
+                     na                    |         |
+             end,                          |         |
+    {Marker, X, Y}.                        |         |
+                                           |         |
+-spec test03() ->                          |         |
+    {tuple | triple, atom(), number()}.    |         |
+test03() ->                                | OK      |
+    Marker = receive                       |         |
+                 {A, N} when               |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     tuple;                |         |
+                 {A, N, _} when            |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     triple                |         |
+             end,                          |         |
+    {Marker, A, N}.                        |         |
+                                           |         |
+-spec test04() ->                          |         |
+    {tuple | triple | timeout,             |         |
+     atom(),                               |         |
+     number()}.                            |         |
+test04() ->                                | OK      |
+    Marker = receive                       |         |
+                 {A, N} when               |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     tuple;                |         |
+                 {A, N, _} when            |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     triple                |         |
+             after 10 ->                   |         |
+                A = a,                     |         |
+                N = 1,                     |         |
+                timeout                    |         |
+             end,                          |         |
+    {Marker, A, N}.                        |         |
+                                           |         |
+-spec test05() ->                          |         |
+    tuple | triple.                        |         |
+test05() ->                                | OK      |
+    Marker = try bar() of                  |         |
+                 {A, N} when               |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     tuple;                |         |
+                 {A, N, _} when            |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     triple                |         |
+             after                         |         |
+                    foo()                  |         |
+             end,                          |         |
+    Marker.                                |         |
+                                           |         |
+-spec test06() ->                          |         |
+    tuple | triple | error.                |         |
+test06() ->                                | OK      |
+    Marker = try bar() of                  |         |
+                 {A, N} when               |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     tuple;                |         |
+                 {A, N, _} when            |         |
+                     is_atom(A),           |         |
+                     is_number(N) ->       |         |
+                     triple                |         |
+             catch _ ->                    |         |
+                 error                     |         |
+             end,                          |         |
+    Marker.                                |         |

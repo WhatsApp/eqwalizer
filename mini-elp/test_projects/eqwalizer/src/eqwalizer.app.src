@@ -1,0 +1,3 @@
+{application, eqwalizer,
+  [{description, "eqwalizer"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
+}.

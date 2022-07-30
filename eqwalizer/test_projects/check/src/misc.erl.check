@@ -1,0 +1,1214 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(misc).                             |         |
+                                           |         |
+%% The majority of these tests are just    |         |
+%% to get some code coverage.              |         |
+%% Many of them do not have any special me……         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-import(misc_lib, [boolean_id/1]).         |         |
+-export_type([                             |         |
+    o/0,                                   |         |
+    o_rec/0,                               |         |
+    o_cycle/0,                             |         |
+    x_cycle/0,                             |         |
+    int_result_o/0,                        |         |
+    my_record_hidden/0                     |         |
+]).                                        |         |
+                                           |         |
+-record(my_record, {                       |         |
+    str :: string(),                       |         |
+    atom :: atom()                         |         |
+}).                                        |         |
+                                           |         |
+-type my_record_hidden() ::                |         |
+    #my_record{}.                          |         |
+                                           |         |
+-spec atomize(                             |         |
+    my_record_hidden()                     |         |
+) -> atom().                               |         |
+atomize(#my_record{atom = A}) ->           | OK      |
+    A.                                     |         |
+                                           |         |
+-spec test01(any()) -> number().           |         |
+test01(-4 = X) -> X.                       | OK      |
+                                           |         |
+-spec test02(any()) -> number().           |         |
+test02(6 / 3 = Y) -> Y.                    | OK      |
+                                           |         |
+-spec test03_neg(any()) -> atom().         |         |
+test03_neg(-4 = X) -> X.                   | ERROR   | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec test04_neg(any()) -> atom().         |         |
+test04_neg(6 / 3 = Y) -> Y.                | ERROR   | Y.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec test05_neg(any()) -> any().          |         |
+test05_neg(X) -> + X.                      | ERROR   | X.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+                                           |         |
+-spec test06_neg(any()) -> atom().         |         |
+test06_neg(X) when is_number(X) -> + X.    | ERROR   | + _.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec test07(boolean()) -> atom().         |         |
+test07(X) ->                               | OK      |
+    not X.                                 |         |
+                                           |         |
+-spec test08_neg(boolean()) -> number().   |         |
+test08_neg(X) ->                           | ERROR   |
+    not X.                                 |         | not _.
+                                           |         | Expected: number()
+                                           |         | Got     : boolean()
+                                           |         |
+-spec test09(any(), any()) -> number().    |         |
+test09(X, Y) when                          | OK      |
+    is_number(X),                          |         |
+    is_number(Y) -> X + Y.                 |         |
+                                           |         |
+-spec test10_neg (any(), any())            |         |
+               -> number().                |         |
+test10_neg(X, Y) when                      | ERROR   |
+    is_number(X) -> X + Y.                 |         | Y.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+                                           |         |
+-spec test11_neg (number(), number())      |         |
+        -> atom().                         |         |
+test11_neg(X, Y) -> X + Y.                 | ERROR   | _ + _.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec test12_neg (atom())                  |         |
+        -> number().                       |         |
+test12_neg(X) -> -X.                       | ERROR   | X.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+                                           |         |
+-spec test13_neg (any(), any())            |         |
+        -> boolean().                      |         |
+test13_neg(X, Y) -> X or Y.                | ERROR   | X.
+                                           |         | Expected: boolean()
+                                           |         | Got     : any()
+                                           |         |
+-spec test14 (boolean(), atom())           |         |
+        -> atom().                         |         |
+test14(X, Y) -> X orelse Y.                | OK      |
+                                           |         |
+-spec test15 (boolean(), atom())           |         |
+        -> atom().                         |         |
+test15(X, Y) -> X andalso Y.               | OK      |
+                                           |         |
+-spec test16_neg (boolean(), boolean())    |         |
+        -> number().                       |         |
+test16_neg(X, Y) -> X or Y.                | ERROR   | _ or _.
+                                           |         | Expected: number()
+                                           |         | Got     : boolean()
+                                           |         |
+-spec test17_neg (boolean(), atom())       |         |
+        -> boolean().                      |         |
+test17_neg(X, Y) -> X or Y.                | ERROR   | Y.
+                                           |         | Expected: boolean()
+                                           |         | Got     : atom()
+                                           |         |
+-spec test18_neg (boolean(), atom())       |         |
+        -> number().                       |         |
+test18_neg(X, Y) -> X orelse Y.            | ERROR   | _ orelse _.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
+                                           |         |
+-spec test19_neg (boolean(), number())     |         |
+        -> {number()}.                     |         |
+test19_neg(X, Y) -> X andalso Y.           | ERROR   | _ andalso _.
+                                           |         | Expected: {number()}
+                                           |         | Got     : 'false' | number()
+                                           |         |
+-spec test20_neg(number()) -> [atom()].    |         |
+test20_neg(X) -> [- X].                    | ERROR   | [- _].
+                                           |         | Expected: [atom()]
+                                           |         | Got     : [number()]
+                                           |         | 
+                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   number() is not a subtype of atom()
+                                           |         |
+-spec test21_neg (number(), number())      |         |
+              -> [atom()].                 |         |
+test21_neg(X, Y) -> [X / Y].               | ERROR   | [_ / _].
+                                           |         | Expected: [atom()]
+                                           |         | Got     : [number()]
+                                           |         | 
+                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   number() is not a subtype of atom()
+                                           |         |
+-spec test22_neg (boolean())               |         |
+        -> [number()].                     |         |
+test22_neg(X) -> [not X].                  | ERROR   | [not _].
+                                           |         | Expected: [number()]
+                                           |         | Got     : [boolean()]
+                                           |         | 
+                                           |         |   [boolean()] is not a subtype of [number()]
+                                           |         |   because
+                                           |         |   boolean() is not a subtype of number()
+                                           |         |
+-spec test23_neg (boolean(), boolean())    |         |
+        -> [number()].                     |         |
+test23_neg(X, Y) -> [X or Y].              | ERROR   | [_ or _].
+                                           |         | Expected: [number()]
+                                           |         | Got     : [boolean()]
+                                           |         | 
+                                           |         |   [boolean()] is not a subtype of [number()]
+                                           |         |   because
+                                           |         |   boolean() is not a subtype of number()
+                                           |         |
+-spec test24_neg (boolean(), atom())       |         |
+        -> [number()].                     |         |
+test24_neg(X, Y) -> [X orelse Y].          | ERROR   | [_ orelse _].
+                                           |         | Expected: [number()]
+                                           |         | Got     : [atom()]
+                                           |         | 
+                                           |         |   [atom()] is not a subtype of [number()]
+                                           |         |   because
+                                           |         |   atom() is not a subtype of number()
+                                           |         |
+-spec test25_pos                           |         |
+  ([boolean()]) -> boolean() | undefined.  |         |
+test25_pos([]) -> undefined;               | OK      |
+test25_pos([X]) -> X;                      |         |
+test25_pos([_|T]) -> test25_pos(T).        |         |
+                                           |         |
+-spec test26_pos(X) -> X.                  |         |
+test26_pos(X) -> X.                        | OK      |
+                                           |         |
+-spec test27_pos(X) -> [X].                |         |
+test27_pos(X) -> [X].                      | OK      |
+                                           |         |
+-spec test28_neg(atom()) -> boolean().     |         |
+test28_neg(B) -> boolean_id(B).            | ERROR   | B.
+                                           |         | Expected: boolean()
+                                           |         | Got     : atom()
+                                           |         |
+-spec test29_neg() -> [].                  |         |
+test29_neg() -> [true, false].             | ERROR   | ['true', 'false'].
+                                           |         | Expected: []
+                                           |         | Got     : ['true']
+                                           |         |
+-spec test30_neg() -> atom.                |         |
+test30_neg() -> 1.                         | ERROR   | 1.
+                                           |         | Expected: 'atom'
+                                           |         | Got     : number()
+                                           |         |
+-spec test31_neg() -> atom.                |         |
+test31_neg() -> fun test30_neg/0.          | ERROR   | test30_neg/0.
+                                           |         | Expected: 'atom'
+                                           |         | Got     : fun(() -> 'atom')
+                                           |         |
+-spec test32_neg() -> atom.                |         |
+test32_neg() -> fun misc_lib:boolean_id/1. | ERROR   | misc_lib:boolean_id/1.
+                                           |         | Expected: 'atom'
+                                           |         | Got     : fun((boolean()) -> boolean())
+                                           |         |
+-spec test33_pos(a | b, b | c) -> b.       |         |
+test33_pos(AB, BC) ->                      | OK      |
+    case AB of BC -> BC end.               |         |
+                                           |         |
+-spec test34_pos({a | b}, {b | c}) -> {b}. |         |
+test34_pos(AB, BC) ->                      | OK      |
+    case AB of BC -> BC end.               |         |
+                                           |         |
+-spec test35_pos([a | b], [b | c]) -> [b]. |         |
+test35_pos(AB, BC) ->                      | OK      |
+    case AB of BC -> BC end.               |         |
+                                           |         |
+-spec test36_pos(F1, F2) -> F3             |         |
+    when F1 :: fun((a) -> a | z),          |         |
+         F2 :: fun((b) -> b | z),          |         |
+         F3 :: fun((a | b) -> z).          |         |
+test36_pos(F1, F2) ->                      | OK      |
+    case F1 of F2 -> F2 end.               |         |
+                                           |         |
+-spec test37_pos (any(), any())            |         |
+              -> {number(), number()}.     |         |
+test37_pos(X, Y) when X + Y > 0 -> {X, Y}. | OK      |
+                                           |         |
+-spec test38_pos (any())                   |         |
+        -> {number()}.                     |         |
+test38_pos(X) when bnot X > 0 -> {X}.      | OK      |
+                                           |         |
+-spec test39_pos                           |         |
+    ({atom(), atom()} | number())          |         |
+  -> {atom(), atom()}.                     |         |
+test39_pos({X, Y}) -> {X, Y};              | OK      |
+test39_pos(_) -> {a, b}.                   |         |
+                                           |         |
+-spec test40_pos                           |         |
+    (number()) -> {none(), none()}.        |         |
+test40_pos({X, Y}) -> {X, Y}.              | OK      |
+                                           |         |
+-spec test41_pos                           |         |
+    (number()) -> {none(), [none()]}.      |         |
+test41_pos([X | Y]) -> {X, Y}.             | OK      |
+                                           |         |
+-spec test42_pos                           |         |
+    (any()) -> {any(), [any()]}.           |         |
+test42_pos([X | Y]) -> {X, Y}.             | OK      |
+                                           |         |
+-spec test43_pos                           |         |
+    (any()) -> none().                     |         |
+test43_pos([_ | Y]) when Y + 1 > 0 -> Y.   | OK      |
+                                           |         |
+-spec test44_pos(any()) -> any().          |         |
+test44_pos(X) ->                           | OK      |
+    case X of                              |         |
+        Z -> ok                            |         |
+    end,                                   |         |
+    Z.                                     |         |
+                                           |         |
+-spec test45_pos(any()) -> atom().         |         |
+test45_pos(X) ->                           | OK      |
+    case X of                              |         |
+        _ -> Z = ok                        |         |
+    end,                                   |         |
+    Z.                                     |         |
+                                           |         |
+-spec test46_neg() -> number().            |         |
+test46_neg() -> false.                     | ERROR   | 'false'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'false'
+                                           |         |
+-spec test47_neg() -> number().            |         |
+test47_neg() -> [].                        | ERROR   | [].
+                                           |         | Expected: number()
+                                           |         | Got     : []
+                                           |         |
+-spec test48_neg() -> atom().              |         |
+test48_neg() -> test47_neg().              | ERROR   | test47_neg().
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec test49_neg() -> atom().              |         |
+test49_neg() -> misc:test47_neg().         | ERROR   | misc:test47_neg().
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-spec test50_pos() -> number().            |         |
+test50_pos() -> misc:test47_neg().         | OK      |
+                                           |         |
+-spec test51_pos() -> number().            |         |
+test51_pos() -> test47_neg().              | OK      |
+                                           |         |
+-spec test52_pos() ->                      |         |
+      fun(() -> number()).                 |         |
+test52_pos() ->                            | OK      |
+    fun test47_neg/0.                      |         |
+                                           |         |
+-spec test53_pos() ->                      |         |
+    fun(() -> number()).                   |         |
+test53_pos() ->                            | OK      |
+    fun misc:test47_neg/0.                 |         |
+                                           |         |
+test54_unspecced() -> ok.                  | NO SPEC |
+                                           |         |
+-spec test55_neg() ->                      |         |
+    fun(() -> number()).                   |         |
+test55_neg() ->                            | ERROR   |
+    fun misc:test54_unspecced/0.           |         | Unbound var: misc:test54_unspecced/0
+
+                                           |         |
+-spec test56_neg() ->                      |         |
+    fun(() -> number()).                   |         |
+test56_neg() ->                            | ERROR   |
+    fun test54_unspecced/0.                |         | Unbound var: test54_unspecced/0
+
+                                           |         |
+-spec test57_pos() -> {atom(), number()}.  |         |
+test57_pos() ->                            | OK      |
+    A = atom,                              |         |
+    N = 1,                                 |         |
+    {A, N}.                                |         |
+                                           |         |
+-spec test58_pos                           |         |
+    (boolean(), atom(), number()) ->       |         |
+    atom() | number().                     |         |
+test58_pos(B, A, N) ->                     | OK      |
+    Res =                                  |         |
+    begin                                  |         |
+    if B -> A; true -> N end               |         |
+    end,                                   |         |
+    Res.                                   |         |
+                                           |         |
+-spec test59_pos() -> number().            |         |
+test59_pos() ->                            | OK      |
+    X = misc:test47_neg(),                 |         |
+    X.                                     |         |
+                                           |         |
+-spec test60_pos() -> number().            |         |
+test60_pos() ->                            | OK      |
+    X = test47_neg(),                      |         |
+    X.                                     |         |
+                                           |         |
+-spec test61_neg() -> number().            |         |
+test61_neg() ->                            | ERROR   |
+    X = misc:test54_unspecced(),           |         | Unbound var: misc:test54_unspecced/0
+
+    X.                                     |         |
+                                           |         |
+-spec test62_neg() -> number().            |         |
+test62_neg() ->                            | ERROR   |
+    X = test54_unspecced(),                |         | Unbound var: test54_unspecced/0
+
+    X.                                     |         |
+                                           |         |
+-spec test63_pos() ->                      |         |
+    fun(() -> number()).                   |         |
+test63_pos() ->                            | OK      |
+    Fun = fun misc:test47_neg/0,           |         |
+    Fun.                                   |         |
+                                           |         |
+-spec test64_pos() ->                      |         |
+    fun(() -> number()).                   |         |
+test64_pos() ->                            | OK      |
+    Fun = fun test47_neg/0,                |         |
+    Fun.                                   |         |
+                                           |         |
+-spec test65_pos() -> [any()].             |         |
+test65_pos() ->                            | OK      |
+    L = [],                                |         |
+    L.                                     |         |
+                                           |         |
+-spec test66_pos() ->                      |         |
+    {atom(), number()}.                    |         |
+test66_pos() ->                            | OK      |
+    Result =                               |         |
+        begin                              |         |
+            X = a,                         |         |
+            Y = 1,                         |         |
+            {X, Y}                         |         |
+        end,                               |         |
+    Result.                                |         |
+                                           |         |
+-spec test67_pos                           |         |
+    (atom(), number()) ->                  |         |
+    [atom() | number()].                   |         |
+test67_pos(A, N) ->                        | OK      |
+    Result =                               |         |
+        begin                              |         |
+            Head = A,                      |         |
+            Tail = [N],                    |         |
+            [Head | Tail]                  |         |
+        end,                               |         |
+    Result.                                |         |
+                                           |         |
+-spec test68_pos({atom()}) -> none().      |         |
+test68_pos({E, _}) -> E.                   | OK      |
+                                           |         |
+-spec test69_pos                           |         |
+    ([atom()] | [number()]) ->             |         |
+    [atom() | number()].                   |         |
+test69_pos([H | T]) -> [H | T].            | OK      |
+                                           |         |
+-spec test70_neg() ->                      |         |
+    [atom() | number()].                   |         |
+test70_neg() ->                            | ERROR   |
+    catch test69_pos([atom]).              |         | catch.
+                                           |         | Expected: [atom() | number()]
+                                           |         | Got     : any()
+                                           |         |
+-spec test71_neg() ->                      |         |
+    [atom() | number()].                   |         |
+test71_neg() ->                            | ERROR   |
+    catch test69_pos(atom).                |         | 'atom'.
+                                           |         | Expected: [atom()] | [number()]
+                                           |         | Got     : 'atom'
+                                           |         | 
+                                           |         |   'atom' is not a subtype of [atom()] | [number()]
+                                           |         |   because
+                                           |         |   'atom' is not a subtype of [atom()]
+                                           |         |
+-spec test72_neg() ->                      |         |
+    any().                                 |         |
+test72_neg() ->                            | ERROR   |
+    catch test69_pos(atom).                |         | 'atom'.
+                                           |         | Expected: [atom()] | [number()]
+                                           |         | Got     : 'atom'
+                                           |         | 
+                                           |         |   'atom' is not a subtype of [atom()] | [number()]
+                                           |         |   because
+                                           |         |   'atom' is not a subtype of [atom()]
+                                           |         |
+-spec test73_pos() ->                      |         |
+    any().                                 |         |
+test73_pos() ->                            | OK      |
+    catch test69_pos([atom]).              |         |
+                                           |         |
+-spec test74_pos() ->                      |         |
+    any().                                 |         |
+test74_pos() ->                            | OK      |
+    X = (catch test69_pos([atom])),        |         |
+    X.                                     |         |
+                                           |         |
+-spec test75_pos() -> ok.                  |         |
+test75_pos() ->                            | OK      |
+    try                                    |         |
+        ok                                 |         |
+    of                                     |         |
+        ok -> ok                           |         |
+    after                                  |         |
+        nook                               |         |
+    end.                                   |         |
+                                           |         |
+-spec test76_pos(any()) -> atom().         |         |
+test76_pos(A) when is_atom(A) -> A;        | OK      |
+test76_pos(_) ->                           |         |
+    erlang:throw({error, not_an_atom}).    |         |
+                                           |         |
+-spec test77_neg(any()) -> atom().         |         |
+test77_neg(A) -> catch(test76_pos(A)).     | ERROR   | catch.
+                                           |         | Expected: atom()
+                                           |         | Got     : any()
+                                           |         |
+-spec test78_pos() -> any().               |         |
+test78_pos() ->                            | OK      |
+    receive                                |         |
+        X -> X                             |         |
+    end.                                   |         |
+                                           |         |
+-spec test79_neg() -> atom().              |         |
+test79_neg() ->                            | ERROR   |
+    receive                                |         |
+        X -> X                             |         | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : any()
+    end.                                   |         |
+                                           |         |
+-spec test80_neg(any()) -> atom().         |         |
+test80_neg(Timeout) ->                     | ERROR   |
+    receive                                |         |
+        X -> X                             |         | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : any()
+    after Timeout ->                       |         |
+        default                            |         |
+    end.                                   |         |
+                                           |         |
+-spec test81_neg(any()) -> atom().         |         |
+test81_neg(Timeout) ->                     | ERROR   |
+    receive                                |         |
+        X when is_atom(X) -> X             |         |
+    after Timeout ->                       |         | Timeout.
+                                           |         | Expected: timeout()
+                                           |         | Got     : any()
+        default                            |         |
+    end.                                   |         |
+                                           |         |
+-spec test82_pos() -> atom().              |         |
+test82_pos() ->                            | ERROR   |
+    A = atom,                              |         |
+    Msg = receive                          |         |
+        A -> A                             |         |
+    after 10 ->                            |         |
+        default                            |         |
+    end,                                   |         |
+    {Msg}.                                 |         | {Msg}.
+                                           |         | Expected: atom()
+                                           |         | Got     : {'default' | 'atom'}
+                                           |         |
+-spec test83_pos(integer()) -> atom().     |         |
+test83_pos(Timeout) ->                     | OK      |
+    receive                                |         |
+        _ -> atom                          |         |
+    after Timeout ->                       |         |
+        default                            |         |
+    end.                                   |         |
+                                           |         |
+-spec test84_pos() -> number().            |         |
+test84_pos() ->                            | OK      |
+    begin                                  |         |
+        Z = 2                              |         |
+    end,                                   |         |
+    Z.                                     |         |
+                                           |         |
+-spec test85() -> atom().                  |         |
+test85() ->                                | OK      |
+    receive                                |         |
+        A when is_atom(A) -> A;            |         |
+        X when is_number(X) -> number      |         |
+    end. % scroll down for test86          |         |
+                                           |         |
+-spec unzip1_neg([{integer(),atom()}])     |         |
+        -> {[atom()], [integer()]}.        |         |
+unzip1_neg([]) -> {[],[]};                 | ERROR   |
+unzip1_neg([{H1, H2}|T]) ->                |         |
+    {T1, T2} = unzip1_neg(T),              |         |
+    {[H1|T1], [H2|T2]}.                    |         | {[H1 | T1], [H2 | T2]}.
+                                           |         | Expected: {[atom()], [number()]}
+                                           |         | Got     : {[number() | atom()], [atom() | number()]}
+                                           |         | 
+                                           |         |   at tuple index 1:
+                                           |         |   {[number() | atom()], [atom() | number()]} is not a subtype of {[atom()], [number()]}
+                                           |         |   because
+                                           |         |   [number() | atom()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   number() | atom() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   number() is not a subtype of atom()
+                                           |         |
+-spec unzip2_neg([{integer(),atom()}])     |         |
+    -> {[atom()] | [integer()],            |         |
+        [atom()] | [integer()]}.           |         |
+unzip2_neg([]) -> {[],[]};                 | ERROR   |
+unzip2_neg([{H1, H2}|T]) ->                |         |
+    {T1, T2} = unzip2_neg(T),              |         |
+    {[H1|T1], [H2|T2]}.                    |         | {[H1 | T1], [H2 | T2]}.
+                                           |         | Expected: {[atom()] | [number()], [atom()] | [number()]}
+                                           |         | Got     : {[atom() | number()], [atom() | number()]}
+                                           |         | 
+                                           |         |   at tuple index 1:
+                                           |         |   {[atom() | number()], [atom() | number()]} is not a subtype of {[atom()] | [number()], [atom()] | [number()]}
+                                           |         |   because
+                                           |         |   [atom() | number()] is not a subtype of [atom()] | [number()]
+                                           |         |   because
+                                           |         |   [atom() | number()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   atom() | number() is not a subtype of atom()
+                                           |         |
+-spec wrong_list_neg() -> any().           |         |
+wrong_list_neg() ->                        | ERROR   |
+    X = [1 | 2],                           |         | 2.
+                                           |         | Expected: [any()]
+                                           |         | Got     : number()
+    X.                                     |         |
+                                           |         |
+-spec comp01(any(), any()) -> boolean().   |         |
+comp01(X, Y) -> X < Y.                     | OK      |
+                                           |         |
+-spec comp01_neg(any(), any()) -> pid().   |         |
+comp01_neg(X, Y) -> X < Y.                 | ERROR   | _ < _.
+                                           |         | Expected: pid()
+                                           |         | Got     : boolean()
+                                           |         |
+-spec comp02(any(), any()) -> boolean().   |         |
+comp02(X, Y) ->                            | OK      |
+    Res = X < Y,                           |         |
+    Res.                                   |         |
+                                           |         |
+-spec comp02_neg(any(), any()) -> pid().   |         |
+comp02_neg(X, Y) ->                        | ERROR   |
+    Res = X < Y,                           |         |
+    Res.                                   |         | Res.
+                                           |         | Expected: pid()
+                                           |         | Got     : boolean()
+                                           |         |
+-spec send01(pid() | port(), any()) ->     |         |
+    any().                                 |         |
+send01(Where, What) ->                     | OK      |
+    Where ! What.                          |         |
+%% - erlang:dst() is OTP specific. - OTP23……         |
+%%-spec send02_neg(any(), any()) ->        |         |
+%%    any().                               |         |
+%%send02_neg(Where, What) ->               |         |
+%%    Where ! What.                        |         |
+                                           |         |
+-spec send03_neg(pid(), any()) ->          |         |
+    pid().                                 |         |
+send03_neg(Where, What) ->                 | ERROR   |
+    Where ! What.                          |         | _ ! _.
+                                           |         | Expected: pid()
+                                           |         | Got     : any()
+                                           |         |
+-record(str_box, {str :: string()}).       |         |
+                                           |         |
+-spec mk_str_box(string()) -> #str_box{}.  |         |
+mk_str_box(Str) -> #str_box{str = Str}.    | OK      |
+                                           |         |
+-spec mk_str_box_neg                       |         |
+    (atom()) -> #str_box{}.                |         |
+mk_str_box_neg(Str) ->                     | ERROR   |
+    #str_box{str = Str}.                   |         | Str.
+                                           |         | Expected: string()
+                                           |         | Got     : atom()
+                                           |         |
+-spec mk_str_box() -> #str_box{}.          |         |
+mk_str_box() -> #str_box{str = "Str"}.     | OK      |
+                                           |         |
+-spec string_neg() -> atom().              |         |
+string_neg() -> "str".                     | ERROR   | string_lit.
+                                           |         | Expected: atom()
+                                           |         | Got     : string()
+                                           |         |
+% this is not very correct                 |         |
+% since binary_to_list returns [byte()].   |         |
+-spec get_str(string() | binary()) ->      |         |
+    string().                              |         |
+get_str(S) when is_list(S) -> S;           | OK      |
+get_str(B) when is_binary(B) ->            |         |
+    erlang:binary_to_list(B).              |         |
+                                           |         |
+-spec get_atom(string() | binary()) ->     |         |
+    atom().                                |         |
+get_atom(B) when is_binary(B) ->           | OK      |
+    erlang:binary_to_atom(B);              |         |
+get_atom(S) when is_list(S) ->             |         |
+    erlang:list_to_atom(S).                |         |
+                                           |         |
+-spec str_pat(string() | binary()) ->      |         |
+    string().                              |         |
+str_pat(SB = "some_string") -> SB.         | OK      |
+                                           |         |
+-spec atom_not_string_neg() ->             |         |
+    atom().                                |         |
+atom_not_string_neg() ->                   | ERROR   |
+    Atom = "atom",                         |         |
+    Atom.                                  |         | Atom.
+                                           |         | Expected: atom()
+                                           |         | Got     : string()
+                                           |         |
+-spec ans(Atoms, Numbers) -> ANs           |         |
+    when                                   |         |
+        Atoms :: [atom()],                 |         |
+        Numbers :: [number()],             |         |
+        AN :: atom() | number(),           |         |
+        ANs :: [AN].                       |         |
+ans(Atoms, Numbers) ->                     | OK      |
+    Atoms ++ Numbers.                      |         |
+                                           |         |
+-spec ans_neg(Atoms, [binary()]) -> ANs    |         |
+    when                                   |         |
+    Atoms :: [atom()],                     |         |
+    AN :: atom() | number(),               |         |
+    ANs :: [AN].                           |         |
+ans_neg(Atoms, Numbers) ->                 | ERROR   |
+    Atoms ++ Numbers.                      |         | _ ++ _.
+                                           |         | Expected: [atom() | number()]
+                                           |         | Got     : [atom() | binary()]
+                                           |         | 
+                                           |         |   [atom() | binary()] is not a subtype of [atom() | number()]
+                                           |         |   because
+                                           |         |   atom() | binary() is not a subtype of atom() | number()
+                                           |         |   because
+                                           |         |   binary() is not a subtype of atom() | number()
+                                           |         |   because
+                                           |         |   binary() is not a subtype of atom()
+                                           |         |
+-spec ans2(Atoms, [binary()]) -> ANs       |         |
+    when                                   |         |
+    Atoms :: [atom()],                     |         |
+    AN :: atom() | number(),               |         |
+    ANs :: [AN].                           |         |
+ans2(Atoms, Numbers) ->                    | OK      |
+    Atoms -- Numbers.                      |         |
+                                           |         |
+-spec ans3(Atoms, [any()]) -> Atoms        |         |
+    when                                   |         |
+    Atoms :: [atom()].                     |         |
+ans3(Atoms, Anys) ->                       | OK      |
+    Atoms -- Anys.                         |         |
+                                           |         |
+-spec ans3_neg(Atoms, any()) -> Atoms      |         |
+    when                                   |         |
+    Atoms :: [atom()].                     |         |
+ans3_neg(Atoms, Anys) ->                   | ERROR   |
+    Atoms -- Anys.                         |         | Anys.
+                                           |         | Expected: [any()]
+                                           |         | Got     : any()
+                                           |         |
+-spec ans4_neg(any(), Atoms) -> Atoms      |         |
+    when                                   |         |
+    Atoms :: [atom()].                     |         |
+ans4_neg(Anys, Atoms) ->                   | ERROR   |
+    Anys ++ Atoms.                         |         | Anys.
+                                           |         | Expected: [any()]
+                                           |         | Got     : any()
+                                           |         |
+-spec slice_tuple_atom                     |         |
+    (tuple()) -> atom().                   |         |
+slice_tuple_atom({El})                     | OK      |
+    when is_atom(El) -> El;                |         |
+slice_tuple_atom({_, El})                  |         |
+    when is_atom(El) -> El.                |         |
+                                           |         |
+-spec slice_tuple_neg                      |         |
+    (tuple()) -> none().                   |         |
+slice_tuple_neg({_, El}) ->                | ERROR   |
+    El.                                    |         | El.
+                                           |         | Expected: none()
+                                           |         | Got     : any()
+                                           |         |
+-spec start([A]) -> [A].                   |         |
+start([] ++ X) -> X.                       | OK      |
+                                           |         |
+-spec start_neg([A]) -> [[A]].             |         |
+start_neg([] ++ X) -> X.                   | ERROR   | X.
+                                           |         | Expected: [[A]]
+                                           |         | Got     : [A]
+                                           |         | 
+                                           |         |   [A] is not a subtype of [[A]]
+                                           |         |   because
+                                           |         |   A is not a subtype of [A]
+                                           |         |
+-spec ss                                   |         |
+    (binary() | string()) -> string().     |         |
+ss("s" ++ S) -> S.                         | OK      |
+                                           |         |
+-spec ss1                                  |         |
+    (binary() | string()) -> string().     |         |
+ss1("" ++ S) -> S.                         | OK      |
+                                           |         |
+-spec ss2_neg                              |         |
+    ([atom() | char()]) -> string().       |         |
+ss2_neg("" ++ S) -> S.                     | ERROR   | S.
+                                           |         | Expected: string()
+                                           |         | Got     : [atom() | number()]
+                                           |         |
+-spec ss3                                  |         |
+    (binary()) -> none().                  |         |
+ss3("b" ++ S) -> S.                        | OK      |
+                                           |         |
+-spec ss4                                  |         |
+    ([atom()] | string()                   |         |
+    , [pid()] | string()                   |         |
+    , any()) ->                            |         |
+    string().                              |         |
+ss4(Same, Same, Test) ->                   | OK      |
+    case Test of                           |         |
+        "prefix" ++ Same -> Same           |         |
+    end.                                   |         |
+                                           |         |
+-spec catch_env_neg_1(any()) -> number().  |         |
+catch_env_neg_1(X) ->                      | ERROR   |
+    _ = (catch case X of                   |         |
+            X when is_number(X) -> X       |         |
+        end),                              |         |
+    X.                                     |         | X.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+                                           |         |
+-spec catch_env_neg_2(any()) -> number().  |         |
+catch_env_neg_2(X) ->                      | ERROR   |
+    catch case X of                        |         | catch.
+                                           |         | Expected: number()
+                                           |         | Got     : any()
+            X when is_number(X) -> X       |         |
+        end.                               |         |
+                                           |         |
+-spec badspec(_) -> #{                     |         |
+    atom() := atom(),                      |         |
+    integer() := integer()                 |         |
+}.                                         |         |
+badspec(_) -> ok.                          | ERROR   | 'ok'.
+                                           |         | Expected: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Got     : 'ok'
+                                           |         |
+-spec test86_neg() -> any().               |         |
+test86_neg() ->                            | ERROR   |
+    catch lists:map({}, {}).               |         | {}.
+                                           |         | Expected: fun((A) -> B)
+                                           |         | Got     : {}
+                                           |         |
+-spec test87_neg() -> any().               |         |
+test87_neg() ->                            | ERROR   |
+    X = (catch lists:map({}, {})),         |         | {}.
+                                           |         | Expected: fun((A) -> B)
+                                           |         | Got     : {}
+    X.                                     |         |
+                                           |         |
+-spec test88_neg() -> any().               |         |
+test88_neg() -> fun badspec/1.             | OK      |
+                                           |         |
+% *can* reference skipped specs from other……         |
+-spec test89_neg() -> any().               |         |
+test89_neg() ->                            | OK      |
+    fun skip:bad_mixed_update/1.           |         |
+                                           |         |
+% cannot reference invalid specs from othe……         |
+-spec test90_neg() -> any().               |         |
+test90_neg() ->                            | ERROR   |
+fun generics_with_unions:test_03_neg/3.    |         | Unbound var: generics_with_unions:test_03_neg/3
+
+                                           |         |
+-spec list_with_vars_neg                   |         |
+(number(), number()) -> pid().             |         |
+list_with_vars_neg(X, Y) ->                | ERROR   |
+    [X, 1, 2, 3 | Y].                      |         | [X, 1, 2, 3 | Y].
+                                           |         | Expected: pid()
+                                           |         | Got     : [number()]
+                                           |         |
+-spec improper_list1                       |         |
+    (number()) -> pid().                   |         |
+improper_list1(X) ->                       | ERROR   |
+    [X, 1, 2, 3 | an_atom].                |         | [X, 1, 2, 3 | 'an_atom'].
+                                           |         | Expected: pid()
+                                           |         | Got     : [number()]
+                                           |         |
+-spec improper_list2                       |         |
+    (number()) -> pid().                   |         |
+improper_list2(X) ->                       | ERROR   |
+    Res = [X, 1, 2, 3 | an_atom],          |         | 'an_atom'.
+                                           |         | Expected: [any()]
+                                           |         | Got     : 'an_atom'
+    Res.                                   |         |
+                                           |         |
+-spec not_list1_neg(atom()) -> none().     |         |
+not_list1_neg("atom" ++ A) -> A.           | OK      |
+                                           |         |
+-spec not_list2_neg                        |         |
+    (atom(), [atom()]) -> none().          |         |
+not_list2_neg                              | OK      |
+    (A, [_ | A]) -> A.                     |         |
+                                           |         |
+-spec not_list3_neg                        |         |
+    (atom(), string()) -> none().          |         |
+not_list3_neg                              | OK      |
+    (A, "atom" ++ A) -> A.                 |         |
+                                           |         |
+-spec catch_me(any()) -> any().            |         |
+catch_me(X) -> catch X.                    | OK      |
+                                           |         |
+-spec receive_timeout1(                    |         |
+    integer()                              |         |
+) -> atom().                               |         |
+receive_timeout1(Timeout) ->               | OK      |
+    receive after Timeout -> timeout end.  |         |
+                                           |         |
+-spec receive_timeout2(                    |         |
+    integer()                              |         |
+) -> {number(), atom()}.                   |         |
+receive_timeout2(Timeout) ->               | OK      |
+    Res =                                  |         |
+        receive                            |         |
+            after Timeout ->               |         |
+            Z = 1,                         |         |
+            timeout                        |         |
+        end,                               |         |
+    {Z, Res}.                              |         |
+                                           |         |
+-spec test_flatten1() -> [term()].         |         |
+test_flatten1() ->                         | OK      |
+    lists:flatten([1, 2, [3]]).            |         |
+                                           |         |
+-spec test_flatten2() -> [term()].         |         |
+test_flatten2() ->                         | OK      |
+    lists:flatten([1, 2, [3]], []).        |         |
+                                           |         |
+-spec test91_neg(none()) ->                |         |
+    {ok, ok}.                              |         |
+test91_neg(None) ->                        | ERROR   |
+    Res = {None, err},                     |         |
+    Res.                                   |         | Res.
+                                           |         | Expected: {'ok', 'ok'}
+                                           |         | Got     : {none(), 'err'}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {none(), 'err'} is not a subtype of {'ok', 'ok'}
+                                           |         |   because
+                                           |         |   'err' is not a subtype of 'ok'
+                                           |         |
+                                           |         |
+-type stuff() :: stuff1 | stuff2.          |         |
+-type v0_op() :: v0_op1 | v0_op2.          |         |
+-type v1_op() :: v1_op1 | v1_op2           |         |
+    | stuff() | v0_op().                   |         |
+-type v2_op() :: v2_op | v1_op().          |         |
+                                           |         |
+-spec v2_to_v1_neg(v2_op()) -> v1_op().    |         |
+v2_to_v1_neg(X) ->                         | ERROR   |
+    X.                                     |         | X.
+                                           |         | Expected: v1_op()
+                                           |         | Got     : v2_op()
+                                           |         | 
+                                           |         |   v2_op() is not a subtype of v1_op()
+                                           |         |   because
+                                           |         |   'v2_op' | v1_op() is not a subtype of v1_op()
+                                           |         |   because
+                                           |         |   'v2_op' | v1_op() is not a subtype of 'v1_op1' | 'v1_op2' | stuff() | v0_op()
+                                           |         |   because
+                                           |         |   'v2_op' is not a subtype of 'v1_op1' | 'v1_op2' | stuff() | v0_op()
+-opaque o() :: {ok}.                       |         |
+                                           |         |
+-record(rec, {}).                          |         |
+-opaque o_rec() :: #rec{}.                 |         |
+                                           |         |
+-record(rec_w_opaque_field, {              |         |
+  o :: o()                                 |         |
+}).                                        |         |
+-type rec_w_opaque_field() ::              |         |
+  #rec_w_opaque_field{}.                   |         |
+                                           |         |
+-spec to_rec_w_opaque_field() ->           |         |
+  rec_w_opaque_field().                    |         |
+to_rec_w_opaque_field() ->                 | OK      |
+  #rec_w_opaque_field{                     |         |
+    o = {ok}                               |         |
+  }.                                       |         |
+                                           |         |
+-opaque o_cycle() :: opaque:o_cycle().     |         |
+                                           |         |
+-spec use_o_cycle1(misc:o_cycle()) ->      |         |
+    opaque:o_cycle().                      |         |
+use_o_cycle1(X) -> X.                      | OK      |
+                                           |         |
+-spec use_o_cycle2(opaque:o_cycle()) ->    |         |
+    misc:o_cycle().                        |         |
+use_o_cycle2(X) -> X.                      | OK      |
+                                           |         |
+-type contravariant(T)                     | INVALID | T. Type vars in aliases are not allowed in function parameter position.
+
+:: fun((T) -> ok).                         |         |
+                                           |         |
+-spec use_contra_neg(fun((ok) -> ok))      | INVALID | use_contra_neg/1 references type with invalid definition: contravariant/1
+
+        -> contravariant(ok).              |         |
+use_contra_neg(X) -> X.                    | NO SPEC |
+                                           |         |
+-spec use_spec_from_behaviour() ->         |         |
+    ok | stop.                             |         |
+use_spec_from_behaviour() ->               | ERROR   |
+    {Res, _} = callbacks1_pos:init({}),    |         | Unbound var: callbacks1_pos:init/1
+
+    Res.                                   |         |
+                                           |         |
+-type x_cycle() ::                         | INVALID | recursive type x_cycle/0 is not productive
+
+    recursive_aliases:x_cycle().           |         |
+                                           |         |
+-opaque int_result_o() ::                  |         |
+fun(() -> {ok, integer()} | error).        |         |
+                                           |         |
+-spec use_opaque_w_bad_arg_neg(            | INVALID |
+    opaque:opair(a, x:y())) ->             |         | Unknown id: x:y/0
+
+    opaque:opair(a, x:y()).                |         |
+use_opaque_w_bad_arg_neg(X) ->             | NO SPEC |
+    X.                                     |         |
+                                           |         |
+-type set() :: [].                         |         |
+-spec names(set()) -> sets:set().          |         |
+names(X) -> X.                             | ERROR   | X.
+                                           |         | Expected: sets:set()
+                                           |         | Got     : misc:set()
+                                           |         | 
+                                           |         |   misc:set() is not a subtype of sets:set()
+                                           |         |   because
+                                           |         |   [] is not a subtype of sets:set()
+                                           |         |   because
+                                           |         |   [] is not a subtype of sets:set(any())
+                                           |         |
+-spec use_abs(integer()) -> integer().     |         |
+use_abs(I) -> abs(I).                      | OK      |
+- spec module_ty_1() -> module().          |         |
+module_ty_1() ->                           | OK      |
+    refine.                                |         |
+                                           |         |
+-spec module_ty_2_neg() -> module().       |         |
+module_ty_2_neg() ->                       | OK      |
+    nonexistent_module.                    |         |
+                                           |         |
+-spec module_ty_3_neg(                     |         |
+    atom()                                 |         |
+) -> module().                             |         |
+module_ty_3_neg(Atom) ->                   | OK      |
+    Atom.                                  |         |
+                                           |         |
+-spec module_ty_4(                         |         |
+    mfa()                                  |         |
+) -> module().                             |         |
+module_ty_4({Mod, _F, _A}) ->              | OK      |
+    Mod.                                   |         |
+                                           |         |
+-spec module_ty_5(                         |         |
+    module()                               |         |
+) -> atom().                               |         |
+module_ty_5(Mod) ->                        | OK      |
+    Mod.                                   |         |
+                                           |         |
+-spec invariant(T, fun((T) -> ok)) -> ok.  |         |
+invariant(_, _) ->                         | OK      |
+    ok.                                    |         |
+                                           |         |
+-spec mod_to_ok(module()) -> ok.           |         |
+mod_to_ok(_) ->                            | OK      |
+    ok.                                    |         |
+                                           |         |
+-spec module_ty_6(module()) -> ok.         |         |
+module_ty_6(Mod) ->                        | OK      |
+    invariant(                             |         |
+        Mod,                               |         |
+        fun mod_to_ok/1                    |         |
+    ).                                     |         |
+                                           |         |
+-spec module_ty_7() ->                     |         |
+    {ok, module()}.                        |         |
+module_ty_7() ->                           | OK      |
+    {ok, lists}.                           |         |
+                                           |         |
+-spec module_ty_8_neg() ->                 |         |
+    {ok, module(), pid()}.                 |         |
+module_ty_8_neg() ->                       | ERROR   |
+    {ok, lists, 1.0}.                      |         | {'ok', 'lists', float_lit}.
+                                           |         | Expected: {'ok', atom(), pid()}
+                                           |         | Got     : {'ok', 'lists', number()}
+                                           |         | 
+                                           |         |   at tuple index 3:
+                                           |         |   {'ok', 'lists', number()} is not a subtype of {'ok', atom(), pid()}
+                                           |         |   because
+                                           |         |   number() is not a subtype of pid()
+                                           |         |
+-spec module_ty_9_neg() ->                 |         |
+    {ok, module()}.                        |         |
+module_ty_9_neg() ->                       | OK      |
+    {ok, nonexistent}.                     |         |
+                                           |         |
+-spec module_ty_10_neg(module()) ->        |         |
+    wrong_ret.                             |         |
+module_ty_10_neg(Mod) ->                   | ERROR   |
+    Mod.                                   |         | Mod.
+                                           |         | Expected: 'wrong_ret'
+                                           |         | Got     : atom()
+                                           |         |
+% accepted because `node()` is             |         |
+% an alias for atom()                      |         |
+-spec module_ty_11(module()) ->            |         |
+    node().                                |         |
+module_ty_11(Mod) ->                       | OK      |
+    Mod.                                   |         |
+                                           |         |
+-spec arity_1(arity()) -> number().        |         |
+arity_1(Arity) ->                          | OK      |
+    Arity.                                 |         |
+                                           |         |
+-spec arity_2_neg(arity()) -> pid().       |         |
+arity_2_neg(Arity) ->                      | ERROR   |
+    Arity.                                 |         | Arity.
+                                           |         | Expected: pid()
+                                           |         | Got     : number()
+                                           |         |
+-spec module_1(module()) -> atom().        |         |
+module_1(Mod) ->                           | OK      |
+    Mod.                                   |         |
+                                           |         |
+-spec node_1(node()) -> atom().            |         |
+node_1(Node) ->                            | OK      |
+    Node.                                  |         |
+                                           |         |
+-spec node_2_neg(node()) -> pid().         |         |
+node_2_neg(Node) ->                        | ERROR   |
+    Node.                                  |         | Node.
+                                           |         | Expected: pid()
+                                           |         | Got     : atom()
+                                           |         |
+-type tab() :: atom() | reference().       |         |
+                                           |         |
+-spec foldl_ets_table_raw1                 |         |
+    (ets:tab(), atom()) -> atom().         |         |
+foldl_ets_table_raw1(EtsTable, Acc) ->     | OK      |
+    foldl_ets(EtsTable, Acc).              |         |
+                                           |         |
+-spec foldl_ets                            |         |
+    (ets:tab(), atom()) -> atom().         |         |
+foldl_ets(_, T) -> T.                      | OK      |
+                                           |         |
+-spec foldl_ets_table_raw1_gen             |         |
+    (ets:tab(), T) -> T.                   |         |
+foldl_ets_table_raw1_gen(EtsTable, Acc) -> | OK      |
+    foldl_ets1_gen(EtsTable, Acc).         |         |
+                                           |         |
+-spec foldl_ets1_gen                       |         |
+    (ets:tab(), T) -> T.                   |         |
+foldl_ets1_gen(_, T) -> T.                 | OK      |
+                                           |         |
+-spec foldl_ets_table_raw2_gen             |         |
+    (ets:tid(), T) -> T.                   |         |
+foldl_ets_table_raw2_gen(EtsTable, Acc) -> | OK      |
+    foldl_ets_gen2(EtsTable, Acc).         |         |
+                                           |         |
+-spec foldl_ets_gen2                       |         |
+    (ets:tid(), T) -> T.                   |         |
+foldl_ets_gen2(_, T) -> T.                 | OK      |
+                                           |         |
+-spec foldl_ets_table_raw3_gen             |         |
+    (tab(), T) -> T.                       |         |
+foldl_ets_table_raw3_gen(EtsTable, Acc) -> | OK      |
+    foldl_ets_gen3(EtsTable, Acc).         |         |
+                                           |         |
+-spec foldl_ets_gen3                       |         |
+    (tab(), T) -> T.                       |         |
+foldl_ets_gen3(_, T) -> T.                 | OK      |
+                                           |         |
+-spec iovec_neg()                          |         |
+    -> erlang:iovec().                     |         |
+iovec_neg() -> {<<>>}.                     | ERROR   | {<<..>>}.
+                                           |         | Expected: erlang:iovec()
+                                           |         | Got     : {binary()}
+                                           |         | 
+                                           |         |   {binary()} is not a subtype of erlang:iovec()
+                                           |         |   because
+                                           |         |   {binary()} is not a subtype of [binary()]
+                                           |         |
+-spec repeated_vars() -> ok.               |         |
+repeated_vars() ->                         | OK      |
+    case {ok, ok} of                       |         |
+        {X, X} -> X                        |         |
+    end.                                   |         |
+                                           |         |
+-spec repeated_vars2() -> ok.              |         |
+repeated_vars2() ->                        | OK      |
+    Res = case {ok, ok} of                 |         |
+        {X, X} -> X                        |         |
+    end,                                   |         |
+    Res.                                   |         |
+                                           |         |
+-spec empty_string() -> [].                |         |
+empty_string() -> "".                      | OK      |
+                                           |         |
+-spec n_a_neg(erlang:number())             |         |
+    -> erlang:atom().                      |         |
+n_a_neg(N) -> N.                           | ERROR   | N.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+% -- types from erlang --                  |         |
+                                           |         |
+-spec my_priorities_pos()                  |         |
+        -> [erlang:priority_level()].      |         |
+my_priorities_pos() ->                     | OK      |
+    MyPriorities =                         |         |
+        [low, normal, high, max],          |         |
+    MyPriorities.                          |         |
+                                           |         |
+-spec my_priorities_neg()                  |         |
+        -> [erlang:priority_level()].      |         |
+my_priorities_neg() ->                     | ERROR   |
+    MyPriorities =                         |         |
+        ['MS', 'MM', 'MA', 'EE', 'GE'],    |         |
+    MyPriorities.                          |         | MyPriorities.
+                                           |         | Expected: [erlang:priority_level()]
+                                           |         | Got     : ['MS' | 'MM' | 'MA' | 'EE' | 'GE']
+                                           |         | 
+                                           |         |   ['MS' | 'MM' | 'MA' | 'EE' | 'GE'] is not a subtype of [erlang:priority_level()]
+                                           |         |   because
+                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not a subtype of erlang:priority_level()
+                                           |         |   because
+                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not a subtype of 'low' | 'normal' | 'high' | 'max'
+                                           |         |
+-spec timestamp_neg(                       |         |
+    erlang:timestamp()                     |         |
+) -> atom().                               |         |
+timestamp_neg(X) ->                        | ERROR   |
+    X.                                     |         | X.
+                                           |         | Expected: atom()
+                                           |         | Got     : erlang:timestamp()
+                                           |         | 
+                                           |         |   erlang:timestamp() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   {number(), number(), number()} is not a subtype of atom()

@@ -1,0 +1,24 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(gradual_misc).                     |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+% code is unsafe                           |         |
+-spec use_invalid_opaque_1(                | INVALID | use_invalid_opaque_1/1 references type with invalid definition: opaque:contravariant/1
+
+    opaque:contravariant(a)                |         |
+) -> opaque:contravariant(a | b).          |         |
+use_invalid_opaque_1(X) ->                 |         |
+  X.                                       |         |
+                                           |         |
+% code is safe but violates opacity        |         |
+-spec use_invalid_opaque_2(                | INVALID | use_invalid_opaque_2/1 references type with invalid definition: opaque:contravariant/1
+
+    opaque:contravariant(a | b)            |         |
+) -> opaque:contravariant(a).              |         |
+use_invalid_opaque_2(X) ->                 |         |
+  X.                                       |         |

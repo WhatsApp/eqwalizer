@@ -1,0 +1,62 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(guards).                           |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec test01(atom() | number()) -> atom(). |         |
+test01(X) when is_atom(X) -> X.            | OK      |
+                                           |         |
+-spec test01_if                            |         |
+    (atom() | number()) ->                 |         |
+    atom().                                |         |
+test01_if(X) ->                            | OK      |
+    if                                     |         |
+        is_number(X) -> undef;             |         |
+        is_atom(X) -> X                    |         |
+    end.                                   |         |
+                                           |         |
+-spec test02                               |         |
+    (atom() | number(), atom() | number()) |         |
+    -> atom().                             |         |
+test02(X, _) when is_atom(X) -> X;         | OK      |
+test02(_, Y) when is_atom(Y) -> Y;         |         |
+test02(_, _) -> default.                   |         |
+                                           |         |
+-spec test02_if                            |         |
+    (atom() | number(), atom() | number()) |         |
+        -> atom().                         |         |
+test02_if(X, Y) ->                         | OK      |
+    if                                     |         |
+        is_atom(X) -> X;                   |         |
+        is_atom(Y) -> Y;                   |         |
+        true -> default                    |         |
+    end.                                   |         |
+                                           |         |
+                                           |         |
+-spec test03(atom()) -> boolean() | undef. |         |
+test03(X) when is_boolean(X) -> X;         | OK      |
+test03(_) -> undef.                        |         |
+                                           |         |
+-spec test04(any()) -> number() | undef.   |         |
+test04(X) when is_number(X) -> X;          | OK      |
+test04(_) -> undef.                        |         |
+                                           |         |
+-spec test05(any()) ->                     |         |
+    #{number() => number()}.               |         |
+test05(X) when X =:= #{1 => b} ->          | ERROR   |
+    X.                                     |         | X.
+                                           |         | Expected: #D{number() => number()}
+                                           |         | Got     : any()
+                                           |         |
+-type loop() :: loop().                    | INVALID | recursive type loop/0 is not productive
+
+-record(invalid, {field :: loop()}).       | INVALID | invalid references type with invalid definition: loop/0
+
+                                           |         |
+-spec test06_neg() -> ok.                  |         |
+test06_neg() when #invalid{} =/= 2 -> ok.  | ERROR   | Unbound rec: invalid
+

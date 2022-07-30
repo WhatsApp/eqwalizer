@@ -1,0 +1,11 @@
+{
+  "app_env:get_key_dynamic/1": [
+    "application:get_env/2"
+  ],
+  "app_env:get_mine/0": [
+    "application:get_env/2"
+  ],
+  "app_env:steal/0": [
+    "application:get_env/2"
+  ]
+}

@@ -1,0 +1,33 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(format).                           |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec to_string_neg                        |         |
+    (any()) -> string().                   |         |
+to_string_neg(X) ->                        | ERROR   |
+  io_lib:format("~p", [X]).                |         | io_lib:format(string_lit, [X]).
+                                           |         | Expected: string()
+                                           |         | Got     : io_lib:chars()
+                                           |         | 
+                                           |         |   io_lib:chars() is not a subtype of string()
+                                           |         |   because
+                                           |         |   [number() | io_lib:chars()] is not a subtype of string()
+                                           |         |
+-spec to_string                            |         |
+    (any()) -> string().                   |         |
+to_string(X) ->                            | OK      |
+  lists:flatten(                           |         |
+    io_lib:format("~p", [X])               |         |
+  ).                                       |         |
+                                           |         |
+-spec to_binary                            |         |
+    (any()) -> binary().                   |         |
+to_binary(X) ->                            | OK      |
+  erlang:iolist_to_binary(                 |         |
+    io_lib:format("~p", [X])               |         |
+  ).                                       |         |

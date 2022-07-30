@@ -1,0 +1,552 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(refine).                           |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec param1(_A, _B) ->                    |         |
+    none().                                |         |
+param1(X, X) -> X.                         | ERROR   | X.
+                                           |         | Expected: none()
+                                           |         | Got     : _B
+                                           |         |
+-spec param2({A, B}, {B, A}) ->            |         |
+    {none(), none()}.                      |         |
+param2(X, X) -> X.                         | ERROR   | X.
+                                           |         | Expected: {none(), none()}
+                                           |         | Got     : {B, A}
+                                           |         | 
+                                           |         |   at tuple index 1:
+                                           |         |   {B, A} is not a subtype of {none(), none()}
+                                           |         |   because
+                                           |         |   B is not a subtype of none()
+                                           |         |
+-spec maps(                                |         |
+    #{a := any()},                         |         |
+    #{atom() => atom()}                    |         |
+) -> none().                               |         |
+maps(M, M) -> M.                           | ERROR   | M.
+                                           |         | Expected: none()
+                                           |         | Got     : #D{atom() => atom()}
+                                           |         |
+-spec funs1(                               |         |
+    fun((A) -> B),                         |         |
+    fun((B) -> A)                          |         |
+) -> fun((A | B) -> none()).               |         |
+funs1(F, F) -> F.                          | ERROR   | F.
+                                           |         | Expected: fun((A | B) -> none())
+                                           |         | Got     : fun((B | A) -> A)
+                                           |         | 
+                                           |         |   fun((B | A) -> A) is not a subtype of fun((A | B) -> none())
+                                           |         |   because
+                                           |         |   A is not a subtype of none()
+                                           |         |
+-spec funs2(                               |         |
+    fun((A) -> atom()),                    |         |
+    fun((atom()) -> A)                     |         |
+) -> fun((A | atom()) -> none()).          |         |
+funs2(F, F) -> F.                          | ERROR   | F.
+                                           |         | Expected: fun((A | atom()) -> none())
+                                           |         | Got     : fun((atom() | A) -> A)
+                                           |         | 
+                                           |         |   fun((atom() | A) -> A) is not a subtype of fun((A | atom()) -> none())
+                                           |         |   because
+                                           |         |   A is not a subtype of none()
+                                           |         |
+-spec tuple1                               |         |
+    ({number(), atom()}) -> none().        |         |
+tuple1(X) ->                               | OK      |
+    X = {a, 1},                            |         |
+    X.                                     |         |
+                                           |         |
+-spec tuple2(                              |         |
+    {number(), atom()},                    |         |
+    {atom(), number()}                     |         |
+) -> none().                               |         |
+tuple2(T1, T2) ->                          | OK      |
+    T1 = T2,                               |         |
+    T1.                                    |         |
+                                           |         |
+-spec list1                                |         |
+    ([atom()], [number()]) -> [].          |         |
+list1(L1, L2) ->                           | OK      |
+    L1 = L2,                               |         |
+    L1.                                    |         |
+                                           |         |
+-spec shape1(                              |         |
+    #{id := atom()},                       |         |
+    #{id := number()}                      |         |
+) -> none().                               |         |
+shape1(S1, S2) ->                          | OK      |
+    S1 = S2,                               |         |
+    S1.                                    |         |
+                                           |         |
+%% no support for                          |         |
+%% "elimination by negation"               |         |
+-spec eliminate1                           |         |
+(binary() | string()) -> string().         |         |
+eliminate1(A)                              | OK      |
+    when not is_binary(A) -> A;            |         |
+eliminate1(_) -> "".                       |         |
+                                           |         |
+-spec eliminate2                           |         |
+    (atom() | pid() | string())            |         |
+    -> string().                           |         |
+eliminate2(A) ->                           | OK      |
+    if                                     |         |
+        not (is_pid(A) or is_atom(A))      |         |
+            -> A;                          |         |
+        true                               |         |
+            -> ""                          |         |
+    end.                                   |         |
+                                           |         |
+-spec list_trick_neg(_T, U) -> U.          |         |
+list_trick_neg([X], _) -> X.               | ERROR   | X.
+                                           |         | Expected: U
+                                           |         | Got     : any()
+                                           |         |
+-spec use_list_refine() -> ok.             |         |
+use_list_refine() ->                       | OK      |
+    _ = list_trick_neg([self()], 1) * 3,   |         |
+    ok.                                    |         |
+                                           |         |
+-spec tuple_trick_neg(_T, U) -> U.         |         |
+tuple_trick_neg({X}, _) -> X.              | ERROR   | X.
+                                           |         | Expected: U
+                                           |         | Got     : any()
+                                           |         |
+-spec use_tuple_refine() -> ok.            |         |
+use_tuple_refine() ->                      | OK      |
+    _ = tuple_trick_neg({self()}, 1) * 3,  |         |
+    ok.                                    |         |
+                                           |         |
+-spec fun_trick_neg(_T, U) -> U.           |         |
+fun_trick_neg(X, _) when is_function(X, 0) | ERROR   |
+    -> X.                                  |         | X.
+                                           |         | Expected: U
+                                           |         | Got     : _T
+                                           |         |
+-spec use_fun_refine(fun(() -> ok))        |         |
+        -> ok.                             |         |
+use_fun_refine(F) ->                       | OK      |
+    _ = fun_trick_neg(F, 1) * 3,           |         |
+    ok.                                    |         |
+                                           |         |
+-spec map_refine_tvar_neg                  |         |
+    (_V) -> none().                        |         |
+map_refine_tvar_neg                        | ERROR   |
+    (#{key := Val}) -> Val.                |         | Val.
+                                           |         | Expected: none()
+                                           |         | Got     : any()
+                                           |         |
+-spec binary_refine_tvar_neg               |         |
+    (_V) -> {none(), none()}.              |         |
+binary_refine_tvar_neg                     | ERROR   |
+    (<<X, Y/binary>>) -> {X, Y}.           |         | {X, Y}.
+                                           |         | Expected: {none(), none()}
+                                           |         | Got     : {number(), binary()}
+                                           |         | 
+                                           |         |   at tuple index 1:
+                                           |         |   {number(), binary()} is not a subtype of {none(), none()}
+                                           |         |   because
+                                           |         |   number() is not a subtype of none()
+                                           |         |
+-record(my_rec, {                          |         |
+    n :: integer(),                        |         |
+    a :: atom()                            |         |
+}).                                        |         |
+-spec record_refine_tvar_neg               |         |
+    (_V) -> {none(), none()}.              |         |
+record_refine_tvar_neg                     | ERROR   |
+    (#my_rec{n = N, a = A}) -> {N, A}.     |         | {N, A}.
+                                           |         | Expected: {none(), none()}
+                                           |         | Got     : {number(), atom()}
+                                           |         | 
+                                           |         |   at tuple index 1:
+                                           |         |   {number(), atom()} is not a subtype of {none(), none()}
+                                           |         |   because
+                                           |         |   number() is not a subtype of none()
+                                           |         |
+-spec refine_w_char(any())                 |         |
+        -> fun(() -> any()).               |         |
+refine_w_char(X)                           | OK      |
+    when is_function(X, $\x00) ->          |         |
+    X.                                     |         |
+                                           |         |
+-type alist() :: [alist() | a].            |         |
+                                           |         |
+-spec refine_alist1_neg(                   |         |
+    alist(), [a | b]                       |         |
+) -> pid().                                |         |
+refine_alist1_neg(X, X) -> X.              | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : ['a' | 'b']
+                                           |         |
+-spec refine_alist2(                       |         |
+    alist(), [a | b]                       |         |
+) -> [a].                                  |         |
+refine_alist2(X, X) -> X.                  | ERROR   | X.
+                                           |         | Expected: ['a']
+                                           |         | Got     : ['a' | 'b']
+                                           |         | 
+                                           |         |   ['a' | 'b'] is not a subtype of ['a']
+                                           |         |   because
+                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   because
+                                           |         |   'b' is not a subtype of 'a'
+                                           |         |
+-type tlist(T) :: [tlist(T) | T].          |         |
+                                           |         |
+-spec refine_tlist1_neg(                   |         |
+    tlist(a), [a | b]                      |         |
+) -> pid().                                |         |
+refine_tlist1_neg(X, X) -> X.              | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : ['a' | 'b']
+                                           |         |
+-spec refine_tlist2(                       |         |
+    tlist(a), [a | b]                      |         |
+) -> [a].                                  |         |
+refine_tlist2(X, X) -> X.                  | ERROR   | X.
+                                           |         | Expected: ['a']
+                                           |         | Got     : ['a' | 'b']
+                                           |         | 
+                                           |         |   ['a' | 'b'] is not a subtype of ['a']
+                                           |         |   because
+                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   because
+                                           |         |   'b' is not a subtype of 'a'
+                                           |         |
+-type my_list()                            |         |
+:: nil                                     |         |
+| {cons, nil | my_list()}.                 |         |
+                                           |         |
+-spec refine_recursive_neg(my_list())      |         |
+        -> number().                       |         |
+refine_recursive_neg({cons, H}) ->         | ERROR   |
+    Res = {cons, H},                       |         |
+    Res.                                   |         | Res.
+                                           |         | Expected: number()
+                                           |         | Got     : {'cons', 'nil' | my_list()}
+                                           |         |
+-spec exploit_recursive() -> ok.           |         |
+exploit_recursive() ->                     | OK      |
+    refine_recursive_neg({cons, nil}) + 1, |         |
+    ok.                                    |         |
+                                           |         |
+% returns a number                         |         |
+-spec opaque1_neg(                         |         |
+    gb_sets:set(atom())) ->                |         |
+    pid().                                 |         |
+opaque1_neg({X, _}) -> X.                  | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : any()
+                                           |         |
+% returns a tuple                          |         |
+-spec opaque2_neg(                         |         |
+    gb_sets:iter(atom())) ->               |         |
+    pid().                                 |         |
+opaque2_neg([X, _]) -> X.                  | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : any()
+                                           |         |
+% returns an atom                          |         |
+-spec opaque_3_neg(                        |         |
+    sets:set(atom())                       |         |
+) -> pid().                                |         |
+opaque_3_neg({                             | ERROR   |
+    X, _, _, _, _, _, _, _, _              |         |
+}) -> X.                                   |         | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : any()
+                                           |         |
+% returns a 2-tuple                        |         |
+-spec opaque_4_neg(                        |         |
+    gb_sets:set(atom()),                   |         |
+    {term(), term()}                       |         |
+) -> pid().                                |         |
+opaque_4_neg(X, X) -> X.                   | ERROR   | X.
+                                           |         | Expected: pid()
+                                           |         | Got     : {any(), any()}
+                                           |         |
+-spec record_as_tuple1_neg                 |         |
+(#my_rec{}, tuple()) -> none().            |         |
+record_as_tuple1_neg(R, R) -> R.           | ERROR   | R.
+                                           |         | Expected: none()
+                                           |         | Got     : #my_rec{}
+                                           |         |
+-spec record_as_tuple2_neg                 |         |
+(tuple(), #my_rec{}) -> none().            |         |
+record_as_tuple2_neg(R, R) -> R.           | ERROR   | R.
+                                           |         | Expected: none()
+                                           |         | Got     : #my_rec{}
+                                           |         |
+-spec record_as_tuple3                     |         |
+(#my_rec{}) -> tuple().                    |         |
+record_as_tuple3(R) -> R.                  | OK      |
+                                           |         |
+-spec record_as_tuple4                     |         |
+(#my_rec{}) -> {my_rec, any(), any()}.     |         |
+record_as_tuple4(R) -> R.                  | OK      |
+                                           |         |
+-spec record_as_tuple5_neg                 |         |
+(tuple()) ->  #my_rec{}.                   |         |
+record_as_tuple5_neg(R) -> R.              | ERROR   | R.
+                                           |         | Expected: #my_rec{}
+                                           |         | Got     : tuple()
+                                           |         |
+-spec record_as_tuple6_neg                 |         |
+(#my_rec{}) -> {not_my_rec, any(), any()}. |         |
+record_as_tuple6_neg(R) -> R.              | ERROR   | R.
+                                           |         | Expected: {'not_my_rec', any(), any()}
+                                           |         | Got     : #my_rec{}
+                                           |         | 
+                                           |         |   at tuple index 1:
+                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', any(), any()}
+                                           |         |   because
+                                           |         |   'my_rec' is not a subtype of 'not_my_rec'
+                                           |         |
+% subtyping "bad" record                   |         |
+-record(bad_rec, {                         | INVALID |
+    i :: unknown:unknown()                 |         | Unknown id: unknown:unknown/0
+
+}).                                        |         |
+-spec record_as_tuple7_neg                 | INVALID | record_as_tuple7_neg/1 references type with invalid definition: #bad_rec{}
+
+(#bad_rec{}) -> {bad_rec, atom()}.         |         |
+record_as_tuple7_neg(R) -> R.              | NO SPEC |
+                                           |         |
+-spec tuple_as_record1                     |         |
+({my_rec, integer(), atom()}) ->           |         |
+#my_rec{}.                                 |         |
+tuple_as_record1(R) -> R.                  | OK      |
+                                           |         |
+-spec tuple_as_record2_neg                 |         |
+  ({my_rec, atom(), integer()}) ->         |         |
+    #my_rec{}.                             |         |
+tuple_as_record2_neg(R) -> R.              | ERROR   | R.
+                                           |         | Expected: #my_rec{}
+                                           |         | Got     : {'my_rec', atom(), number()}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}
+                                           |         |   because
+                                           |         |   atom() is not a subtype of number()
+                                           |         |
+%% different arities -> X = none()         |         |
+-spec tup_guard_record1                    |         |
+({my_rec, _}) -> term().                   |         |
+tup_guard_record1(X)                       | OK      |
+    when is_record(X, my_rec) ->           |         |
+    X * 2.                                 |         |
+                                           |         |
+-spec tup_guard_record2_neg                |         |
+({my_rec, _, _}) -> term().                |         |
+tup_guard_record2_neg(X)                   | ERROR   |
+    when is_record(X, my_rec) ->           |         |
+    X * 2.                                 |         | X.
+                                           |         | Expected: number()
+                                           |         | Got     : #my_rec{}
+                                           |         |
+-spec record_guard_tup_neg                 |         |
+(#my_rec{}) -> term().                     |         |
+record_guard_tup_neg(X)                    | ERROR   |
+    when is_tuple(X) ->                    |         |
+    X * 2.                                 |         | X.
+                                           |         | Expected: number()
+                                           |         | Got     : #my_rec{}
+                                           |         |
+-spec ftt(fun((T) -> ok), T) -> T.         |         |
+ftt(X, _) -> X.                            | ERROR   | X.
+                                           |         | Expected: T
+                                           |         | Got     : fun((T) -> 'ok')
+                                           |         |
+-spec my_rec_to_ok(#my_rec{}) -> ok.       |         |
+my_rec_to_ok(X) -> X.                      | ERROR   | X.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : #my_rec{}
+                                           |         |
+-spec use1                                 |         |
+(fun((#my_rec{}) -> ok),                   |         |
+{my_rec, integer(), atom()})               |         |
+-> term().                                 |         |
+use1(F, X) -> ftt(F, X).                   | OK      |
+                                           |         |
+-spec use2_neg                             |         |
+(fun((#my_rec{}) -> ok),                   |         |
+{my_rec, atom(), integer()})               |         |
+-> term().                                 |         |
+use2_neg(F, X) -> ftt(F, X).               | ERROR   | X.
+                                           |         | Expected: #my_rec{}
+                                           |         | Got     : {'my_rec', atom(), number()}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}
+                                           |         |   because
+                                           |         |   atom() is not a subtype of number()
+                                           |         |
+-spec use3                                 |         |
+(fun(({my_rec, integer(), atom()}) -> ok), |         |
+#my_rec{})                                 |         |
+-> term().                                 |         |
+use3(F, X) -> ftt(F, X).                   | OK      |
+                                           |         |
+-spec use4_neg                             |         |
+(fun(({my_rec, atom(), integer()}) -> ok), |         |
+#my_rec{})                                 |         |
+-> term().                                 |         |
+use4_neg(F, X) -> ftt(F, X).               | ERROR   | X.
+                                           |         | Expected: {'my_rec', atom(), number()}
+                                           |         | Got     : #my_rec{}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), number()}
+                                           |         |   because
+                                           |         |   number() is not a subtype of atom()
+                                           |         |
+-spec ttt1                                 |         |
+({my_rec, integer(), T}, T) -> T.          |         |
+ttt1(T, T) -> T.                           | OK      |
+                                           |         |
+-spec use5                                 |         |
+(#my_rec{}) -> atom().                     |         |
+use5(X) -> ttt1(X, x).                     | OK      |
+                                           |         |
+-spec ttt2                                 |         |
+({my_rec, atom(), T}, T) -> T.             |         |
+ttt2(T, T) -> T.                           | OK      |
+                                           |         |
+-spec use6_neg                             |         |
+(#my_rec{}) -> atom().                     |         |
+use6_neg(X) -> ttt2(X, x).                 | ERROR   | X.
+                                           |         | Expected: {'my_rec', atom(), T}
+                                           |         | Got     : #my_rec{}
+                                           |         | 
+                                           |         |   at tuple index 2:
+                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), T}
+                                           |         |   because
+                                           |         |   number() is not a subtype of atom()
+                                           |         |
+-spec use7_neg                             |         |
+(#my_rec{}) -> integer().                  |         |
+use7_neg(X) -> ttt1(X, 1).                 | ERROR   | ttt1(X, 1).
+                                           |         | Expected: number()
+                                           |         | Got     : atom() | number()
+                                           |         | 
+                                           |         |   atom() | number() is not a subtype of number()
+                                           |         |   because
+                                           |         |   atom() is not a subtype of number()
+                                           |         |
+-spec deets(#my_rec{} | a)                 |         |
+-> {my_rec, _, _}.                         |         |
+deets(X) -> X.                             | ERROR   | X.
+                                           |         | Expected: {'my_rec', any(), any()}
+                                           |         | Got     : #my_rec{} | 'a'
+                                           |         | 
+                                           |         |   #my_rec{} | 'a' is not a subtype of {'my_rec', any(), any()}
+                                           |         |   because
+                                           |         |   'a' is not a subtype of {'my_rec', any(), any()}
+                                           |         |
+-record(union_rec, {                       |         |
+    b :: undefined | binary(),             |         |
+    s :: undefined | string()              |         |
+}).                                        |         |
+                                           |         |
+-spec rec_field_b_1_neg                    |         |
+    (#union_rec{}) -> binary().            |         |
+rec_field_b_1_neg(#union_rec{b = B}) ->    | ERROR   |
+    B.                                     |         | B.
+                                           |         | Expected: binary()
+                                           |         | Got     : 'undefined' | binary()
+                                           |         | 
+                                           |         |   'undefined' | binary() is not a subtype of binary()
+                                           |         |   because
+                                           |         |   'undefined' is not a subtype of binary()
+                                           |         |
+-spec rec_field_b_2                        |         |
+    (#union_rec{}) -> binary().            |         |
+rec_field_b_2(#union_rec{b = B})           | OK      |
+    when is_binary(B) ->                   |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_3                        |         |
+    (#union_rec{}) -> undefined.           |         |
+rec_field_b_3(#union_rec{b = B})           | OK      |
+    when B == undefined ->                 |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_4                        |         |
+    (#union_rec{}) -> undefined.           |         |
+rec_field_b_4(#union_rec{b = B})           | OK      |
+    when B =:= undefined ->                |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_5                        |         |
+    (#union_rec{}) -> binary().            |         |
+rec_field_b_5(#union_rec{b = B})           | OK      |
+    when B =/= undefined ->                |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_6                        |         |
+    (#union_rec{}) -> binary().            |         |
+rec_field_b_6(#union_rec{b = B})           | OK      |
+    when B /= undefined ->                 |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_7                        |         |
+    (#union_rec{}) -> undefined.           |         |
+rec_field_b_7(#union_rec{b = B})           | OK      |
+    when undefined == B ->                 |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_8                        |         |
+    (#union_rec{}) -> undefined.           |         |
+rec_field_b_8(#union_rec{b = B})           | OK      |
+    when undefined =:= B ->                |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_9                        |         |
+    (#union_rec{}) -> binary().            |         |
+rec_field_b_9(#union_rec{b = B})           | OK      |
+    when undefined =/= B ->                |         |
+    B.                                     |         |
+                                           |         |
+-spec rec_field_b_10                       |         |
+    (#union_rec{}) -> binary().            |         |
+rec_field_b_10(#union_rec{b = B})          | OK      |
+    when undefined /= B ->                 |         |
+    B.                                     |         |
+                                           |         |
+-type shape() :: #{                        |         |
+    id => number(),                        |         |
+    name => string()                       |         |
+}.                                         |         |
+                                           |         |
+-spec double_id_neg(shape()) -> shape().   |         |
+double_id_neg(S) ->                        | ERROR   |
+    S#{id := 42}.                          |         | S.
+                                           |         | Undef key `id`. Type: shape()
+                                           |         |
+-spec double_id(shape()) -> shape().       |         |
+double_id(#{id := Id} = S) ->              | OK      |
+    S#{id := Id * 2};                      |         |
+double_id(S) ->                            |         |
+    S.                                     |         |
+                                           |         |
+-record(any_rec, {field :: any()}).        |         |
+-type tagged() :: {tag, integer()}.        |         |
+                                           |         |
+-spec snd(#any_rec{} | tagged()) ->        |         |
+    integer().                             |         |
+snd({tag, I}) -> I.                        | OK      |
+                                           |         |
+-spec use_private_record_neg() -> ok.      |         |
+use_private_record_neg() ->                | ERROR   |
+    Rec = records:mk_foo_pos(),            |         |
+    {foo, _Id, Name} = Rec,                |         |
+    eqwalizer:reveal_type(Name),           |         | atom()
+
+    Name.                                  |         |
