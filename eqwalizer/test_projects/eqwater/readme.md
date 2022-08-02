@@ -2,8 +2,6 @@
 
 Next-generation (smart) occurrence typing for eqWAlizer.
 
-It's based on eqWAter-4 [prototype](https://www.internalfb.com/code/eqwalizer/src/fbsource/fbcode/whatsapp/experimental/eqwater/).
-
 Structure of examples:
 
 - `eqwater.erl` - the basic examples (also used for keep code coverage) with "raw types" (without type aliases).
