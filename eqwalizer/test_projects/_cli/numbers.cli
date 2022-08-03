@@ -1,9 +1,9 @@
 all specs:
-    containing number: 13.85%
-    containing integer: 9.79%
-    containing pos_integer: 3.43%
+    containing number: 13.81%
+    containing integer: 9.76%
+    containing pos_integer: 3.42%
     containing non_neg_integer: 2.13%
-    containing neg_integer: 1.58%
+    containing neg_integer: 1.57%
     containing byte: 0.28%
     containing char: 0.24%
     containing float: 0.59%
@@ -21,11 +21,11 @@ generated specs:
     containing range: 0.00%
     containing int lit: 0.00%
 non-generated specs:
-    containing number: 13.85%
-    containing integer: 9.79%
-    containing pos_integer: 3.43%
+    containing number: 13.81%
+    containing integer: 9.76%
+    containing pos_integer: 3.42%
     containing non_neg_integer: 2.13%
-    containing neg_integer: 1.58%
+    containing neg_integer: 1.57%
     containing byte: 0.28%
     containing char: 0.24%
     containing float: 0.59%

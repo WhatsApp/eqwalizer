@@ -46,3 +46,66 @@ test() ->
 test_arity_neg() ->
   X = fun(a, _) -> b end,
   X.
+
+-spec fun1a() -> atom().
+fun1a() ->
+  X = ok,
+  Res = (fun(Z) -> Z end)(X),
+  Res.
+
+-spec fun1b() -> atom().
+fun1b() ->
+  X = ok,
+  (fun(Z) -> Z end)(X).
+
+-spec fun2a(boolean()) -> atom().
+fun2a(B) ->
+  Res =
+    (fun F() ->
+      case B of
+        true -> true;
+        false -> F()
+      end
+     end)(),
+  Res.
+
+-spec fun2b(boolean()) -> atom().
+fun2b(B) ->
+  (fun F() ->
+    case B of
+      true -> true;
+      false -> F()
+    end
+   end)().
+
+-spec fun3a(boolean(), X) -> X.
+fun3a(B, X) ->
+  Res =
+    (fun F(Y) ->
+      case B of
+        true -> Y;
+        false -> F(Y)
+      end
+    end)(X),
+  Res.
+
+-spec fun3b(boolean(), X) -> X.
+fun3b(B, X) ->
+  (fun F(Y) ->
+    case B of
+      true -> Y;
+      false -> F(Y)
+    end
+   end)(X).
+
+-spec fun4b() -> pid().
+fun4b() ->
+  spawn_link(fun F() ->
+    receive
+      continue ->
+        F();
+      exit ->
+        ok
+    end
+  end),
+  ok.

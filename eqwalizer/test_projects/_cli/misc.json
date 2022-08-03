@@ -2386,7 +2386,14 @@
           "fold2_neg/1",
           "fold3_neg/1",
           "test/0",
-          "test_arity_neg/0"
+          "test_arity_neg/0",
+          "fun1a/0",
+          "fun1b/0",
+          "fun2a/1",
+          "fun2b/1",
+          "fun3a/2",
+          "fun3b/2",
+          "fun4b/0"
         ]
       },
       {

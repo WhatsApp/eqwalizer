@@ -56,3 +56,69 @@ test_arity_neg() ->                        | ERROR   |
   X.                                       |         | X.
                                            |         | Expected: fun(('a') -> 'b')
                                            |         | Got     : fun((dynamic(), dynamic()) -> dynamic())
+                                           |         |
+-spec fun1a() -> atom().                   |         |
+fun1a() ->                                 | OK      |
+  X = ok,                                  |         |
+  Res = (fun(Z) -> Z end)(X),              |         |
+  Res.                                     |         |
+                                           |         |
+-spec fun1b() -> atom().                   |         |
+fun1b() ->                                 | OK      |
+  X = ok,                                  |         |
+  (fun(Z) -> Z end)(X).                    |         |
+                                           |         |
+-spec fun2a(boolean()) -> atom().          |         |
+fun2a(B) ->                                | OK      |
+  Res =                                    |         |
+    (fun F() ->                            |         |
+      case B of                            |         |
+        true -> true;                      |         |
+        false -> F()                       |         |
+      end                                  |         |
+     end)(),                               |         |
+  Res.                                     |         |
+                                           |         |
+-spec fun2b(boolean()) -> atom().          |         |
+fun2b(B) ->                                | ERROR   |
+  (fun F() ->                              |         |
+    case B of                              |         |
+      true -> true;                        |         |
+      false -> F()                         |         | Unbound var: F
+
+    end                                    |         |
+   end)().                                 |         |
+                                           |         |
+-spec fun3a(boolean(), X) -> X.            |         |
+fun3a(B, X) ->                             | OK      |
+  Res =                                    |         |
+    (fun F(Y) ->                           |         |
+      case B of                            |         |
+        true -> Y;                         |         |
+        false -> F(Y)                      |         |
+      end                                  |         |
+    end)(X),                               |         |
+  Res.                                     |         |
+                                           |         |
+-spec fun3b(boolean(), X) -> X.            |         |
+fun3b(B, X) ->                             | ERROR   |
+  (fun F(Y) ->                             |         |
+    case B of                              |         |
+      true -> Y;                           |         |
+      false -> F(Y)                        |         | Unbound var: F
+
+    end                                    |         |
+   end)(X).                                |         |
+                                           |         |
+-spec fun4b() -> pid().                    |         |
+fun4b() ->                                 | ERROR   |
+  spawn_link(fun F() ->                    |         |
+    receive                                |         |
+      continue ->                          |         |
+        F();                               |         | Unbound var: F
+
+      exit ->                              |         |
+        ok                                 |         |
+    end                                    |         |
+  end),                                    |         |
+  ok.                                      |         |
