@@ -33,6 +33,15 @@ Adding `eqwalizer_support` and `eqwalizer_rebar3`:
 ]}.
 ```
 
+## FAQ
+
+Please refer to [the FAQ document][./FAQ.md] for answers to some common questions,
+including:
+
+- What's the difference between eqWAlizer and Dialyzer?
+- Why not extend Dialyzer, rather than creating a new tool?
+- What about Elixir?
+
 ## License
 
 eqWAlizer is [Apache licensed](./LICENSE).
