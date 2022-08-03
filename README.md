@@ -19,7 +19,7 @@ Adding `eqwalizer_support` and `eqwalizer_rebar3`:
 {deps, [
   {eqwalizer_support,
     {git_subdir,
-        "git@github.com:whatsapp/eqwalizer.git",
+        "https://github.com/whatsapp/eqwalizer.git",
         {branch, "main"},
         "eqwalizer_support"}}
 ]}.
@@ -27,7 +27,7 @@ Adding `eqwalizer_support` and `eqwalizer_rebar3`:
 {project_plugins, [
   {eqwalizer_rebar3,
     {git_subdir,
-        "git@github.com:whatsapp/eqwalizer.git",
+        "https://github.com/whatsapp/eqwalizer.git",
         {branch, "main"},
         "eqwalizer_rebar3"}}
 ]}.
