@@ -39,6 +39,8 @@ class ConvertAst(fromBeam: Boolean) {
     def unapply(term: EObject): Option[Pos] = term match {
       case ETuple(List(l: ELong, c: ELong)) =>
         Some(pos(l.value.intValue, c.value.intValue))
+      case EList(List(ETuple(List(EAtom("text"), EString(_))), ETuple(List(EAtom("location"), pos))), None) =>
+        unapply(pos)
       // We have some "bad code" after parse transforms.
       case l: ELong =>
         Some(pos(l.value.intValue, l.value.intValue + 1))
