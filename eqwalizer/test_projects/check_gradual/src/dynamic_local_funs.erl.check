@@ -80,12 +80,11 @@ fun2a(B) ->                                | OK      |
   Res.                                     |         |
                                            |         |
 -spec fun2b(boolean()) -> atom().          |         |
-fun2b(B) ->                                | ERROR   |
+fun2b(B) ->                                | OK      |
   (fun F() ->                              |         |
     case B of                              |         |
       true -> true;                        |         |
-      false -> F()                         |         | Unbound var: F
-
+      false -> F()                         |         |
     end                                    |         |
    end)().                                 |         |
                                            |         |
@@ -101,12 +100,11 @@ fun3a(B, X) ->                             | OK      |
   Res.                                     |         |
                                            |         |
 -spec fun3b(boolean(), X) -> X.            |         |
-fun3b(B, X) ->                             | ERROR   |
+fun3b(B, X) ->                             | OK      |
   (fun F(Y) ->                             |         |
     case B of                              |         |
       true -> Y;                           |         |
-      false -> F(Y)                        |         | Unbound var: F
-
+      false -> F(Y)                        |         |
     end                                    |         |
    end)(X).                                |         |
                                            |         |
@@ -115,10 +113,11 @@ fun4b() ->                                 | ERROR   |
   spawn_link(fun F() ->                    |         |
     receive                                |         |
       continue ->                          |         |
-        F();                               |         | Unbound var: F
-
+        F();                               |         |
       exit ->                              |         |
         ok                                 |         |
     end                                    |         |
   end),                                    |         |
-  ok.                                      |         |
+  ok.                                      |         | 'ok'.
+                                           |         | Expected: pid()
+                                           |         | Got     : 'ok'

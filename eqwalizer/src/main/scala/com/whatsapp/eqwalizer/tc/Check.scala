@@ -183,16 +183,23 @@ final class Check(pipelineContext: PipelineContext) {
                 throw UnboundVar(expr.pos, fqn.toString)
             }
         case DynCall(l: Lambda, args) =>
-          val (argTys, env1) = elab.elabExprs(args, env)
           val arity = lambdaArity(l)
           if (arity != args.size) throw LambdaArityMismatch(l.pos, l, lambdaArity = arity, argsArity = args.size)
-          if (occurrence.eqwater(l.clauses)) {
-            val envs = occurrence.clausesEnvs(l.clauses, argTys, env1)
-            l.clauses
-              .lazyZip(envs)
-              .map((clause, occEnv) => checkClause(clause, argTys, resTy, occEnv, Set.empty))
-          } else {
-            l.clauses.foreach(checkClause(_, argTys, resTy, env1, Set.empty))
+          val (argTys, env1) = elab.elabExprs(args, env)
+          l.name match {
+            case Some(name) if pipelineCtx.gradualTyping =>
+              val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), resTy)
+              val env2 = env.updated(name, funType)
+              checkExpr(l, funType, env2)
+            case _ =>
+              if (occurrence.eqwater(l.clauses)) {
+                val envs = occurrence.clausesEnvs(l.clauses, argTys, env1)
+                l.clauses
+                  .lazyZip(envs)
+                  .map((clause, occEnv) => checkClause(clause, argTys, resTy, occEnv, Set.empty))
+              } else {
+                l.clauses.foreach(checkClause(_, argTys, resTy, env1, Set.empty))
+              }
           }
           env1
         case DynCall(dynRemoteFun: DynRemoteFun, args) =>
@@ -458,13 +465,19 @@ final class Check(pipelineContext: PipelineContext) {
         val arity = lambdaArity(lambda)
         if (arity != fParamTys.size)
           throw LambdaArityMismatch(lambda.pos, lambda, lambdaArity = arity, argsArity = fParamTys.size)
+        val env1 = lambda.name match {
+          case Some(name) =>
+            env.updated(name, resTy)
+          case _ =>
+            env
+        }
         if (occurrence.eqwater(lambda.clauses)) {
-          val envs = occurrence.clausesEnvs(lambda.clauses, fParamTys, env)
+          val envs = occurrence.clausesEnvs(lambda.clauses, fParamTys, env1)
           lambda.clauses
             .lazyZip(envs)
             .map((clause, occEnv) => checkClause(clause, fParamTys, fResTy, occEnv, Set.empty))
         } else {
-          lambda.clauses.foreach(checkClause(_, fParamTys, fResTy, env, exportedVars = Set.empty))
+          lambda.clauses.foreach(checkClause(_, fParamTys, fResTy, env1, exportedVars = Set.empty))
         }
       case _ =>
         val (ty, _) = elab.elabExpr(lambda, env)

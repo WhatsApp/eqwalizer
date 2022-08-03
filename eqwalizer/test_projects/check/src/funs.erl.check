@@ -265,16 +265,18 @@ named_2() ->                               | OK      |
                                            |         |
 -spec named_3() -> fun(() -> a).           |         |
 named_3() ->                               | ERROR   |
-    fun F() -> F end.                      |         | Unbound var: F
-
+    fun F() -> F end.                      |         | F.
+                                           |         | Expected: 'a'
+                                           |         | Got     : fun(() -> 'a')
                                            |         |
 -spec named_4() -> nok.                    |         |
 named_4() ->                               | ERROR   |
     lists:map(                             |         |
         fun Fib(N) when N < 2 -> 1;        |         |
             Fib(N) ->                      |         |
-                Fib(N - 2) + Fib(N - 1)    |         | Unbound var: Fib
-
+                Fib(N - 2) + Fib(N - 1)    |         | _ - _.
+                                           |         | Expected: none()
+                                           |         | Got     : number()
         end,                               |         |
         [1, 2, 3]                          |         |
     ),                                     |         |

@@ -204,22 +204,22 @@ final class Elab(pipelineContext: PipelineContext) {
         }
       case lambda @ Lambda(clauses) =>
         val arity = clauses.head.pats.length
+        val funType = if (pipelineContext.gradualTyping) {
+          FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
+        } else {
+          FunType(Nil, List.fill(arity)(NoneType), AnyType)
+        }
+        val env1 = lambda.name match {
+          case Some(name) if pipelineCtx.gradualTyping =>
+            env.updated(name, funType)
+          case _ =>
+            env
+        }
         if (arity == 0) {
-          val clauseTys = lambda.clauses.map(elabClause(_, Nil, env, Set.empty)).map(_._1)
+          val clauseTys = lambda.clauses.map(elabClause(_, Nil, env1, Set.empty)).map(_._1)
           val resTy = subtype.join(clauseTys)
           (FunType(Nil, Nil, resTy), env)
         } else {
-          val funType = if (pipelineContext.gradualTyping) {
-            FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
-          } else {
-            FunType(Nil, List.fill(arity)(NoneType), AnyType)
-          }
-          val env1 = lambda.name match {
-            case Some(name) if pipelineCtx.gradualTyping =>
-              env.updated(name, funType)
-            case _ =>
-              env
-          }
           check.checkExpr(lambda, funType, env1)
           (funType, env)
         }

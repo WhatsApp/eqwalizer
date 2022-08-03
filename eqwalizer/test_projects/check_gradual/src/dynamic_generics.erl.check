@@ -129,34 +129,34 @@ named1() ->                                | OK      |
                                            |         |
 -spec named2_neg() -> [integer()].         |         |
 named2_neg() ->                            | ERROR   |
-  lists:map(                               |         | lists:map(fun, [1, 2, 3]).
-                                           |         | Expected: [number()]
-                                           |         | Got     : [number() | 'three']
-                                           |         | 
-                                           |         |   [number() | 'three'] is not a subtype of [number()]
-                                           |         |   because
-                                           |         |   number() | 'three' is not a subtype of number()
-                                           |         |   because
-                                           |         |   'three' is not a subtype of number()
+  lists:map(                               |         |
     fun                                    |         |
       Fib(N) when N < 2                    |         |
         -> 1;                              |         |
       Fib(3) ->                            |         |
         three;                             |         |
       Fib(N) ->                            |         |
-        Fib(N - 2) + Fib(N - 1)            |         |
+        Fib(N - 2) + Fib(N - 1)            |         | Fib(_ - _).
+                                           |         | Expected: number()
+                                           |         | Got     : number() | 'three'
+                                           |         | 
+                                           |         |   number() | 'three' is not a subtype of number()
+                                           |         |   because
+                                           |         |   'three' is not a subtype of number()
     end,                                   |         |
     [1, 2, 3]                              |         |
   ).                                       |         |
                                            |         |
 -spec named3_neg() -> [integer()].         |         |
-named3_neg() ->                            | OK      |
+named3_neg() ->                            | ERROR   |
   lists:map(                               |         |
     fun                                    |         |
       Fib(N) when N < 2                    |         |
         -> 1;                              |         |
       Fib(N) ->                            |         |
-        Fib(undefined) + Fib(N - 1)        |         |
+        Fib(undefined) + Fib(N - 1)        |         | 'undefined'.
+                                           |         | Expected: number()
+                                           |         | Got     : 'undefined'
     end,                                   |         |
     [1, 2, 3]                              |         |
   ).                                       |         |
