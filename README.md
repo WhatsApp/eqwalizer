@@ -35,7 +35,7 @@ Adding `eqwalizer_support` and `eqwalizer_rebar3`:
 
 ## FAQ
 
-Please refer to [the FAQ document][./FAQ.md] for answers to some common questions,
+Please refer to [the FAQ document](./FAQ.md) for answers to some common questions,
 including:
 
 - What's the difference between eqWAlizer and Dialyzer?
