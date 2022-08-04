@@ -6,6 +6,10 @@ A type-checker for Erlang.
 
 1. Use OTP 25
 2. Download the `elp` binary for your system from https://github.com/WhatsApp/eqwalizer/releases
+
+    > On Mac you will probably get the following message when trying to run the executable the first time: "elp cannot be opened because the developer cannot be verified.".
+    To solve this, go to Preferences > Security and Privacy and add an exception. Alternatively, you can build elp from source.
+
 3. Add `eqwalizer_support` dependency and `eqwalizer_rebar3` plugin
    to your rebar3 project definition (see below)
 4. From the project directory run:
