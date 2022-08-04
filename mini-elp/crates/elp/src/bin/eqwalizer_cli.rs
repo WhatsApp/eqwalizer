@@ -42,7 +42,12 @@ pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> 
     let file_id = analysis
         .module_file_id(loaded.project_id, &args.module)?
         .with_context(|| format!("Module {} not found", &args.module))?;
-    let reporter = &mut reporting::PrettyReporter::new(analysis, loaded, &mut out);
+    let mut reporter: Box<dyn reporting::Reporter> = if args.json {
+        Box::new(reporting::JsonReporter::new(analysis, loaded, &mut out))
+    } else {
+        Box::new(reporting::PrettyReporter::new(analysis, loaded, &mut out))
+    };
+    let reporter = reporter.as_mut();
     eqwalize(EqwalizerInternalArgs {
         analysis,
         loaded,

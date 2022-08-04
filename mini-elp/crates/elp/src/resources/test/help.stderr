@@ -18,6 +18,7 @@ COMMANDS:
     eqwalize <module>          Eqwalize specified module
         --project              Path to directory with rebar project (defaults to `.`)
         --fast                 Refresh AST information for only the specified module
+        --format json          Show diagnostics in JSON format
     eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
         --project              Path to directory with rebar project (defaults to `.`)
         --format json          Show diagnostics in JSON format

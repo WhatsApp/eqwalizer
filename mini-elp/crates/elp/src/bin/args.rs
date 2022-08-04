@@ -32,6 +32,7 @@ pub struct Eqwalize {
     pub module: String,
     pub fast: bool,
     pub profile: Option<String>,
+    pub json: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -77,6 +78,7 @@ COMMANDS:
     eqwalize <module>          Eqwalize specified module
         --project              Path to directory with rebar project (defaults to `.`)
         --fast                 Refresh AST information for only the specified module
+        --format json          Show diagnostics in JSON format
     eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
         --project              Path to directory with rebar project (defaults to `.`)
         --format json          Show diagnostics in JSON format
@@ -133,11 +135,17 @@ impl Args {
                 let project = get_project(&mut arguments)?;
                 let module = arguments.free_from_str()?;
                 let fast = arguments.contains("--fast");
+                // TODO: Refactor into function
+                let format: String = arguments
+                    .opt_value_from_str("--format")?
+                    .unwrap_or_default();
+                let json = format == "json";
                 Command::Eqwalize(Eqwalize {
                     project,
                     module,
                     fast,
                     profile,
+                    json,
                 })
             }
             "eqwalize-all" => {
