@@ -135,11 +135,7 @@ impl Args {
                 let project = get_project(&mut arguments)?;
                 let module = arguments.free_from_str()?;
                 let fast = arguments.contains("--fast");
-                // TODO: Refactor into function
-                let format: String = arguments
-                    .opt_value_from_str("--format")?
-                    .unwrap_or_default();
-                let json = format == "json";
+                let json = get_json(&mut arguments)?;
                 Command::Eqwalize(Eqwalize {
                     project,
                     module,
@@ -150,10 +146,7 @@ impl Args {
             }
             "eqwalize-all" => {
                 let project = get_project(&mut arguments)?;
-                let format: String = arguments
-                    .opt_value_from_str("--format")?
-                    .unwrap_or_default();
-                let json = format == "json";
+                let json = get_json(&mut arguments)?;
                 Command::EqwalizeAll(EqwalizeAll {
                     project,
                     profile,
@@ -171,6 +164,11 @@ impl Args {
 fn get_project(args: &mut Arguments) -> Result<PathBuf> {
     let project = args.opt_value_from_str("--project")?;
     Ok(project.unwrap_or(PathBuf::from(".")))
+}
+
+fn get_json(args: &mut Arguments) -> Result<bool> {
+    let format: String = args.opt_value_from_str("--format")?.unwrap_or_default();
+    Ok(format == "json")
 }
 
 fn finish_args(args: Arguments) -> Result<()> {
