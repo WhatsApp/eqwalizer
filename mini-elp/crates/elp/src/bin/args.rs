@@ -102,7 +102,11 @@ impl Args {
 
         let command = match arguments.subcommand()? {
             Some(command) => command,
-            None => bail!("Command is expected"),
+            None => {
+                return Ok(Args {
+                    command: Command::Help,
+                });
+            }
         };
 
         let command = match command.as_str() {
