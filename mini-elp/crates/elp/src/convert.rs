@@ -8,6 +8,7 @@ use std::path::Path;
 
 use elp_eqwalizer::EqwalizerDiagnostic;
 use elp_ide_db::LineIndex;
+use text_size::TextRange;
 use text_size::TextSize;
 
 use crate::arc_types;
@@ -15,6 +16,12 @@ use crate::arc_types;
 pub fn position(line_index: &LineIndex, offset: TextSize) -> lsp_types::Position {
     let line_col = line_index.line_col(offset);
     lsp_types::Position::new(line_col.line, line_col.col_utf16)
+}
+
+pub fn range(line_index: &LineIndex, range: TextRange) -> lsp_types::Range {
+    let start = position(line_index, range.start());
+    let end = position(line_index, range.end());
+    lsp_types::Range::new(start, end)
 }
 
 pub fn eqwalizer_to_arc_diagnostic(
@@ -52,6 +59,30 @@ pub fn eqwalizer_to_arc_diagnostic(
         message,
         d.expression.clone(),
     )
+}
+
+pub fn eqwalizer_to_lsp_diagnostic(
+    d: &EqwalizerDiagnostic,
+    line_index: &LineIndex,
+) -> lsp_types::Diagnostic {
+    let range = range(line_index, d.range);
+    let severity = lsp_types::DiagnosticSeverity::WARNING;
+    let explanation = match &d.explanation {
+        Some(s) => format!("\n\n{}", s),
+        None => "".to_string(),
+    };
+    let message = format!("{}{}\n", d.message, explanation);
+    lsp_types::Diagnostic {
+        range,
+        severity: Some(severity),
+        code: Some(lsp_types::NumberOrString::String("eqwalizer".to_string())),
+        code_description: None,
+        source: Some("elp".into()),
+        message,
+        related_information: None,
+        tags: None,
+        data: None,
+    }
 }
 
 fn expr_string(d: &EqwalizerDiagnostic) -> String {

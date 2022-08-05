@@ -209,6 +209,21 @@ mod tests {
     }
 
     #[test]
+    fn eqwalize_module_diagnostics_match_snapshot_json_lsp() {
+        simple_snapshot(
+            args_vec![
+                "eqwalize",
+                "app_a_mod2",
+                "--project",
+                "../../test_projects/standard",
+                "--format",
+                "json-lsp"
+            ],
+            expect_file!["../resources/test/standard/eqwalize_app_a_mod2_diagnostics_lsp.jsonl"],
+        );
+    }
+
+    #[test]
     fn eqwalize_all_diagnostics_match_snapshot_jsonl() {
         simple_snapshot(
             args_vec![

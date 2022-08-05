@@ -1,0 +1,2 @@
+{"relative_path":"app_a/src/app_a_mod2.erl","diagnostic":{"range":{"start":{"line":26,"character":0},"end":{"line":26,"character":26}},"severity":2,"code":"eqwalizer","source":"elp","message":"recursive type invalid/0 is not productive\n"}}
+{"relative_path":"app_a/src/app_a_mod2.erl","diagnostic":{"range":{"start":{"line":35,"character":8},"end":{"line":35,"character":15}},"severity":2,"code":"eqwalizer","source":"elp","message":"Expected: number()\nGot     : 'an_atom'\n"}}

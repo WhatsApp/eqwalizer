@@ -18,10 +18,10 @@ COMMANDS:
     eqwalize <module>          Eqwalize specified module
         --project              Path to directory with rebar project (defaults to `.`)
         --fast                 Refresh AST information for only the specified module
-        --format json          Show diagnostics in JSON format
+        --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
     eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
         --project              Path to directory with rebar project (defaults to `.`)
-        --format json          Show diagnostics in JSON format
+        --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
 
 ENV VARS:
     ELP_EQWALIZER_PATH         Path to the eqwalizer executable, otherwise local one is used

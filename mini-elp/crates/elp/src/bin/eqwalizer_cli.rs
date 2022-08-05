@@ -21,6 +21,7 @@ use rayon::prelude::*;
 
 use crate::args::Eqwalize;
 use crate::args::EqwalizeAll;
+use crate::args::Format;
 use crate::load_rebar;
 use crate::load_rebar::LoadResult;
 use crate::parse_server_cli;
@@ -42,10 +43,10 @@ pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> 
     let file_id = analysis
         .module_file_id(loaded.project_id, &args.module)?
         .with_context(|| format!("Module {} not found", &args.module))?;
-    let mut reporter: Box<dyn reporting::Reporter> = if args.json {
-        Box::new(reporting::JsonReporter::new(analysis, loaded, &mut out))
-    } else {
-        Box::new(reporting::PrettyReporter::new(analysis, loaded, &mut out))
+    let mut reporter: Box<dyn reporting::Reporter> = match args.format {
+        Format::Json => Box::new(reporting::JsonReporter::new(analysis, loaded, &mut out)),
+        Format::JsonLSP => Box::new(reporting::JsonLSPReporter::new(analysis, loaded, &mut out)),
+        Format::Pretty => Box::new(reporting::PrettyReporter::new(analysis, loaded, &mut out)),
     };
     let reporter = reporter.as_mut();
     eqwalize(EqwalizerInternalArgs {
@@ -62,10 +63,10 @@ pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> 
     let loaded = &load_rebar::load_project_at(&args.project, &profile, IncludeOtp::No)?;
     let analysis = &loaded.analysis();
 
-    let mut reporter: Box<dyn reporting::Reporter> = if args.json {
-        Box::new(reporting::JsonReporter::new(analysis, loaded, &mut out))
-    } else {
-        Box::new(reporting::PrettyReporter::new(analysis, loaded, &mut out))
+    let mut reporter: Box<dyn reporting::Reporter> = match args.format {
+        Format::Json => Box::new(reporting::JsonReporter::new(analysis, loaded, &mut out)),
+        Format::JsonLSP => Box::new(reporting::JsonLSPReporter::new(analysis, loaded, &mut out)),
+        Format::Pretty => Box::new(reporting::PrettyReporter::new(analysis, loaded, &mut out)),
     };
     let reporter = reporter.as_mut();
     let module_index = analysis.module_index(loaded.project_id)?;

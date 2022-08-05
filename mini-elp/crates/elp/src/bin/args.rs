@@ -18,6 +18,13 @@ pub struct Args {
 }
 
 #[derive(Debug, Clone)]
+pub enum Format {
+    Json,
+    JsonLSP,
+    Pretty,
+}
+
+#[derive(Debug, Clone)]
 pub enum Command {
     Version,
     Help,
@@ -32,14 +39,14 @@ pub struct Eqwalize {
     pub module: String,
     pub fast: bool,
     pub profile: Option<String>,
-    pub json: bool,
+    pub format: Format,
 }
 
 #[derive(Debug, Clone)]
 pub struct EqwalizeAll {
     pub project: PathBuf,
     pub profile: Option<String>,
-    pub json: bool,
+    pub format: Format,
 }
 
 #[derive(Debug, Clone)]
@@ -78,10 +85,10 @@ COMMANDS:
     eqwalize <module>          Eqwalize specified module
         --project              Path to directory with rebar project (defaults to `.`)
         --fast                 Refresh AST information for only the specified module
-        --format json          Show diagnostics in JSON format
+        --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
     eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
         --project              Path to directory with rebar project (defaults to `.`)
-        --format json          Show diagnostics in JSON format
+        --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
 
 ENV VARS:
     ELP_EQWALIZER_PATH         Path to the eqwalizer executable, otherwise local one is used
@@ -139,22 +146,22 @@ impl Args {
                 let project = get_project(&mut arguments)?;
                 let module = arguments.free_from_str()?;
                 let fast = arguments.contains("--fast");
-                let json = get_json(&mut arguments)?;
+                let format = get_format(&mut arguments)?;
                 Command::Eqwalize(Eqwalize {
                     project,
                     module,
                     fast,
                     profile,
-                    json,
+                    format,
                 })
             }
             "eqwalize-all" => {
                 let project = get_project(&mut arguments)?;
-                let json = get_json(&mut arguments)?;
+                let format = get_format(&mut arguments)?;
                 Command::EqwalizeAll(EqwalizeAll {
                     project,
                     profile,
-                    json,
+                    format,
                 })
             }
             _ => Command::Help,
@@ -170,9 +177,13 @@ fn get_project(args: &mut Arguments) -> Result<PathBuf> {
     Ok(project.unwrap_or(PathBuf::from(".")))
 }
 
-fn get_json(args: &mut Arguments) -> Result<bool> {
+fn get_format(args: &mut Arguments) -> Result<Format> {
     let format: String = args.opt_value_from_str("--format")?.unwrap_or_default();
-    Ok(format == "json")
+    match format.as_str() {
+        "json" => Ok(Format::Json),
+        "json-lsp" => Ok(Format::JsonLSP),
+        &_ => Ok(Format::Pretty),
+    }
 }
 
 fn finish_args(args: Arguments) -> Result<()> {

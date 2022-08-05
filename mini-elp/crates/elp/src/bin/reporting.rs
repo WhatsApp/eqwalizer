@@ -28,6 +28,8 @@ use elp_ide_db::elp_base_db::FileId;
 use elp_ide_db::elp_base_db::VfsPath;
 use elp_ide_db::EqwalizerDiagnostic;
 use lazy_static::lazy_static;
+use lsp_types::Diagnostic;
+use serde::Serialize;
 use text_size::TextRange;
 
 use crate::load_rebar::LoadResult;
@@ -52,6 +54,12 @@ pub struct ParseDiagnostic {
     pub range: Option<TextRange>,
 }
 
+#[derive(Serialize)]
+pub struct LSPDiagnosticWithPath {
+    pub relative_path: PathBuf,
+    pub diagnostic: Diagnostic,
+}
+
 pub struct PrettyReporter<'a, W: WriteColor> {
     analysis: &'a Analysis,
     loaded: &'a LoadResult,
@@ -60,6 +68,12 @@ pub struct PrettyReporter<'a, W: WriteColor> {
 }
 
 pub struct JsonReporter<'a, W: Write> {
+    analysis: &'a Analysis,
+    loaded: &'a LoadResult,
+    out: &'a mut W,
+}
+
+pub struct JsonLSPReporter<'a, W: Write> {
     analysis: &'a Analysis,
     loaded: &'a LoadResult,
     out: &'a mut W,
@@ -198,6 +212,84 @@ impl<'a, W: Write> Reporter for JsonReporter<'a, W> {
                 convert::eqwalizer_to_arc_diagnostic(diagnostic, &line_index, relative_path);
             let diagnostic = serde_json::to_string(&diagnostic)?;
             writeln!(self.out, "{}", diagnostic)?;
+        }
+        Ok(())
+    }
+
+    fn write_parse_diagnostics(&mut self, diagnostics: &[ParseDiagnostic]) -> Result<()> {
+        for diagnostic in diagnostics {
+            let diagnostic = arc_types::Diagnostic::new(
+                diagnostic.relative_path.as_path(),
+                diagnostic.line_num,
+                None,
+                "ELP".to_string(),
+                diagnostic.msg.clone(),
+                None,
+            );
+            let diagnostic = serde_json::to_string(&diagnostic)?;
+            writeln!(self.out, "{}", diagnostic)?;
+        }
+        Ok(())
+    }
+
+    fn write_file_advice(&mut self, file_id: FileId, description: String) -> Result<()> {
+        let file_path = &self.loaded.vfs.file_path(file_id);
+        let root_path = &self
+            .analysis
+            .project_data(file_id)?
+            .with_context(|| "could not find project data")?
+            .root_dir;
+        let relative_path = get_relative_path(root_path, file_path);
+        let diagnostic = arc_types::Diagnostic::new(
+            relative_path,
+            1,
+            None,
+            "ELP".to_string(),
+            description,
+            None,
+        );
+        let diagnostic = serde_json::to_string(&diagnostic)?;
+        writeln!(self.out, "{}", diagnostic)?;
+        Ok(())
+    }
+
+    fn write_error_count(&mut self) -> Result<()> {
+        Ok(())
+    }
+}
+
+impl<'a, W: Write> JsonLSPReporter<'a, W> {
+    pub fn new(analysis: &'a Analysis, loaded: &'a LoadResult, out: &'a mut W) -> Self {
+        Self {
+            analysis,
+            loaded,
+            out,
+        }
+    }
+}
+
+impl<'a, W: Write> Reporter for JsonLSPReporter<'a, W> {
+    fn write_eqwalizer_diagnostics(
+        &mut self,
+        file_id: FileId,
+        diagnostics: &[EqwalizerDiagnostic],
+    ) -> Result<()> {
+        let line_index = self.analysis.line_index(file_id)?;
+        let file_path = &self.loaded.vfs.file_path(file_id);
+        let root_path = &self
+            .analysis
+            .project_data(file_id)?
+            .with_context(|| "could not find project data")?
+            .root_dir;
+        let relative_path = get_relative_path(root_path, file_path);
+        for diagnostic in diagnostics {
+            let diagnostic = convert::eqwalizer_to_lsp_diagnostic(diagnostic, &line_index);
+            let diagnostic_with_path = LSPDiagnosticWithPath {
+                diagnostic,
+                relative_path: relative_path.to_path_buf(),
+            };
+            let diagnostic_with_path = serde_json::to_string(&diagnostic_with_path)?;
+            writeln!(self.out, "{}", diagnostic_with_path)?;
         }
         Ok(())
     }
