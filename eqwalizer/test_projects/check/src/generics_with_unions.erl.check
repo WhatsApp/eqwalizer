@@ -235,7 +235,7 @@ use_handle_res_2() ->                      | OK      |
 -spec overlap_1([T] | T) -> T.             |         |
 overlap_1([T]) -> T;                       | ERROR   | T.
                                            |         | Expected: T
-                                           |         | Got     : any()
+                                           |         | Got     : term()
 overlap_1(T) -> T.                         |         |
                                            |         |
 -spec overlap_2(T | [T]) -> T.             |         |
@@ -261,7 +261,7 @@ use_overlap_2() ->                         | ERROR   |
 -spec trick(A, A | {B}) -> B.              |         |
 trick(_, {B}) -> B.                        | ERROR   | B.
                                            |         | Expected: B
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec use_trick(any(), any()) -> none().   |         |
 use_trick(A, B) -> trick(A, B).            | OK      |

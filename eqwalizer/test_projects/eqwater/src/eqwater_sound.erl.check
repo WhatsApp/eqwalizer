@@ -68,7 +68,7 @@ t03(_, B) -> B.                            |         | B.
 -spec tuple_trick_neg(_T, U) -> U.         |         |
 tuple_trick_neg({X}, _) -> X.              | ERROR   | X.
                                            |         | Expected: U
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec fun_trick_neg(_T, U) -> U.           |         |
 fun_trick_neg(X, _) when is_function(X, 0) | ERROR   |
@@ -79,7 +79,7 @@ fun_trick_neg(X, _) when is_function(X, 0) | ERROR   |
 -spec union_trick(A, A | {B}) -> B.        |         |
 union_trick(_, {B}) -> B.                  | ERROR   | B.
                                            |         | Expected: B
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 %% these edge cases don't                  |         |
 %% degrade with eqwater                    |         |

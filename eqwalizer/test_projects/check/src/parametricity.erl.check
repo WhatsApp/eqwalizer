@@ -186,7 +186,7 @@ refine02(X, X) -> X.                       | OK      |
     any().                                 |         |
 refine03(X, X, _) ->                       | ERROR   |
     [Elem || Elem <- X].                   |         | X.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : B
                                            |         |
 % adapted from wa_lists.erl                |         |

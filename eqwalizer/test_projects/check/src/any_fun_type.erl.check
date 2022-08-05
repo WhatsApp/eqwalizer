@@ -62,11 +62,11 @@ guard02_pos(F)                             | OK      |
 guard03_neg(F)                             | ERROR   |
     when is_function(F, 1) -> F.           |         | F.
                                            |         | Expected: f2()
-                                           |         | Got     : fun((any()) -> any())
+                                           |         | Got     : fun((term()) -> term())
                                            |         | 
-                                           |         |   fun((any()) -> any()) is not a subtype of f2()
+                                           |         |   fun((term()) -> term()) is not a subtype of f2()
                                            |         |   because
-                                           |         |   fun((any()) -> any()) is not a subtype of fun((any(), any()) -> any())
+                                           |         |   fun((term()) -> term()) is not a subtype of fun((term(), term()) -> term())
                                            |         |
 -spec a_to_a(none()) -> a.                 |         |
 a_to_a(a) -> a.                            | OK      |

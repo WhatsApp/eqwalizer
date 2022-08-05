@@ -22,7 +22,7 @@ test03_pos(<<N, _:N, Rest/binary>>) ->     | OK      |
                                            |         |
 -spec test04_neg() -> list(any()).         |         |
 test04_neg() -> <<>>.                      | ERROR   | <<..>>.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : binary()
                                            |         |
 -spec test05_pos(binary())                 |         |

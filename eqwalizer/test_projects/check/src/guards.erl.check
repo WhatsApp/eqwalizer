@@ -50,7 +50,7 @@ test04(_) -> undef.                        |         |
 test05(X) when X =:= #{1 => b} ->          | ERROR   |
     X.                                     |         | X.
                                            |         | Expected: #D{number() => number()}
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -type loop() :: loop().                    | INVALID | recursive type loop/0 is not productive
 

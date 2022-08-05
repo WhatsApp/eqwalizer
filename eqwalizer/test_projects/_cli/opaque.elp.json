@@ -18,7 +18,7 @@
         "end": 641
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : any()",
+      "message": "Expected: 'ok'\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -30,7 +30,7 @@
         "end": 704
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : #D{any() => any()}",
+      "message": "Expected: 'ok'\nGot     : #D{term() => term()}",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -78,7 +78,7 @@
         "end": 1771
       },
       "lineAndCol": null,
-      "message": "Expected: {'ok'}\nGot     : any()",
+      "message": "Expected: {'ok'}\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",

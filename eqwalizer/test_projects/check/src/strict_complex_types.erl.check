@@ -53,7 +53,7 @@ use_complex_map3() ->                      | ERROR   |
                                            |         | 
                                            |         |   eqwalizer:dynamic() is not a subtype of number()
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
                                            |         |
 -spec use_complex_map4_neg()               |         |
       -> integer().                        |         |

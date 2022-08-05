@@ -104,12 +104,12 @@ test1() ->                                 | OK      |
 test2() ->                                 | ERROR   |
     case rand:uniform(2) of                |         |
         1 -> gb_sets:new();                |         | gb_sets:new().
-                                           |         | Expected: {any(), any()} | 'a'
+                                           |         | Expected: {term(), term()} | 'a'
                                            |         | Got     : gb_sets:set(none())
                                            |         | 
-                                           |         |   gb_sets:set(none()) is not a subtype of {any(), any()} | 'a'
+                                           |         |   gb_sets:set(none()) is not a subtype of {term(), term()} | 'a'
                                            |         |   because
-                                           |         |   gb_sets:set(none()) is not a subtype of {any(), any()}
+                                           |         |   gb_sets:set(none()) is not a subtype of {term(), term()}
         2 -> a                             |         |
     end.                                   |         |
                                            |         |

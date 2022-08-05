@@ -79,7 +79,7 @@ file_consult() ->                          | OK      |
 file_consult_neg() ->                      | ERROR   |
   file:consult(some_file).                 |         | file:consult('some_file').
                                            |         | Expected: 'nok'
-                                           |         | Got     : {'ok', [dynamic()]} | {'error', 'terminated' | 'badarg' | file:posix() | 'system_limit' | {number(), atom(), any()}}
+                                           |         | Got     : {'ok', [dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
                                            |         |
 -spec abs1() ->                            |         |
   anything.                                |         |

@@ -13,7 +13,7 @@ error: expected_subtype
 581 │     flatmap(fun thing_to_list/1, List).
     │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ flatmap(thing_to_list/1, List).
 Expected: string()
-Got     : [any()]
+Got     : [term()]
 
 
 error: recursive_constraint
@@ -42,8 +42,8 @@ error: expected_subtype
      │
 1119 │    lists:reverse(umerge3_1(L1, [H2 | H3], T2, H2, [], T3, H3), []).
      │                                    ^^^^^ H3.
-Expected: [any()]
-Got     : any()
+Expected: [term()]
+Got     : term()
 
 
 error: expected_subtype
@@ -54,13 +54,13 @@ error: expected_subtype
      │     │
      │     filtermap(eqwalizer:dynamic_cast(F), L).
 Expected: [T | X]
-Got     : [any()]
+Got     : [term()]
 
      │     
 
-  [any()] is not a subtype of [T | X]
+  [term()] is not a subtype of [T | X]
   because
-  any() is not a subtype of T | X
+  term() is not a subtype of T | X
 
 error: expected_subtype
      ┌─ app_a/src/app_a_lists.erl:1310:15
@@ -69,14 +69,14 @@ error: expected_subtype
      │               ^
      │               │
      │               F.
-Expected: fun((any()) -> boolean() | {'true', any()})
+Expected: fun((term()) -> boolean() | {'true', term()})
 Got     : fun((T) -> boolean() | {'true', X})
 
      │               
 
-  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((any()) -> boolean() | {'true', any()})
+  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((term()) -> boolean() | {'true', term()})
   because
-  any() is not a subtype of T
+  term() is not a subtype of T
 
 error: type_alias_is_non_productive
    ┌─ app_a/src/app_a_mod2.erl:27:1
@@ -144,8 +144,8 @@ error: expected_subtype
    │     ^
    │     │
    │     X.
-Expected: #S{k_ok => any(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
-Got     : #S{k_extra => any(), k_ok => any(), k_req1 => any(), k_req2 => any(), k_wrong1 => pid(), k_wrong2 => pid()}
+Expected: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
+Got     : #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
 
    │     
 

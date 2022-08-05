@@ -16,22 +16,22 @@
 -spec f01(any()) -> {A, A}.                |         |
 f01(X) -> X.                               | ERROR   | X.
                                            |         | Expected: {A, A}
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec f02(any()) -> atom().                |         |
 f02(X) -> X.                               | ERROR   | X.
                                            |         | Expected: atom()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec f03 (fun((atom()) -> any())) ->      |         |
            fun((any()) -> atom()).         |         |
 f03(F) -> F.                               | ERROR   | F.
-                                           |         | Expected: fun((any()) -> atom())
-                                           |         | Got     : fun((atom()) -> any())
+                                           |         | Expected: fun((term()) -> atom())
+                                           |         | Got     : fun((atom()) -> term())
                                            |         | 
-                                           |         |   fun((atom()) -> any()) is not a subtype of fun((any()) -> atom())
+                                           |         |   fun((atom()) -> term()) is not a subtype of fun((term()) -> atom())
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec f04(a | b | c) -> (a | b).           |         |
 f04(X) -> X.                               | ERROR   | X.
@@ -129,38 +129,38 @@ map05(M) -> M.                             | ERROR   | M.
         -> #{atom() => integer()}.         |         |
 map06(M) -> M.                             | ERROR   | M.
                                            |         | Expected: #D{atom() => number()}
-                                           |         | Got     : #D{any() => number()}
+                                           |         | Got     : #D{term() => number()}
                                            |         | 
-                                           |         |   #D{any() => number()} is not a subtype of #D{atom() => number()}
+                                           |         |   #D{term() => number()} is not a subtype of #D{atom() => number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec map07(#{atom() => any()})            |         |
         -> #{atom() => integer()}.         |         |
 map07(M) -> M.                             | ERROR   | M.
                                            |         | Expected: #D{atom() => number()}
-                                           |         | Got     : #D{atom() => any()}
+                                           |         | Got     : #D{atom() => term()}
                                            |         | 
-                                           |         |   #D{atom() => any()} is not a subtype of #D{atom() => number()}
+                                           |         |   #D{atom() => term()} is not a subtype of #D{atom() => number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
                                            |         |
 -spec map08(#{atom() => any()})            |         |
         -> #{}.                            |         |
 map08(M) -> M.                             | ERROR   | M.
                                            |         | Expected: shape map #S{}
-                                           |         | Got     : dict  map #D{atom() => any()}
+                                           |         | Got     : dict  map #D{atom() => term()}
                                            |         |
 -spec tuple1                               |         |
     (tuple()) -> {any()}.                  |         |
 tuple1(X) -> X.                            | ERROR   | X.
-                                           |         | Expected: {any()}
+                                           |         | Expected: {term()}
                                            |         | Got     : tuple()
                                            |         |
 -spec any_fun(any()) -> fun().             |         |
 any_fun(F) -> F.                           | ERROR   | F.
                                            |         | Expected: fun()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec f10() -> {tuple(), ok}.              |         |
 f10() ->                                   | ERROR   |

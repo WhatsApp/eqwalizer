@@ -155,11 +155,11 @@ as_fs(F) when is_function(F, 2) ->         |         |
 -spec as_f0_neg(any(), any()) -> fs().     |         |
 as_f0_neg(F, A)                            | ERROR   |
     when is_function(F, A) -> #f0{f = F}.  |         | F.
-                                           |         | Expected: fun(() -> any())
+                                           |         | Expected: fun(() -> term())
                                            |         | Got     : fun()
                                            |         |
 -spec as_f1_neg(any()) -> #f1{}.           |         |
 as_f1_neg(F)                               | ERROR   |
     when is_function(F, 2) -> #f1{f = F}.  |         | F.
-                                           |         | Expected: fun((any()) -> any())
-                                           |         | Got     : fun((any(), any()) -> any())
+                                           |         | Expected: fun((term()) -> term())
+                                           |         | Got     : fun((term(), term()) -> term())

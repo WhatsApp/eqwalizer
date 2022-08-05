@@ -18,7 +18,7 @@ use_dynamic_type(Dyn) -> {Dyn}.            | ERROR   | {Dyn}.
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec use_dynamic_type_neg                 |         |
     (eqwalizer:dynamic()) -> {atom()}.     |         |
@@ -29,7 +29,7 @@ use_dynamic_type_neg(Dyn) ->               | ERROR   |
                                            |         | 
                                            |         |   eqwalizer:dynamic() is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec use_cast(any()) -> {atom()}.         |         |
 use_cast(A) ->                             | ERROR   |
@@ -43,4 +43,4 @@ use_cast(A) ->                             | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()

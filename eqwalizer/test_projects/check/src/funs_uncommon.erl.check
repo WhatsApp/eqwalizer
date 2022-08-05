@@ -25,14 +25,14 @@ test_02() ->                               | ERROR   |
   #rectup{                                 |         |
     field = {fun(X) -> X end, an_atom}     |         | {fun, 'an_atom'}.
                                            |         | Expected: {fun(('a') -> 'a'), atom()}
-                                           |         | Got     : {fun((none()) -> any()), 'an_atom'}
+                                           |         | Got     : {fun((none()) -> term()), 'an_atom'}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {fun((none()) -> any()), 'an_atom'} is not a subtype of {fun(('a') -> 'a'), atom()}
+                                           |         |   {fun((none()) -> term()), 'an_atom'} is not a subtype of {fun(('a') -> 'a'), atom()}
                                            |         |   because
-                                           |         |   fun((none()) -> any()) is not a subtype of fun(('a') -> 'a')
+                                           |         |   fun((none()) -> term()) is not a subtype of fun(('a') -> 'a')
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
   }.                                       |         |
                                            |         |
 -record(rec, {field :: fun((a) -> a)}).    |         |
@@ -48,21 +48,21 @@ test_04(R) ->                              | ERROR   |
   R#rec{                                   |         |
     field = {fun(X) -> X end, an_atom}     |         | {fun, 'an_atom'}.
                                            |         | Expected: fun(('a') -> 'a')
-                                           |         | Got     : {fun((none()) -> any()), 'an_atom'}
+                                           |         | Got     : {fun((none()) -> term()), 'an_atom'}
   }.                                       |         |
                                            |         |
 -spec test_05() -> #{key := fun((a) -> a)}……         |
 test_05() ->                               | ERROR   |
   #{key => fun(X) -> X end}.               |         | #{..}.
                                            |         | Expected: #S{key := fun(('a') -> 'a')}
-                                           |         | Got     : #S{key := fun((none()) -> any())}
+                                           |         | Got     : #S{key := fun((none()) -> term())}
                                            |         | 
                                            |         |   at shape key 'key':
-                                           |         |   #S{key := fun((none()) -> any())} is not a subtype of #S{key := fun(('a') -> 'a')}
+                                           |         |   #S{key := fun((none()) -> term())} is not a subtype of #S{key := fun(('a') -> 'a')}
                                            |         |   because
-                                           |         |   fun((none()) -> any()) is not a subtype of fun(('a') -> 'a')
+                                           |         |   fun((none()) -> term()) is not a subtype of fun(('a') -> 'a')
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_06(                             |         |
    #{key := fun((a) -> a)}                 |         |
@@ -70,41 +70,41 @@ test_05() ->                               | ERROR   |
 test_06(M) ->                              | ERROR   |
   M#{key => fun(X) -> X end}.              |         | ..#{..}.
                                            |         | Expected: #S{key := fun(('a') -> 'a')}
-                                           |         | Got     : #S{key := fun((none()) -> any())}
+                                           |         | Got     : #S{key := fun((none()) -> term())}
                                            |         | 
                                            |         |   at shape key 'key':
-                                           |         |   #S{key := fun((none()) -> any())} is not a subtype of #S{key := fun(('a') -> 'a')}
+                                           |         |   #S{key := fun((none()) -> term())} is not a subtype of #S{key := fun(('a') -> 'a')}
                                            |         |   because
-                                           |         |   fun((none()) -> any()) is not a subtype of fun(('a') -> 'a')
+                                           |         |   fun((none()) -> term()) is not a subtype of fun(('a') -> 'a')
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_07() -> {fun((a) -> a)}.        |         |
 test_07() ->                               | ERROR   |
   {fun(X) -> X end}.                       |         | {fun}.
                                            |         | Expected: {fun(('a') -> 'a')}
-                                           |         | Got     : {fun((none()) -> any())}
+                                           |         | Got     : {fun((none()) -> term())}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {fun((none()) -> any())} is not a subtype of {fun(('a') -> 'a')}
+                                           |         |   {fun((none()) -> term())} is not a subtype of {fun(('a') -> 'a')}
                                            |         |   because
-                                           |         |   fun((none()) -> any()) is not a subtype of fun(('a') -> 'a')
+                                           |         |   fun((none()) -> term()) is not a subtype of fun(('a') -> 'a')
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_08() -> {fun((a) -> a)}.        |         |
 test_08() ->                               | ERROR   |
   Res = {fun(X) -> X end},                 |         |
   Res.                                     |         | Res.
                                            |         | Expected: {fun(('a') -> 'a')}
-                                           |         | Got     : {fun((none()) -> any())}
+                                           |         | Got     : {fun((none()) -> term())}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {fun((none()) -> any())} is not a subtype of {fun(('a') -> 'a')}
+                                           |         |   {fun((none()) -> term())} is not a subtype of {fun(('a') -> 'a')}
                                            |         |   because
-                                           |         |   fun((none()) -> any()) is not a subtype of fun(('a') -> 'a')
+                                           |         |   fun((none()) -> term()) is not a subtype of fun(('a') -> 'a')
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_09() -> b.                      |         |
 test_09() ->                               | ERROR   |
@@ -117,26 +117,26 @@ test_09() ->                               | ERROR   |
 test_10() ->                               | ERROR   |
   [fun(X) -> X end, fun(X) -> X end].      |         | [fun, fun].
                                            |         | Expected: [fun(('a') -> 'a')]
-                                           |         | Got     : [fun((none()) -> any())]
+                                           |         | Got     : [fun((none()) -> term())]
                                            |         | 
-                                           |         |   [fun((none()) -> any())] is not a subtype of [fun(('a') -> 'a')]
+                                           |         |   [fun((none()) -> term())] is not a subtype of [fun(('a') -> 'a')]
                                            |         |   because
-                                           |         |   fun((none()) -> any()) is not a subtype of fun(('a') -> 'a')
+                                           |         |   fun((none()) -> term()) is not a subtype of fun(('a') -> 'a')
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_11() -> [fun((a, b) -> a)].     |         |
 test_11() ->                               | ERROR   |
   Res = [fun(X, _) -> X end],              |         |
   Res.                                     |         | Res.
                                            |         | Expected: [fun(('a', 'b') -> 'a')]
-                                           |         | Got     : [fun((none(), none()) -> any())]
+                                           |         | Got     : [fun((none(), none()) -> term())]
                                            |         | 
-                                           |         |   [fun((none(), none()) -> any())] is not a subtype of [fun(('a', 'b') -> 'a')]
+                                           |         |   [fun((none(), none()) -> term())] is not a subtype of [fun(('a', 'b') -> 'a')]
                                            |         |   because
-                                           |         |   fun((none(), none()) -> any()) is not a subtype of fun(('a', 'b') -> 'a')
+                                           |         |   fun((none(), none()) -> term()) is not a subtype of fun(('a', 'b') -> 'a')
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_12(a) -> fun((b, c) ->          |         |
                       {a, b, c}).          |         |
@@ -148,13 +148,13 @@ test_12(a) ->                              | OK      |
 test_13() ->                               | ERROR   |
   [                                        |         | [ || ].
                                            |         | Expected: [fun((number()) -> number())]
-                                           |         | Got     : [fun((none()) -> any())]
+                                           |         | Got     : [fun((none()) -> term())]
                                            |         | 
-                                           |         |   [fun((none()) -> any())] is not a subtype of [fun((number()) -> number())]
+                                           |         |   [fun((none()) -> term())] is not a subtype of [fun((number()) -> number())]
                                            |         |   because
-                                           |         |   fun((none()) -> any()) is not a subtype of fun((number()) -> number())
+                                           |         |   fun((none()) -> term()) is not a subtype of fun((number()) -> number())
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
     fun(X) -> X * Y end                    |         |
     || Y <- [1, 2, 3]                      |         |
   ].                                       |         |

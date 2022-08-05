@@ -371,27 +371,27 @@ test_49b() ->                              | OK      |
 test_50_neg(X) ->                          | ERROR   |
   (+X).                                    |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec test_50b_neg(term()) -> nok.         |         |
 test_50b_neg(X) ->                         | ERROR   |
   _ = (+X),                                |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
   nok.                                     |         |
                                            |         |
 -spec test_51_neg(term()) -> nok.          |         |
 test_51_neg(X) ->                          | ERROR   |
   _ = (-X),                                |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
   nok.                                     |         |
                                            |         |
 -spec test_51b_neg(term()) -> nok.         |         |
 test_51b_neg(X) ->                         | ERROR   |
   _ = (-X),                                |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
   nok.                                     |         |
                                            |         |
 -spec test_52_wip_neg(pos_integer()) ->    |         |
@@ -457,14 +457,14 @@ test_59b_wip_neg(X) ->                     | OK      |
 test_60_neg(X) ->                          | ERROR   |
   bnot X.                                  |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec test_60b_neg(term()) ->              |         |
   nok.                                     |         |
 test_60b_neg(X) ->                         | ERROR   |
   _ = bnot X,                              |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
   nok.                                     |         |
                                            |         |
 -spec test_61() -> +1..2.                  |         |

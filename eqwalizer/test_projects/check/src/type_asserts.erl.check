@@ -109,9 +109,9 @@ scope_neg(A) ->                            | ERROR   |
   X = is_number(A) andalso A,              |         |
   {X, A}.                                  |         | {X, A}.
                                            |         | Expected: {'false' | number(), number()}
-                                           |         | Got     : {'false' | number(), any()}
+                                           |         | Got     : {'false' | number(), term()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'false' | number(), any()} is not a subtype of {'false' | number(), number()}
+                                           |         |   {'false' | number(), term()} is not a subtype of {'false' | number(), number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()

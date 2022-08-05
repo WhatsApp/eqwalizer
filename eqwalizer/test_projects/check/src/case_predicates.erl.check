@@ -12,7 +12,7 @@ my_apply(X, Y) ->                          | ERROR   |
   case {is_atom(X), is_atom(Y)} of         |         |
     {true, true} -> aa(X, Y);              |         | X.
                                            |         | Expected: atom()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
     {true, _} -> a(X);                     |         |
     {_, true} -> a(Y);                     |         |
     _ -> not-ok                            |         |

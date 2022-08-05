@@ -59,16 +59,16 @@ map_get_2_6(M) ->                          | OK      |
 ) -> any().                                |         |
 map_get_2_7_neg(M) ->                      | ERROR   |
     get(a, M).                             |         | M.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
                                            |         |
 -spec map_get_2_8_neg(                     |         |
     any()                                  |         |
 ) -> any().                                |         |
 map_get_2_8_neg(M) ->                      | ERROR   |
     Res = maps:get(a, M),                  |         | M.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
     Res.                                   |         |
                                            |         |
 -spec map_get_2_9_neg(                     |         |
@@ -76,16 +76,16 @@ map_get_2_8_neg(M) ->                      | ERROR   |
 ) -> any().                                |         |
 map_get_2_9_neg(M) ->                      | ERROR   |
     maps:get(a, M, false).                 |         | M.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
                                            |         |
 -spec map_get_2_10_neg(                    |         |
     any()                                  |         |
 ) -> any().                                |         |
 map_get_2_10_neg(M) ->                     | ERROR   |
     Res = maps:get(a, M, false),           |         | M.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
     Res.                                   |         |
                                            |         |
 -spec map_get_2_11(                        |         |
@@ -311,11 +311,11 @@ maps_filter_2_4_wip(B) ->                  | ERROR   |
     case B of                              |         |
         true -> maps:filter(F, M);         |         | F.
                                            |         | Expected: fun((number(), 'a' | 'b') -> boolean())
-                                           |         | Got     : fun((none(), none()) -> any())
+                                           |         | Got     : fun((none(), none()) -> term())
                                            |         | 
-                                           |         |   fun((none(), none()) -> any()) is not a subtype of fun((number(), 'a' | 'b') -> boolean())
+                                           |         |   fun((none(), none()) -> term()) is not a subtype of fun((number(), 'a' | 'b') -> boolean())
                                            |         |   because
-                                           |         |   any() is not a subtype of boolean()
+                                           |         |   term() is not a subtype of boolean()
         false -> maps:filter(F, It)        |         |
     end.                                   |         |
                                            |         |
@@ -382,14 +382,14 @@ maps_filter_2_9_neg(B, M, It) ->           | ERROR   |
             _ -> a                         |         |
         end,                               |         |
     maps:filter(fun erlang:'=:='/2, X).    |         | X.
-                                           |         | Expected: maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
                                            |         | Got     : maps:iterator(K, V) | #D{K => V} | 'a'
                                            |         | 
-                                           |         |   maps:iterator(K, V) | #D{K => V} | 'a' is not a subtype of maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         |   maps:iterator(K, V) | #D{K => V} | 'a' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         |   'a' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of maps:iterator(any(), any())
+                                           |         |   'a' is not a subtype of maps:iterator(term(), term())
                                            |         |
 % return ty of maps:filter/2               |         |
 % is always DictMap                        |         |
@@ -419,12 +419,12 @@ maps_filter_2_9_neg(It) ->                 | ERROR   |
 maps_filter_2_10_neg() ->                  | ERROR   |
     F = fun erlang:'=:='/2,                |         |
     maps:filter(F, non_kv),                |         | 'non_kv'.
-                                           |         | Expected: maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
                                            |         | Got     : 'non_kv'
                                            |         | 
-                                           |         |   'non_kv' is not a subtype of maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
                                            |         |   because
-                                           |         |   'non_kv' is not a subtype of maps:iterator(any(), any())
+                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term())
     nok.                                   |         |
                                            |         |
 -spec map_filter_empty(Pred) -> Map when   |         |
@@ -494,10 +494,10 @@ maps_map_2_4_wip(B) ->                     | ERROR   |
     F = fun (K, V) -> K =:= V end,         |         |
     case B of                              |         |
         true -> maps:map(F, M);            |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> any())
-                                           |         | Got     : fun((none(), none()) -> any())
+                                           |         | Expected: fun((number(), 'a' | 'b') -> term())
+                                           |         | Got     : fun((none(), none()) -> term())
                                            |         | 
-                                           |         |   fun((none(), none()) -> any()) is not a subtype of fun((number(), 'a' | 'b') -> any())
+                                           |         |   fun((none(), none()) -> term()) is not a subtype of fun((number(), 'a' | 'b') -> term())
                                            |         |   because
                                            |         |   number() is not a subtype of none()
         false -> maps:map(F, It)           |         |
@@ -512,7 +512,7 @@ maps_map_2_5_neg(B) ->                     | ERROR   |
     F = fun self/0,                        |         |
     case B of                              |         |
         true -> maps:map(F, M);            |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> any())
+                                           |         | Expected: fun((number(), 'a' | 'b') -> term())
                                            |         | Got     : fun(() -> pid())
         false -> maps:map(F, It)           |         |
     end.                                   |         |
@@ -525,7 +525,7 @@ maps_map_2_6_neg(B) ->                     | ERROR   |
     F = fun lists:map/2,                   |         |
     case B of                              |         |
         true -> maps:map(F, M);            |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> any()) with 0 type parameters
+                                           |         | Expected: fun((number(), 'a' | 'b') -> term()) with 0 type parameters
                                            |         | Got     : fun((fun((A) -> B), [A]) -> [B]) with 2 type parameters
         false -> maps:map(F, It)           |         |
     end.                                   |         |
@@ -571,12 +571,12 @@ maps_map_2_9_neg(B) ->                     | ERROR   |
 maps_map_2_10_neg() ->                     | ERROR   |
     F = fun erlang:'=:='/2,                |         |
     maps:map(F, non_kv),                   |         | 'non_kv'.
-                                           |         | Expected: maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
                                            |         | Got     : 'non_kv'
                                            |         | 
-                                           |         |   'non_kv' is not a subtype of maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
                                            |         |   because
-                                           |         |   'non_kv' is not a subtype of maps:iterator(any(), any())
+                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term())
     nok.                                   |         |
                                            |         |
 -spec maps_fold_3_1(boolean())             |         |
@@ -638,12 +638,12 @@ maps_fold_3_5_neg() ->                     | ERROR   |
         fun (_, _, Acc) -> Acc end,        |         |
         [],                                |         |
         non_kv                             |         | 'non_kv'.
-                                           |         | Expected: maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
                                            |         | Got     : 'non_kv'
                                            |         | 
-                                           |         |   'non_kv' is not a subtype of maps:iterator(any(), any()) | #D{any() => any()}
+                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
                                            |         |   because
-                                           |         |   'non_kv' is not a subtype of maps:iterator(any(), any())
+                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term())
     ).                                     |         |
                                            |         |
 -spec maps_fold_3_6(none()) ->             |         |
@@ -681,8 +681,8 @@ maps_fold_3_8() ->                         | OK      |
 maps_fold_3_9_neg() ->                     | ERROR   |
     maps:fold(                             |         |
         fun folder_bad/3,                  |         | folder_bad/3.
-                                           |         | Expected: fun((number(), 'a', []) -> any()) with 0 type parameters
-                                           |         | Got     : fun((any(), any(), Acc) -> [Acc]) with 1 type parameter
+                                           |         | Expected: fun((number(), 'a', []) -> term()) with 0 type parameters
+                                           |         | Got     : fun((term(), term(), Acc) -> [Acc]) with 1 type parameter
         [],                                |         |
         #{1 => a}                          |         |
     ).                                     |         |
@@ -706,12 +706,12 @@ lists_filtermap_2() ->                     | OK      |
 lists_filtermap_2_neg() ->                 | ERROR   |
     lists:filtermap(                       |         |
         fun erlang:binary_to_list/1,       |         | erlang:binary_to_list/1.
-                                           |         | Expected: fun((number()) -> boolean() | {'true', any()})
+                                           |         | Expected: fun((number()) -> boolean() | {'true', term()})
                                            |         | Got     : fun((binary()) -> [number()])
                                            |         | 
-                                           |         |   fun((binary()) -> [number()]) is not a subtype of fun((number()) -> boolean() | {'true', any()})
+                                           |         |   fun((binary()) -> [number()]) is not a subtype of fun((number()) -> boolean() | {'true', term()})
                                            |         |   because
-                                           |         |   [number()] is not a subtype of boolean() | {'true', any()}
+                                           |         |   [number()] is not a subtype of boolean() | {'true', term()}
                                            |         |   because
                                            |         |   [number()] is not a subtype of boolean()
         [1, 2, 3]                          |         |
@@ -732,10 +732,10 @@ lists_filtermap_4_neg() ->                 | ERROR   |
         fun (1) -> {true, a};              |         |
             (2) -> true;                   |         |
             (3) -> wrong_ret end,          |         | 'wrong_ret'.
-                                           |         | Expected: boolean() | {'true', any()}
+                                           |         | Expected: boolean() | {'true', term()}
                                            |         | Got     : 'wrong_ret'
                                            |         | 
-                                           |         |   'wrong_ret' is not a subtype of boolean() | {'true', any()}
+                                           |         |   'wrong_ret' is not a subtype of boolean() | {'true', term()}
                                            |         |   because
                                            |         |   'wrong_ret' is not a subtype of boolean()
         [1, 2, 3]                          |         |
@@ -748,7 +748,7 @@ lists_filtermap_5_neg() ->                 | ERROR   |
         fun (1) -> {true, a};              |         |
             (2) -> true end,               |         |
         not_a_list                         |         | 'not_a_list'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'not_a_list'
     ),                                     |         |
     nok.                                   |         |
@@ -792,12 +792,12 @@ lists_filtermap_8_neg() ->                 | ERROR   |
                            wrong_ret       |         |
                    end,                    |         |
                 Res                        |         | Res.
-                                           |         | Expected: boolean() | {'true', any()}
+                                           |         | Expected: boolean() | {'true', term()}
                                            |         | Got     : {'true', 'a'} | 'wrong_ret'
                                            |         | 
-                                           |         |   {'true', 'a'} | 'wrong_ret' is not a subtype of boolean() | {'true', any()}
+                                           |         |   {'true', 'a'} | 'wrong_ret' is not a subtype of boolean() | {'true', term()}
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean() | {'true', any()}
+                                           |         |   'wrong_ret' is not a subtype of boolean() | {'true', term()}
                                            |         |   because
                                            |         |   'wrong_ret' is not a subtype of boolean()
         end,                               |         |
@@ -1205,11 +1205,11 @@ test_find_dict(M) ->                       | OK      |
 'test_plists_get_value/2'(L) ->            | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
                                            |         | Expected: pid() | 'undefined'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of pid() | 'undefined'
+                                           |         |   term() is not a subtype of pid() | 'undefined'
                                            |         |   because
-                                           |         |   any() is not a subtype of pid()
+                                           |         |   term() is not a subtype of pid()
                                            |         |
 -spec 'test_plists_get_value/2_overlap'(   |         |
     plist({k, v}, pid())) ->               |         |
@@ -1217,18 +1217,18 @@ test_find_dict(M) ->                       | OK      |
 'test_plists_get_value/2_overlap'(L) ->    | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
                                            |         | Expected: pid() | 'undefined' | 'v'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of pid() | 'undefined' | 'v'
+                                           |         |   term() is not a subtype of pid() | 'undefined' | 'v'
                                            |         |   because
-                                           |         |   any() is not a subtype of pid()
+                                           |         |   term() is not a subtype of pid()
                                            |         |
 -spec 'test_plists_get_value/2_neg'(       |         |
     plist(atom(), pid())) -> pid().        |         |
 'test_plists_get_value/2_neg'(L) ->        | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
                                            |         | Expected: pid()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec 'test_plists_get_value/3'(           |         |
     plist(reference(), pid())) ->          |         |
@@ -1236,11 +1236,11 @@ test_find_dict(M) ->                       | OK      |
 'test_plists_get_value/3'(L) ->            | ERROR   |
     proplists:get_value(k, L, 3).          |         | proplists:get_value('k', L, 3).
                                            |         | Expected: pid() | number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of pid() | number()
+                                           |         |   term() is not a subtype of pid() | number()
                                            |         |   because
-                                           |         |   any() is not a subtype of pid()
+                                           |         |   term() is not a subtype of pid()
                                            |         |
 -spec 'test_plists_get_value/3_overlap'(   |         |
     plist({k, v1}, v2)) ->                 |         |
@@ -1248,11 +1248,11 @@ test_find_dict(M) ->                       | OK      |
 'test_plists_get_value/3_overlap'(L) ->    | ERROR   |
     proplists:get_value(k, L, my_default). |         | proplists:get_value('k', L, 'my_default').
                                            |         | Expected: 'v1' | 'v2' | 'my_default'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of 'v1' | 'v2' | 'my_default'
+                                           |         |   term() is not a subtype of 'v1' | 'v2' | 'my_default'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'v1'
+                                           |         |   term() is not a subtype of 'v1'
                                            |         |
 -spec 'test_plists_get_value/3_neg'(       |         |
     plist(number(), v)) ->                 |         |
@@ -1260,13 +1260,13 @@ test_find_dict(M) ->                       | OK      |
 'test_plists_get_value/3_neg'(L) ->        | ERROR   |
     proplists:get_value(k, L, my_default). |         | proplists:get_value('k', L, 'my_default').
                                            |         | Expected: 'v'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec 'test_plists_get_value/2_2_neg'()    |         |
         -> term().                         |         |
 'test_plists_get_value/2_2_neg'() ->       | ERROR   |
     proplists:get_value(k, b).             |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec 'test_plists_get_value/2_3'()        |         |
@@ -1274,20 +1274,20 @@ test_find_dict(M) ->                       | OK      |
 'test_plists_get_value/2_3'() ->           | ERROR   |
     proplists:get_value(k, []).            |         | proplists:get_value('k', []).
                                            |         | Expected: 'default'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec 'test_plists_get_value/3_2'()        |         |
         -> my_default.                     |         |
 'test_plists_get_value/3_2'() ->           | ERROR   |
 proplists:get_value(k, [], my_default).    |         | proplists:get_value('k', [], 'my_default').
                                            |         | Expected: 'my_default'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec 'test_plists_get_value/3_2_neg'()    |         |
         -> term().                         |         |
 'test_plists_get_value/3_2_neg'() ->       | ERROR   |
     proplists:get_value(k, b, my_default). |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_get_bool1_neg            |         |
@@ -1303,13 +1303,13 @@ test_plists_get_bool1_neg(L) ->            | ERROR   |
 test_plists_get_all_values(L) ->           | ERROR   |
     proplists:get_all_values(k, L).        |         | proplists:get_all_values('k', L).
                                            |         | Expected: [pid() | 'default']
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
                                            |         | 
-                                           |         |   [any()] is not a subtype of [pid() | 'default']
+                                           |         |   [term()] is not a subtype of [pid() | 'default']
                                            |         |   because
-                                           |         |   any() is not a subtype of pid() | 'default'
+                                           |         |   term() is not a subtype of pid() | 'default'
                                            |         |   because
-                                           |         |   any() is not a subtype of pid()
+                                           |         |   term() is not a subtype of pid()
                                            |         |
 -spec test_plists_get_all_values2(         |         |
     plist({k, v}, pid())) ->               |         |
@@ -1317,44 +1317,44 @@ test_plists_get_all_values(L) ->           | ERROR   |
 test_plists_get_all_values2(L) ->          | ERROR   |
     proplists:get_all_values(k, L).        |         | proplists:get_all_values('k', L).
                                            |         | Expected: [pid() | 'default' | 'v']
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
                                            |         | 
-                                           |         |   [any()] is not a subtype of [pid() | 'default' | 'v']
+                                           |         |   [term()] is not a subtype of [pid() | 'default' | 'v']
                                            |         |   because
-                                           |         |   any() is not a subtype of pid() | 'default' | 'v'
+                                           |         |   term() is not a subtype of pid() | 'default' | 'v'
                                            |         |   because
-                                           |         |   any() is not a subtype of pid()
+                                           |         |   term() is not a subtype of pid()
                                            |         |
 -spec test_plists_get_all_values3(         |         |
     plist(atom(), pid())) -> [pid()].      |         |
 test_plists_get_all_values3(L) ->          | ERROR   |
     proplists:get_all_values(k, L).        |         | proplists:get_all_values('k', L).
                                            |         | Expected: [pid()]
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
                                            |         | 
-                                           |         |   [any()] is not a subtype of [pid()]
+                                           |         |   [term()] is not a subtype of [pid()]
                                            |         |   because
-                                           |         |   any() is not a subtype of pid()
+                                           |         |   term() is not a subtype of pid()
                                            |         |
 -spec test_plists_get_all_values4()        |         |
         -> [].                             |         |
 test_plists_get_all_values4() ->           | ERROR   |
     proplists:get_all_values(k, []).       |         | proplists:get_all_values('k', []).
                                            |         | Expected: []
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
                                            |         |
 -spec test_plists_get_all_values5_neg()    |         |
         -> [].                             |         |
 test_plists_get_all_values5_neg() ->       | ERROR   |
     proplists:get_all_values(k, b).        |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_get_bool2_neg()          |         |
         -> term().                         |         |
 test_plists_get_bool2_neg() ->             | ERROR   |
     proplists:get_bool(b, b).              |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_get_keys1_neg            |         |
@@ -1362,11 +1362,11 @@ test_plists_get_bool2_neg() ->             | ERROR   |
 test_plists_get_keys1_neg(L) ->            | ERROR   |
     proplists:get_keys(L).                 |         | proplists:get_keys(L).
                                            |         | Expected: ['c']
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
                                            |         | 
-                                           |         |   [any()] is not a subtype of ['c']
+                                           |         |   [term()] is not a subtype of ['c']
                                            |         |   because
-                                           |         |   any() is not a subtype of 'c'
+                                           |         |   term() is not a subtype of 'c'
                                            |         |
 -spec test_plists_get_keys2                |         |
     ([a | b | {c, {d, d}}]) ->             |         |
@@ -1374,19 +1374,19 @@ test_plists_get_keys1_neg(L) ->            | ERROR   |
 test_plists_get_keys2(L) ->                | ERROR   |
     proplists:get_keys(L).                 |         | proplists:get_keys(L).
                                            |         | Expected: ['a' | 'b' | 'c']
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
                                            |         | 
-                                           |         |   [any()] is not a subtype of ['a' | 'b' | 'c']
+                                           |         |   [term()] is not a subtype of ['a' | 'b' | 'c']
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a' | 'b' | 'c'
+                                           |         |   term() is not a subtype of 'a' | 'b' | 'c'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_plists_get_keys3_neg()          |         |
         -> term().                         |         |
 test_plists_get_keys3_neg() ->             | ERROR   |
     proplists:get_keys(a).                 |         | 'a'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'a'
                                            |         |
 -spec test_plists_get_keys4()              |         |
@@ -1394,11 +1394,11 @@ test_plists_get_keys3_neg() ->             | ERROR   |
 test_plists_get_keys4() ->                 | ERROR   |
     proplists:get_keys(                    |         | proplists:get_keys([{'a', 'b', 'c'}]).
                                            |         | Expected: ['a']
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
                                            |         | 
-                                           |         |   [any()] is not a subtype of ['a']
+                                           |         |   [term()] is not a subtype of ['a']
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
         [{a, b, c}]                        |         |
     ).                                     |         |
                                            |         |
@@ -1408,17 +1408,17 @@ test_plists_get_keys4() ->                 | ERROR   |
 test_plists_get_values1(L) ->              | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
                                            |         | Expected: 'a' | pid()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of 'a' | pid()
+                                           |         |   term() is not a subtype of 'a' | pid()
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
                                            |         |
 -spec test_plists_get_values2_neg() ->     |         |
     a | pid().                             |         |
 test_plists_get_values2_neg() ->           | ERROR   |
     proplists:get_value(k, b).             |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_lookup1_neg()            |         |
@@ -1431,7 +1431,7 @@ proplists:lookup(self(), [a, {b, true}]).  |         | proplists:lookup(erlang:s
 -spec test_plists_lookup2_neg() -> term(). |         |
 test_plists_lookup2_neg() ->               | ERROR   |
     proplists:lookup(a, b).                |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_lookup3()                |         |
@@ -1476,7 +1476,7 @@ test_plists_lookup_all1_neg() ->           | ERROR   |
         -> term().                         |         |
 test_plists_lookup_all2_neg() ->           | ERROR   |
     proplists:lookup_all(a, b).            |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_lookup_all3()            |         |
@@ -1527,7 +1527,7 @@ test_plists_is_defined3() ->               | OK      |
     boolean().                             |         |
 test_plists_is_defined4_neg() ->           | ERROR   |
     proplists:is_defined(self(), b).       |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_delete1_neg() -> term(). |         |
@@ -1552,34 +1552,34 @@ test_plists_delete3(L) ->                  | OK      |
 test_plists_split1(L, Ks) ->               | ERROR   |
     proplists:split(L, Ks).                |         | proplists:split(L, Ks).
                                            |         | Expected: {[plist('a', 'b')], plist('a', 'b')}
-                                           |         | Got     : {[[any()]], [any()]}
+                                           |         | Got     : {[[term()]], [term()]}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {[[any()]], [any()]} is not a subtype of {[plist('a', 'b')], plist('a', 'b')}
+                                           |         |   {[[term()]], [term()]} is not a subtype of {[plist('a', 'b')], plist('a', 'b')}
                                            |         |   because
-                                           |         |   [[any()]] is not a subtype of [plist('a', 'b')]
+                                           |         |   [[term()]] is not a subtype of [plist('a', 'b')]
                                            |         |   because
-                                           |         |   [any()] is not a subtype of plist('a', 'b')
+                                           |         |   [term()] is not a subtype of plist('a', 'b')
                                            |         |   because
-                                           |         |   [any()] is not a subtype of ['a' | {'a', 'b'}]
+                                           |         |   [term()] is not a subtype of ['a' | {'a', 'b'}]
                                            |         |
 -spec test_plists_split2_neg() -> term().  |         |
 test_plists_split2_neg() ->                | ERROR   |
     proplists:split(b, []).                |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_split3_neg() -> term().  |         |
 test_plists_split3_neg() ->                | ERROR   |
     proplists:split([], b).                |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_to_map1_neg()            |         |
     -> term().                             |         |
 test_plists_to_map1_neg() ->               | ERROR   |
     proplists:to_map(b).                   |         | 'b'.
-                                           |         | Expected: [atom() | {any(), any()} | any()]
+                                           |         | Expected: [atom() | {term(), term()} | term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_to_map2_neg()            |         |
@@ -1598,9 +1598,9 @@ test_plists_to_map3_neg() ->               | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of 'a' | 'd'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a' | 'd'
+                                           |         |   term() is not a subtype of 'a' | 'd'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
         [{a, b}, c, {d, self()}]).         |         |
                                            |         |
 -spec test_plists_to_map4()                |         |
@@ -1614,9 +1614,9 @@ test_plists_to_map4() ->                   | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of 'a' | 'c' | 'd'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a' | 'c' | 'd'
+                                           |         |   term() is not a subtype of 'a' | 'c' | 'd'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'a'
+                                           |         |   term() is not a subtype of 'a'
         [{a, b}, c, {d, self()}]).         |         |
                                            |         |
 -spec test_plists_to_map5()                |         |
@@ -1630,7 +1630,7 @@ test_plists_to_map5() ->                   | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of none()
                                            |         |   because
-                                           |         |   any() is not a subtype of none()
+                                           |         |   term() is not a subtype of none()
                                            |         |
 -spec test_plists_from_map1() ->           |         |
     plist(a | pid(), b | true).            |         |
@@ -1651,33 +1651,33 @@ test_plists_from_map2_neg() ->             | ERROR   |
 'test_plists_get_value/2_4'() ->           | ERROR   |
     proplists:get_value(a, [a]).           |         | proplists:get_value('a', ['a']).
                                            |         | Expected: 'true' | 'undefined'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of 'true' | 'undefined'
+                                           |         |   term() is not a subtype of 'true' | 'undefined'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'true'
+                                           |         |   term() is not a subtype of 'true'
                                            |         |
 -spec 'test_plists_get_value/2_5'          |         |
     (atom()) -> true | undefined.          |         |
 'test_plists_get_value/2_5'(X) ->          | ERROR   |
     proplists:get_value(X, [a]).           |         | proplists:get_value(X, ['a']).
                                            |         | Expected: 'true' | 'undefined'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of 'true' | 'undefined'
+                                           |         |   term() is not a subtype of 'true' | 'undefined'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'true'
+                                           |         |   term() is not a subtype of 'true'
                                            |         |
 -spec 'test_plists_get_value/3_3'()        |         |
         -> true | b.                       |         |
 'test_plists_get_value/3_3'() ->           | ERROR   |
     proplists:get_value(a, [a], b).        |         | proplists:get_value('a', ['a'], 'b').
                                            |         | Expected: 'true' | 'b'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of 'true' | 'b'
+                                           |         |   term() is not a subtype of 'true' | 'b'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'true'
+                                           |         |   term() is not a subtype of 'true'
                                            |         |
 -spec app_env1_strict() -> number().       |         |
 app_env1_strict() ->                       | ERROR   |
@@ -1690,7 +1690,7 @@ app_env1_strict() ->                       | ERROR   |
                                            |         | 
                                            |         |   eqwalizer:dynamic() is not a subtype of number()
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
     end.                                   |         |
                                            |         |
 -spec app_env2_strict() -> number().       |         |
@@ -1704,7 +1704,7 @@ app_env2_strict() ->                       | ERROR   |
                                            |         | 
                                            |         |   eqwalizer:dynamic() is not a subtype of number()
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
     end.                                   |         |
                                            |         |
 -spec app_env3_strict() -> number().       |         |
@@ -1718,7 +1718,7 @@ app_env3_strict() ->                       | ERROR   |
                                            |         | 
                                            |         |   eqwalizer:dynamic() is not a subtype of number()
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
                                            |         |
 -spec flatten1_strict() -> [atom()].       |         |
 flatten1_strict() ->                       | OK      |
@@ -1742,13 +1742,13 @@ file_consult_neg1() ->                     | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of 'anything'
                                            |         |   because
-                                           |         |   any() is not a subtype of 'anything'
+                                           |         |   term() is not a subtype of 'anything'
                                            |         |
 -spec file_consult_neg2() -> nok.          |         |
 file_consult_neg2() ->                     | ERROR   |
     file:consult(some_file).               |         | file:consult('some_file').
                                            |         | Expected: 'nok'
-                                           |         | Got     : {'ok', [eqwalizer:dynamic()]} | {'error', 'terminated' | 'badarg' | file:posix() | 'system_limit' | {number(), atom(), any()}}
+                                           |         | Got     : {'ok', [eqwalizer:dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
                                            |         |
 -spec keysort() -> [{a | b, c | d}].       |         |
 keysort() ->                               | OK      |
@@ -2057,12 +2057,12 @@ tc2_5_neg() ->                             | ERROR   |
 tc3_wip() ->                               | ERROR   |
     timer:tc(                              |         | timer:tc('erlang', 'list_to_binary', []).
                                            |         | Expected: {number(), binary()}
-                                           |         | Got     : {number(), any()}
+                                           |         | Got     : {number(), term()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {number(), any()} is not a subtype of {number(), binary()}
+                                           |         |   {number(), term()} is not a subtype of {number(), binary()}
                                            |         |   because
-                                           |         |   any() is not a subtype of binary()
+                                           |         |   term() is not a subtype of binary()
         erlang,                            |         |
         list_to_binary,                    |         |
         []                                 |         |
@@ -2075,7 +2075,7 @@ tc3_2_neg() ->                             | ERROR   |
         erlang,                            |         |
         list_to_binary,                    |         |
         an_atom                            |         | 'an_atom'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'an_atom'
     ).                                     |         |
                                            |         |
@@ -2084,12 +2084,12 @@ tc3_2_neg() ->                             | ERROR   |
 tc3_3_neg() ->                             | ERROR   |
     timer:tc(                              |         | timer:tc('erjangz', 'list_to_binary', []).
                                            |         | Expected: {number(), binary()}
-                                           |         | Got     : {number(), any()}
+                                           |         | Got     : {number(), term()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {number(), any()} is not a subtype of {number(), binary()}
+                                           |         |   {number(), term()} is not a subtype of {number(), binary()}
                                            |         |   because
-                                           |         |   any() is not a subtype of binary()
+                                           |         |   term() is not a subtype of binary()
         erjangz,                           |         |
         list_to_binary,                    |         |
         []                                 |         |
@@ -2106,9 +2106,9 @@ ets_lookup_1_neg(Any) ->                   | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of {'whatev'} | {number()}
+                                           |         |   term() is not a subtype of {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of {'whatev'}
+                                           |         |   term() is not a subtype of {'whatev'}
                                            |         |
 -spec ets_lookup_2_neg(term()) -> pid().   |         |
 ets_lookup_2_neg(Any) ->                   | ERROR   |
@@ -2133,7 +2133,7 @@ ets_lookup_4_neg(Any) ->                   | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of tuple()
                                            |         |   because
-                                           |         |   any() is not a subtype of tuple()
+                                           |         |   term() is not a subtype of tuple()
                                            |         |
 -spec ets_lookup_5(term()) ->              |         |
     [any()].                               |         |
@@ -2151,7 +2151,7 @@ ets_tab2list_1_neg(Atom) ->                | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of tuple()
                                            |         |   because
-                                           |         |   any() is not a subtype of tuple()
+                                           |         |   term() is not a subtype of tuple()
                                            |         |
 -spec ets_tab2list_2_neg(atom()) ->        |         |
     [{whatev} | {2}].                      |         |
@@ -2164,9 +2164,9 @@ ets_tab2list_2_neg(Atom) ->                | ERROR   |
                                            |         |   because
                                            |         |   eqwalizer:dynamic() is not a subtype of {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of {'whatev'} | {number()}
+                                           |         |   term() is not a subtype of {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of {'whatev'}
+                                           |         |   term() is not a subtype of {'whatev'}
                                            |         |
 -spec ets_tab2list_3_neg() -> term().      |         |
 ets_tab2list_3_neg() ->                    | ERROR   |
@@ -2212,7 +2212,7 @@ flatten2_strict4(L) ->                     | OK      |
 -spec flatten2_strict5_neg() -> any().     |         |
 flatten2_strict5_neg() ->                  | ERROR   |
     lists:flatten([], 1).                  |         | 1.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : number()
                                            |         |
 -type reclist(A) :: [A | reclist(A)].      |         |
@@ -2223,7 +2223,7 @@ flatten1_strict4(L) -> lists:flatten(L).   | OK      |
 -spec flatten1_strict5_neg() -> any().     |         |
 flatten1_strict5_neg() ->                  | ERROR   |
     lists:flatten(3).                      |         | 3.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : number()
                                            |         |
 -type reclist2() :: [nil] | [reclist2()].  |         |
@@ -2296,13 +2296,13 @@ maps_without_5_neg(Atom, DOrE) ->          | ERROR   |
 -spec maps_without_6_neg() -> any().       |         |
 maps_without_6_neg() ->                    | ERROR   |
     maps:without(non_list, #{}).           |         | 'non_list'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'non_list'
                                            |         |
 -spec maps_without_7_neg() -> any().       |         |
 maps_without_7_neg() ->                    | ERROR   |
     maps:without([], non_map).             |         | 'non_map'.
-                                           |         | Expected: #D{any() => any()}
+                                           |         | Expected: #D{term() => term()}
                                            |         | Got     : 'non_map'
                                            |         |
 -spec maps_without_8(any()) ->             |         |
@@ -2360,7 +2360,7 @@ maps_without_13(Keys) ->                   | ERROR   |
 maps_without_14_neg() ->                   | ERROR   |
     maps:without(                          |         |
         [a | improper_tail],               |         | 'improper_tail'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'improper_tail'
         #{a => self(), b => self()}        |         |
     ).                                     |         |
@@ -2442,7 +2442,7 @@ use_custom_overloaded2(B) ->               | OK      |
     (any()) -> any().                      |         |
 used_custom_overloaded3_neg(X) ->          | ERROR   |
     custom_overloaded(X).                  |         | custom_overloaded(X).
-                                           |         | Not enough info to branch. Arg types: any()
+                                           |         | Not enough info to branch. Arg types: term()
                                            |         |
 -spec maps_find_1(                         |         |
     pid(), #{pid() => atom()}              |         |

@@ -66,7 +66,7 @@
         "end": 1515
       },
       "lineAndCol": null,
-      "message": "Expected: U\nGot     : any()",
+      "message": "Expected: U\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -78,7 +78,7 @@
         "end": 1683
       },
       "lineAndCol": null,
-      "message": "Expected: U\nGot     : any()",
+      "message": "Expected: U\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -102,7 +102,7 @@
         "end": 2084
       },
       "lineAndCol": null,
-      "message": "Expected: none()\nGot     : any()",
+      "message": "Expected: none()\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "Val",
@@ -198,7 +198,7 @@
         "end": 3289
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : any()",
+      "message": "Expected: pid()\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -210,7 +210,7 @@
         "end": 3393
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : any()",
+      "message": "Expected: pid()\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -222,7 +222,7 @@
         "end": 3519
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : any()",
+      "message": "Expected: pid()\nGot     : term()",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -234,7 +234,7 @@
         "end": 3643
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : {any(), any()}",
+      "message": "Expected: pid()\nGot     : {term(), term()}",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -282,11 +282,11 @@
         "end": 4176
       },
       "lineAndCol": null,
-      "message": "Expected: {'not_my_rec', any(), any()}\nGot     : #my_rec{}",
+      "message": "Expected: {'not_my_rec', term(), term()}\nGot     : #my_rec{}",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "R",
-      "explanationOrNull": "  at tuple index 1:\n  {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', any(), any()}\n  because\n  'my_rec' is not a subtype of 'not_my_rec'"
+      "explanationOrNull": "  at tuple index 1:\n  {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', term(), term()}\n  because\n  'my_rec' is not a subtype of 'not_my_rec'"
     },
     {
       "range": {
@@ -426,11 +426,11 @@
         "end": 5846
       },
       "lineAndCol": null,
-      "message": "Expected: {'my_rec', any(), any()}\nGot     : #my_rec{} | 'a'",
+      "message": "Expected: {'my_rec', term(), term()}\nGot     : #my_rec{} | 'a'",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
-      "explanationOrNull": "  #my_rec{} | 'a' is not a subtype of {'my_rec', any(), any()}\n  because\n  'a' is not a subtype of {'my_rec', any(), any()}"
+      "explanationOrNull": "  #my_rec{} | 'a' is not a subtype of {'my_rec', term(), term()}\n  because\n  'a' is not a subtype of {'my_rec', term(), term()}"
     },
     {
       "range": {

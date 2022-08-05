@@ -95,11 +95,11 @@ catch_foo2_neg(X) ->                       | ERROR   |
         end,                               |         |
     Res.                                   |         | Res.
                                            |         | Expected: number()
-                                           |         | Got     : number() | [any()]
+                                           |         | Got     : number() | [term()]
                                            |         | 
-                                           |         |   number() | [any()] is not a subtype of number()
+                                           |         |   number() | [term()] is not a subtype of number()
                                            |         |   because
-                                           |         |   [any()] is not a subtype of number()
+                                           |         |   [term()] is not a subtype of number()
                                            |         |
 -spec catch_foo3_neg(any()) -> number().   |         |
 catch_foo3_neg(X) ->                       | ERROR   |
@@ -118,5 +118,5 @@ catch_foo4_neg(X) ->                       | ERROR   |
     catch                                  |         |
         Class:_:Stack  -> {Class, Stack}   |         | {Class, Stack}.
                                            |         | Expected: number()
-                                           |         | Got     : {'error' | 'exit' | 'throw', [any()]}
+                                           |         | Got     : {'error' | 'exit' | 'throw', [term()]}
     end.                                   |         |

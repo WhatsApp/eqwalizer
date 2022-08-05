@@ -44,8 +44,8 @@ test03(L) ->                               | OK      |
 -spec test04_neg(any()) -> [any()].        |         |
 test04_neg(L) ->                           | ERROR   |
     [X || X <- L].                         |         | L.
-                                           |         | Expected: [any()]
-                                           |         | Got     : any()
+                                           |         | Expected: [term()]
+                                           |         | Got     : term()
                                            |         |
 -spec test05(binary()) -> [number()].      |         |
 test05(B) ->                               | OK      |
@@ -54,7 +54,7 @@ test05(B) ->                               | OK      |
 -spec test06_neg(binary()) -> list(any()). |         |
 test06_neg(B) ->                           | ERROR   |
     << Y || <<Y>> <= B >>.                 |         | << || >>.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : binary()
                                            |         |
 -spec test07(list(binary())) -> binary().  |         |
@@ -64,7 +64,7 @@ test07(LB) ->                              | OK      |
 -spec test08_neg(binary()) -> binary().    |         |
 test08_neg(B) ->                           | ERROR   |
     << Y || Y <- B >>.                     |         | B.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : binary()
                                            |         |
 -spec test09_neg(list(binary())) -> binary……         |
@@ -112,8 +112,8 @@ test15_neg(LB) ->                          | OK      |
 -spec test16_neg(any()) -> [any()].        |         |
 test16_neg(L) ->                           | ERROR   |
     Res = [X || X <- L],                   |         | L.
-                                           |         | Expected: [any()]
-                                           |         | Got     : any()
+                                           |         | Expected: [term()]
+                                           |         | Got     : term()
     Res.                                   |         |
                                            |         |
 -spec test17(binary()) -> [number()].      |         |
@@ -124,7 +124,7 @@ test17(LB) ->                              | OK      |
 -spec test18_neg(boolean()) -> [boolean()]……         |
 test18_neg(L) ->                           | ERROR   |
     Res = [X || X <- L, X],                |         | L.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : boolean()
     Res.                                   |         |
                                            |         |
@@ -149,7 +149,7 @@ test21_neg(LB) ->                          | ERROR   |
 -spec test22_neg(binary()) -> binary().    |         |
 test22_neg(B) ->                           | ERROR   |
     Res = << Y || Y <- B >>,               |         | B.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : binary()
     Res.                                   |         |
                                            |         |

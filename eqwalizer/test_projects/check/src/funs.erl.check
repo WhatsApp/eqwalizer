@@ -65,12 +65,12 @@ lam_arg_1_pos() ->                         | OK      |
 lam_arg_2_neg() ->                         | ERROR   |
     lmap_n_to_n(fun(X) ->                  |         |
         X ++ [] end,                       |         | X.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : n()
                                            |         | 
-                                           |         |   n() is not a subtype of [any()]
+                                           |         |   n() is not a subtype of [term()]
                                            |         |   because
-                                           |         |   number() is not a subtype of [any()]
+                                           |         |   number() is not a subtype of [term()]
         [1,2,3]                            |         |
     ).                                     |         |
                                            |         |
@@ -112,12 +112,12 @@ lam_ret_1_pos() ->                         | OK      |
     fun((n(), n()) -> n()).                |         |
 lam_ret_1_neg() ->                         | ERROR   |
     fun(X, Y) -> X ++ Y end.               |         | X.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : n()
                                            |         | 
-                                           |         |   n() is not a subtype of [any()]
+                                           |         |   n() is not a subtype of [term()]
                                            |         |   because
-                                           |         |   number() is not a subtype of [any()]
+                                           |         |   number() is not a subtype of [term()]
                                            |         |
 -spec lam_ret_2_neg() ->                   |         |
     fun((n(), n()) -> n()).                |         |

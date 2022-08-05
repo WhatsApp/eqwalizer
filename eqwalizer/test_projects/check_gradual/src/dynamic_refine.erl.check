@@ -85,7 +85,7 @@ refine_any1_neg(Arg) ->                    | ERROR   |
     % Arg is refined as [any()] here       |         |
     is_list(Arg) -> {Arg}                  |         | {Arg}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {[any()]}
+                                           |         | Got     : {[term()]}
   end.                                     |         |
                                            |         |
 -spec refine_todo1_neg() -> ok.            |         |
@@ -130,7 +130,7 @@ mixed1(Arg, UseOrig) ->                    | ERROR   |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | any()}
+                                           |         | Got     : {dynamic() | term()}
                                            |         |
 -spec mixed2                               |         |
   (any(), boolean()) -> ok.                |         |
@@ -142,7 +142,7 @@ mixed2(Arg, UseDyn) ->                     | ERROR   |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | any()}
+                                           |         | Got     : {dynamic() | term()}
                                            |         |
 -spec mixed3                               |         |
   (boolean(), boolean()) -> ok.            |         |

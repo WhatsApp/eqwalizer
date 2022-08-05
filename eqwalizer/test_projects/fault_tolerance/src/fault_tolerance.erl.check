@@ -128,10 +128,10 @@ visible_cast(N) ->                         | ERROR   |
 expected_fun(F) ->                         | ERROR   |
   X = F(),                                 |         | F.
                                            |         | Expected fun type with arity 0
-                                           |         | Got: any()
+                                           |         | Got: term()
   Y = F(),                                 |         | F.
                                            |         | Expected fun type with arity 0
-                                           |         | Got: any()
+                                           |         | Got: term()
   {X, Y}.                                  |         | {X, Y}.
                                            |         | Expected: number()
                                            |         | Got     : {dynamic(), dynamic()}
@@ -173,8 +173,8 @@ lists_append(M1, M2) ->                    | ERROR   |
     (any(), atom(), atom()) -> atom().     |         |
 maps_update1(M, K, V) ->                   | ERROR   |
   M1 = M#{                                 |         | M.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
     K :=                                   |         |
       V +                                  |         | V.
                                            |         | Expected: number()
@@ -189,8 +189,8 @@ maps_update1(M, K, V) ->                   | ERROR   |
     (any(), atom(), atom()) -> atom().     |         |
 maps_update2(M, K, V) ->                   | ERROR   |
   M1 = M#{                                 |         | M.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
     K =>                                   |         |
     V +                                    |         | V.
                                            |         | Expected: number()
@@ -207,11 +207,11 @@ lists_flatten(L1, L2) ->                   | ERROR   |
   Res =                                    |         |
     lists:flatten(                         |         |
       L1,                                  |         | L1.
-                                           |         | Expected: [any()]
-                                           |         | Got     : any()
+                                           |         | Expected: [term()]
+                                           |         | Got     : term()
       L2                                   |         | L2.
-                                           |         | Expected: [any()]
-                                           |         | Got     : any()
+                                           |         | Expected: [term()]
+                                           |         | Got     : term()
     ),                                     |         |
   Res.                                     |         | Res.
                                            |         | Expected: atom()
@@ -226,10 +226,10 @@ block(X, Y) ->                             | ERROR   |
     Z =                                    |         |
       X +                                  |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
         Y,                                 |         | Y.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
     Z                                      |         | Z.
                                            |         | Expected: atom()
                                            |         | Got     : number()
@@ -240,23 +240,23 @@ block(X, Y) ->                             | ERROR   |
 cons(H, T) ->                              | ERROR   |
   Res = lists:append(                      |         |
     [H |                                   |         | T.
-                                           |         | Expected: [any()]
-                                           |         | Got     : any()
+                                           |         | Expected: [term()]
+                                           |         | Got     : term()
       T],                                  |         |
     [T |                                   |         | H.
-                                           |         | Expected: [any()]
-                                           |         | Got     : any()
+                                           |         | Expected: [term()]
+                                           |         | Got     : term()
       H]                                   |         |
   ),                                       |         |
   Res.                                     |         | Res.
                                            |         | Expected: [atom()]
-                                           |         | Got     : [dynamic() | any()]
+                                           |         | Got     : [dynamic() | term()]
                                            |         | 
-                                           |         |   [dynamic() | any()] is not a subtype of [atom()]
+                                           |         |   [dynamic() | term()] is not a subtype of [atom()]
                                            |         |   because
-                                           |         |   dynamic() | any() is not a subtype of atom()
+                                           |         |   dynamic() | term() is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec 'case'                               |         |
     (boolean(), atom()) -> number().       |         |
@@ -302,7 +302,7 @@ comprehensions1() ->                       | ERROR   |
                                            |         | Expected: 'ok'
                                            |         | Got     : [dynamic()]
     X <- #{                                |         | #{..}.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : #S{a := 'b', c := number()}
       a => b,                              |         |
       c => d + 1                           |         | 'd'.
@@ -323,7 +323,7 @@ comprehensions2(L) ->                      | ERROR   |
                                            |         | Got     : number()
     <<Y>> <= L                             |         | L.
                                            |         | Expected: binary()
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
   ],                                       |         |
   Res.                                     |         | Res.
                                            |         | Expected: 'ok'
@@ -334,7 +334,7 @@ comprehensions3(B) ->                      | ERROR   |
   Res =                                    |         |
     <<Y || Y <-                            |         |
       B                                    |         | B.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : binary()
     >>,                                    |         |
   Res.                                     |         | Res.
@@ -486,16 +486,16 @@ receive1() ->                              | ERROR   |
                                            |         | Expected: atom()
                                            |         | Got     : [dynamic()]
           ++ a                             |         | 'a'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'a'
       );                                   |         |
     N ->                                   |         |
       atom_to_binary(                      |         |
         <<N>>                              |         | <<..>>.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : binary()
           ++ b                             |         | 'b'.
-                                           |         | Expected: [any()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
       )                                    |         |
   end.                                     |         |

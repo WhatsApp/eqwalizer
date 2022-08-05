@@ -39,8 +39,8 @@ error: expected_subtype
    │     ^
    │     │
    │     X.
-Expected: #S{k_ok => any(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
-Got     : #S{k_extra => any(), k_ok => any(), k_req1 => any(), k_req2 => any(), k_wrong1 => pid(), k_wrong2 => pid()}
+Expected: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
+Got     : #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
 
    │     
 

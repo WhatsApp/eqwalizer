@@ -525,7 +525,7 @@ test_subtype_refine_neg(R) -> R.           | ERROR   | R.
                                            |         | 
                                            |         |   #refined_two_fields{} is not a subtype of #refined_two_fields{inner :: number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
                                            |         |
 -spec test_subtype_union_refine            |         |
     ({refined_two_fields, integer() | bool……         |
@@ -591,7 +591,7 @@ unbound_update_neg(X) ->                   | ERROR   |
         -> atom().                         |         |
 inspect_untyped(U) ->                      | ERROR   |
     Field2 = U#untyped.field2,             |         |
-    eqwalizer:reveal_type(Field2),         |         | any()
+    eqwalizer:reveal_type(Field2),         |         | term()
 
     Field2.                                |         |
                                            |         |
@@ -708,11 +708,11 @@ un_two_ref1() ->                           | ERROR   |
     Rec = mk_two_ref(),                    |         |
     Rec#two_ref.a.                         |         | ...#two_ref.a.
                                            |         | Expected: atom()
-                                           |         | Got     : any() | none()
+                                           |         | Got     : term() | none()
                                            |         | 
-                                           |         |   any() | none() is not a subtype of atom()
+                                           |         |   term() | none() is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec un_two_ref2() -> atom().             |         |
 un_two_ref2() ->                           | ERROR   |
@@ -720,8 +720,8 @@ un_two_ref2() ->                           | ERROR   |
     #two_ref{a = A} = Rec,                 |         |
     A.                                     |         | A.
                                            |         | Expected: atom()
-                                           |         | Got     : any() | none()
+                                           |         | Got     : term() | none()
                                            |         | 
-                                           |         |   any() | none() is not a subtype of atom()
+                                           |         |   term() | none() is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()

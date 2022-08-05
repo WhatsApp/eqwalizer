@@ -106,7 +106,7 @@ eliminate2(A) ->                           | OK      |
 -spec list_trick_neg(_T, U) -> U.          |         |
 list_trick_neg([X], _) -> X.               | ERROR   | X.
                                            |         | Expected: U
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec use_list_refine() -> ok.             |         |
 use_list_refine() ->                       | OK      |
@@ -116,7 +116,7 @@ use_list_refine() ->                       | OK      |
 -spec tuple_trick_neg(_T, U) -> U.         |         |
 tuple_trick_neg({X}, _) -> X.              | ERROR   | X.
                                            |         | Expected: U
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec use_tuple_refine() -> ok.            |         |
 use_tuple_refine() ->                      | OK      |
@@ -140,7 +140,7 @@ use_fun_refine(F) ->                       | OK      |
 map_refine_tvar_neg                        | ERROR   |
     (#{key := Val}) -> Val.                |         | Val.
                                            |         | Expected: none()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec binary_refine_tvar_neg               |         |
     (_V) -> {none(), none()}.              |         |
@@ -243,7 +243,7 @@ exploit_recursive() ->                     | OK      |
     pid().                                 |         |
 opaque1_neg({X, _}) -> X.                  | ERROR   | X.
                                            |         | Expected: pid()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 % returns a tuple                          |         |
 -spec opaque2_neg(                         |         |
@@ -251,7 +251,7 @@ opaque1_neg({X, _}) -> X.                  | ERROR   | X.
     pid().                                 |         |
 opaque2_neg([X, _]) -> X.                  | ERROR   | X.
                                            |         | Expected: pid()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 % returns an atom                          |         |
 -spec opaque_3_neg(                        |         |
@@ -261,7 +261,7 @@ opaque_3_neg({                             | ERROR   |
     X, _, _, _, _, _, _, _, _              |         |
 }) -> X.                                   |         | X.
                                            |         | Expected: pid()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 % returns a 2-tuple                        |         |
 -spec opaque_4_neg(                        |         |
@@ -270,7 +270,7 @@ opaque_3_neg({                             | ERROR   |
 ) -> pid().                                |         |
 opaque_4_neg(X, X) -> X.                   | ERROR   | X.
                                            |         | Expected: pid()
-                                           |         | Got     : {any(), any()}
+                                           |         | Got     : {term(), term()}
                                            |         |
 -spec record_as_tuple1_neg                 |         |
 (#my_rec{}, tuple()) -> none().            |         |
@@ -301,11 +301,11 @@ record_as_tuple5_neg(R) -> R.              | ERROR   | R.
 -spec record_as_tuple6_neg                 |         |
 (#my_rec{}) -> {not_my_rec, any(), any()}. |         |
 record_as_tuple6_neg(R) -> R.              | ERROR   | R.
-                                           |         | Expected: {'not_my_rec', any(), any()}
+                                           |         | Expected: {'not_my_rec', term(), term()}
                                            |         | Got     : #my_rec{}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', any(), any()}
+                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', term(), term()}
                                            |         |   because
                                            |         |   'my_rec' is not a subtype of 'not_my_rec'
                                            |         |
@@ -443,12 +443,12 @@ use7_neg(X) -> ttt1(X, 1).                 | ERROR   | ttt1(X, 1).
 -spec deets(#my_rec{} | a)                 |         |
 -> {my_rec, _, _}.                         |         |
 deets(X) -> X.                             | ERROR   | X.
-                                           |         | Expected: {'my_rec', any(), any()}
+                                           |         | Expected: {'my_rec', term(), term()}
                                            |         | Got     : #my_rec{} | 'a'
                                            |         | 
-                                           |         |   #my_rec{} | 'a' is not a subtype of {'my_rec', any(), any()}
+                                           |         |   #my_rec{} | 'a' is not a subtype of {'my_rec', term(), term()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of {'my_rec', any(), any()}
+                                           |         |   'a' is not a subtype of {'my_rec', term(), term()}
                                            |         |
 -record(union_rec, {                       |         |
     b :: undefined | binary(),             |         |

@@ -50,22 +50,22 @@ no_cast() ->                               | ERROR   |
     Key = get(key),                        |         |
     Key.                                   |         | Key.
                                            |         | Expected: atom()
-                                           |         | Got     : any() | 'undefined'
+                                           |         | Got     : term() | 'undefined'
                                            |         | 
-                                           |         |   any() | 'undefined' is not a subtype of atom()
+                                           |         |   term() | 'undefined' is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec cast1() -> atom().                   |         |
 cast1() ->                                 | ERROR   |
     Key = get(key),                        |         |
     Key.                                   |         | Key.
                                            |         | Expected: atom()
-                                           |         | Got     : any() | 'undefined'
+                                           |         | Got     : term() | 'undefined'
                                            |         | 
-                                           |         |   any() | 'undefined' is not a subtype of atom()
+                                           |         |   term() | 'undefined' is not a subtype of atom()
                                            |         |   because
-                                           |         |   any() is not a subtype of atom()
+                                           |         |   term() is not a subtype of atom()
                                            |         |
 -spec reveal_none(none()) -> none().       |         |
 reveal_none(X) ->                          | ERROR   |

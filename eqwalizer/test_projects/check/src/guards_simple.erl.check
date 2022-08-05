@@ -32,7 +32,7 @@ atom_neg_2(X) ->                           | ERROR   |
     if                                     |         |
         is_list(X) -> X                    |         | X.
                                            |         | Expected: atom()
-                                           |         | Got     : [any()]
+                                           |         | Got     : [term()]
     end.                                   |         |
                                            |         |
 -spec atom_neg_3(any()) -> atom().         |         |

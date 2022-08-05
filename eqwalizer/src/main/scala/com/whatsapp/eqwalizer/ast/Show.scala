@@ -38,7 +38,7 @@ case class Show(pipelineContext: PipelineContext) {
       case DictMap(kt, vt) =>
         s"#D{${show(kt)} => ${show(vt)}}"
       case AnyType =>
-        "any()"
+        "term()"
       case AtomType =>
         "atom()"
       case NoneType =>

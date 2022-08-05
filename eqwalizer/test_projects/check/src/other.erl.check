@@ -47,8 +47,8 @@ get_inter2() ->                            | ERROR   |
     logger:metadata().                     |         |
 any_as_metadata_neg(M) -> M.               | ERROR   | M.
                                            |         | Expected: logger:metadata()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         | 
-                                           |         |   any() is not a subtype of logger:metadata()
+                                           |         |   term() is not a subtype of logger:metadata()
                                            |         |   because
-                                           |         |   any() is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |   term() is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}

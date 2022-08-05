@@ -10,7 +10,7 @@
   pos_integer().                           |         |
 test_1_neg(X) when X >= 1 -> X.            | ERROR   | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec test_2(term()) ->                    |         |
   pos_integer().                           |         |

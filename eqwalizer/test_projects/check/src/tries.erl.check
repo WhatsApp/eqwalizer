@@ -29,7 +29,7 @@ test02_neg() ->                            | ERROR   |
     try foo() of                           |         |
         {_, Y} -> Y                        |         | Y.
                                            |         | Expected: atom()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
     catch                                  |         |
         {error, _} -> error                |         |
     end.                                   |         |
@@ -151,7 +151,7 @@ repeated_vars(X) ->                        | ERROR   |
     try X of                               |         |
         {X, X} -> X                        |         | X.
                                            |         | Expected: 'ok'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
     after                                  |         |
         ok                                 |         |
     end.                                   |         |
@@ -165,4 +165,4 @@ test_repeated_vars2(X) ->                  | ERROR   |
     end,                                   |         |
     Res.                                   |         | Res.
                                            |         | Expected: 'ok'
-                                           |         | Got     : any()
+                                           |         | Got     : term()

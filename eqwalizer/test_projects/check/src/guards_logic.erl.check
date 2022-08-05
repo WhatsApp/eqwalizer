@@ -36,7 +36,7 @@ test07_neg(X, Y) when X andalso Y -> Y.    | ERROR   | Y.
 -spec test08_neg(any()) -> number().       |         |
 test08_neg(X) when not is_number(X) -> X.  | ERROR   | X.
                                            |         | Expected: number()
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 % We don't try to process                  |         |
 % logic connectives in a smart way         |         |
@@ -84,12 +84,12 @@ test14_neg(X, Y)                           | ERROR   |
     when X + 1 > 0; Y / 3 > 1 ->           |         |
     {X, Y}.                                |         | {X, Y}.
                                            |         | Expected: {number(), number()}
-                                           |         | Got     : {any(), any()}
+                                           |         | Got     : {term(), term()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {any(), any()} is not a subtype of {number(), number()}
+                                           |         |   {term(), term()} is not a subtype of {number(), number()}
                                            |         |   because
-                                           |         |   any() is not a subtype of number()
+                                           |         |   term() is not a subtype of number()
                                            |         |
 -spec test15 (any(), any())                |         |
          -> {number(), number()}           |         |

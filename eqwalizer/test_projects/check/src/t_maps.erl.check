@@ -95,8 +95,8 @@ empty_update1(M) ->                        | OK      |
     (any()) -> map().                      |         |
 empty_update2_neg(M) ->                    | ERROR   |
     M#{}.                                  |         | M.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
                                            |         |
 -spec empty_update3                        |         |
     () -> #{}.                             |         |
@@ -138,8 +138,8 @@ shape_update3_neg(S) ->                    | ERROR   |
     (any()) -> #{bar := b()}.              |         |
 shape_update4_neg(S) ->                    | ERROR   |
     S#{bar := true}.                       |         | S.
-                                           |         | Expected: #D{any() => any()}
-                                           |         | Got     : any()
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : term()
                                            |         |
 -spec meet_dict1                           |         |
     (#{b() | n() => any()}, #{a() => any()……         |
@@ -150,10 +150,10 @@ meet_dict1(D, D) -> D.                     | OK      |
     (#{b() | n() => any()}, #{a() => any()……         |
     #{n() => any()}.                       |         |
 meet_dict2_neg(D, D) -> D.                 | ERROR   | D.
-                                           |         | Expected: #D{n() => any()}
-                                           |         | Got     : #D{b() => any()}
+                                           |         | Expected: #D{n() => term()}
+                                           |         | Got     : #D{b() => term()}
                                            |         | 
-                                           |         |   #D{b() => any()} is not a subtype of #D{n() => any()}
+                                           |         |   #D{b() => term()} is not a subtype of #D{n() => term()}
                                            |         |   because
                                            |         |   b() is not a subtype of n()
                                            |         |   because
@@ -409,7 +409,7 @@ needs_shape_ab(_) -> ok.                   | OK      |
 shapeab_neg(X) ->                          | ERROR   |
     needs_shape_a(X),                      |         |
     needs_shape_a(X#{b => hello}).         |         | ..#{..}.
-                                           |         | Expected: #S{a := any()}
+                                           |         | Expected: #S{a := term()}
                                            |         | Got     : #S{a := number(), b := 'hello'}
                                            |         | 
                                            |         | These associations do not match:
@@ -989,8 +989,8 @@ expected_required_got_opt_2_neg(X) ->      | ERROR   |
     }.                                     |         |
 misc_mismatch_1_neg(X) ->                  | ERROR   |
     X.                                     |         | X.
-                                           |         | Expected: #S{k_ok => any(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
-                                           |         | Got     : #S{k_extra => any(), k_ok => any(), k_req1 => any(), k_req2 => any(), k_wrong1 => pid(), k_wrong2 => pid()}
+                                           |         | Expected: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
+                                           |         | Got     : #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 

@@ -67,7 +67,7 @@ test_trans_invalid3_neg([Z]) ->            |         |
     pid().                                 |         |
 test_opaque_as_fun_neg(X) -> X(ok).        | ERROR   | X.
                                            |         | Expected fun type with arity 1
-                                           |         | Got: misc:o() | fun((any()) -> none())
+                                           |         | Got: misc:o() | fun((term()) -> none())
                                            |         |
 -spec union_list_1(                        |         |
     string(), eqwalizer:dynamic()          |         |

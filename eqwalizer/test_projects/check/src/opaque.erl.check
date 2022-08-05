@@ -34,12 +34,12 @@ otp_1_neg(X) ->                            | ERROR   |
 -spec test1_neg(misc:o()) -> ok.           |         |
 test1_neg({X}) -> X.                       | ERROR   | X.
                                            |         | Expected: 'ok'
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec test2_neg(misc:o()) -> ok.           |         |
 test2_neg(X=#{a := b}) -> X.               | ERROR   | X.
                                            |         | Expected: 'ok'
-                                           |         | Got     : #D{any() => any()}
+                                           |         | Got     : #D{term() => term()}
                                            |         |
 -spec test3_neg(misc:o()) -> tuple().      |         |
 test3_neg(X) -> X.                         | ERROR   | X.
@@ -113,7 +113,7 @@ test11_neg({rec_w_opaque_field,            | ERROR   |
   {X}}                                     |         |
 ) -> X.                                    |         | X.
                                            |         | Expected: {'ok'}
-                                           |         | Got     : any()
+                                           |         | Got     : term()
                                            |         |
 -spec test12_neg(                          |         |
     misc:o()                               |         |

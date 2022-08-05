@@ -4,7 +4,7 @@ error: expected_subtype
 581 │     flatmap(fun thing_to_list/1, List).
     │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ flatmap(thing_to_list/1, List).
 Expected: string()
-Got     : [any()]
+Got     : [term()]
 
 
 error: recursive_constraint
@@ -33,8 +33,8 @@ error: expected_subtype
      │
 1119 │    lists:reverse(umerge3_1(L1, [H2 | H3], T2, H2, [], T3, H3), []).
      │                                    ^^^^^ H3.
-Expected: [any()]
-Got     : any()
+Expected: [term()]
+Got     : term()
 
 
 error: expected_subtype
@@ -45,13 +45,13 @@ error: expected_subtype
      │     │
      │     filtermap(eqwalizer:dynamic_cast(F), L).
 Expected: [T | X]
-Got     : [any()]
+Got     : [term()]
 
      │     
 
-  [any()] is not a subtype of [T | X]
+  [term()] is not a subtype of [T | X]
   because
-  any() is not a subtype of T | X
+  term() is not a subtype of T | X
 
 error: expected_subtype
      ┌─ app_a/src/app_a_lists.erl:1310:15
@@ -60,13 +60,13 @@ error: expected_subtype
      │               ^
      │               │
      │               F.
-Expected: fun((any()) -> boolean() | {'true', any()})
+Expected: fun((term()) -> boolean() | {'true', term()})
 Got     : fun((T) -> boolean() | {'true', X})
 
      │               
 
-  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((any()) -> boolean() | {'true', any()})
+  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((term()) -> boolean() | {'true', term()})
   because
-  any() is not a subtype of T
+  term() is not a subtype of T
 
 7 ERRORS

@@ -760,12 +760,12 @@ occ25(F) -> F().                           |         |
   {any()}.                                 |         |
 occ26_neg(F) when is_function(F, 1) -> {F(…… ERROR   |
 occ26_neg(T) -> T.                         |         | T.
-                                           |         | Expected: {any()}
-                                           |         | Got     : fun() | {any()}
+                                           |         | Expected: {term()}
+                                           |         | Got     : fun() | {term()}
                                            |         | 
-                                           |         |   fun() | {any()} is not a subtype of {any()}
+                                           |         |   fun() | {term()} is not a subtype of {term()}
                                            |         |   because
-                                           |         |   fun() is not a subtype of {any()}
+                                           |         |   fun() is not a subtype of {term()}
                                            |         |
 -spec occ27_neg                            |         |
   (fun() | {any()}) ->                     |         |

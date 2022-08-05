@@ -156,7 +156,7 @@ test_overloaded_generic(B) ->              | ERROR   |
     F = fun erlang:'=:='/2,                |         |
     case B of                              |         |
         true -> maps_filter(F, M);         |         | maps_filter(F, M).
-                                           |         | Not enough info to branch. Arg types: fun((any(), any()) -> boolean()), #D{number() => number()}
+                                           |         | Not enough info to branch. Arg types: fun((term(), term()) -> boolean()), #D{number() => number()}
         false -> maps_filter(F, It)        |         |
     end.                                   |         |
                                            |         |
@@ -270,7 +270,7 @@ take_ok_or_any(_) -> error.                |         |
 -spec overlap_any_neg(any()) -> error.     |         |
 overlap_any_neg(Any) ->                    | ERROR   |
     take_ok_or_any(Any).                   |         | take_ok_or_any(Any).
-                                           |         | Not enough info to branch. Arg types: any()
+                                           |         | Not enough info to branch. Arg types: term()
                                            |         |
 -spec over                                 |         |
   (integer()) -> atom();                   |         |
