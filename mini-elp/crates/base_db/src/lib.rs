@@ -4,8 +4,9 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
-use elp_project_model::AppType;
 use std::sync::Arc;
+
+use elp_project_model::AppType;
 use text_size::TextRange;
 use text_size::TextSize;
 

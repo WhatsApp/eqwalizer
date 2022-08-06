@@ -5,13 +5,12 @@
  */
 
 use anyhow::Result;
-
-use crate::load_rebar::LoadResult;
-
 #[cfg(not(test))]
 pub use progress::*;
 #[cfg(test)]
 pub use test_progress::*;
+
+use crate::load_rebar::LoadResult;
 
 pub fn compile_deps(loaded: &LoadResult) -> Result<()> {
     let pb = spinner("Compiling dependencies", "Compiled dependencies");
@@ -22,10 +21,11 @@ pub fn compile_deps(loaded: &LoadResult) -> Result<()> {
 
 #[allow(dead_code)]
 mod progress {
+    use std::borrow::Cow;
+
     use indicatif::ProgressBar;
     use indicatif::ProgressFinish;
     use indicatif::ProgressStyle;
-    use std::borrow::Cow;
 
     pub fn progress(len: u64, message: &'static str, done_message: &'static str) -> ProgressBar {
         let pb = ProgressBar::new(len);

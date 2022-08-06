@@ -375,11 +375,13 @@ fn path_into_list(path: PathBuf) -> eetf::List {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::str;
+
     use expect_test::expect_file;
     use expect_test::ExpectFile;
     use lazy_static::lazy_static;
-    use std::str;
+
+    use super::*;
 
     #[test]
     fn regular_module() {

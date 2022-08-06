@@ -10,7 +10,6 @@ use std::str;
 
 use anyhow::Context;
 use anyhow::Result;
-
 use elp::convert;
 use elp_ide::parse_server;
 use elp_ide::Analysis;

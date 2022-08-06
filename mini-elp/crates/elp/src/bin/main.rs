@@ -75,13 +75,15 @@ fn try_main(
 // cargo test --package elp --bin elp
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::path::PathBuf;
+    use std::str;
+
     use codespan_reporting::term::termcolor::Buffer;
     use expect_test::expect_file;
     use expect_test::ExpectFile;
-    use std::path::PathBuf;
-    use std::str;
     use tempfile::Builder;
+
+    use super::*;
 
     macro_rules! args_vec {
         ($($e:expr$(,)?)+) => {

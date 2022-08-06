@@ -4,6 +4,10 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
+use std::fmt;
+use std::sync::Arc;
+use std::sync::RwLock;
+
 use anyhow::Result;
 use elp_base_db::salsa;
 use elp_base_db::FileId;
@@ -12,13 +16,9 @@ use elp_base_db::FileLoaderDelegate;
 use elp_base_db::ProjectId;
 use elp_base_db::SourceDatabase;
 use elp_base_db::Upcast;
-
 use fxhash::FxHashMap;
 use parse_server::Connection;
 use salsa::Database;
-use std::fmt;
-use std::sync::Arc;
-use std::sync::RwLock;
 
 pub mod eqwalizer;
 mod erl_ast;

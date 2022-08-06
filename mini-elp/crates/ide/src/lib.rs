@@ -4,7 +4,10 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
+use std::sync::Arc;
+
 use anyhow::Result;
+pub use elp_ide_db;
 use elp_ide_db::elp_base_db::salsa;
 use elp_ide_db::elp_base_db::salsa::ParallelDatabase;
 use elp_ide_db::elp_base_db::FileId;
@@ -13,6 +16,7 @@ use elp_ide_db::elp_base_db::ModuleName;
 use elp_ide_db::elp_base_db::ProjectData;
 use elp_ide_db::elp_base_db::ProjectId;
 use elp_ide_db::elp_base_db::SourceDatabase;
+pub use elp_ide_db::parse_server;
 use elp_ide_db::parse_server::ParseError;
 use elp_ide_db::Eqwalizer;
 use elp_ide_db::EqwalizerDatabase;
@@ -22,10 +26,6 @@ use elp_ide_db::LineIndex;
 use elp_ide_db::LineIndexDatabase;
 use elp_ide_db::RootDatabase;
 use elp_project_model::AppType;
-use std::sync::Arc;
-
-pub use elp_ide_db;
-pub use elp_ide_db::parse_server;
 
 pub type Cancellable<T> = Result<T, salsa::Cancelled>;
 

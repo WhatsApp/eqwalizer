@@ -4,9 +4,6 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
-use anyhow::Context;
-use anyhow::Result;
-use fxhash::FxHashMap;
 use std::convert::TryInto;
 use std::env;
 use std::ffi::OsString;
@@ -21,12 +18,14 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::process::ExitStatus;
 use std::sync::Arc;
-use text_size::TextRange;
 
+use anyhow::Context;
+use anyhow::Result;
+use fxhash::FxHashMap;
 use serde::Deserialize;
-
 use tempfile::Builder;
 use tempfile::TempPath;
+use text_size::TextRange;
 
 mod ipc;
 use ipc::IpcHandle;

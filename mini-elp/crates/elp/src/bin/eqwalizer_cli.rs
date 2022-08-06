@@ -8,7 +8,6 @@ use anyhow::bail;
 use anyhow::Context;
 use anyhow::Result;
 use codespan_reporting::term::termcolor::WriteColor;
-
 use elp_ide::Analysis;
 use elp_ide_db::elp_base_db::FileId;
 use elp_ide_db::elp_base_db::FileSource;

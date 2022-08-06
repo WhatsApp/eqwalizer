@@ -19,7 +19,6 @@ use codespan_reporting::term;
 use codespan_reporting::term::termcolor::Color;
 use codespan_reporting::term::termcolor::ColorSpec;
 use codespan_reporting::term::termcolor::WriteColor;
-
 use elp::arc_types;
 use elp::convert;
 use elp_ide::Analysis;
