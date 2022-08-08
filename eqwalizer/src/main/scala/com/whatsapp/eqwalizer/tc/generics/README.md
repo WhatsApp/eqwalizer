@@ -1,8 +1,6 @@
 Our implementation of Generics: All differences from Pierce and Turner "Local Type Inference"
 
-We implemented Local Type Inference for generics, for the reasons described in
-[eqWAlizer's Approach to Type Inference](https://fb.workplace.com/groups/typederlang/permalink/319738999492935/),
-starting with [Pierce and Turner 2000's "Local Type Inference" algorithm](https://www.cis.upenn.edu/~bcpierce/papers/lti-toplas.pdf) (abbreviated "P&T" below).
+We implemented Local Type Inference for generics by starting with [Pierce and Turner 2000's "Local Type Inference" algorithm](https://www.cis.upenn.edu/~bcpierce/papers/lti-toplas.pdf) (abbreviated "P&T" below).
 
 ## First Iteration: Direct Translation of P&T Local Type Inference
 
@@ -20,36 +18,22 @@ The only differences at this stage were:
 After Phase 1, we extended P&T in several ways, described in the rest of this post
 
 > Note: eqWAlizer also contains some innovations w.r.t. recursive type aliases with parameters, not covered by P&T.
-We will cover that topic in a separate post.
 
 ## Extending the Approach: Expressive Lambdas
 
-Our analysis indicated that type-checking idiomatic WA Erlang requires
+Our analysis indicated that type-checking idiomatic Erlang specific to our use-case requires
 advanced handling of lambdas (funs).
 
-While we drew inspiration from the literature, novel solutions were required to support idiomatic WA Erlang.
-The following Workplace post describes why we needed these novel solutions and what we did:
-[eqWAlizer’s approach to generics applied to lambdas](https://fb.workplace.com/groups/typederlang/permalink/324789545654547/).
-
+While we drew inspiration from the literature, novel solutions were required to support our usage of Erlang.
 
 ## Generics with parameters with Unions of Type Variables
 
-These cases occurred in WASERVER, and supporting them enables good code to type check without requiring any changes to
-how WA devs write Erlang.
-
-This diff gives examples and explains our algorithm:
-
-https://www.internalfb.com/diff/D29426958
-
-We tweaked the algorithm slightly in:
-
-https://www.internalfb.com/diff/D32880201
+These cases can occur, and supporting them enables good code to type check without requiring any changes to
+how devs write Erlang.
 
 ## Other changes: Maintainability and Expressivity
 
 The work on expressive lambdas meant that we did not need P&T's C-Abs-Inf rule.
-We dropped this rule in https://www.internalfb.com/diff/D27799001, which made subsequent features easier to implement
-and test.
 
 An invariant we introduced for inference for lambdas makes it easier for us to ensure changes to our
 generics-handling are sound. Conceptually, we have two separate phases, where P&T have just one:
@@ -60,8 +44,7 @@ calls.
 The separation of inference and checking, which emerged naturally from our work on lambdas, gives us more assurance
 that our changes are safe and enables a simple mental model for what the type checker is doing.
 
-Finally, in https://www.internalfb.com/diff/D31923815
-we allow code to type-check even in obscure cases where we can't infer a "best" type. For example, this really-contrived
+Finally, we allow code to type-check even in obscure cases where we can't infer a "best" type. For example, this really-contrived
 code would be rejected by P&T but is accepted by eqWAlizer:
 
 ```erl
