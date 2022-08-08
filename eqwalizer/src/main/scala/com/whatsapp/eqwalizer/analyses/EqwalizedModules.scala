@@ -68,7 +68,9 @@ object EqwalizedModules {
     val production = !absPath.contains("/test/")
     val preamble = new String(Files.readAllBytes(Paths.get(absPath))).take(200)
     val generated = preamble.contains(generatedMark)
-    val eqwalized = forms.exists { case TypingAttribute("eqwalizer" :: _) => true; case _ => false }
+    val eqwalized = DbApi.getModuleApp(module).get.hasEqwalizerMarker || forms.exists {
+      case TypingAttribute("eqwalizer" :: _) => true; case _ => false
+    }
     ModuleInfo(module = module, path = path, generated = generated, production = production, eqwalized = eqwalized)
   }
 }
