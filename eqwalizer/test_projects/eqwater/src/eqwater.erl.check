@@ -1199,42 +1199,24 @@ occ47(A1, A2) ->                           | OK      |
                                            |         |
 -spec occ48(binary() | atom(), atom())     |         |
       -> {atom(), atom()}.                 |         |
-occ48(A1, A2) ->                           | ERROR   |
+occ48(A1, A2) ->                           | OK      |
   case {A1, A2} of                         |         |
     {B, _} when is_binary(B) ->            |         |
       {undefined, A2};                     |         |
     _ ->                                   |         |
-      {A1, A2}                             |         | {A1, A2}.
-                                           |         | Expected: {atom(), atom()}
-                                           |         | Got     : {binary() | atom(), atom()}
-                                           |         | 
-                                           |         |   at tuple index 1:
-                                           |         |   {binary() | atom(), atom()} is not a subtype of {atom(), atom()}
-                                           |         |   because
-                                           |         |   binary() | atom() is not a subtype of atom()
-                                           |         |   because
-                                           |         |   binary() is not a subtype of atom()
+      {A1, A2}                             |         |
   end.                                     |         |
                                            |         |
 -spec occ49(                               |         |
     integer() | undefined,                 |         |
     integer() | undefined                  |         |
 ) -> {integer(), integer()}.               |         |
-occ49(A1, A2) ->                           | ERROR   |
+occ49(A1, A2) ->                           | OK      |
   case {A1, A2} of                         |         |
     {undefined, undefined} ->              |         |
       {0, 0};                              |         |
     {undefined, _} ->                      |         |
-      {0, A2};                             |         | {0, A2}.
-                                           |         | Expected: {number(), number()}
-                                           |         | Got     : {number(), number() | 'undefined'}
-                                           |         | 
-                                           |         |   at tuple index 2:
-                                           |         |   {number(), number() | 'undefined'} is not a subtype of {number(), number()}
-                                           |         |   because
-                                           |         |   number() | 'undefined' is not a subtype of number()
-                                           |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+      {0, A2};                             |         |
     {_, undefined} ->                      |         |
       {A1, 0};                             |         |
     _ ->                                   |         |

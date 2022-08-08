@@ -160,6 +160,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val v = genVar()
         (env + (v -> selType), v)
     }
+    val eMap = c.expr match {
+      case Tuple(elems) =>
+        elems.zipWithIndex.collect { case (Var(n), i) => n -> mkObj(x, List(TupleField(i, elems.size))) }.toMap
+      case _ =>
+        Map.empty[Name, Obj]
+    }
+
     var propsAcc = List.empty[Prop]
     val clauseEnvs = ListBuffer.empty[Env]
     for (clause <- c.clauses) {
@@ -168,7 +175,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
       val aMap = aliases(x, Nil, pat, env).toMap
       val (testPos, testNeg) = guardsProps(clause.guards, aMap)
       val clauseProps = propsAcc ++ patPos.toList ++ testPos
-      val clauseEnv = batchSelect(env1, clauseProps, aMap)
+      val clauseEnv = batchSelect(env1, clauseProps, aMap ++ eMap)
       clauseEnvs.addOne(clauseEnv)
       propsAcc = {
         val allNeg = patNeg.toList ++ testNeg
