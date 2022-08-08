@@ -1013,3 +1013,55 @@ occ44(R = #string_or_def{value = undefined, default = D}) ->
     D;
 occ44(R = #string_or_def{}) ->
     R#string_or_def.value.
+
+-spec occ45(binary() | atom(), atom())
+      -> {atom(), atom()}.
+occ45(B, A) when is_binary(B) ->
+  {undefined, A};
+occ45(A1, A2) ->
+  {A1, A2}.
+
+-spec occ46({binary() | atom(), atom()}) -> {atom(), atom()}.
+occ46(Tuple) ->
+  case Tuple of
+    {B, A} when is_binary(B) ->
+      {undefined, A};
+    {A1, A2} ->
+      {A1, A2}
+  end.
+
+-spec occ47(binary() | atom(), atom())
+      -> {atom(), atom()}.
+occ47(A1, A2) ->
+  case {A1, A2} of
+    {B, _} when is_binary(B) ->
+      {undefined, A2};
+    {A3, A4} ->
+      {A3, A4}
+  end.
+
+-spec occ48(binary() | atom(), atom())
+      -> {atom(), atom()}.
+occ48(A1, A2) ->
+  case {A1, A2} of
+    {B, _} when is_binary(B) ->
+      {undefined, A2};
+    _ ->
+      {A1, A2}
+  end.
+
+-spec occ49(
+    integer() | undefined,
+    integer() | undefined
+) -> {integer(), integer()}.
+occ49(A1, A2) ->
+  case {A1, A2} of
+    {undefined, undefined} ->
+      {0, 0};
+    {undefined, _} ->
+      {0, A2};
+    {_, undefined} ->
+      {A1, 0};
+    _ ->
+      {A1, A2}
+  end.
