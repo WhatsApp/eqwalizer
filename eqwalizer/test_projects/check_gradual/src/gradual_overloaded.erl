@@ -89,3 +89,43 @@ use_fst_gen4(X) ->
     Res = fst_gen(X),
     eqwalizer:reveal_type(Res),
     Res.
+
+-record(r, {count :: integer()}).
+
+-spec rec_each
+    (fun((#r{}) -> #r{}), #r{}) -> #r{};
+    (fun((#r{}) -> #r{}), [#r{}]) -> [#r{}].
+rec_each(F, R) when is_record(R, r) ->
+    F(R);
+rec_each(F, Rs) when is_list(Rs) ->
+    lists:map(F, Rs).
+
+-spec rec_each1(#r{}) -> #r{}.
+rec_each1(Rec) ->
+    rec_each(
+        fun(R) -> R#r{count = 0} end,
+        Rec
+    ).
+
+-spec rec_each2_neg(#r{}) -> atom().
+rec_each2_neg(Rec) ->
+    rec_each(
+        fun(R) -> R#r{count = 0} end,
+        Rec
+    ).
+
+-spec rec_each3_neg(#r{}) -> atom().
+rec_each3_neg(Rec) ->
+    rec_each(
+        fun(I) -> I + 1 end,
+        Rec
+    ).
+
+% optimistically assuming dynamic()
+-spec rec_each4
+    (#r{} | [#r{}]) -> atom().
+rec_each4(Rec) ->
+    rec_each(
+        fun(I) -> I + 1 end,
+        Rec
+    ).

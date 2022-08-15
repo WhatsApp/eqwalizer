@@ -1,10 +1,10 @@
 all funs:
-                                               All : 2669
-                                         Checkable : 2414
-                              Well-typed checkable : 1563
+                                               All : 2674
+                                         Checkable : 2419
+                              Well-typed checkable : 1564
                                    Checkable ratio : 90%
                          Health ratio of checkable : 65%
-                                       error count : 850
+                                       error count : 854
 
 --------------------------------------------
 generated funs:
@@ -26,19 +26,19 @@ generated non-test funs:
 
 --------------------------------------------
 non-generated funs:
-                                               All : 2669
-                                         Checkable : 2414
-                              Well-typed checkable : 1563
+                                               All : 2674
+                                         Checkable : 2419
+                              Well-typed checkable : 1564
                                    Checkable ratio : 90%
                          Health ratio of checkable : 65%
-                                       error count : 850
+                                       error count : 854
 
 --------------------------------------------
 non-generated non-test funs (most important):
-                                               All : 2667
-                                         Checkable : 2412
-                              Well-typed checkable : 1562
+                                               All : 2672
+                                         Checkable : 2417
+                              Well-typed checkable : 1563
                                    Checkable ratio : 90%
                          Health ratio of checkable : 65%
-                                       error count : 849
+                                       error count : 853
 

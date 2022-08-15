@@ -34,6 +34,7 @@ check/src/vars2.erl:15 vars2:remove/4
 check_gradual/src/gradual_overloaded.erl:10 gradual_overloaded:swap/1
 check_gradual/src/gradual_overloaded.erl:18 gradual_overloaded:extract/1
 check_gradual/src/gradual_overloaded.erl:63 gradual_overloaded:fst_gen/1
+check_gradual/src/gradual_overloaded.erl:95 gradual_overloaded:rec_each/2
 debug/src/types1.erl:303 types1:inter/1
 eqwalizer/src/eqwalizer_specs.erl:304 eqwalizer_specs:custom:custom_overloaded/1
-Total: 38
+Total: 39

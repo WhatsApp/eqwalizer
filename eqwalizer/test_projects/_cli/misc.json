@@ -2532,7 +2532,12 @@
           "use_fst_gen1/1",
           "use_fst_gen2/1",
           "use_fst_gen3/1",
-          "use_fst_gen4/1"
+          "use_fst_gen4/1",
+          "rec_each/2",
+          "rec_each1/1",
+          "rec_each2_neg/1",
+          "rec_each3_neg/1",
+          "rec_each4/1"
         ]
       },
       {
