@@ -22,7 +22,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def elabOverloaded(expr: Expr, remoteId: RemoteId, args: List[Expr], env: Env): (Type, Env) = {
-    if (hasLambda(args)) {
+    if (!pipelineCtx.gradualTyping && hasLambda(args)) {
       throw NotSupportedLambdaInOverloadedCall(expr.pos, expr)
     }
     val depFunSpec = util.getOverloadedSpec(remoteId).get
