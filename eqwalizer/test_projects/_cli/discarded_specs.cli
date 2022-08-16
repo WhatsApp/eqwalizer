@@ -49,5 +49,5 @@ type_aliases:uses_trans_unbound_var/2
 type_aliases:uses_ty_w_unbound_var/2
 type_aliases:uses_ty_w_unbound_var2/0
 Discarded specs: 49
-Total specs: 2555
-Discarded ratio: 1.9178 %
+Total specs: 2572
+Discarded ratio: 1.9051 %

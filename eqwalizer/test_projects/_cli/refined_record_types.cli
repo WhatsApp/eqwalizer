@@ -12,6 +12,7 @@ check/src/records.erl:393
 check/src/records.erl:500
 check/src/records.erl:513
 check/src/records.erl:514
+check_gradual/src/dynamic_refine.erl:283
 debug/src/records_wip.erl:31
 eqwater/src/eqwater.erl:598
-Total: 16
+Total: 17

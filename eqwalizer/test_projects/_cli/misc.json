@@ -2431,7 +2431,27 @@
           "dyn_union_1/1",
           "use_private_record_neg/0",
           "refine_map_update1/1",
-          "refine_map_update2/2"
+          "refine_map_update2/2",
+          "foo1/1",
+          "dyn_refine_list/0",
+          "dyn_refine_union/1",
+          "dyn_refine_union_2/1",
+          "dyn_refine_union_neg/1",
+          "with_rec_neg/1",
+          "with_rec_neg2/1",
+          "refine_union_alias/1",
+          "refine_union_alias_neg/1",
+          "refine_to_tuple/1",
+          "refine_in_tuple/1",
+          "refine_in_tuple_2/1",
+          "refine_in_tuple_neg/1",
+          "refine_to_none/1",
+          "occ_tuple_dyn/1",
+          "occ_record_dyn/1",
+          "refine_dyn_record/1",
+          "refine_dyn_select/1",
+          "filter_none/1",
+          "filter_none_ret_dyn/1"
         ]
       },
       {

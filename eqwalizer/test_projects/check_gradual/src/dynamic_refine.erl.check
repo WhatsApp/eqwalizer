@@ -210,3 +210,174 @@ refine_map_update2(                        | OK      |
   M#{key := Val};                          |         |
 refine_map_update2(_, Other) ->            |         |
   Other.                                   |         |
+                                           |         |
+-spec foo1([integer()]) -> ok.             |         |
+foo1(_) -> ok.                             | OK      |
+                                           |         |
+-spec dyn_refine_list() -> ok.             |         |
+dyn_refine_list() ->                       | OK      |
+  Dyn = dyn_val(),                         |         |
+  if                                       |         |
+    is_list(Dyn) -> foo1(Dyn)              |         |
+  end.                                     |         |
+                                           |         |
+-spec dyn_refine_union(                    |         |
+    eqwalizer:dynamic() | error            |         |
+) -> ok.                                   |         |
+dyn_refine_union(error) -> ok;             | OK      |
+dyn_refine_union(D) -> D.                  |         |
+                                           |         |
+-spec dyn_refine_union_2(                  |         |
+    eqwalizer:dynamic() | error | ok       |         |
+) -> ok.                                   |         |
+dyn_refine_union_2(error) -> ok;           | OK      |
+dyn_refine_union_2(D) -> D.                |         |
+                                           |         |
+-spec dyn_refine_union_neg(                |         |
+    eqwalizer:dynamic() | error | ok       |         |
+) -> ok.                                   |         |
+dyn_refine_union_neg(ok) -> ok;            | ERROR   |
+dyn_refine_union_neg(D) -> D.              |         | D.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : none() | 'error'
+                                           |         | 
+                                           |         |   none() | 'error' is not a subtype of 'ok'
+                                           |         |   because
+                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |
+-record(foo, {id :: integer()}).           |         |
+                                           |         |
+with_rec_neg(undefined) ->                 | OK      |
+  undefined;                               |         |
+with_rec_neg(#foo{id = Id}) ->             |         |
+  atom_to_binary(Id).                      |         |
+                                           |         |
+-spec with_rec_neg2(                       |         |
+    eqwalizer:dynamic() | #foo{}           |         |
+) -> atom().                               |         |
+with_rec_neg2(undefined) ->                | ERROR   |
+  undefined;                               |         |
+with_rec_neg2(#foo{id = Id}) ->            |         |
+  atom_to_binary(Id).                      |         | Id.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+-type dyn_alias() :: eqwalizer:dynamic().  |         |
+-type union() :: {dyn_alias() | err}.      |         |
+-type spec_union() :: {integer() | err}.   |         |
+                                           |         |
+-spec refine_union_alias(union()) -> ok.   |         |
+refine_union_alias({err}) -> ok;           | OK      |
+refine_union_alias({X}) -> X.              |         |
+                                           |         |
+-spec refine_union_alias_neg(union()) -> o……         |
+refine_union_alias_neg({X}) -> X.          | ERROR   | X.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : dyn_alias() | 'err'
+                                           |         | 
+                                           |         |   dyn_alias() | 'err' is not a subtype of 'ok'
+                                           |         |   because
+                                           |         |   'err' is not a subtype of 'ok'
+                                           |         |
+-spec refine_to_tuple(union()) -> {ok}.    |         |
+refine_to_tuple({err}) -> {ok};            | OK      |
+refine_to_tuple(X) -> X.                   |         |
+                                           |         |
+-spec refine_in_tuple(union()) -> spec_uni……         |
+refine_in_tuple(T) -> T.                   | OK      |
+                                           |         |
+-spec refine_in_tuple_2(union()) -> {err}. |         |
+refine_in_tuple_2(T) -> T.                 | OK      |
+                                           |         |
+-spec refine_in_tuple_neg(union()) -> {ok}……         |
+refine_in_tuple_neg(T) -> T.               | ERROR   | T.
+                                           |         | Expected: {'ok'}
+                                           |         | Got     : union()
+                                           |         | 
+                                           |         |   union() is not a subtype of {'ok'}
+                                           |         |   because
+                                           |         |   at tuple index 1:
+                                           |         |   {dyn_alias() | 'err'} is not a subtype of {'ok'}
+                                           |         |   because
+                                           |         |   dyn_alias() | 'err' is not a subtype of 'ok'
+                                           |         |   because
+                                           |         |   'err' is not a subtype of 'ok'
+                                           |         |
+-spec refine_to_none(dyn_alias()) -> ok.   |         |
+refine_to_none(X) when is_integer(X) -> X. | OK      |
+                                           |         |
+-spec occ_tuple_dyn(                       |         |
+    {err, binary()} | {ok, atom()} | dyn_a……         |
+) -> binary().                             |         |
+occ_tuple_dyn({err, B}) -> B;              | ERROR   |
+occ_tuple_dyn({ok, A}) -> atom_to_binary(A……         |
+occ_tuple_dyn(V) -> V.                     |         | V.
+                                           |         | Expected: binary()
+                                           |         | Got     : {'err', binary()} | {'ok', atom()} | dyn_alias()
+                                           |         | 
+                                           |         |   {'err', binary()} | {'ok', atom()} | dyn_alias() is not a subtype of binary()
+                                           |         |   because
+                                           |         |   {'err', binary()} is not a subtype of binary()
+                                           |         |
+-record(rec_err, {a :: err, b :: binary()}……         |
+-spec occ_record_dyn(                      |         |
+    #rec_err{} | dyn_alias()               |         |
+) -> binary().                             |         |
+occ_record_dyn(#rec_err{a = err, b = B}) -…… ERROR   |
+    B;                                     |         |
+occ_record_dyn(D) -> D.                    |         | D.
+                                           |         | Expected: binary()
+                                           |         | Got     : #rec_err{} | dyn_alias()
+                                           |         | 
+                                           |         |   #rec_err{} | dyn_alias() is not a subtype of binary()
+                                           |         |   because
+                                           |         |   #rec_err{} is not a subtype of binary()
+                                           |         |
+-record(ref_rec, {                         |         |
+    a :: eqwalizer:refinable(any())        |         |
+}).                                        |         |
+-type ref_rec1() :: #ref_rec{              |         |
+    a :: integer()                         |         |
+}.                                         |         |
+                                           |         |
+-spec refine_dyn_record(                   |         |
+    dyn_alias()                            |         |
+) -> ref_rec1().                           |         |
+refine_dyn_record(R = #ref_rec{a = I})     | OK      |
+    when is_integer(I) -> R.               |         |
+                                           |         |
+-spec refine_dyn_select(                   |         |
+    dyn_alias()                            |         |
+) -> integer().                            |         |
+refine_dyn_select(R = #ref_rec{a = I})     | OK      |
+    when is_integer(I) -> R#ref_rec.a.     |         |
+                                           |         |
+% Testing interaction between generics and……         |
+filter_none(D) ->                          | ERROR   |
+    maps:filtermap(                        |         |
+        fun(_, X) ->                       |         | fun.
+                                           |         | Expected: fun((Key, Value1) -> boolean() | {'true', Value2})
+                                           |         | Got     : fun((none(), none()) -> 'false' | {'true', none()})
+                                           |         | 
+                                           |         |   fun((none(), none()) -> 'false' | {'true', none()}) is not a subtype of fun((Key, Value1) -> boolean() | {'true', Value2})
+                                           |         |   because
+                                           |         |   Key is not a subtype of none()
+            case X of                      |         |
+                none -> false;             |         |
+                _ -> {true, X}             |         |
+            end                            |         |
+        end,                               |         |
+        D                                  |         |
+    ).                                     |         |
+                                           |         |
+filter_none_ret_dyn(D) ->                  | OK      |
+    maps:filtermap(                        |         |
+        fun(_, X) ->                       |         |
+            Dyn = dyn_val(),               |         |
+            case X of                      |         |
+                none -> false;             |         |
+                _ -> {true, Dyn}           |         |
+            end                            |         |
+        end,                               |         |
+        D                                  |         |
+    ).                                     |         |

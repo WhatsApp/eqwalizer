@@ -1,10 +1,10 @@
 all funs:
-                                               All : 2674
-                                         Checkable : 2419
-                              Well-typed checkable : 1564
+                                               All : 2694
+                                         Checkable : 2435
+                              Well-typed checkable : 1567
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 854
+                         Health ratio of checkable : 64%
+                                       error count : 867
 
 --------------------------------------------
 generated funs:
@@ -26,19 +26,19 @@ generated non-test funs:
 
 --------------------------------------------
 non-generated funs:
-                                               All : 2674
-                                         Checkable : 2419
-                              Well-typed checkable : 1564
+                                               All : 2694
+                                         Checkable : 2435
+                              Well-typed checkable : 1567
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 854
+                         Health ratio of checkable : 64%
+                                       error count : 867
 
 --------------------------------------------
 non-generated non-test funs (most important):
-                                               All : 2672
-                                         Checkable : 2417
-                              Well-typed checkable : 1563
+                                               All : 2692
+                                         Checkable : 2433
+                              Well-typed checkable : 1566
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 853
+                         Health ratio of checkable : 64%
+                                       error count : 866
 

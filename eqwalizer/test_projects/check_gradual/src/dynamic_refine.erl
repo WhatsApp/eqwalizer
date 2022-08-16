@@ -191,3 +191,131 @@ refine_map_update2(
   M#{key := Val};
 refine_map_update2(_, Other) ->
   Other.
+  
+-spec foo1([integer()]) -> ok.
+foo1(_) -> ok.
+
+-spec dyn_refine_list() -> ok.
+dyn_refine_list() ->
+  Dyn = dyn_val(),
+  if
+    is_list(Dyn) -> foo1(Dyn)
+  end.
+
+-spec dyn_refine_union(
+    eqwalizer:dynamic() | error
+) -> ok.
+dyn_refine_union(error) -> ok;
+dyn_refine_union(D) -> D.
+
+-spec dyn_refine_union_2(
+    eqwalizer:dynamic() | error | ok
+) -> ok.
+dyn_refine_union_2(error) -> ok;
+dyn_refine_union_2(D) -> D.
+
+-spec dyn_refine_union_neg(
+    eqwalizer:dynamic() | error | ok
+) -> ok.
+dyn_refine_union_neg(ok) -> ok;
+dyn_refine_union_neg(D) -> D.
+
+-record(foo, {id :: integer()}).
+
+with_rec_neg(undefined) ->
+  undefined;
+with_rec_neg(#foo{id = Id}) ->
+  atom_to_binary(Id).
+
+-spec with_rec_neg2(
+    eqwalizer:dynamic() | #foo{}
+) -> atom().
+with_rec_neg2(undefined) ->
+  undefined;
+with_rec_neg2(#foo{id = Id}) ->
+  atom_to_binary(Id).
+
+-type dyn_alias() :: eqwalizer:dynamic().
+-type union() :: {dyn_alias() | err}.
+-type spec_union() :: {integer() | err}.
+
+-spec refine_union_alias(union()) -> ok.
+refine_union_alias({err}) -> ok;
+refine_union_alias({X}) -> X.
+
+-spec refine_union_alias_neg(union()) -> ok.
+refine_union_alias_neg({X}) -> X.
+
+-spec refine_to_tuple(union()) -> {ok}.
+refine_to_tuple({err}) -> {ok};
+refine_to_tuple(X) -> X.
+
+-spec refine_in_tuple(union()) -> spec_union().
+refine_in_tuple(T) -> T.
+
+-spec refine_in_tuple_2(union()) -> {err}.
+refine_in_tuple_2(T) -> T.
+
+-spec refine_in_tuple_neg(union()) -> {ok}.
+refine_in_tuple_neg(T) -> T.
+
+-spec refine_to_none(dyn_alias()) -> ok.
+refine_to_none(X) when is_integer(X) -> X.
+
+-spec occ_tuple_dyn(
+    {err, binary()} | {ok, atom()} | dyn_alias()
+) -> binary().
+occ_tuple_dyn({err, B}) -> B;
+occ_tuple_dyn({ok, A}) -> atom_to_binary(A);
+occ_tuple_dyn(V) -> V.
+
+-record(rec_err, {a :: err, b :: binary()}).
+-spec occ_record_dyn(
+    #rec_err{} | dyn_alias()
+) -> binary().
+occ_record_dyn(#rec_err{a = err, b = B}) ->
+    B;
+occ_record_dyn(D) -> D.
+
+-record(ref_rec, {
+    a :: eqwalizer:refinable(any())
+}).
+-type ref_rec1() :: #ref_rec{
+    a :: integer()
+}.
+
+-spec refine_dyn_record(
+    dyn_alias()
+) -> ref_rec1().
+refine_dyn_record(R = #ref_rec{a = I})
+    when is_integer(I) -> R.
+
+-spec refine_dyn_select(
+    dyn_alias()
+) -> integer().
+refine_dyn_select(R = #ref_rec{a = I})
+    when is_integer(I) -> R#ref_rec.a.
+    
+% Testing interaction between generics and dynamic()
+filter_none(D) ->
+    maps:filtermap(
+        fun(_, X) ->
+            case X of
+                none -> false;
+                _ -> {true, X}
+            end
+        end,
+        D
+    ).
+    
+filter_none_ret_dyn(D) ->
+    maps:filtermap(
+        fun(_, X) ->
+            Dyn = dyn_val(),
+            case X of
+                none -> false;
+                _ -> {true, Dyn}
+            end
+        end,
+        D
+    ).
