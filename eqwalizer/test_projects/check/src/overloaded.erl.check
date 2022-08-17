@@ -148,7 +148,7 @@ maps_filter(_, Map) when is_map(Map) ->    | ERROR   |
                                            |         | Expected: #D{Key => Value}
                                            |         | Got     : maps:iterator(Key, Value)
                                            |         |
--spec test_overloaded_generic(boolean)     |         |
+-spec test_overloaded_generic(boolean())   |         |
         -> #{number() => number()}.        |         |
 test_overloaded_generic(B) ->              | ERROR   |
     M = #{1 => 1, 2 => 3},                 |         |

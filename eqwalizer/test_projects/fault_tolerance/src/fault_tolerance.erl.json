@@ -518,18 +518,6 @@
     },
     {
       "range": {
-        "start": 2548,
-        "end": 2549
-      },
-      "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fburl.com/eqwalizer_expected_subtype",
-      "code": "expected_subtype",
-      "expressionOrNull": "A",
-      "explanationOrNull": null
-    },
-    {
-      "range": {
         "start": 2638,
         "end": 2639
       },

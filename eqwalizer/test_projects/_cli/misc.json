@@ -3176,7 +3176,7 @@
           "occ_andalso/1",
           "multi_param1/2",
           "multi_param2_neg/2",
-          "multi_param3_neg/2",
+          "multi_param3/2",
           "multi_param4/2",
           "foo1/1",
           "foo2/2",

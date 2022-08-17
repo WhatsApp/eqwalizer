@@ -135,7 +135,7 @@ test_inner_bar() ->
 maps_filter(_, Map) when is_map(Map) ->
     Map.
 
--spec test_overloaded_generic(boolean)
+-spec test_overloaded_generic(boolean())
         -> #{number() => number()}.
 test_overloaded_generic(B) ->
     M = #{1 => 1, 2 => 3},

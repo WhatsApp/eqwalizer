@@ -716,7 +716,9 @@ final class Occurrence(pipelineContext: PipelineContext) {
       te = updateTypeEnv(te, +, oT, t)
     for (Neg(oT, t) <- pair._2)
       te = updateTypeEnv(te, -, oT, t)
-    te(x)
+    // The second isNoneType check is there to reduce unwanted noise when none() is not introduced by refining
+    if (te.exists { case (s, t) => subtype.isNoneType(t) && !subtype.isNoneType(typeEnv(s)) }) NoneType
+    else te(x)
   }
 
   private def updateTypeEnv(typeEnv: Env, pol: Polarity, obj: Obj, t: Type): Env = {

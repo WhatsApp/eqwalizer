@@ -838,13 +838,13 @@ multi_param2_neg(X, Y) when is_atom(X),
                 is_atom(Y) -> 1;
 multi_param2_neg(_, Y) -> Y.
 
--spec multi_param3_neg(
+-spec multi_param3(
     atom(),
     number() | atom()
 ) -> number().
-multi_param3_neg(X, Y) when is_atom(X),
+multi_param3(X, Y) when is_atom(X),
   is_atom(Y) -> 1;
-multi_param3_neg(_, Y) -> Y.
+multi_param3(_, Y) -> Y.
 
 -spec multi_param4(
     atom(),

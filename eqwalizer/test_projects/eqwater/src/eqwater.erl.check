@@ -394,39 +394,21 @@ occ14(A) -> A.                             |         |
 -spec occ15                                |         |
   (#a_rec{} | atom(), #ab_rec{})           |         |
     -> atom().                             |         |
-occ15(#a_rec{a = Z},                       | ERROR   |
+occ15(#a_rec{a = Z},                       | OK      |
   #ab_rec{}) -> Z;                         |         |
-occ15(A, _) -> A.                          |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : #a_rec{} | atom()
-                                           |         | 
-                                           |         |   #a_rec{} | atom() is not a subtype of atom()
-                                           |         |   because
-                                           |         |   #a_rec{} is not a subtype of atom()
+occ15(A, _) -> A.                          |         |
                                            |         |
 -spec occ16                                |         |
   (#a_rec{} | atom(), #ab_rec{})           |         |
     -> atom().                             |         |
-occ16(#a_rec{},                            | ERROR   |
+occ16(#a_rec{},                            | OK      |
   #ab_rec{}) -> ok;                        |         |
-occ16(A, _) -> A.                          |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : #a_rec{} | atom()
-                                           |         | 
-                                           |         |   #a_rec{} | atom() is not a subtype of atom()
-                                           |         |   because
-                                           |         |   #a_rec{} is not a subtype of atom()
+occ16(A, _) -> A.                          |         |
                                            |         |
 -spec occ17(                               |         |
 {ax, atom()} | atom(), {bx, atom()}) -> at……         |
-occ17({ax, _}, {bx, _}) -> ok;             | ERROR   |
-occ17(A, _) -> A.                          |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : {'ax', atom()} | atom()
-                                           |         | 
-                                           |         |   {'ax', atom()} | atom() is not a subtype of atom()
-                                           |         |   because
-                                           |         |   {'ax', atom()} is not a subtype of atom()
+occ17({ax, _}, {bx, _}) -> ok;             | OK      |
+occ17(A, _) -> A.                          |         |
                                            |         |
 % correct work with names and scopes       |         |
                                            |         |
@@ -977,19 +959,13 @@ multi_param2_neg(_, Y) -> Y.               |         | Y.
                                            |         |   because
                                            |         |   atom() is not a subtype of number()
                                            |         |
--spec multi_param3_neg(                    |         |
+-spec multi_param3(                        |         |
     atom(),                                |         |
     number() | atom()                      |         |
 ) -> number().                             |         |
-multi_param3_neg(X, Y) when is_atom(X),    | ERROR   |
+multi_param3(X, Y) when is_atom(X),        | OK      |
   is_atom(Y) -> 1;                         |         |
-multi_param3_neg(_, Y) -> Y.               |         | Y.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | atom()
-                                           |         | 
-                                           |         |   number() | atom() is not a subtype of number()
-                                           |         |   because
-                                           |         |   atom() is not a subtype of number()
+multi_param3(_, Y) -> Y.                   |         |
                                            |         |
 -spec multi_param4(                        |         |
     atom(),                                |         |
@@ -1072,18 +1048,12 @@ foo5({B1, B2}) ->                          |         |
   atom() | binary()                        |         |
 ) ->                                       |         |
   binary().                                |         |
-foo6(A1, A2) when                          | ERROR   |
+foo6(A1, A2) when                          | OK      |
   is_atom(A1) and is_atom(A2) ->           |         |
   <<>>;                                    |         |
 foo6(A, B) when                            |         |
   is_atom(A) ->                            |         |
-  B;                                       |         | B.
-                                           |         | Expected: binary()
-                                           |         | Got     : atom() | binary()
-                                           |         | 
-                                           |         |   atom() | binary() is not a subtype of binary()
-                                           |         |   because
-                                           |         |   atom() is not a subtype of binary()
+  B;                                       |         |
 foo6(B, A) when                            |         |
   is_atom(A) ->                            |         |
   B;                                       |         |
@@ -1232,26 +1202,14 @@ occ50(_, I) -> I.                          |         |
 -spec occ51                                |         |
     (ok, integer() | undefined)            |         |
     -> integer().                          |         |
-occ51(ok, undefined) -> 0;                 | ERROR   |
-occ51(ok, I) -> I.                         |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'undefined'
-                                           |         | 
-                                           |         |   number() | 'undefined' is not a subtype of number()
-                                           |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+occ51(ok, undefined) -> 0;                 | OK      |
+occ51(ok, I) -> I.                         |         |
                                            |         |
 -spec occ52                                |         |
     ([term()], integer() | undefined)      |         |
     -> integer().                          |         |
-occ52(L, undefined) when is_list(L) -> 0;  | ERROR   |
-occ52(_, I) -> I.                          |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'undefined'
-                                           |         | 
-                                           |         |   number() | 'undefined' is not a subtype of number()
-                                           |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+occ52(L, undefined) when is_list(L) -> 0;  | OK      |
+occ52(_, I) -> I.                          |         |
                                            |         |
 -spec occ53_neg                            |         |
     ([term()], integer() | undefined)      |         |

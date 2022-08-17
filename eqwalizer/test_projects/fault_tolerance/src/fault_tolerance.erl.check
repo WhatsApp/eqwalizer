@@ -267,9 +267,7 @@ cons(H, T) ->                              | ERROR   |
     true -> A + 1;                         |         | A.
                                            |         | Expected: number()
                                            |         | Got     : atom()
-    false -> A - 1                         |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+    false -> A - 1                         |         |
   end.                                     |         |
                                            |         |
 -spec 'if'                                 |         |

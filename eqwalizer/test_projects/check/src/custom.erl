@@ -338,7 +338,7 @@ maps_filter_2_9_neg(B, M, It) ->
 
 % return ty of maps:filter/2
 % is always DictMap
--spec maps_filter_2_8_neg(boolean)
+-spec maps_filter_2_8_neg(boolean())
         -> #{a => a, b => b}.
 maps_filter_2_8_neg(B) ->
     M = #{a => a, b => b},
@@ -368,7 +368,7 @@ maps_filter_2_10_neg() ->
 map_filter_empty(Pred) ->
     maps:filter(Pred, #{}).
 
--spec maps_map_2_1(boolean)
+-spec maps_map_2_1(boolean())
         -> #{number() => boolean()}.
 maps_map_2_1(B) ->
     M = #{1 => a, 2 => b},
@@ -470,7 +470,7 @@ maps_map_2_8_neg(It) ->
 
 % return ty of maps:map/2
 % is always DictMap
--spec maps_map_2_9_neg(boolean)
+-spec maps_map_2_9_neg(boolean())
         -> #{a => a, b => b}.
 maps_map_2_9_neg(B) ->
     M = #{a => a, b => b},
