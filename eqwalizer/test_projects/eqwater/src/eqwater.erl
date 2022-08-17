@@ -1065,3 +1065,27 @@ occ49(A1, A2) ->
     _ ->
       {A1, A2}
   end.
+  
+-spec occ50
+    (ok, integer() | undefined)
+    -> integer().
+occ50(_, undefined) -> 0;
+occ50(_, I) -> I.
+
+-spec occ51
+    (ok, integer() | undefined)
+    -> integer().
+occ51(ok, undefined) -> 0;
+occ51(ok, I) -> I.
+
+-spec occ52
+    ([term()], integer() | undefined)
+    -> integer().
+occ52(L, undefined) when is_list(L) -> 0;
+occ52(_, I) -> I.
+
+-spec occ53_neg
+    ([term()], integer() | undefined)
+    -> integer().
+occ53_neg(L, undefined) when is_integer(L) -> 0;
+occ53_neg(_, I) -> I.

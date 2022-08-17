@@ -1222,3 +1222,45 @@ occ49(A1, A2) ->                           | OK      |
     _ ->                                   |         |
       {A1, A2}                             |         |
   end.                                     |         |
+                                           |         |
+-spec occ50                                |         |
+    (ok, integer() | undefined)            |         |
+    -> integer().                          |         |
+occ50(_, undefined) -> 0;                  | OK      |
+occ50(_, I) -> I.                          |         |
+                                           |         |
+-spec occ51                                |         |
+    (ok, integer() | undefined)            |         |
+    -> integer().                          |         |
+occ51(ok, undefined) -> 0;                 | ERROR   |
+occ51(ok, I) -> I.                         |         | I.
+                                           |         | Expected: number()
+                                           |         | Got     : number() | 'undefined'
+                                           |         | 
+                                           |         |   number() | 'undefined' is not a subtype of number()
+                                           |         |   because
+                                           |         |   'undefined' is not a subtype of number()
+                                           |         |
+-spec occ52                                |         |
+    ([term()], integer() | undefined)      |         |
+    -> integer().                          |         |
+occ52(L, undefined) when is_list(L) -> 0;  | ERROR   |
+occ52(_, I) -> I.                          |         | I.
+                                           |         | Expected: number()
+                                           |         | Got     : number() | 'undefined'
+                                           |         | 
+                                           |         |   number() | 'undefined' is not a subtype of number()
+                                           |         |   because
+                                           |         |   'undefined' is not a subtype of number()
+                                           |         |
+-spec occ53_neg                            |         |
+    ([term()], integer() | undefined)      |         |
+    -> integer().                          |         |
+occ53_neg(L, undefined) when is_integer(L)…… ERROR   |
+occ53_neg(_, I) -> I.                      |         | I.
+                                           |         | Expected: number()
+                                           |         | Got     : number() | 'undefined'
+                                           |         | 
+                                           |         |   number() | 'undefined' is not a subtype of number()
+                                           |         |   because
+                                           |         |   'undefined' is not a subtype of number()
