@@ -264,20 +264,6 @@ mod tests {
         )
     }
 
-    #[test]
-    fn eqwalize_all_fails_on_bad_parse() {
-        simple_snapshot(
-            args_vec![
-                "eqwalize-all",
-                "--project",
-                "../../test_projects/parse_error",
-                "--format",
-                "json",
-            ],
-            expect_file!["../resources/test/standard/eqwalize_all_parse_error.jsonl"],
-        );
-    }
-
     fn simple_snapshot(args: Vec<OsString>, expected: ExpectFile) {
         let (stdout, stderr, code) = elp(args);
         assert_eq!(
