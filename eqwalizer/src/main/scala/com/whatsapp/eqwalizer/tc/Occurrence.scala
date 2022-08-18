@@ -433,6 +433,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
       case (DynamicType, _) =>
         Some(true)
+      case (_, DynamicType) =>
+        Some(true)
 
       case (VarType(_), _) =>
         Some(true)
@@ -581,9 +583,9 @@ final class Occurrence(pipelineContext: PipelineContext) {
         UnionType(ts.map(restrict(_, s)))
       case (t, s) if overlap(t, s).isFalse =>
         NoneType
-      case (t, s) if subtype.subType(t, s) =>
+      case (t, s) if subtype.gradualSubType(t, s) =>
         t
-      case (t, s) if subtype.subType(s, t) =>
+      case (t, s) if subtype.gradualSubType(s, t) =>
         s
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
@@ -597,7 +599,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   def remove(t1: Type, t2: Type): Type =
     (t1, t2) match {
-      case (t, s) if subtype.subType(t, s) =>
+      case (t, s) if subtype.gradualSubType(t, s) =>
         NoneType
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
@@ -753,6 +755,10 @@ final class Occurrence(pipelineContext: PipelineContext) {
         NoneType
       case (s, Nil) =>
         s
+      case (DynamicType, TupleField(_, _) :: _) =>
+        DynamicType
+      case (DynamicType, RecordField(_, _) :: _) =>
+        DynamicType
       case (UnionType(ts), _) =>
         UnionType(ts.map(typePathRef(_, path)))
       case (TupleType(ts), TupleField(index, arity) :: path1) if ts.size == arity =>

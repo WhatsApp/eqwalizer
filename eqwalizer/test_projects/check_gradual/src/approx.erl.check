@@ -76,7 +76,11 @@ union_list_1(S, Dyn) ->                    | ERROR   |
   [_H, Dyn2] = [S, Dyn],                   |         |
   Dyn2.                                    |         | Dyn2.
                                            |         | Expected: 'anything'
-                                           |         | Got     : string()
+                                           |         | Got     : dynamic() | [number()]
+                                           |         | 
+                                           |         |   dynamic() | [number()] is not a subtype of 'anything'
+                                           |         |   because
+                                           |         |   [number()] is not a subtype of 'anything'
                                            |         |
 -spec dyn_union_1(                         |         |
     none(), eqwalizer:dynamic()            |         |
@@ -98,6 +102,6 @@ dyn_union_2(N, D) ->                       | ERROR   |
           2 -> D;                          |         |
           1 -> N                           |         |
         end,                               |         |
-  eqwalizer:reveal_type(Res),              |         | none()
+  eqwalizer:reveal_type(Res),              |         | dynamic()
 
   Res.                                     |         |

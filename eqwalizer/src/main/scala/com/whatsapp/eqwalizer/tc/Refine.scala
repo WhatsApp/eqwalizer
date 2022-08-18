@@ -28,9 +28,9 @@ class Refine(pipelineContext: PipelineContext) {
 
   private def refineAux(t1: Type, t2: Type, seen: Set[RemoteId])(implicit
       promoteNone: Boolean
-  ): Type = {
-    if (subtype.subType(t1, t2)) t1
-    else if (subtype.subType(t2, t1)) t2
+  ): Type =
+    if (subtype.gradualSubType(t1, t2)) t1
+    else if (subtype.gradualSubType(t2, t1)) t2
     else
       (t1, t2) match {
         case (RemoteType(rid, args), _) =>
@@ -43,6 +43,8 @@ class Refine(pipelineContext: PipelineContext) {
             val body = util.getTypeDeclBody(rid, args)
             refineAux(t1, body, seen + rid)
           }
+        case (DynamicType, _) => DynamicType
+        case (_, DynamicType) => DynamicType
         // Composed "refinable" types - refining component by component
         case (UnionType(ty1s), _) => subtype.join(ty1s.map(refineAux(_, t2, seen)))
         case (_, UnionType(ty2s)) =>
@@ -107,5 +109,4 @@ class Refine(pipelineContext: PipelineContext) {
         case (_, _) =>
           NoneType
       }
-  }
 }

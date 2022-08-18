@@ -239,9 +239,9 @@ dyn_refine_union_2(D) -> D.                |         |
 dyn_refine_union_neg(ok) -> ok;            | ERROR   |
 dyn_refine_union_neg(D) -> D.              |         | D.
                                            |         | Expected: 'ok'
-                                           |         | Got     : none() | 'error'
+                                           |         | Got     : dynamic() | 'error' | none()
                                            |         | 
-                                           |         |   none() | 'error' is not a subtype of 'ok'
+                                           |         |   dynamic() | 'error' | none() is not a subtype of 'ok'
                                            |         |   because
                                            |         |   'error' is not a subtype of 'ok'
                                            |         |
@@ -273,9 +273,9 @@ refine_union_alias({X}) -> X.              |         |
 -spec refine_union_alias_neg(union()) -> o……         |
 refine_union_alias_neg({X}) -> X.          | ERROR   | X.
                                            |         | Expected: 'ok'
-                                           |         | Got     : dyn_alias() | 'err'
+                                           |         | Got     : dynamic() | 'err'
                                            |         | 
-                                           |         |   dyn_alias() | 'err' is not a subtype of 'ok'
+                                           |         |   dynamic() | 'err' is not a subtype of 'ok'
                                            |         |   because
                                            |         |   'err' is not a subtype of 'ok'
                                            |         |
@@ -309,29 +309,17 @@ refine_to_none(X) when is_integer(X) -> X. | OK      |
 -spec occ_tuple_dyn(                       |         |
     {err, binary()} | {ok, atom()} | dyn_a……         |
 ) -> binary().                             |         |
-occ_tuple_dyn({err, B}) -> B;              | ERROR   |
+occ_tuple_dyn({err, B}) -> B;              | OK      |
 occ_tuple_dyn({ok, A}) -> atom_to_binary(A……         |
-occ_tuple_dyn(V) -> V.                     |         | V.
-                                           |         | Expected: binary()
-                                           |         | Got     : {'err', binary()} | {'ok', atom()} | dyn_alias()
-                                           |         | 
-                                           |         |   {'err', binary()} | {'ok', atom()} | dyn_alias() is not a subtype of binary()
-                                           |         |   because
-                                           |         |   {'err', binary()} is not a subtype of binary()
+occ_tuple_dyn(V) -> V.                     |         |
                                            |         |
 -record(rec_err, {a :: err, b :: binary()}……         |
 -spec occ_record_dyn(                      |         |
     #rec_err{} | dyn_alias()               |         |
 ) -> binary().                             |         |
-occ_record_dyn(#rec_err{a = err, b = B}) -…… ERROR   |
+occ_record_dyn(#rec_err{a = err, b = B}) -…… OK      |
     B;                                     |         |
-occ_record_dyn(D) -> D.                    |         | D.
-                                           |         | Expected: binary()
-                                           |         | Got     : #rec_err{} | dyn_alias()
-                                           |         | 
-                                           |         |   #rec_err{} | dyn_alias() is not a subtype of binary()
-                                           |         |   because
-                                           |         |   #rec_err{} is not a subtype of binary()
+occ_record_dyn(D) -> D.                    |         |
                                            |         |
 -record(ref_rec, {                         |         |
     a :: eqwalizer:refinable(any())        |         |
@@ -349,19 +337,15 @@ refine_dyn_record(R = #ref_rec{a = I})     | OK      |
 -spec refine_dyn_select(                   |         |
     dyn_alias()                            |         |
 ) -> integer().                            |         |
-refine_dyn_select(R = #ref_rec{a = I})     | OK      |
-    when is_integer(I) -> R#ref_rec.a.     |         |
+refine_dyn_select(R = #ref_rec{a = I})     | ERROR   |
+    when is_integer(I) -> R#ref_rec.a.     |         | ...#ref_rec.a.
+                                           |         | Expected: number()
+                                           |         | Got     : term()
                                            |         |
 % Testing interaction between generics and……         |
-filter_none(D) ->                          | ERROR   |
+filter_none(D) ->                          | OK      |
     maps:filtermap(                        |         |
-        fun(_, X) ->                       |         | fun.
-                                           |         | Expected: fun((Key, Value1) -> boolean() | {'true', Value2})
-                                           |         | Got     : fun((none(), none()) -> 'false' | {'true', none()})
-                                           |         | 
-                                           |         |   fun((none(), none()) -> 'false' | {'true', none()}) is not a subtype of fun((Key, Value1) -> boolean() | {'true', Value2})
-                                           |         |   because
-                                           |         |   Key is not a subtype of none()
+        fun(_, X) ->                       |         |
             case X of                      |         |
                 none -> false;             |         |
                 _ -> {true, X}             |         |
@@ -385,15 +369,11 @@ filter_none_ret_dyn(D) ->                  | OK      |
 -spec refine_is_list(                      |         |
     eqwalizer:dynamic() | error            |         |
 ) -> atom().                               |         |
-refine_is_list(L) when is_list(L) ->       | ERROR   |
-  lists:nth(1, L).                         |         | lists:nth(1, L).
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+refine_is_list(L) when is_list(L) ->       | OK      |
+  lists:nth(1, L).                         |         |
                                            |         |
 -spec refine_is_map(                       |         |
     eqwalizer:dynamic() | error            |         |
 ) -> atom().                               |         |
-refine_is_map(M) when is_map(M) ->         | ERROR   |
-  maps:get(key, M).                        |         | maps:get('key', M).
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+refine_is_map(M) when is_map(M) ->         | OK      |
+  maps:get(key, M).                        |         |

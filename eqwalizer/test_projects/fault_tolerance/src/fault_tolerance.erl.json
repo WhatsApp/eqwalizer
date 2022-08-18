@@ -258,7 +258,7 @@
         "end": 1528
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : [none()]",
+      "message": "Expected: number()\nGot     : [dynamic()]",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
@@ -306,7 +306,7 @@
         "end": 1762
       },
       "lineAndCol": null,
-      "message": "Expected: #D{dynamic() => dynamic()}\nGot     : [none()]",
+      "message": "Expected: #D{dynamic() => dynamic()}\nGot     : [dynamic()]",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "Res",
@@ -518,6 +518,18 @@
     },
     {
       "range": {
+        "start": 2548,
+        "end": 2549
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : atom()",
+      "uri": "https://fburl.com/eqwalizer_expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "A",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
         "start": 2638,
         "end": 2639
       },
@@ -702,7 +714,7 @@
         "end": 3246
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : #D{'id' => number()}",
+      "message": "Expected: number()\nGot     : #D{dynamic() | 'id' => dynamic() | number()}",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "M1",
@@ -726,7 +738,7 @@
         "end": 3251
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : #D{'id' => number()}",
+      "message": "Expected: number()\nGot     : #D{dynamic() | 'id' => dynamic() | number()}",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "M2",

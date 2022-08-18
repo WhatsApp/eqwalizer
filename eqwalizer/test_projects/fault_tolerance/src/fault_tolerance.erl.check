@@ -144,7 +144,7 @@ lambda_arity(Ns, A) ->                     | ERROR   |
   Y =                                      |         |
     X +                                    |         | X.
                                            |         | Expected: number()
-                                           |         | Got     : [none()]
+                                           |         | Got     : [dynamic()]
       A,                                   |         | A.
                                            |         | Expected: number()
                                            |         | Got     : atom()
@@ -167,7 +167,7 @@ lists_append(M1, M2) ->                    | ERROR   |
   ),                                       |         |
   Res.                                     |         | Res.
                                            |         | Expected: #D{dynamic() => dynamic()}
-                                           |         | Got     : [none()]
+                                           |         | Got     : [dynamic()]
                                            |         |
 -spec maps_update1                         |         |
     (any(), atom(), atom()) -> atom().     |         |
@@ -267,7 +267,9 @@ cons(H, T) ->                              | ERROR   |
     true -> A + 1;                         |         | A.
                                            |         | Expected: number()
                                            |         | Got     : atom()
-    false -> A - 1                         |         |
+    false -> A - 1                         |         | A.
+                                           |         | Expected: number()
+                                           |         | Got     : atom()
   end.                                     |         |
                                            |         |
 -spec 'if'                                 |         |
@@ -352,11 +354,11 @@ maps(M) ->                                 | ERROR   |
                                            |         | Got     : 'b'
   M1 + M2.                                 |         | M1.
                                            |         | Expected: number()
-                                           |         | Got     : #D{'id' => number()}
+                                           |         | Got     : #D{dynamic() | 'id' => dynamic() | number()}
                                            |         | ---
                                            |         | M2.
                                            |         | Expected: number()
-                                           |         | Got     : #D{'id' => number()}
+                                           |         | Got     : #D{dynamic() | 'id' => dynamic() | number()}
                                            |         | ---
                                            |         | _ + _.
                                            |         | Expected: 'ok'

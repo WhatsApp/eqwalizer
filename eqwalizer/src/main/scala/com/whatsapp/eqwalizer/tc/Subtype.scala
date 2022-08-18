@@ -11,12 +11,38 @@ import com.whatsapp.eqwalizer.ast.Types._
 
 class Subtype(pipelineContext: PipelineContext) {
   val util = pipelineContext.util
-  def subType(t1: Type, t2: Type): Boolean =
-    subType(t1, t2, Set.empty)
 
-  private def subType(t1: Type, t2: Type, seen: Set[(Type, Type)]): Boolean = {
+  private sealed trait Variance
+  private case object + extends Variance
+  private case object - extends Variance
+
+  private type Polarity = (Variance, Variance)
+
+  private def negate(v: Variance): Variance =
+    v match {
+      case + => -
+      case - => +
+    }
+
+  private def negate(polarity: Polarity): Polarity = {
+    val (v1, v2) = polarity
+    (negate(v2), negate(v1))
+  }
+
+  def subType(t1: Type, t2: Type): Boolean =
+    subTypePol(t1, t2, Set.empty)(-, +)
+
+  def gradualSubType(t1: Type, t2: Type): Boolean =
+    subTypePol(t1, t2, Set.empty)(+, +) && subTypePol(t1, t2, Set.empty)(-, -)
+
+  private def subTypePol(
+      t1: Type,
+      t2: Type,
+      seen: Set[((Type, Variance), (Type, Variance))],
+  )(implicit polarity: Polarity): Boolean = {
+    val (v1, v2) = polarity
     (t1, t2) match {
-      case (_, _) if seen((t1, t2)) =>
+      case (_, _) if seen(((t1, v1), (t2, v2))) =>
         true
       case (_, _) if t1 == t2 =>
         true
@@ -25,28 +51,31 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case (NoneType, _) =>
         true
-      case (DynamicType, _) =>
+      case (DynamicType, _) if v1 == - =>
         true
-      case (_, DynamicType) =>
+      case (DynamicType, _) if v1 == + =>
+        subTypePol(AnyType, t2, seen)
+      case (_, DynamicType) if v2 == - =>
+        subTypePol(t1, NoneType, seen)
+      case (_, DynamicType) if v2 == + =>
         true
-
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
-        subType(body, t2, seen + (t1 -> t2))
+        subTypePol(body, t2, seen + ((t1, v1) -> (t2, v2)))
       case (_, RemoteType(rid, args)) =>
         val body = util.getTypeDeclBody(rid, args)
-        subType(t1, body, seen + (t1 -> t2))
+        subTypePol(t1, body, seen + ((t1, v1) -> (t2, v2)))
       case (OpaqueType(id1, tys1), OpaqueType(id2, tys2)) =>
-        id1 == id2 && tys1.lazyZip(tys2).forall(subType(_, _, seen))
+        id1 == id2 && tys1.lazyZip(tys2).forall(subTypePol(_, _, seen))
 
       case (UnionType(tys1), _) =>
-        tys1.forall(subType(_, t2, seen))
+        tys1.forall(subTypePol(_, t2, seen))
 
       case (ty1: TupleType, ty2: UnionType) if ty1.argTys.nonEmpty =>
         ty1.argTys.zipWithIndex.exists { case (elem, i) => subtypeTuple(elem, ty2, i, ty1, seen) }
 
       case (_, UnionType(tys2)) =>
-        tys2.exists(subType(t1, _, seen))
+        tys2.exists(subTypePol(t1, _, seen))
 
       case (AtomLitType(_), AtomType) =>
         true
@@ -59,28 +88,28 @@ class Subtype(pipelineContext: PipelineContext) {
       case (r: RecordType, t: TupleType) =>
         util.getRecord(r.module, r.name) match {
           case Some(recDecl) =>
-            subType(recordAsTuple(recDecl), t, seen)
+            subTypePol(recordAsTuple(recDecl), t, seen)
           case None =>
             false
         }
       case (t: TupleType, r: RecordType) =>
         util.getRecord(r.module, r.name) match {
           case Some(recDecl) =>
-            subType(t, recordAsTuple(recDecl), seen)
+            subTypePol(t, recordAsTuple(recDecl), seen)
           case None =>
             false
         }
       case (r: RefinedRecordType, t: TupleType) =>
         util.getRecord(r.recType.module, r.recType.name) match {
           case Some(recDecl) =>
-            subType(refinedRecordAsTuple(recDecl, r), t, seen)
+            subTypePol(refinedRecordAsTuple(recDecl, r), t, seen)
           case None =>
             false
         }
       case (t: TupleType, r: RefinedRecordType) =>
         util.getRecord(r.recType.module, r.recType.name) match {
           case Some(recDecl) =>
-            subType(t, refinedRecordAsTuple(recDecl, r), seen)
+            subTypePol(t, refinedRecordAsTuple(recDecl, r), seen)
           case None =>
             false
         }
@@ -89,7 +118,7 @@ class Subtype(pipelineContext: PipelineContext) {
       case (rec: RecordType, refRec: RefinedRecordType) if rec == refRec.recType =>
         util.getRecord(rec.module, rec.name) match {
           case Some(recDecl) =>
-            refRec.fields.forall(f => subType(recDecl.fields(f._1).tp, f._2, seen))
+            refRec.fields.forall(f => subTypePol(recDecl.fields(f._1).tp, f._2, seen))
           case None =>
             false
         }
@@ -99,9 +128,9 @@ class Subtype(pipelineContext: PipelineContext) {
           case Some(recDecl) =>
             refRec2.fields.forall { case (fName, fTy) =>
               if (refRec1.fields.contains(fName))
-                subType(refRec1.fields(fName), fTy, seen)
+                subTypePol(refRec1.fields(fName), fTy, seen)
               else
-                subType(recDecl.fields(fName).tp, fTy, seen)
+                subTypePol(recDecl.fields(fName).tp, fTy, seen)
             }
         }
       case (AnyTupleType, TupleType(_)) if pipelineContext.gradualTyping =>
@@ -115,28 +144,30 @@ class Subtype(pipelineContext: PipelineContext) {
       case (AnyFunType, FunType(_, _, _)) if pipelineContext.gradualTyping =>
         true
       case (FunType(_, argTys, _), AnyFunType) =>
-        argTys.forall(subType(AnyType, _, seen))
+        argTys.forall(subTypePol(AnyType, _, seen))
       case (TupleType(tys1), TupleType(tys2)) if tys1.size == tys2.size =>
-        tys1.lazyZip(tys2).forall(subType(_, _, seen))
+        tys1.lazyZip(tys2).forall(subTypePol(_, _, seen))
       case (NilType, ListType(_)) =>
         true
       case (ListType(ty1), NilType) =>
-        subType(ty1, NoneType, seen)
+        subTypePol(ty1, NoneType, seen)
       case (ListType(et1), ListType(et2)) =>
-        subType(et1, et2, seen)
+        subTypePol(et1, et2, seen)
       case (ft1: FunType, ft2: FunType) if ft1.argTys.size == ft2.argTys.size =>
         TypeVars.conformForalls(ft1, ft2) match {
           case None => false
           case Some((FunType(_, args1, res1), FunType(_, args2, res2))) =>
-            subType(res1, res2, seen) && args2.lazyZip(args1).forall(subType(_, _, seen))
+            subTypePol(res1, res2, seen) && args2
+              .lazyZip(args1)
+              .forall(subTypePol(_, _, seen)(negate(polarity)))
         }
       case (DictMap(kT1, vT1), DictMap(kT2, vT2)) =>
-        subType(kT1, kT2, seen) && subType(vT1, vT2, seen)
+        subTypePol(kT1, kT2, seen) && subTypePol(vT1, vT2, seen)
       case (ShapeMap(props), DictMap(kT, vT)) =>
         // keep this logic in sync with ElabGeneric.constraintGen
         val shapeDomain = join(props.map(prop => AtomLitType(prop.key)))
         val shapeCodomain = join(props.map(_.tp))
-        subType(shapeDomain, kT, seen) && subType(shapeCodomain, vT, seen)
+        subTypePol(shapeDomain, kT, seen) && subTypePol(shapeCodomain, vT, seen)
       case (ShapeMap(props1), ShapeMap(props2)) =>
         // keep this logic in sync with ElabGeneric.constraintGen
         val keys1 = props1.map(_.key).toSet
@@ -149,7 +180,7 @@ class Subtype(pipelineContext: PipelineContext) {
         for (prop1 <- props1) {
           val t1 = prop1.tp
           val t2 = kvs2(prop1.key)
-          if (!subType(t1, t2, seen)) return false
+          if (!subTypePol(t1, t2, seen)) return false
         }
         true
       case (DictMap(kT, vT), ShapeMap(_)) if isDynamicType(kT) && isDynamicType(vT) =>
@@ -201,14 +232,14 @@ class Subtype(pipelineContext: PipelineContext) {
         false
     })
 
-  // dynamic() is not available in the surface language ->
-  // it cannot be inside remote or opaque types...
   private def hasDynamic(t: Type): Boolean =
     t match {
       case DynamicType =>
         true
       case UnionType(ts) =>
         ts.exists(hasDynamic)
+      case RemoteType(rid, args) =>
+        hasDynamic(util.getTypeDeclBody(rid, args))
       case _ =>
         false
     }
@@ -220,6 +251,8 @@ class Subtype(pipelineContext: PipelineContext) {
       case UnionType(ts) =>
         val ts1 = ts.flatMap(staticAux)
         if (ts1.isEmpty) None else Some(UnionType(ts1))
+      case RemoteType(rid, args) =>
+        staticAux(util.getTypeDeclBody(rid, args))
       case _ =>
         Some(t)
     }
@@ -238,8 +271,8 @@ class Subtype(pipelineContext: PipelineContext) {
     val static2 = if (dynamic2) static(t2) else t2
 
     val staticRes =
-      if (subType(static1, static2)) static2
-      else if (subType(static2, static1)) static1
+      if (gradualSubType(static1, static2)) static2
+      else if (gradualSubType(static2, static1)) static1
       else UnionType(Set(static1, static2))
 
     if (dynamic1 || dynamic2) {
@@ -255,8 +288,9 @@ class Subtype(pipelineContext: PipelineContext) {
       t2: Type,
       proj: Int,
       originalTuple: TupleType,
-      seen: Set[(Type, Type)],
-  ): Boolean = {
+      seen: Set[((Type, Variance), (Type, Variance))],
+  )(implicit polarity: (Variance, Variance)): Boolean = {
+    val (v1, v2) = polarity
     (t1, t2) match {
       // Standard cases from subType
       case (NoneType, _) =>
@@ -265,8 +299,12 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case (_, AnyTupleType) =>
         true
-      case (_, DynamicType) =>
+      case (_, DynamicType) if v2 == + =>
         true
+      case (_, DynamicType) if v2 == - =>
+        false
+      case (DynamicType, _) if v1 == + =>
+        subtypeTuple(AnyType, t2, proj, originalTuple, seen)
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
         subtypeTuple(body, t2, proj, originalTuple, seen)
@@ -277,12 +315,11 @@ class Subtype(pipelineContext: PipelineContext) {
         tys1.forall(subtypeTuple(_, t2, proj, originalTuple, seen))
       case (_, TupleType(tys2)) if originalTuple.argTys.size == tys2.size =>
         // Injects the union back into the original tuple
-        subType(TupleType(originalTuple.argTys.updated(proj, t1)), t2, seen)
-
+        subTypePol(TupleType(originalTuple.argTys.updated(proj, t1)), t2, seen)
       // Standard cases from subType
       case (_, RemoteType(rid, args)) =>
         val body = util.getTypeDeclBody(rid, args)
-        subtypeTuple(t1, body, proj, originalTuple, seen + (originalTuple -> t2))
+        subtypeTuple(t1, body, proj, originalTuple, seen + ((originalTuple, v1) -> (t2, v2)))
       case (_, UnionType(tys)) =>
         tys.exists(t => subtypeTuple(t1, t, proj, originalTuple, seen))
       case (_, r: RecordType) =>
