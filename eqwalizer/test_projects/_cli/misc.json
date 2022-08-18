@@ -2451,7 +2451,9 @@
           "refine_dyn_record/1",
           "refine_dyn_select/1",
           "filter_none/1",
-          "filter_none_ret_dyn/1"
+          "filter_none_ret_dyn/1",
+          "refine_is_list/1",
+          "refine_is_map/1"
         ]
       },
       {

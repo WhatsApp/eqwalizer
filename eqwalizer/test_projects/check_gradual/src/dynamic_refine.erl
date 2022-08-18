@@ -319,3 +319,15 @@ filter_none_ret_dyn(D) ->
         end,
         D
     ).
+
+-spec refine_is_list(
+    eqwalizer:dynamic() | error
+) -> atom().
+refine_is_list(L) when is_list(L) ->
+  lists:nth(1, L).
+
+-spec refine_is_map(
+    eqwalizer:dynamic() | error
+) -> atom().
+refine_is_map(M) when is_map(M) ->
+  maps:get(key, M).
