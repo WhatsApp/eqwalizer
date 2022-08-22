@@ -212,13 +212,6 @@ class Approx(pipelineContext: PipelineContext) {
       case _ => List()
     }
 
-  def joinEnvs(envs: List[Env]): Env = {
-    val vars = envs.map(_.keySet).reduce(_.intersect(_))
-    var envAcc: Env = envs.head.filter { case (k, _) => vars(k) }
-    for { env <- envs; v <- vars } envAcc = envAcc.updated(v, subtype.join(envAcc(v), env(v)))
-    envAcc
-  }
-
   private def adjustShapeMap(t: ShapeMap, keyT: Type, valT: Type): Type =
     keyT match {
       case AtomLitType(key) =>

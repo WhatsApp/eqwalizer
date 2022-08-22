@@ -260,27 +260,6 @@ class Subtype(pipelineContext: PipelineContext) {
   private def static(t: Type): Type =
     staticAux(t).getOrElse(NoneType)
 
-  def join(ts: Iterable[Type]): Type =
-    ts.fold(NoneType)(join)
-
-  def join(t1: Type, t2: Type): Type = {
-    val dynamic1 = hasDynamic(t1)
-    val dynamic2 = hasDynamic(t2)
-
-    val static1 = if (dynamic1) static(t1) else t1
-    val static2 = if (dynamic2) static(t2) else t2
-
-    val staticRes =
-      if (gradualSubType(static1, static2)) static2
-      else if (gradualSubType(static2, static1)) static1
-      else UnionType(Set(static1, static2))
-
-    if (dynamic1 || dynamic2) {
-      if (staticRes == NoneType) DynamicType else UnionType(Set(DynamicType, staticRes))
-    } else
-      staticRes
-  }
-
   /** Checks whether originalTuple.updated(proj, t1) < t2, by expanding t1 if it is an alias or a union.
     */
   private def subtypeTuple(
@@ -340,5 +319,33 @@ class Subtype(pipelineContext: PipelineContext) {
       case _ =>
         false
     }
+  }
+
+  def joinEnvs(envs: List[Env]): Env = {
+    val vars = envs.map(_.keySet).reduce(_.intersect(_))
+    var envAcc: Env = envs.head.filter { case (k, _) => vars(k) }
+    for { env <- envs; v <- vars } envAcc = envAcc.updated(v, join(envAcc(v), env(v)))
+    envAcc
+  }
+
+  def join(ts: Iterable[Type]): Type =
+    ts.fold(NoneType)(join)
+
+  def join(t1: Type, t2: Type): Type = {
+    val dynamic1 = hasDynamic(t1)
+    val dynamic2 = hasDynamic(t2)
+
+    val static1 = if (dynamic1) static(t1) else t1
+    val static2 = if (dynamic2) static(t2) else t2
+
+    val staticRes =
+      if (gradualSubType(static1, static2)) static2
+      else if (gradualSubType(static2, static1)) static1
+      else UnionType(Set(static1, static2))
+
+    if (dynamic1 || dynamic2) {
+      if (staticRes == NoneType) DynamicType else UnionType(Set(DynamicType, staticRes))
+    } else
+      staticRes
   }
 }

@@ -237,10 +237,10 @@ final class Elab(pipelineContext: PipelineContext) {
             .lazyZip(clauseEnvs)
             .map((clause, occEnv) => elabClause(clause, List(selTy), occEnv, effVars))
             .unzip
-          (subtype.join(ts), approx.joinEnvs(envs))
+          (subtype.join(ts), subtype.joinEnvs(envs))
         } else {
           val (ts, envs) = clauses.map(elabClause(_, List(selTy), env1, effVars)).unzip
-          (subtype.join(ts), approx.joinEnvs(envs))
+          (subtype.join(ts), subtype.joinEnvs(envs))
         }
       case i @ If(clauses) =>
         val effVars = Vars.clausesVars(clauses)
@@ -250,10 +250,10 @@ final class Elab(pipelineContext: PipelineContext) {
             .lazyZip(clauseEnvs)
             .map((clause, occEnv) => elabClause(clause, List.empty, occEnv, effVars))
             .unzip
-          (subtype.join(ts), approx.joinEnvs(envs))
+          (subtype.join(ts), subtype.joinEnvs(envs))
         } else {
           val (ts, envs) = clauses.map(elabClause(_, List.empty, env, effVars)).unzip
-          (subtype.join(ts), approx.joinEnvs(envs))
+          (subtype.join(ts), subtype.joinEnvs(envs))
         }
       case Match(mPat @ Pats.PatVar(_), l: Lambda) if pipelineContext.gradualTyping =>
         val arity = l.clauses.head.pats.size
@@ -401,7 +401,7 @@ final class Elab(pipelineContext: PipelineContext) {
         val effVars = Vars.clausesVars(clauses)
         val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
         val (ts, envs) = clauses.map(elabClause(_, List(argType), env, effVars)).unzip
-        (subtype.join(ts), approx.joinEnvs(envs))
+        (subtype.join(ts), subtype.joinEnvs(envs))
       case ReceiveWithTimeout(List(), timeout, timeoutBlock) =>
         val env1 = check.checkExpr(timeout, builtinTypes("timeout"), env)
         elabBody(timeoutBlock, env1)
@@ -411,7 +411,7 @@ final class Elab(pipelineContext: PipelineContext) {
         val (ts, envs) = clauses.map(elabClause(_, List(argType), env, effVars)).unzip
         val env1 = check.checkExpr(timeout, builtinTypes("timeout"), env)
         val (timeoutT, timeoutEnv) = elabBody(timeoutBlock, env1)
-        (subtype.join(timeoutT :: ts), approx.joinEnvs(timeoutEnv :: envs))
+        (subtype.join(timeoutT :: ts), subtype.joinEnvs(timeoutEnv :: envs))
       case LComprehension(template, qualifiers) =>
         var envAcc = env
         qualifiers.foreach {

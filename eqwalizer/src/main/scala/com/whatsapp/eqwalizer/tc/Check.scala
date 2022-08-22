@@ -221,7 +221,7 @@ final class Check(pipelineContext: PipelineContext) {
             env2
           } else {
             val envs = funTys.map(checkApply(expr, _, args, resTy, env1))
-            approx.joinEnvs(envs)
+            subtype.joinEnvs(envs)
           }
         case LocalFun(id) =>
           util.getFunType(module, id) match {
@@ -256,10 +256,10 @@ final class Check(pipelineContext: PipelineContext) {
             val envs2 = clauses
               .lazyZip(clauseEnvs)
               .map((clause, occEnv) => checkClause(clause, List(selType), resTy, occEnv, effVars))
-            approx.joinEnvs(envs2)
+            subtype.joinEnvs(envs2)
           } else {
             val envs2 = clauses.map(checkClause(_, List(selType), resTy, env1, effVars))
-            approx.joinEnvs(envs2)
+            subtype.joinEnvs(envs2)
           }
         case i @ If(clauses) =>
           val effVars = Vars.clausesVars(clauses)
@@ -268,10 +268,10 @@ final class Check(pipelineContext: PipelineContext) {
             val envs1 = clauses
               .lazyZip(clauseEnvs)
               .map((clause, occEnv) => checkClause(clause, List.empty, resTy, occEnv, effVars))
-            approx.joinEnvs(envs1)
+            subtype.joinEnvs(envs1)
           } else {
             val envs1 = clauses.map(checkClause(_, List.empty, resTy, env, effVars))
-            approx.joinEnvs(envs1)
+            subtype.joinEnvs(envs1)
           }
         case Match(mPat, mExp) =>
           val (mType, env1) = elab.elabExpr(mExp, env)
@@ -327,7 +327,7 @@ final class Check(pipelineContext: PipelineContext) {
           val effVars = Vars.clausesVars(clauses)
           val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
           val envs1 = clauses.map(checkClause(_, List(argType), resTy, env, effVars))
-          approx.joinEnvs(envs1)
+          subtype.joinEnvs(envs1)
         case ReceiveWithTimeout(List(), timeout, timeoutBlock) =>
           val env1 = checkExpr(timeout, builtinTypes("timeout"), env)
           checkBody(timeoutBlock, resTy, env1)
@@ -338,7 +338,7 @@ final class Check(pipelineContext: PipelineContext) {
           val tEnv1 = checkExpr(timeout, builtinTypes("timeout"), env)
           val tEnv2 = checkBody(timeoutBlock, resTy, tEnv1)
           val tEnv3 = util.exitScope(env, tEnv2, effVars)
-          approx.joinEnvs(tEnv3 :: envs1)
+          subtype.joinEnvs(tEnv3 :: envs1)
         case LComprehension(template, qualifiers) =>
           var envAcc = env
           qualifiers.foreach {

@@ -69,7 +69,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
             else (TupleType(patTypes), envAcc)
           }
         val (tys, envs) = tyEnvPairs.unzip
-        (subtype.join(tys), approx.joinEnvs(envs))
+        (subtype.join(tys), subtype.joinEnvs(envs))
       case PatNil() =>
         val patType = refine.approxMeet(t, NilType)
         (patType, env)
