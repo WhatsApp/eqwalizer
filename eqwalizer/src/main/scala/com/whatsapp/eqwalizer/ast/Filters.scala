@@ -10,6 +10,38 @@ import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.Guards._
 
 object Filters {
+  val predicates1: Set[String] =
+    Set(
+      "is_atom",
+      "is_binary",
+      "is_bitstring",
+      "is_boolean",
+      "is_float",
+      "is_function",
+      "is_integer",
+      "is_list",
+      "is_number",
+      "is_pid",
+      "is_port",
+      "is_reference",
+      "is_map",
+      "is_tuple",
+    )
+
+  private def isPredicateFun(name: String, arity: Int): Boolean =
+    (name, arity) match {
+      case (_, 1) =>
+        predicates1(name)
+      case ("is_record", 2) =>
+        true
+      case ("is_function", 2) =>
+        true
+      case ("is_record", 3) =>
+        true
+      case _ =>
+        false
+    }
+
   def asTest(expr: Expr): Option[Test] =
     expr match {
       case Var(n) =>
@@ -18,7 +50,7 @@ object Filters {
         Some(TestAtom(s)(expr.pos))
       case IntLit(i) =>
         Some(TestNumber(Some(i))(expr.pos))
-      case RemoteCall(RemoteId("erlang", f, arity), args) =>
+      case RemoteCall(RemoteId("erlang", f, arity), args) if isPredicateFun(f, arity) =>
         for {
           argsT <- asTests(args)
         } yield TestCall(Id(f, arity), argsT)(expr.pos)

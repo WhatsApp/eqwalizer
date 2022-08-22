@@ -164,14 +164,8 @@ wrap5(X) ->                                | ERROR   |
 -spec andalso1(                            |         |
     integer() | undefined                  |         |
 ) -> pos_integer().                        |         |
-andalso1(X) ->                             | ERROR   |
+andalso1(X) ->                             | OK      |
   case is_number(X) andalso X > 0 of       |         |
-    true -> X;                             |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'undefined'
-                                           |         | 
-                                           |         |   number() | 'undefined' is not a subtype of number()
-                                           |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+    true -> X;                             |         |
     false -> 1                             |         |
   end.                                     |         |

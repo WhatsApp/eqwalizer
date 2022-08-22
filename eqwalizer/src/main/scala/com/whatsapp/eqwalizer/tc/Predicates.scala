@@ -12,27 +12,9 @@ import com.whatsapp.eqwalizer.ast.Pats.{PatAtom, PatWild}
 import com.whatsapp.eqwalizer.ast.{Filters, RemoteId}
 
 object Predicates {
-  val predicates1: Set[String] =
-    Set(
-      "is_atom",
-      "is_binary",
-      "is_bitstring",
-      "is_boolean",
-      "is_float",
-      "is_function",
-      "is_integer",
-      "is_list",
-      "is_number",
-      "is_pid",
-      "is_port",
-      "is_reference",
-      "is_map",
-      "is_tuple",
-    )
-
   def isCaseIf(e: Case): Boolean = {
     val Case(sel, clauses) = e
-    clauses.size == 2 && isPredicateSelector(sel) && testingBranches(clauses)
+    clauses.size == 2 && testingBranches(clauses) && Filters.asTest(sel).isDefined
   }
 
   def asIf(e: Case): If = {
@@ -50,20 +32,6 @@ object Predicates {
         If(List(ifClause1, ifClause2))(e.pos)
     }
   }
-
-  private def isPredicateSelector(sel: Expr): Boolean =
-    sel match {
-      case RemoteCall(RemoteId("erlang", f, 1), Var(_) :: _) if predicates1(f) =>
-        true
-      case RemoteCall(RemoteId("erlang", "is_record", 2), List(Var(_), AtomLit(_))) =>
-        true
-      case RemoteCall(RemoteId("erlang", "is_function", 2), List(Var(_), IntLit(_))) =>
-        true
-      case RemoteCall(RemoteId("erlang", "is_record", 3), List(Var(_), AtomLit(_), IntLit(_))) =>
-        true
-      case _ =>
-        false
-    }
 
   private def testingBranches(clauses: List[Clause]): Boolean =
     clauses match {
