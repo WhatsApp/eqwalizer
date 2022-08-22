@@ -130,7 +130,7 @@ mixed1(Arg, UseOrig) ->                    | ERROR   |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | term()}
+                                           |         | Got     : {term()}
                                            |         |
 -spec mixed2                               |         |
   (any(), boolean()) -> ok.                |         |
@@ -142,7 +142,7 @@ mixed2(Arg, UseDyn) ->                     | ERROR   |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | term()}
+                                           |         | Got     : {term()}
                                            |         |
 -spec mixed3                               |         |
   (boolean(), boolean()) -> ok.            |         |
@@ -154,7 +154,7 @@ mixed3(Arg, UseOrig) ->                    | ERROR   |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | boolean()}
+                                           |         | Got     : {boolean() | dynamic()}
                                            |         |
 -spec mixed4                               |         |
   (binary(), boolean()) -> ok.             |         |
@@ -183,7 +183,7 @@ mixed5(Arg, Flag) ->                       | ERROR   |
     end,                                   |         |
   {Mixed2}.                                |         | {Mixed2}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | binary() | atom()}
+                                           |         | Got     : {binary() | atom() | dynamic()}
                                            |         |
 -spec dyn_union_1(                         |         |
     [eqwalizer:dynamic()] | error          |         |
@@ -273,9 +273,9 @@ refine_union_alias({X}) -> X.              |         |
 -spec refine_union_alias_neg(union()) -> o……         |
 refine_union_alias_neg({X}) -> X.          | ERROR   | X.
                                            |         | Expected: 'ok'
-                                           |         | Got     : dynamic() | 'err'
+                                           |         | Got     : dyn_alias() | 'err'
                                            |         | 
-                                           |         |   dynamic() | 'err' is not a subtype of 'ok'
+                                           |         |   dyn_alias() | 'err' is not a subtype of 'ok'
                                            |         |   because
                                            |         |   'err' is not a subtype of 'ok'
                                            |         |

@@ -70,9 +70,9 @@ case07() ->                                | ERROR   |
   Acc = dyn_val(),                         |         |
   lists:foldl(fun add/2, Acc, Ns).         |         | lists:foldl(add/2, Acc, Ns).
                                            |         | Expected: none()
-                                           |         | Got     : dynamic() | number()
+                                           |         | Got     : number() | dynamic()
                                            |         | 
-                                           |         |   dynamic() | number() is not a subtype of none()
+                                           |         |   number() | dynamic() is not a subtype of none()
                                            |         |   because
                                            |         |   number() is not a subtype of none()
                                            |         |
@@ -83,7 +83,7 @@ case08_neg() ->                            | ERROR   |
   Res = lists:foldl(fun add/2, Acc, Ns),   |         |
   {Res}.                                   |         | {Res}.
                                            |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | number()}
+                                           |         | Got     : {number() | dynamic()}
                                            |         |
 -spec case09_neg() -> ok.                  |         |
 case09_neg() ->                            | ERROR   |

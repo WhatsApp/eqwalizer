@@ -486,11 +486,11 @@
         "end": 2433
       },
       "lineAndCol": null,
-      "message": "Expected: [atom()]\nGot     : [dynamic() | term()]",
+      "message": "Expected: [atom()]\nGot     : [term()]",
       "uri": "https://fburl.com/eqwalizer_expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "Res",
-      "explanationOrNull": "  [dynamic() | term()] is not a subtype of [atom()]\n  because\n  dynamic() | term() is not a subtype of atom()\n  because\n  term() is not a subtype of atom()"
+      "explanationOrNull": "  [term()] is not a subtype of [atom()]\n  because\n  term() is not a subtype of atom()"
     },
     {
       "range": {

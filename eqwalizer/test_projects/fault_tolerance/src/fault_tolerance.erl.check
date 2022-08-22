@@ -250,11 +250,9 @@ cons(H, T) ->                              | ERROR   |
   ),                                       |         |
   Res.                                     |         | Res.
                                            |         | Expected: [atom()]
-                                           |         | Got     : [dynamic() | term()]
+                                           |         | Got     : [term()]
                                            |         | 
-                                           |         |   [dynamic() | term()] is not a subtype of [atom()]
-                                           |         |   because
-                                           |         |   dynamic() | term() is not a subtype of atom()
+                                           |         |   [term()] is not a subtype of [atom()]
                                            |         |   because
                                            |         |   term() is not a subtype of atom()
                                            |         |
