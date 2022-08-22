@@ -465,12 +465,10 @@ final class Elab(pipelineContext: PipelineContext) {
         val field = recDecl.fields(fieldName)
         if (field.refinable) {
           val (elabTy, elabEnv) = elabExpr(recExpr, env)
-          approx.getRecordField(recDecl, elabTy, fieldName) match {
-            case None =>
-              throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
-            case Some(fieldTy) =>
-              (fieldTy, elabEnv)
-          }
+          if (subtype.subType(elabTy, RecordType(recName)(module)))
+            (approx.getRecordField(recDecl, elabTy, fieldName), elabEnv)
+          else
+            throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
         } else {
           val fieldT = field.tp
           val env1 = check.checkExpr(recExpr, RecordType(recName)(module), env)
@@ -618,10 +616,10 @@ final class Elab(pipelineContext: PipelineContext) {
       val (refTy, refEnv) = elabExpr(recExpr, env)
       val allRefinedFields = recDecl.fields.collect { case (name, f) if f.refinable => name }.toSet
       val keepFields = allRefinedFields -- fields.map(_.name)
+      if (!subtype.subType(refTy, recType))
+        throw ExpectedSubtype(recExpr.pos, recExpr, expected = recType, got = refTy)
       keepFields.foreach { fieldName =>
-        val fieldTy = approx
-          .getRecordField(recDecl, refTy, fieldName)
-          .getOrElse(throw ExpectedSubtype(recExpr.pos, recExpr, expected = recType, got = refTy))
+        val fieldTy = approx.getRecordField(recDecl, refTy, fieldName)
         refinedFields += (fieldName -> fieldTy)
       }
       envAcc = refEnv

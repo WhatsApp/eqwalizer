@@ -111,7 +111,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
         var envAcc = env
         var refinedFields: Map[String, Type] = Map.empty
         for (namedField <- namedFields) {
-          val fieldTy = approx.getRecordField(recDecl, recType, namedField.name).getOrElse(NoneType)
+          val fieldTy = approx.getRecordField(recDecl, recType, namedField.name)
           val (patType, env1) = elabPat(namedField.pat, fieldTy, envAcc)
           envAcc = env1
           refinedFields += (namedField.name -> patType)
@@ -122,7 +122,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
             val allNames = recDecl.fields.keySet
             val genNames = (allNames -- usedNames).toList.sorted
             for (genName <- genNames) {
-              val fieldTy = approx.getRecordField(recDecl, recType, genName).getOrElse(NoneType)
+              val fieldTy = approx.getRecordField(recDecl, recType, genName)
               val (patType, env1) = elabPat(genField, fieldTy, envAcc)
               envAcc = env1
               refinedFields += (genName -> patType)

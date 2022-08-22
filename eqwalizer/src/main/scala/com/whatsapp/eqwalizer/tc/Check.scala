@@ -427,14 +427,12 @@ final class Check(pipelineContext: PipelineContext) {
           val field = recDecl.fields(fieldName)
           if (field.refinable) {
             val (elabTy, elabEnv) = elab.elabExpr(recExpr, env)
-            approx.getRecordField(recDecl, elabTy, fieldName) match {
-              case None =>
-                throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
-              case Some(fieldTy) =>
-                if (!subtype.subType(fieldTy, resTy))
-                  throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldTy)
-                elabEnv
-            }
+            if (!subtype.subType(elabTy, RecordType(recName)(module)))
+              throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
+            val fieldTy = approx.getRecordField(recDecl, elabTy, fieldName)
+            if (!subtype.subType(fieldTy, resTy))
+              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldTy)
+            elabEnv
           } else {
             val fieldT = field.tp
             if (!subtype.subType(fieldT, resTy))

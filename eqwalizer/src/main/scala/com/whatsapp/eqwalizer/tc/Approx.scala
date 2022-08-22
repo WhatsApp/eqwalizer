@@ -273,29 +273,30 @@ class Approx(pipelineContext: PipelineContext) {
         false
     }
 
-  def getRecordField(recDecl: RecDeclTyped, recTy: Type, fieldName: String): Option[Type] = {
+  def getRecordField(recDecl: RecDeclTyped, recTy: Type, fieldName: String): Type = {
     val field = recDecl.fields(fieldName)
     recTy match {
       case RefinedRecordType(recType, fields) if recDecl.name == recType.name =>
-        Some(fields.getOrElse(fieldName, field.tp))
+        fields.getOrElse(fieldName, field.tp)
       case RecordType(name) if recDecl.name == name =>
-        Some(field.tp)
+        field.tp
       case TupleType(argTys) if argTys.size - 1 == recDecl.fields.size && argTys.head == AtomLitType(recDecl.name) =>
         recDecl.fields.zipWithIndex
           .collectFirst { case ((n, _), i) if n == fieldName => i + 1 }
           .map(argTys(_))
+          .getOrElse(field.tp)
       case AnyTupleType | DynamicType | VarType(_) | OpaqueType(_, _) =>
-        recDecl.fields.get(fieldName).map(_.tp)
+        field.tp
       case RemoteType(id, argTys) =>
         getRecordField(recDecl, util.getTypeDeclBody(id, argTys), fieldName)
       case UnionType(argTys) =>
         val fieldTys = argTys.map(getRecordField(recDecl, _, fieldName))
-        if (fieldTys.exists(_.isEmpty)) None
-        else Some(UnionType(fieldTys.map(_.get)))
+        UnionType(fieldTys)
       case NoneType =>
-        Some(NoneType)
-      case _ =>
-        None
+        NoneType
+      // $COVERAGE-OFF$
+      case _ => throw new IllegalStateException()
+      // $COVERAGE-ON$
     }
   }
 }
