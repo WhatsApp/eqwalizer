@@ -141,3 +141,12 @@ wrap5(X) ->
     true -> {p, X};
     _ -> X
   end.
+
+-spec andalso1(
+    integer() | undefined
+) -> pos_integer().
+andalso1(X) ->
+  case is_number(X) andalso X > 0 of
+    true -> X;
+    false -> 1
+  end.

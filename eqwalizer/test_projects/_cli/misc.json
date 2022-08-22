@@ -141,7 +141,8 @@
           "wrap2/1",
           "wrap3_neg/1",
           "wrap4/1",
-          "wrap5/1"
+          "wrap5/1",
+          "andalso1/1"
         ]
       },
       {
