@@ -15,10 +15,9 @@ import scala.collection.mutable.ListBuffer
 
 final class ElabGuard(pipelineContext: PipelineContext) {
   private lazy val module = pipelineContext.module
-  private lazy val approx = pipelineContext.approx
+  private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
   private lazy val subtype = pipelineContext.subtype
-  private lazy val refine = pipelineContext.refine
   private lazy val occurrence = pipelineContext.occurrence
 
   private val elabPredicateType1: PartialFunction[String, Type] = {
@@ -97,7 +96,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         if (!subtype.subType(tailTy, ListType(AnyType))) {
           (ListType(headTy), env2)
         } else {
-          val resType = approx.asListType(tailTy) match {
+          val resType = narrow.asListType(tailTy) match {
             case Some(ListType(t)) => ListType(subtype.join(headTy, t))
             case None              => headTy
           }
@@ -196,7 +195,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestVar(v) =>
         val testType = env.get(v) match {
           case Some(vt) =>
-            refine.approxMeet(vt, upper)
+            narrow.meet(vt, upper)
           case None => upper
         }
         env + (v -> testType)
@@ -258,7 +257,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestVar(v), NumTest(n)) =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> refine.approxMeet(ty, NumberType))
+            env + (v -> narrow.meet(ty, NumberType))
           // $COVERAGE-OFF$
           case None =>
             env
@@ -267,7 +266,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", NumTest(n), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> refine.approxMeet(ty, NumberType))
+            env + (v -> narrow.meet(ty, NumberType))
           // $COVERAGE-OFF$
           case None =>
             env
@@ -276,7 +275,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestVar(v), TestAtom(a)) =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> refine.approxMeet(ty, AtomLitType(a)))
+            env + (v -> narrow.meet(ty, AtomLitType(a)))
           // $COVERAGE-OFF$
           case None =>
             env
@@ -285,7 +284,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestAtom(a), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> refine.approxMeet(ty, AtomLitType(a)))
+            env + (v -> narrow.meet(ty, AtomLitType(a)))
           // $COVERAGE-OFF$
           case None =>
             env

@@ -23,7 +23,7 @@ final class Check(pipelineContext: PipelineContext) {
   private lazy val elabPat = pipelineContext.elabPat
   private lazy val subtype = pipelineContext.subtype
   private lazy val util = pipelineContext.util
-  private lazy val approx = pipelineContext.approx
+  private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
   lazy val freshen = new TypeVars.VarFreshener().freshen _
   private implicit val pipelineCtx: PipelineContext = pipelineContext
@@ -215,7 +215,7 @@ final class Check(pipelineContext: PipelineContext) {
           if (!util.isFunType(ty, expArity)) {
             throw ExpectedFunType(f.pos, f, expArity, ty)
           }
-          val funTys = approx.asFunType(ty, args.size).get
+          val funTys = narrow.asFunType(ty, args.size).get
           if (funTys.isEmpty) {
             val (_, env2) = elab.elabExprs(args, env1)
             env2
@@ -346,7 +346,7 @@ final class Check(pipelineContext: PipelineContext) {
               val (gT, gEnv) = elab.elabExpr(gExpr, envAcc)
               if (!subtype.subType(gT, ListType(AnyType)))
                 throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-              val Some(ListType(gElemT)) = approx.asListType(gT)
+              val Some(ListType(gElemT)) = narrow.asListType(gT)
               val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
               envAcc = pEnv
             case BGenerate(gPat, gExpr) =>
@@ -374,7 +374,7 @@ final class Check(pipelineContext: PipelineContext) {
               val (gT, gEnv) = elab.elabExpr(gExpr, envAcc)
               if (!subtype.subType(gT, ListType(AnyType)))
                 throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-              val Some(ListType(gElemT)) = approx.asListType(gT)
+              val Some(ListType(gElemT)) = narrow.asListType(gT)
               val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
               envAcc = pEnv
             case BGenerate(gPat, gExpr) =>
@@ -429,7 +429,7 @@ final class Check(pipelineContext: PipelineContext) {
             val (elabTy, elabEnv) = elab.elabExpr(recExpr, env)
             if (!subtype.subType(elabTy, RecordType(recName)(module)))
               throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
-            val fieldTy = approx.getRecordField(recDecl, elabTy, fieldName)
+            val fieldTy = narrow.getRecordField(recDecl, elabTy, fieldName)
             if (!subtype.subType(fieldTy, resTy))
               throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldTy)
             elabEnv

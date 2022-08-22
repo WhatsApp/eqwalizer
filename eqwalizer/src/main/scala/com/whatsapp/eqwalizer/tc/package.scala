@@ -32,11 +32,10 @@ package object tc {
       options.eqwater.getOrElse(config.eqwater)
     val tolerateErrors: Boolean =
       gradualTyping && options.tolerateErrors.getOrElse(config.tolerateErrors)
-    val refine: Refine = new Refine(this)
     val util: Util = new Util(this)
     val vars: Vars = new Vars(this)
     val subtype: Subtype = new Subtype(this)
-    val approx: Approx = new Approx(this)
+    val narrow: Narrow = new Narrow(this)
     val constraints: Constraints = new Constraints(this)
     val checkCallback: CheckCallback = new CheckCallback(this)
     val subtypeDetail: SubtypeDetail = new SubtypeDetail(this)

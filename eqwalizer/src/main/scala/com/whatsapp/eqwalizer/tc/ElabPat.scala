@@ -13,8 +13,7 @@ import com.whatsapp.eqwalizer.tc.TcDiagnostics.{UnhandledOp, UnboundRecord}
 
 final class ElabPat(pipelineContext: PipelineContext) {
   private lazy val module = pipelineContext.module
-  private lazy val refine = pipelineContext.refine
-  private lazy val approx = pipelineContext.approx
+  private lazy val narrow = pipelineContext.narrow
   private lazy val subtype = pipelineContext.subtype
   private lazy val util = pipelineContext.util
   private lazy val check = pipelineContext.check
@@ -35,25 +34,25 @@ final class ElabPat(pipelineContext: PipelineContext) {
         (t, env)
       case PatVar(v) =>
         val patType = env.get(v) match {
-          case Some(vt) => refine.approxMeet(t, vt)
+          case Some(vt) => narrow.meet(t, vt)
           case None     => t
         }
         (patType, env + (v -> patType))
       case PatAtom(s) =>
-        val patType = refine.approxMeet(t, AtomLitType(s))
+        val patType = narrow.meet(t, AtomLitType(s))
         (patType, env)
       case PatInt() =>
-        val patType = refine.approxMeet(t, NumberType)
+        val patType = narrow.meet(t, NumberType)
         (patType, env)
       case PatNumber() =>
-        val patType = refine.approxMeet(t, NumberType)
+        val patType = narrow.meet(t, NumberType)
         (patType, env)
       case PatString() =>
-        val patType = refine.approxMeet(t, stringType)
+        val patType = narrow.meet(t, stringType)
         (patType, env)
       case PatTuple(elems) =>
         val arity = elems.size
-        val parts = approx.asTupleType(t, arity)
+        val parts = narrow.asTupleType(t, arity)
         val restrictingParts =
           if (parts.isEmpty) List(TupleType(List.fill(arity)(NoneType)))
           else parts
@@ -71,10 +70,10 @@ final class ElabPat(pipelineContext: PipelineContext) {
         val (tys, envs) = tyEnvPairs.unzip
         (subtype.join(tys), subtype.joinEnvs(envs))
       case PatNil() =>
-        val patType = refine.approxMeet(t, NilType)
+        val patType = narrow.meet(t, NilType)
         (patType, env)
       case PatCons(hPat, tPat) =>
-        approx.asListType(t) match {
+        narrow.asListType(t) match {
           case None =>
             val (_, env1) = elabPat(hPat, NoneType, env)
             val (_, env2) = elabPat(tPat, NoneType, env1)
@@ -82,7 +81,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
           case Some(ListType(elemType)) =>
             val (hType, env1) = elabPat(hPat, elemType, env)
             val (tType, env2) = elabPat(tPat, ListType(elemType), env1)
-            val ListType(refinedT) = approx.asListType(tType).get
+            val ListType(refinedT) = narrow.asListType(tType).get
             (ListType(subtype.join(hType, refinedT)), env2)
         }
       case PatMatch(p1: PatVar, p2) =>
@@ -96,22 +95,22 @@ final class ElabPat(pipelineContext: PipelineContext) {
       case binOp: PatBinOp =>
         elabBinOp(binOp, t, env)
       case PatBinary(elems) =>
-        val patType = refine.approxMeet(t, BinaryType)
+        val patType = narrow.meet(t, BinaryType)
         var envAcc = env
         for { elem <- elems } {
           envAcc = elabBinaryElem(elem, envAcc)
         }
         (patType, envAcc)
       case PatRecordIndex(_, _) =>
-        val patType = refine.approxMeet(t, NumberType)
+        val patType = narrow.meet(t, NumberType)
         (patType, env)
       case PatRecord(recName, namedFields, genFieldOpt) =>
-        val recType = refine.approxMeet(t, RecordType(recName)(module))
+        val recType = narrow.meet(t, RecordType(recName)(module))
         val recDecl = util.getRecord(module, recName).getOrElse(throw UnboundRecord(pat.pos, recName))
         var envAcc = env
         var refinedFields: Map[String, Type] = Map.empty
         for (namedField <- namedFields) {
-          val fieldTy = approx.getRecordField(recDecl, recType, namedField.name)
+          val fieldTy = narrow.getRecordField(recDecl, recType, namedField.name)
           val (patType, env1) = elabPat(namedField.pat, fieldTy, envAcc)
           envAcc = env1
           refinedFields += (namedField.name -> patType)
@@ -122,7 +121,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
             val allNames = recDecl.fields.keySet
             val genNames = (allNames -- usedNames).toList.sorted
             for (genName <- genNames) {
-              val fieldTy = approx.getRecordField(recDecl, recType, genName)
+              val fieldTy = narrow.getRecordField(recDecl, recType, genName)
               val (patType, env1) = elabPat(genField, fieldTy, envAcc)
               envAcc = env1
               refinedFields += (genName -> patType)
@@ -134,18 +133,18 @@ final class ElabPat(pipelineContext: PipelineContext) {
         else
           (RefinedRecordType(RecordType(recName)(module), refinedFields), envAcc)
       case PatMap(kvs) =>
-        val mapType = approx.asMapType(t)
+        val mapType = narrow.asMapType(t)
         var refinedMapType = mapType
         var envAcc = env
         for ((keyPat, valPat) <- kvs) {
           keyPat match {
             case PatAtom(key) =>
-              val (_, env1) = elabPat(valPat, approx.getValType(key, mapType), envAcc)
-              refinedMapType = approx.withRequiredProp(key, mapType)
+              val (_, env1) = elabPat(valPat, narrow.getValType(key, mapType), envAcc)
+              refinedMapType = narrow.withRequiredProp(key, mapType)
               envAcc = env1
             case _ =>
-              val (_, env1) = elabPat(keyPat, approx.getKeyType(mapType), envAcc)
-              val (_, env2) = elabPat(valPat, approx.getValType(mapType), env1)
+              val (_, env1) = elabPat(keyPat, narrow.getKeyType(mapType), envAcc)
+              val (_, env2) = elabPat(valPat, narrow.getValType(mapType), env1)
               envAcc = env2
           }
         }
@@ -182,10 +181,10 @@ final class ElabPat(pipelineContext: PipelineContext) {
         val (_, env2) = elabPat(arg2, NumberType, env1)
         (NumberType, env2)
       case "++" =>
-        val asListT = approx.asListType(t).getOrElse(NoneType)
+        val asListT = narrow.asListType(t).getOrElse(NoneType)
         val (arg1Ty, env1) = elabPat(arg1, asListT, env)
         val (arg2Ty, env2) = elabPat(arg2, asListT, env1)
-        (approx.asListType(arg1Ty), approx.asListType(arg2Ty)) match {
+        (narrow.asListType(arg1Ty), narrow.asListType(arg2Ty)) match {
           case (Some(ListType(elem1Ty)), Some(ListType(elem2Ty))) =>
             (ListType(subtype.join(elem1Ty, elem2Ty)), env2)
           // $COVERAGE-OFF$

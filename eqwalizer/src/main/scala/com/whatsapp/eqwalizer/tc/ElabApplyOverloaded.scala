@@ -18,7 +18,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val util = pipelineContext.util
   private lazy val subtype = pipelineContext.subtype
   private val elabApply = pipelineContext.elabApply
-  private val refine = pipelineContext.refine
+  private val narrow = pipelineContext.narrow
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def elabOverloaded(expr: Expr, remoteId: RemoteId, args: List[Expr], env: Env): (Type, Env) = {
@@ -58,7 +58,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
     util.getOverloadedSpec(remoteId).isDefined
 
   private def mightOverlap(t1: Type, t2: Type): Boolean = {
-    val approxMeet = refine.approxMeet(t1, t2)
+    val approxMeet = narrow.meet(t1, t2)
     !subtype.subType(approxMeet, NoneType)
   }
 

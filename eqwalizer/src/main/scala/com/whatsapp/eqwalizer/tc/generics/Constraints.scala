@@ -44,7 +44,7 @@ object Constraints {
 class Constraints(pipelineContext: PipelineContext) {
   import Constraints._
   private lazy val subtype = pipelineContext.subtype
-  private lazy val refine = pipelineContext.refine
+  private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
@@ -305,5 +305,5 @@ class Constraints(pipelineContext: PipelineContext) {
 
   /** Safe approximation because we re-check arg types once we have concrete param types
     */
-  private def meet(t1: Type, t2: Type): Type = refine.approxMeet(t1, t2)
+  private def meet(t1: Type, t2: Type): Type = narrow.meet(t1, t2)
 }

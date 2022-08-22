@@ -22,8 +22,7 @@ final class Elab(pipelineContext: PipelineContext) {
   private lazy val elabApplyOverloaded = pipelineContext.elabApplyOverloaded
   private lazy val subtype = pipelineContext.subtype
   private lazy val util = pipelineContext.util
-  private lazy val approx = pipelineContext.approx
-  private lazy val refine = pipelineContext.refine
+  private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
@@ -89,7 +88,7 @@ final class Elab(pipelineContext: PipelineContext) {
         if (!subtype.subType(tailT, ListType(AnyType))) {
           throw ExpectedSubtype(tail.pos, tail, expected = ListType(AnyType), got = tailT)
         } else {
-          val resType = approx.asListType(tailT) match {
+          val resType = narrow.asListType(tailT) match {
             case Some(ListType(t)) => ListType(subtype.join(headT, t))
             case None              => headT
           }
@@ -143,7 +142,7 @@ final class Elab(pipelineContext: PipelineContext) {
         if (!util.isFunType(ty, expArity)) {
           throw ExpectedFunType(f.pos, f, expArity, ty)
         }
-        val funTys = approx.asFunType(ty, args.size).get
+        val funTys = narrow.asFunType(ty, args.size).get
         if (funTys.isEmpty) {
           val (_, env2) = elabExprs(args, env1)
           (NoneType, env2)
@@ -343,8 +342,8 @@ final class Elab(pipelineContext: PipelineContext) {
               if (op == "--")
                 arg1Ty
               else {
-                val Some(ListType(elem1Ty)) = approx.asListType(arg1Ty)
-                val Some(ListType(elem2Ty)) = approx.asListType(arg2Ty)
+                val Some(ListType(elem1Ty)) = narrow.asListType(arg1Ty)
+                val Some(ListType(elem2Ty)) = narrow.asListType(arg2Ty)
                 ListType(subtype.join(elem1Ty, elem2Ty))
               }
             (resTy, env2)
@@ -419,7 +418,7 @@ final class Elab(pipelineContext: PipelineContext) {
             val (gT, gEnv) = elabExpr(gExpr, envAcc)
             if (!subtype.subType(gT, ListType(AnyType)))
               throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-            val Some(ListType(gElemT)) = approx.asListType(gT)
+            val Some(ListType(gElemT)) = narrow.asListType(gT)
             val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
             envAcc = pEnv
           case BGenerate(gPat, gExpr) =>
@@ -441,7 +440,7 @@ final class Elab(pipelineContext: PipelineContext) {
             val (gT, gEnv) = elabExpr(gExpr, envAcc)
             if (!subtype.subType(gT, ListType(AnyType)))
               throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-            val Some(ListType(gElemT)) = approx.asListType(gT)
+            val Some(ListType(gElemT)) = narrow.asListType(gT)
             val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
             envAcc = pEnv
           case BGenerate(gPat, gExpr) =>
@@ -466,7 +465,7 @@ final class Elab(pipelineContext: PipelineContext) {
         if (field.refinable) {
           val (elabTy, elabEnv) = elabExpr(recExpr, env)
           if (subtype.subType(elabTy, RecordType(recName)(module)))
-            (approx.getRecordField(recDecl, elabTy, fieldName), elabEnv)
+            (narrow.getRecordField(recDecl, elabTy, fieldName), elabEnv)
           else
             throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
         } else {
@@ -509,7 +508,7 @@ final class Elab(pipelineContext: PipelineContext) {
           val (keyT, env2) = elabExpr(key, envAcc)
           val (valT, env3) = elabExpr(value, env2)
           envAcc = env3
-          resT = approx.adjustMapType(resT, keyT, valT)
+          resT = narrow.adjustMapType(resT, keyT, valT)
         }
         (resT, envAcc)
       case ReqMapUpdate(map, kvs) =>
@@ -522,11 +521,11 @@ final class Elab(pipelineContext: PipelineContext) {
         var envAcc = env1
         var resT = mapT
         for ((key, value) <- kvs) {
-          if (!pipelineCtx.gradualTyping && !approx.isShapeWithKey(mapT, key))
+          if (!pipelineCtx.gradualTyping && !narrow.isShapeWithKey(mapT, key))
             throw UndefinedKey(expr.pos, map, key, mapT)
           val (valT, env2) = elabExpr(value, envAcc)
           envAcc = env2
-          resT = approx.adjustMapType(resT, AtomLitType(key), valT)
+          resT = narrow.adjustMapType(resT, AtomLitType(key), valT)
         }
         (resT, envAcc)
     }
@@ -619,7 +618,7 @@ final class Elab(pipelineContext: PipelineContext) {
       if (!subtype.subType(refTy, recType))
         throw ExpectedSubtype(recExpr.pos, recExpr, expected = recType, got = refTy)
       keepFields.foreach { fieldName =>
-        val fieldTy = approx.getRecordField(recDecl, refTy, fieldName)
+        val fieldTy = narrow.getRecordField(recDecl, refTy, fieldName)
         refinedFields += (fieldName -> fieldTy)
       }
       envAcc = refEnv

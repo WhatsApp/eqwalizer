@@ -17,7 +17,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val elabApply = pipelineContext.elabApply
   private lazy val check = pipelineContext.check
   private lazy val subtype = pipelineContext.subtype
-  private lazy val approx = pipelineContext.approx
+  private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
   private lazy val occurrence = pipelineCtx.occurrence
   implicit val pipelineCtx = pipelineContext
@@ -104,7 +104,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val listAnyTy = ListType(AnyType)
         if (!subtype.subType(collectionTy, listAnyTy))
           throw ExpectedSubtype(collection.pos, collection, listAnyTy, collectionTy)
-        val elemTy = approx.asListType(collectionTy).get.t
+        val elemTy = narrow.asListType(collectionTy).get.t
         val tupleTrueAnyTy = TupleType(List(trueType, AnyType))
         val expRet = subtype.join(booleanType, tupleTrueAnyTy)
         val expFunTy = FunType(Nil, List(elemTy), expRet)
@@ -122,7 +122,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case _ =>
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
-            approx.asFunType(funArgTy, 1).get.map(_.resTy)
+            narrow.asFunType(funArgTy, 1).get.map(_.resTy)
         }
         def funResultsToItemTy(tys: Iterable[Type], defaultTy: Type, pos: Pos): Type =
           tys.foldLeft(NoneType: Type)((memo, ty) => subtype.join(memo, funResultToItemTy(ty, defaultTy, pos)))
@@ -168,7 +168,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val tailTy = argTys(1)
             if (!subtype.subType(tailTy, anyListTy))
               throw ExpectedSubtype(tail.pos, tail, expected = anyListTy, got = tailTy)
-            val Some(ListType(tailElemTy)) = approx.asListType(tailTy)
+            val Some(ListType(tailElemTy)) = narrow.asListType(tailTy)
             subtype.join(argElemTy, tailElemTy)
         }
         (ListType(elemTy), env1)
@@ -205,7 +205,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             throw ExpectedSubtype(replacement.pos, replacement, expected = AnyTupleType, got = replacementTy)
         }
         validate()
-        val ListType(inTupleTy) = approx.asListType(tupleListTy).get
+        val ListType(inTupleTy) = narrow.asListType(tupleListTy).get
         val resTy = ListType(subtype.join(inTupleTy, replacementTy))
         (resTy, env1)
 
@@ -232,12 +232,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val anyMapTy = DictMap(AnyType, AnyType)
         if (!subtype.subType(mapTy, anyMapTy))
           throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = approx.asMapType(mapTy)
+        val mapType = narrow.asMapType(mapTy)
         val valTy = keyTy match {
           case AtomLitType(key) =>
-            approx.getValType(key, mapType)
+            narrow.getValType(key, mapType)
           case _ =>
-            approx.getValType(mapType)
+            narrow.getValType(mapType)
         }
         val resTy = UnionType(Set(TupleType(List(AtomLitType("ok"), valTy)), AtomLitType("error")))
         (resTy, env1)
@@ -258,7 +258,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
 
-            val vTys = approx.asFunType(funArgTy, 3).get.map(_.resTy)
+            val vTys = narrow.asFunType(funArgTy, 3).get.map(_.resTy)
             subtype.join(vTys)
         }
         def validateAccumulatorTy(accTy: Type): Unit = funArg match {
@@ -279,13 +279,13 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val anyMapTy = DictMap(AnyType, AnyType)
         if (!subtype.subType(mapTy, anyMapTy))
           throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = approx.asMapType(mapTy)
+        val mapType = narrow.asMapType(mapTy)
         keyTy match {
           case AtomLitType(key) =>
-            val valTy = approx.getValType(key, mapType)
+            val valTy = narrow.getValType(key, mapType)
             (valTy, env1)
           case _ =>
-            val valTy = approx.getValType(mapType)
+            val valTy = narrow.getValType(mapType)
             (valTy, env1)
         }
 
@@ -295,13 +295,13 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val anyMapTy = DictMap(AnyType, AnyType)
         if (!subtype.subType(mapTy, anyMapTy))
           throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = approx.asMapType(mapTy)
+        val mapType = narrow.asMapType(mapTy)
         keyTy match {
           case AtomLitType(key) =>
-            val valTy = approx.getValType(key, mapType)
+            val valTy = narrow.getValType(key, mapType)
             (subtype.join(valTy, defaultValTy), env1)
           case _ =>
-            val valTy = approx.getValType(mapType)
+            val valTy = narrow.getValType(mapType)
             (subtype.join(valTy, defaultValTy), env1)
         }
 
@@ -314,7 +314,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             if (!subtype.subType(mapTy, anyMap)) {
               throw ExpectedSubtype(map.pos, map, expected = anyMap, got = mapTy)
             }
-            val resTy = approx.adjustMapType(mapTy, AtomLitType(keyAtom), valTy)
+            val resTy = narrow.adjustMapType(mapTy, AtomLitType(keyAtom), valTy)
             (resTy, env1)
           case _ =>
             val ft = util.getFunType(fqn).get
@@ -338,7 +338,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
 
-            val vTys = approx.asFunType(funArgTy, 2).get.map(_.resTy)
+            val vTys = narrow.asFunType(funArgTy, 2).get.map(_.resTy)
             subtype.join(vTys)
         }
         (DictMap(keyTy, resValTy), env1)
@@ -401,7 +401,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           // $COVERAGE-ON$
 
         }
-        val ty = `with`(approx.asMapType(mapTy))
+        val ty = `with`(narrow.asMapType(mapTy))
         (ty, env1)
 
       case RemoteId("maps", "without", 2) =>
@@ -462,7 +462,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           // $COVERAGE-ON$
 
         }
-        val ty = without(approx.asMapType(mapTy))
+        val ty = without(narrow.asMapType(mapTy))
         (ty, env1)
 
       // $COVERAGE-OFF$
@@ -494,9 +494,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         case RemoteType(RemoteId("maps", "iterator", 2), List(kTy, valTy)) =>
           Some(kTy, valTy)
         case _ =>
-          val mapTy = approx.asMapType(ty)
-          val k = approx.getKeyType(mapTy)
-          val v = approx.getValType(mapTy)
+          val mapTy = narrow.asMapType(ty)
+          val k = narrow.getKeyType(mapTy)
+          val v = narrow.getValType(mapTy)
           Some(k, v)
       }
     }

@@ -7,14 +7,100 @@
 package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
+import com.whatsapp.eqwalizer.ast.{RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
 
-// These operations are sound approximations...
-// They should be used really carefully, - they can be sound in one context,
-// but unsound in another context
-class Approx(pipelineContext: PipelineContext) {
+class Narrow(pipelineContext: PipelineContext) {
   private val subtype = pipelineContext.subtype
   private val util = pipelineContext.util
+
+  def meet(t1: Type, t2: Type): Type =
+    meetAux(t1, t2, Set.empty)(promoteNone = true)
+
+  private def meetAux(t1: Type, t2: Type, seen: Set[RemoteId])(implicit
+      promoteNone: Boolean
+  ): Type =
+    if (subtype.gradualSubType(t1, t2)) t1
+    else if (subtype.gradualSubType(t2, t1)) t2
+    else
+      (t1, t2) match {
+        case (RemoteType(rid, args), _) =>
+          val body = util.getTypeDeclBody(rid, args)
+          meetAux(body, t2, seen)
+        case (_, RemoteType(rid, args)) =>
+          if (seen(rid) || args.nonEmpty)
+            t1
+          else {
+            val body = util.getTypeDeclBody(rid, args)
+            meetAux(t1, body, seen + rid)
+          }
+        case (DynamicType, _) => DynamicType
+        case (_, DynamicType) => DynamicType
+        // Composed "refinable" types - refining component by component
+        case (UnionType(ty1s), _) => subtype.join(ty1s.map(meetAux(_, t2, seen)))
+        case (_, UnionType(ty2s)) =>
+          subtype.join(ty2s.map(meetAux(t1, _, seen)(promoteNone)))
+
+        case (TupleType(elems1), TupleType(elems2)) if elems1.size == elems2.size =>
+          val elems = elems1.lazyZip(elems2).map(meetAux(_, _, seen))
+          if (promoteNone && elems.exists(subtype.isNoneType)) NoneType
+          else TupleType(elems)
+        case (ListType(et1), ListType(et2)) =>
+          val et = meetAux(et1, et2, seen)
+          if (promoteNone && subtype.isNoneType(et)) NilType
+          else ListType(et)
+        case (ft1: FunType, ft2: FunType) if ft1.argTys.size == ft2.argTys.size =>
+          TypeVars.conformForalls(ft1, ft2) match {
+            case None => NoneType
+            case Some((FunType(forall, args1, res1), FunType(_, args2, res2))) =>
+              FunType(
+                forall,
+                args1.lazyZip(args2).map(subtype.join),
+                meetAux(res1, res2, seen)(promoteNone = false),
+              )
+          }
+        case (DictMap(kT1, vT1), DictMap(kT2, vT2)) =>
+          DictMap(meetAux(kT1, kT2, seen), meetAux(vT1, vT2, seen))
+        case (ShapeMap(props1), ShapeMap(props2)) =>
+          val keys1 = props1.map(_.key).toSet
+          val keys2 = props2.map(_.key).toSet
+          if (keys1 != keys2) return NoneType
+          val reqKeys1 = props1.collect { case ReqProp(k, _) => k }.toSet
+          val reqKeys2 = props2.collect { case ReqProp(k, _) => k }.toSet
+          val allReqKeys = reqKeys1.union(reqKeys2)
+          val allOptKeys = keys1.diff(allReqKeys)
+          val kvs1 = props1.map(prop => prop.key -> prop.tp).toMap
+          val kvs2 = props2.map(prop => prop.key -> prop.tp).toMap
+          val reqProps = allReqKeys.toList.sorted.map(k => ReqProp(k, meetAux(kvs1(k), kvs2(k), seen)))
+          val optProps = allOptKeys.toList.sorted.map(k => OptProp(k, meetAux(kvs1(k), kvs2(k), seen)))
+          if (promoteNone && reqProps.exists(p => subtype.isNoneType(p.tp))) NoneType
+          else ShapeMap(reqProps ++ optProps)
+        case (rt: RefinedRecordType, t: RecordType) if t == rt.recType => rt
+        case (t: RecordType, rt: RefinedRecordType) if t == rt.recType => rt
+        case (rt1: RefinedRecordType, rt2: RefinedRecordType) if rt1.recType == rt2.recType =>
+          val fields = rt1.fields.keySet ++ rt2.fields.keySet
+          val fieldsMeet = fields.map { fieldName =>
+            val t1 = rt1.fields.getOrElse(fieldName, AnyType)
+            val t2 = rt2.fields.getOrElse(fieldName, AnyType)
+            fieldName -> meet(t1, t2)
+          }.toMap
+          if (promoteNone && fieldsMeet.values.exists(subtype.isNoneType)) NoneType
+          else RefinedRecordType(rt1.recType, fieldsMeet)
+
+        // "Non-refinable" types. - Using the main type
+        case (DictMap(_, _), ShapeMap(_))   => t1
+        case (ShapeMap(_), DictMap(_, _))   => t1
+        case (VarType(_), _)                => t1
+        case (_, VarType(_))                => t1
+        case (AnyFunType, FunType(_, _, _)) => t1
+        case (FunType(_, _, _), AnyFunType) => t1
+        case (OpaqueType(_, _), _)          => t1
+        case (_, OpaqueType(_, _))          => t1
+        // At this point we know for sure that t1 /\ t2 = 0
+        case (_, _) =>
+          NoneType
+      }
+
   def asListType(t: Type): Option[ListType] =
     extractListElem(t) match {
       case Nil => None
@@ -117,13 +203,6 @@ class Approx(pipelineContext: PipelineContext) {
         List()
     }
 
-  /** "Normalizes" the original type into "union" of fun types.
-    * @param ty - original type
-    * @param arity - needed arity
-    * @return
-    *   None if the original type can contain an element E for which is_function(E, arity) is false.
-    *   Some(funTys) with the property: subtype.equiv(ty, UnionType(funTys)) is true.
-    */
   def asFunType(ty: Type, arity: Int): Option[List[FunType]] =
     asFunTypeAux(ty, arity)
 
@@ -150,12 +229,6 @@ class Approx(pipelineContext: PipelineContext) {
       None
   }
 
-  /** Returns precise intersection of `t` and `{any(), any(), ...}`
-    *
-    * @param t type to refine
-    * @param arity tuple arity
-    * @return ts such that `t /\ {any(), any(), ...} == UnionType(ts)`
-    */
   def asTupleType(t: Type, arity: Int): List[TupleType] =
     asTupleTypeAux(t, arity)
 
