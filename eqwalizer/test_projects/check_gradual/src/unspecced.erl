@@ -34,3 +34,11 @@ as_list([H | T]) ->
 as_tuple({E1, _}) ->
   Res = {E1},
   expect_none(Res).
+
+-record(rec, {id :: number()}).
+
+get_id_neg1(Rec) ->
+  atom_to_binary(Rec#rec.id).
+
+get_id_neg2(#rec{id = Id}) ->
+  atom_to_binary(Id).

@@ -2601,7 +2601,9 @@
           "as_map3/1",
           "as_map4/1",
           "as_list/1",
-          "as_tuple/1"
+          "as_tuple/1",
+          "get_id_neg1/1",
+          "get_id_neg2/1"
         ]
       },
       {

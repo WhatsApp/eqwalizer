@@ -46,3 +46,13 @@ as_tuple({E1, _}) ->                       | ERROR   |
   expect_none(Res).                        |         | Res.
                                            |         | Expected: none()
                                            |         | Got     : {dynamic()}
+                                           |         |
+-record(rec, {id :: number()}).            |         |
+                                           |         |
+get_id_neg1(Rec) ->                        | ERROR   |
+  atom_to_binary(Rec#rec.id).              |         | ...#rec.id.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
+                                           |         |
+get_id_neg2(#rec{id = Id}) ->              | OK      |
+  atom_to_binary(Id).                      |         |
