@@ -54,5 +54,7 @@ get_id_neg1(Rec) ->                        | ERROR   |
                                            |         | Expected: atom()
                                            |         | Got     : number()
                                            |         |
-get_id_neg2(#rec{id = Id}) ->              | OK      |
-  atom_to_binary(Id).                      |         |
+get_id_neg2(#rec{id = Id}) ->              | ERROR   |
+  atom_to_binary(Id).                      |         | Id.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()

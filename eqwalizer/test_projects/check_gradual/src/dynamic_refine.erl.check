@@ -247,10 +247,12 @@ dyn_refine_union_neg(D) -> D.              |         | D.
                                            |         |
 -record(foo, {id :: integer()}).           |         |
                                            |         |
-with_rec_neg(undefined) ->                 | OK      |
+with_rec_neg(undefined) ->                 | ERROR   |
   undefined;                               |         |
 with_rec_neg(#foo{id = Id}) ->             |         |
-  atom_to_binary(Id).                      |         |
+  atom_to_binary(Id).                      |         | Id.
+                                           |         | Expected: atom()
+                                           |         | Got     : number()
                                            |         |
 -spec with_rec_neg2(                       |         |
     eqwalizer:dynamic() | #foo{}           |         |

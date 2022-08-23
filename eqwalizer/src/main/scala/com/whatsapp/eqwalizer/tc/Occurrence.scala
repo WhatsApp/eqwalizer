@@ -757,8 +757,12 @@ final class Occurrence(pipelineContext: PipelineContext) {
         s
       case (DynamicType, TupleField(_, _) :: _) =>
         DynamicType
-      case (DynamicType, RecordField(_, _) :: _) =>
-        DynamicType
+      case (DynamicType, RecordField(fieldName, recName) :: path1) =>
+        util
+          .getRecord(module, recName)
+          .map(_.fields(fieldName).tp)
+          .map(typePathRef(_, path1))
+          .getOrElse(DynamicType)
       case (UnionType(ts), _) =>
         UnionType(ts.map(typePathRef(_, path)))
       case (TupleType(ts), TupleField(index, arity) :: path1) if ts.size == arity =>
