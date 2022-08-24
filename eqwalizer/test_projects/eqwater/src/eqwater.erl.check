@@ -1231,11 +1231,5 @@ occ53_neg(_, I) -> I.                      |         | I.
 -spec occ54                                |         |
     (m(), integer() | undefined)           |         |
     -> integer().                          |         |
-occ54(#{}, undefined) -> 0;                | ERROR   |
-occ54(#{}, I) -> I.                        |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'undefined'
-                                           |         | 
-                                           |         |   number() | 'undefined' is not a subtype of number()
-                                           |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+occ54(#{}, undefined) -> 0;                | OK      |
+occ54(#{}, I) -> I.                        |         |

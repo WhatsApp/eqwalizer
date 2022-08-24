@@ -406,6 +406,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
           case None =>
             patProps(x, path, pat1, env)
         }
+      case PatMap(Nil) =>
+        val obj = mkObj(x, path)
+        val pos = Pos(obj, DictMap(AnyType, AnyType))
+        val neg = Neg(obj, DictMap(AnyType, AnyType))
+        Some(pos, neg)
       case _ =>
         Some(Unknown, Unknown)
     }
