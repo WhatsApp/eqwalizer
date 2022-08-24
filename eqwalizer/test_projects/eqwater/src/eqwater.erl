@@ -1089,3 +1089,14 @@ occ52(_, I) -> I.
     -> integer().
 occ53_neg(L, undefined) when is_integer(L) -> 0;
 occ53_neg(_, I) -> I.
+
+-type m() :: #{
+    a => a,
+    b => b
+}.
+
+-spec occ54
+    (m(), integer() | undefined)
+    -> integer().
+occ54(#{}, undefined) -> 0;
+occ54(#{}, I) -> I.

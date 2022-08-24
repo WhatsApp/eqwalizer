@@ -1222,3 +1222,20 @@ occ53_neg(_, I) -> I.                      |         | I.
                                            |         |   number() | 'undefined' is not a subtype of number()
                                            |         |   because
                                            |         |   'undefined' is not a subtype of number()
+                                           |         |
+-type m() :: #{                            |         |
+    a => a,                                |         |
+    b => b                                 |         |
+}.                                         |         |
+                                           |         |
+-spec occ54                                |         |
+    (m(), integer() | undefined)           |         |
+    -> integer().                          |         |
+occ54(#{}, undefined) -> 0;                | ERROR   |
+occ54(#{}, I) -> I.                        |         | I.
+                                           |         | Expected: number()
+                                           |         | Got     : number() | 'undefined'
+                                           |         | 
+                                           |         |   number() | 'undefined' is not a subtype of number()
+                                           |         |   because
+                                           |         |   'undefined' is not a subtype of number()
