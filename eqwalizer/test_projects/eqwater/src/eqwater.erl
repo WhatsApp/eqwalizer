@@ -1100,3 +1100,33 @@ occ53_neg(_, I) -> I.
     -> integer().
 occ54(#{}, undefined) -> 0;
 occ54(#{}, I) -> I.
+
+-spec occ55
+    ([] | atom(), atom()) -> atom().
+occ55([], A) -> A;
+occ55(A, _) -> A.
+
+-spec occ56
+    ([atom()] | atom(), atom()) -> [atom()].
+occ56(V, A) ->
+    case V of
+        [_] -> V;
+        _ -> [A]
+    end.
+    
+-spec occ57_neg
+    ([atom()] | atom(), atom()) -> [atom()].
+occ57_neg(V, _) ->
+    case V of
+        [_] -> V;
+        A -> [A]
+    end.
+    
+-spec occ58
+    ([atom()] | atom(), atom()) -> [atom()].
+occ58(V, A) ->
+    case V of
+        [_] -> V;
+        [] -> V;
+        A2 -> [A2]
+    end.

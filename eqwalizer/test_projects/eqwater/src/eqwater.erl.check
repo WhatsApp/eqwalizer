@@ -1233,3 +1233,57 @@ occ53_neg(_, I) -> I.                      |         | I.
     -> integer().                          |         |
 occ54(#{}, undefined) -> 0;                | OK      |
 occ54(#{}, I) -> I.                        |         |
+                                           |         |
+-spec occ55                                |         |
+    ([] | atom(), atom()) -> atom().       |         |
+occ55([], A) -> A;                         | ERROR   |
+occ55(A, _) -> A.                          |         | A.
+                                           |         | Expected: atom()
+                                           |         | Got     : [] | atom()
+                                           |         | 
+                                           |         |   [] | atom() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   [] is not a subtype of atom()
+                                           |         |
+-spec occ56                                |         |
+    ([atom()] | atom(), atom()) -> [atom()……         |
+occ56(V, A) ->                             | ERROR   |
+    case V of                              |         |
+        [_] -> V;                          |         | V.
+                                           |         | Expected: [atom()]
+                                           |         | Got     : [atom()] | atom()
+                                           |         | 
+                                           |         |   [atom()] | atom() is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   atom() is not a subtype of [atom()]
+        _ -> [A]                           |         |
+    end.                                   |         |
+                                           |         |
+-spec occ57_neg                            |         |
+    ([atom()] | atom(), atom()) -> [atom()……         |
+occ57_neg(V, _) ->                         | ERROR   |
+    case V of                              |         |
+        [_] -> V;                          |         | V.
+                                           |         | Expected: [atom()]
+                                           |         | Got     : [atom()] | atom()
+                                           |         | 
+                                           |         |   [atom()] | atom() is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   atom() is not a subtype of [atom()]
+        A -> [A]                           |         |
+    end.                                   |         |
+                                           |         |
+-spec occ58                                |         |
+    ([atom()] | atom(), atom()) -> [atom()……         |
+occ58(V, A) ->                             | ERROR   |
+    case V of                              |         |
+        [_] -> V;                          |         | V.
+                                           |         | Expected: [atom()]
+                                           |         | Got     : [atom()] | atom()
+                                           |         | 
+                                           |         |   [atom()] | atom() is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   atom() is not a subtype of [atom()]
+        [] -> V;                           |         |
+        A2 -> [A2]                         |         |
+    end.                                   |         |
