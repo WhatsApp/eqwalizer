@@ -968,3 +968,20 @@ my_priorities_neg() ->
 ) -> atom().
 timestamp_neg(X) ->
     X.
+
+-spec orelse1(boolean(), pid())
+        -> true | pid().
+orelse1(Flag, Pid) ->
+    Flag orelse Pid.
+
+-spec orelse2(boolean(), pid())
+        -> true | pid().
+orelse2(Flag, Pid) ->
+    Res = (Flag orelse Pid),
+    Res.
+
+-spec orelse3_neg(atom(), pid())
+        -> true | pid().
+orelse3_neg(Flag, Pid) ->
+    Res = (Flag orelse Pid),
+    Res.

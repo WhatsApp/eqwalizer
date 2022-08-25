@@ -1212,3 +1212,34 @@ timestamp_neg(X) ->                        | ERROR   |
                                            |         |   erlang:timestamp() is not a subtype of atom()
                                            |         |   because
                                            |         |   {number(), number(), number()} is not a subtype of atom()
+                                           |         |
+-spec orelse1(boolean(), pid())            |         |
+        -> true | pid().                   |         |
+orelse1(Flag, Pid) ->                      | ERROR   |
+    Flag orelse Pid.                       |         | _ orelse _.
+                                           |         | Expected: 'true' | pid()
+                                           |         | Got     : boolean() | pid()
+                                           |         | 
+                                           |         |   boolean() | pid() is not a subtype of 'true' | pid()
+                                           |         |   because
+                                           |         |   boolean() is not a subtype of 'true' | pid()
+                                           |         |
+-spec orelse2(boolean(), pid())            |         |
+        -> true | pid().                   |         |
+orelse2(Flag, Pid) ->                      | ERROR   |
+    Res = (Flag orelse Pid),               |         |
+    Res.                                   |         | Res.
+                                           |         | Expected: 'true' | pid()
+                                           |         | Got     : boolean() | pid()
+                                           |         | 
+                                           |         |   boolean() | pid() is not a subtype of 'true' | pid()
+                                           |         |   because
+                                           |         |   boolean() is not a subtype of 'true' | pid()
+                                           |         |
+-spec orelse3_neg(atom(), pid())           |         |
+        -> true | pid().                   |         |
+orelse3_neg(Flag, Pid) ->                  | ERROR   |
+    Res = (Flag orelse Pid),               |         | Flag.
+                                           |         | Expected: boolean()
+                                           |         | Got     : atom()
+    Res.                                   |         |

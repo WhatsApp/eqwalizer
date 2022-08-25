@@ -1225,7 +1225,10 @@
           "n_a_neg/1",
           "my_priorities_pos/0",
           "my_priorities_neg/0",
-          "timestamp_neg/1"
+          "timestamp_neg/1",
+          "orelse1/2",
+          "orelse2/2",
+          "orelse3_neg/2"
         ]
       },
       {

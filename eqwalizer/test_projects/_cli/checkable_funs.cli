@@ -1,10 +1,10 @@
 all funs:
-                                               All : 2708
-                                         Checkable : 2447
+                                               All : 2711
+                                         Checkable : 2450
                               Well-typed checkable : 1579
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 867
+                         Health ratio of checkable : 64%
+                                       error count : 870
 
 --------------------------------------------
 generated funs:
@@ -26,19 +26,19 @@ generated non-test funs:
 
 --------------------------------------------
 non-generated funs:
-                                               All : 2708
-                                         Checkable : 2447
+                                               All : 2711
+                                         Checkable : 2450
                               Well-typed checkable : 1579
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 867
+                         Health ratio of checkable : 64%
+                                       error count : 870
 
 --------------------------------------------
 non-generated non-test funs (most important):
-                                               All : 2706
-                                         Checkable : 2445
+                                               All : 2709
+                                         Checkable : 2448
                               Well-typed checkable : 1578
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 866
+                         Health ratio of checkable : 64%
+                                       error count : 869
 

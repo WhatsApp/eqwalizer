@@ -1,6 +1,6 @@
 all specs:
-    containing number: 13.60%
-    containing integer: 9.96%
+    containing number: 13.59%
+    containing integer: 9.95%
     containing pos_integer: 3.41%
     containing non_neg_integer: 2.09%
     containing neg_integer: 1.55%
@@ -21,8 +21,8 @@ generated specs:
     containing range: 0.00%
     containing int lit: 0.00%
 non-generated specs:
-    containing number: 13.60%
-    containing integer: 9.96%
+    containing number: 13.59%
+    containing integer: 9.95%
     containing pos_integer: 3.41%
     containing non_neg_integer: 2.09%
     containing neg_integer: 1.55%
