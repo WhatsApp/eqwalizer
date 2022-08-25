@@ -1122,9 +1122,9 @@ occ57_neg(V, _) ->
         A -> [A]
     end.
     
--spec occ58
+-spec occ58_neg
     ([atom()] | atom(), atom()) -> [atom()].
-occ58(V, A) ->
+occ58_neg(V, A) ->
     case V of
         [_] -> V;
         [] -> V;

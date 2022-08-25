@@ -411,6 +411,16 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val pos = Pos(obj, DictMap(AnyType, AnyType))
         val neg = Neg(obj, DictMap(AnyType, AnyType))
         Some(pos, neg)
+      case PatNil() =>
+        val obj = mkObj(x, path)
+        val pos = Pos(obj, NilType)
+        val neg = Neg(obj, NilType)
+        Some(pos, neg)
+      case PatCons(_, _) =>
+        val obj = mkObj(x, path)
+        val pos = Pos(obj, ListType(AnyType))
+        val neg = Unknown
+        Some(pos, neg)
       case _ =>
         Some(Unknown, Unknown)
     }
