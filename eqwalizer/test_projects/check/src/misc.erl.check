@@ -1215,26 +1215,14 @@ timestamp_neg(X) ->                        | ERROR   |
                                            |         |
 -spec orelse1(boolean(), pid())            |         |
         -> true | pid().                   |         |
-orelse1(Flag, Pid) ->                      | ERROR   |
-    Flag orelse Pid.                       |         | _ orelse _.
-                                           |         | Expected: 'true' | pid()
-                                           |         | Got     : boolean() | pid()
-                                           |         | 
-                                           |         |   boolean() | pid() is not a subtype of 'true' | pid()
-                                           |         |   because
-                                           |         |   boolean() is not a subtype of 'true' | pid()
+orelse1(Flag, Pid) ->                      | OK      |
+    Flag orelse Pid.                       |         |
                                            |         |
 -spec orelse2(boolean(), pid())            |         |
         -> true | pid().                   |         |
-orelse2(Flag, Pid) ->                      | ERROR   |
+orelse2(Flag, Pid) ->                      | OK      |
     Res = (Flag orelse Pid),               |         |
-    Res.                                   |         | Res.
-                                           |         | Expected: 'true' | pid()
-                                           |         | Got     : boolean() | pid()
-                                           |         | 
-                                           |         |   boolean() | pid() is not a subtype of 'true' | pid()
-                                           |         |   because
-                                           |         |   boolean() is not a subtype of 'true' | pid()
+    Res.                                   |         |
                                            |         |
 -spec orelse3_neg(atom(), pid())           |         |
         -> true | pid().                   |         |

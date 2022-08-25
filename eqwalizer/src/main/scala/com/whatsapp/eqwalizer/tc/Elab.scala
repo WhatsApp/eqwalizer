@@ -301,7 +301,7 @@ final class Elab(pipelineContext: PipelineContext) {
           case "orelse" =>
             val env1 = check.checkExpr(arg1, booleanType, env)
             val (t2, env2) = elabExpr(arg2, env1)
-            (subtype.join(booleanType, t2), env2)
+            (subtype.join(trueType, t2), env2)
           case "andalso" =>
             val (t1, env1) = elabExpr(arg1, env)
             if (!subtype.subType(t1, booleanType))
