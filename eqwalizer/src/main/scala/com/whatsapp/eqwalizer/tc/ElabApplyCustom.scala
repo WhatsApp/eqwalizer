@@ -252,14 +252,14 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         def getAccumulatorTy(accTy: Type): Type = funArg match {
           case lambda: Lambda =>
             val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy, accTy), env, Set.empty)).map(_._1)
-            subtype.join(vTys)
+            subtype.join(accTy :: vTys)
           case _ =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), AnyType)
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
 
             val vTys = narrow.asFunType(funArgTy, 3).get.map(_.resTy)
-            subtype.join(vTys)
+            subtype.join(accTy :: vTys)
         }
         def validateAccumulatorTy(accTy: Type): Unit = funArg match {
           case lambda: Lambda =>

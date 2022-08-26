@@ -648,8 +648,10 @@ maps_fold_3_5_neg() ->                     | ERROR   |
                                            |         |
 -spec maps_fold_3_6(none()) ->             |         |
     #{number() => number()}.               |         |
-maps_fold_3_6(None) ->                     | OK      |
-    maps:fold(                             |         |
+maps_fold_3_6(None) ->                     | ERROR   |
+    maps:fold(                             |         | maps:fold(None, [], #{..}).
+                                           |         | Expected: #D{number() => number()}
+                                           |         | Got     : []
         None,                              |         |
         [],                                |         |
         #{1 => 1}                          |         |
@@ -665,8 +667,14 @@ maps_fold_3_7(None) ->                     | OK      |
                                            |         |
 -spec maps_fold_4_neg                      |         |
     (#{atom => atom()}) -> atom().         |         |
-maps_fold_4_neg(M) ->                      | OK      |
-    maps:fold(                             |         |
+maps_fold_4_neg(M) ->                      | ERROR   |
+    maps:fold(                             |         | maps:fold(fun, [], M).
+                                           |         | Expected: atom()
+                                           |         | Got     : [] | atom()
+                                           |         | 
+                                           |         |   [] | atom() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   [] is not a subtype of atom()
         fun (_K, A, _Acc) -> A end,        |         |
         [],                                |         |
         M                                  |         |
@@ -679,8 +687,14 @@ folder_good(_, _, _) -> 1.                 | OK      |
 folder_bad(_, _, Acc) -> [Acc].            | OK      |
                                            |         |
 -spec maps_fold_3_8() -> number().         |         |
-maps_fold_3_8() ->                         | OK      |
-    maps:fold(                             |         |
+maps_fold_3_8() ->                         | ERROR   |
+    maps:fold(                             |         | maps:fold(folder_good/3, [], #{..}).
+                                           |         | Expected: number()
+                                           |         | Got     : [] | number()
+                                           |         | 
+                                           |         |   [] | number() is not a subtype of number()
+                                           |         |   because
+                                           |         |   [] is not a subtype of number()
         fun folder_good/3,                 |         |
         [],                                |         |
         #{1 => a}                          |         |
