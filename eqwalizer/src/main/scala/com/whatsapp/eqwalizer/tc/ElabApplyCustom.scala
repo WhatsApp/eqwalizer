@@ -270,8 +270,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
         }
         val accTy2 = getAccumulatorTy(accTy1)
-        validateAccumulatorTy(accTy2)
-        (accTy2, env1)
+        val accTy3 = getAccumulatorTy(accTy2)
+        validateAccumulatorTy(accTy3)
+        (accTy3, env1)
 
       case RemoteId("maps", "get", 2) =>
         val List(key, map) = args
