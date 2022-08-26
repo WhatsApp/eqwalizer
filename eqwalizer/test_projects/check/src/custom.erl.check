@@ -663,6 +663,15 @@ maps_fold_3_7(None) ->                     | OK      |
         None                               |         |
     ).                                     |         |
                                            |         |
+-spec maps_fold_4_neg                      |         |
+    (#{atom => atom()}) -> atom().         |         |
+maps_fold_4_neg(M) ->                      | OK      |
+    maps:fold(                             |         |
+        fun (_K, A, _Acc) -> A end,        |         |
+        [],                                |         |
+        M                                  |         |
+    ).                                     |         |
+                                           |         |
 -spec folder_good(_, _, _) -> number().    |         |
 folder_good(_, _, _) -> 1.                 | OK      |
                                            |         |
