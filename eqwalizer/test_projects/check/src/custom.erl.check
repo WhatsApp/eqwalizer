@@ -702,6 +702,69 @@ maps_fold_3_9_neg() ->                     | ERROR   |
         #{1 => a}                          |         |
     ).                                     |         |
                                            |         |
+-spec maps_fold_4_1(#{atom() => {b, binary……         |
+maps_fold_4_1(M) ->                        | ERROR   |
+    maps:fold(                             |         |
+        fun                                |         |
+            (K, {i, I}, Acc) ->            |         |
+                maps:put(K, I, Acc);       |         | maps:put(K, I, Acc).
+                                           |         | Expected: #D{atom() => number()} | #D{atom() => binary()}
+                                           |         | Got     : #D{atom() => number() | binary()}
+                                           |         | 
+                                           |         |   #D{atom() => number() | binary()} is not a subtype of #D{atom() => number()} | #D{atom() => binary()}
+                                           |         |   because
+                                           |         |   #D{atom() => number() | binary()} is not a subtype of #D{atom() => number()}
+                                           |         |   because
+                                           |         |   number() | binary() is not a subtype of number()
+                                           |         |   because
+                                           |         |   binary() is not a subtype of number()
+            (K, {b, B}, Acc) ->            |         |
+                maps:put(K, B, Acc)        |         |
+        end,                               |         |
+        #{},                               |         |
+        M                                  |         |
+    ).                                     |         |
+                                           |         |
+-spec maps_fold_4_2(#{atom() => {b, binary……         |
+maps_fold_4_2(M) ->                        | ERROR   |
+    maps:fold(                             |         |
+        fun                                |         |
+            (K, {i, I}, Acc) ->            |         |
+                maps:put(K, I, Acc);       |         | maps:put(K, I, Acc).
+                                           |         | Expected: #D{atom() => number()} | #D{atom() => binary()} | #D{atom() => atom()}
+                                           |         | Got     : #D{atom() => number() | binary() | atom()}
+                                           |         | 
+                                           |         |   #D{atom() => number() | binary() | atom()} is not a subtype of #D{atom() => number()} | #D{atom() => binary()} | #D{atom() => atom()}
+                                           |         |   because
+                                           |         |   #D{atom() => number() | binary() | atom()} is not a subtype of #D{atom() => number()}
+                                           |         |   because
+                                           |         |   number() | binary() | atom() is not a subtype of number()
+                                           |         |   because
+                                           |         |   binary() is not a subtype of number()
+            (K, {b, B}, Acc) ->            |         |
+                maps:put(K, B, Acc);       |         |
+            (K, {a, A}, Acc) ->            |         |
+                maps:put(K, A, Acc)        |         |
+        end,                               |         |
+        #{},                               |         |
+        M                                  |         |
+    ).                                     |         |
+                                           |         |
+-spec maps_fold_4_3_neg(#{atom() => {b, bi……         |
+maps_fold_4_3_neg(M) ->                    | OK      |
+    maps:fold(                             |         |
+        fun                                |         |
+            (_K, {i, I}, Acc) ->           |         |
+                [I | Acc];                 |         |
+            (_K, {b, B}, Acc) ->           |         |
+                [B | Acc];                 |         |
+            (_K, {a, A}, Acc) ->           |         |
+                [A | Acc]                  |         |
+        end,                               |         |
+        [],                                |         |
+        M                                  |         |
+    ).                                     |         |
+                                           |         |
 -spec lists_filtermap_1() -> [number()].   |         |
 lists_filtermap_1() ->                     | OK      |
     lists:filtermap(                       |         |

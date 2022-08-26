@@ -588,6 +588,49 @@ maps_fold_3_9_neg() ->
         #{1 => a}
     ).
 
+-spec maps_fold_4_1(#{atom() => {b, binary()} | {i, integer()}}) -> #{atom() => binary() | integer()}.
+maps_fold_4_1(M) ->
+    maps:fold(
+        fun
+            (K, {i, I}, Acc) ->
+                maps:put(K, I, Acc);
+            (K, {b, B}, Acc) ->
+                maps:put(K, B, Acc)
+        end,
+        #{},
+        M
+    ).
+
+-spec maps_fold_4_2(#{atom() => {b, binary()} | {i, integer()} | {a, atom()}}) -> #{atom() => binary() | integer() | atom()}.
+maps_fold_4_2(M) ->
+    maps:fold(
+        fun
+            (K, {i, I}, Acc) ->
+                maps:put(K, I, Acc);
+            (K, {b, B}, Acc) ->
+                maps:put(K, B, Acc);
+            (K, {a, A}, Acc) ->
+                maps:put(K, A, Acc)
+        end,
+        #{},
+        M
+    ).
+
+-spec maps_fold_4_3_neg(#{atom() => {b, binary()} | {i, integer()} | {a, atom()}}) -> [binary()] | [integer()] | [atom()].
+maps_fold_4_3_neg(M) ->
+    maps:fold(
+        fun
+            (_K, {i, I}, Acc) ->
+                [I | Acc];
+            (_K, {b, B}, Acc) ->
+                [B | Acc];
+            (_K, {a, A}, Acc) ->
+                [A | Acc]
+        end,
+        [],
+        M
+    ).
+
 -spec lists_filtermap_1() -> [number()].
 lists_filtermap_1() ->
     lists:filtermap(
