@@ -648,12 +648,10 @@ maps_fold_3_5_neg() ->                     | ERROR   |
                                            |         |
 -spec maps_fold_3_6(none()) ->             |         |
     #{number() => number()}.               |         |
-maps_fold_3_6(None) ->                     | ERROR   |
-    maps:fold(                             |         | maps:fold(None, [], #{..}).
-                                           |         | Expected: #D{number() => number()}
-                                           |         | Got     : []
+maps_fold_3_6(None) ->                     | OK      |
+    maps:fold(                             |         |
         None,                              |         |
-        [],                                |         |
+        #{},                               |         |
         #{1 => 1}                          |         |
     ).                                     |         |
                                            |         |
@@ -687,16 +685,10 @@ folder_good(_, _, _) -> 1.                 | OK      |
 folder_bad(_, _, Acc) -> [Acc].            | OK      |
                                            |         |
 -spec maps_fold_3_8() -> number().         |         |
-maps_fold_3_8() ->                         | ERROR   |
-    maps:fold(                             |         | maps:fold(folder_good/3, [], #{..}).
-                                           |         | Expected: number()
-                                           |         | Got     : [] | number()
-                                           |         | 
-                                           |         |   [] | number() is not a subtype of number()
-                                           |         |   because
-                                           |         |   [] is not a subtype of number()
+maps_fold_3_8() ->                         | OK      |
+    maps:fold(                             |         |
         fun folder_good/3,                 |         |
-        [],                                |         |
+        0,                                 |         |
         #{1 => a}                          |         |
     ).                                     |         |
                                            |         |

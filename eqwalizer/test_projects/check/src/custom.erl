@@ -545,7 +545,7 @@ maps_fold_3_5_neg() ->
 maps_fold_3_6(None) ->
     maps:fold(
         None,
-        [],
+        #{},
         #{1 => 1}
     ).
 
@@ -576,7 +576,7 @@ folder_bad(_, _, Acc) -> [Acc].
 maps_fold_3_8() ->
     maps:fold(
         fun folder_good/3,
-        [],
+        0,
         #{1 => a}
     ).
 
