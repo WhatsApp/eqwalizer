@@ -61,7 +61,7 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
-        subTypePol(body, t2, seen + ((t1, v1) -> (t2, v2)))
+        containsType(t1, t2) || subTypePol(body, t2, seen + ((t1, v1) -> (t2, v2)))
       case (_, RemoteType(rid, args)) =>
         val body = util.getTypeDeclBody(rid, args)
         subTypePol(t1, body, seen + ((t1, v1) -> (t2, v2)))
@@ -231,6 +231,16 @@ class Subtype(pipelineContext: PipelineContext) {
       case _ =>
         false
     })
+
+  private def containsType(t1: Type, t2: Type): Boolean = {
+    t2 match {
+      case AnyType       => true
+      case _ if t1 == t2 => true
+      case UnionType(tys) =>
+        tys.exists(containsType(t1, _))
+      case _ => false
+    }
+  }
 
   /** Checks whether originalTuple.updated(proj, t1) < t2, by expanding t1 if it is an alias or a union.
     */
