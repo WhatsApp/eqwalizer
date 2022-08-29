@@ -2235,3 +2235,35 @@ file_open5_neg(Mode) ->
     {ok, Device} =
         file:open("/file", [Mode]),
     Device.
+
+-spec maps_remove1(
+    #{a := integer()}
+) -> #{}.
+maps_remove1(M) ->
+    maps:remove(a, M).
+
+-spec maps_remove2(
+    #{a := integer()}
+) -> #{a := integer()}.
+maps_remove2(M) ->
+    maps:remove(b, M).
+
+-spec maps_remove3_neg(
+    atom(),
+    #{a := integer()}
+) -> #{a := integer()}.
+maps_remove3_neg(A, M) ->
+    maps:remove(A, M).
+
+-spec maps_remove4(
+    #{a := integer(), b := atom()} |
+    #{a := atom(), b := pid()}
+) -> #{b := atom()} | #{b => pid()}.
+maps_remove4(M) ->
+    maps:remove(a, M).
+
+-spec maps_remove5(
+    #{atom() => binary()}
+) -> #{atom() => binary()}.
+maps_remove5(M) ->
+    maps:remove(a, M).

@@ -2982,3 +2982,47 @@ file_open5_neg(Mode) ->                    | ERROR   |
                                            |         |   pid() | file:fd() is not a subtype of #file_descriptor{}
                                            |         |   because
                                            |         |   pid() is not a subtype of #file_descriptor{}
+                                           |         |
+-spec maps_remove1(                        |         |
+    #{a := integer()}                      |         |
+) -> #{}.                                  |         |
+maps_remove1(M) ->                         | ERROR   |
+    maps:remove(a, M).                     |         | maps:remove('a', M).
+                                           |         | Expected: shape map #S{}
+                                           |         | Got     : dict  map #D{'a' => number()}
+                                           |         |
+-spec maps_remove2(                        |         |
+    #{a := integer()}                      |         |
+) -> #{a := integer()}.                    |         |
+maps_remove2(M) ->                         | ERROR   |
+    maps:remove(b, M).                     |         | maps:remove('b', M).
+                                           |         | Expected: shape map #S{a := number()}
+                                           |         | Got     : dict  map #D{'b' | 'a' => number()}
+                                           |         |
+-spec maps_remove3_neg(                    |         |
+    atom(),                                |         |
+    #{a := integer()}                      |         |
+) -> #{a := integer()}.                    |         |
+maps_remove3_neg(A, M) ->                  | ERROR   |
+    maps:remove(A, M).                     |         | maps:remove(A, M).
+                                           |         | Expected: shape map #S{a := number()}
+                                           |         | Got     : dict  map #D{atom() => number()}
+                                           |         |
+-spec maps_remove4(                        |         |
+    #{a := integer(), b := atom()} |       |         |
+    #{a := atom(), b := pid()}             |         |
+) -> #{b := atom()} | #{b => pid()}.       |         |
+maps_remove4(M) ->                         | ERROR   |
+    maps:remove(a, M).                     |         | maps:remove('a', M).
+                                           |         | Expected: #S{b := atom()} | #S{b => pid()}
+                                           |         | Got     : #D{'a' | 'b' => number() | atom() | atom() | pid()}
+                                           |         | 
+                                           |         |   #D{'a' | 'b' => number() | atom() | atom() | pid()} is not a subtype of #S{b := atom()} | #S{b => pid()}
+                                           |         |   because
+                                           |         |   dict  map #D{'a' | 'b' => number() | atom() | atom() | pid()} is not a subtype of shape map #S{b := atom()}
+                                           |         |
+-spec maps_remove5(                        |         |
+    #{atom() => binary()}                  |         |
+) -> #{atom() => binary()}.                |         |
+maps_remove5(M) ->                         | OK      |
+    maps:remove(a, M).                     |         |
