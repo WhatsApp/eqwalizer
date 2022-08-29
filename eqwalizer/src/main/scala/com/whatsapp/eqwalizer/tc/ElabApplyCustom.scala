@@ -39,6 +39,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "get", 2),
       RemoteId("maps", "get", 3),
       RemoteId("maps", "map", 2),
+      RemoteId("maps", "remove", 2),
       RemoteId("maps", "put", 3),
       RemoteId("maps", "with", 2),
       RemoteId("maps", "without", 2),
@@ -343,6 +344,37 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             subtype.join(vTys)
         }
         (DictMap(keyTy, resValTy), env1)
+
+      case RemoteId("maps", "remove", 2) =>
+        val List(keyArg, mapArg) = args
+        val List(keyTy, mapTy) = argTys
+        if (!subtype.subType(mapTy, anyMapTy)) {
+          throw ExpectedSubtype(mapArg.pos, mapArg, expected = anyMapTy, got = mapTy)
+        }
+        def remove(mapTy: Type): Type = mapTy match {
+          case shape: ShapeMap =>
+            keyTy match {
+              case AtomLitType(key) =>
+                val props = shape.props.filter(_.key != key)
+                shape.copy(props = props)
+              case _ =>
+                val valTy = subtype.join(shape.props.map(_.tp))
+                DictMap(AtomType, valTy)
+            }
+          case UnionType(tys) =>
+            subtype.join(tys.map(remove))
+          case dict: DictMap =>
+            dict
+          case NoneType =>
+            NoneType
+          case unexpected =>
+            // $COVERAGE-OFF$
+            throw new IllegalStateException(s"unexpected non-map $unexpected")
+          // $COVERAGE-ON$
+        }
+
+        val ty = remove(narrow.asMapType(mapTy))
+        (ty, env1)
 
       case RemoteId("maps", "with", 2) =>
         @tailrec

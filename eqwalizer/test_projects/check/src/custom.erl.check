@@ -2986,18 +2986,14 @@ file_open5_neg(Mode) ->                    | ERROR   |
 -spec maps_remove1(                        |         |
     #{a := integer()}                      |         |
 ) -> #{}.                                  |         |
-maps_remove1(M) ->                         | ERROR   |
-    maps:remove(a, M).                     |         | maps:remove('a', M).
-                                           |         | Expected: shape map #S{}
-                                           |         | Got     : dict  map #D{'a' => number()}
+maps_remove1(M) ->                         | OK      |
+    maps:remove(a, M).                     |         |
                                            |         |
 -spec maps_remove2(                        |         |
     #{a := integer()}                      |         |
 ) -> #{a := integer()}.                    |         |
-maps_remove2(M) ->                         | ERROR   |
-    maps:remove(b, M).                     |         | maps:remove('b', M).
-                                           |         | Expected: shape map #S{a := number()}
-                                           |         | Got     : dict  map #D{'b' | 'a' => number()}
+maps_remove2(M) ->                         | OK      |
+    maps:remove(b, M).                     |         |
                                            |         |
 -spec maps_remove3_neg(                    |         |
     atom(),                                |         |
@@ -3012,14 +3008,8 @@ maps_remove3_neg(A, M) ->                  | ERROR   |
     #{a := integer(), b := atom()} |       |         |
     #{a := atom(), b := pid()}             |         |
 ) -> #{b := atom()} | #{b => pid()}.       |         |
-maps_remove4(M) ->                         | ERROR   |
-    maps:remove(a, M).                     |         | maps:remove('a', M).
-                                           |         | Expected: #S{b := atom()} | #S{b => pid()}
-                                           |         | Got     : #D{'a' | 'b' => number() | atom() | atom() | pid()}
-                                           |         | 
-                                           |         |   #D{'a' | 'b' => number() | atom() | atom() | pid()} is not a subtype of #S{b := atom()} | #S{b => pid()}
-                                           |         |   because
-                                           |         |   dict  map #D{'a' | 'b' => number() | atom() | atom() | pid()} is not a subtype of shape map #S{b := atom()}
+maps_remove4(M) ->                         | OK      |
+    maps:remove(a, M).                     |         |
                                            |         |
 -spec maps_remove5(                        |         |
     #{atom() => binary()}                  |         |
