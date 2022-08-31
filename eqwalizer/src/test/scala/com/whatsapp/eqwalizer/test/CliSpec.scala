@@ -57,10 +57,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(NegatedTypePredicates.main(Array()), "negated_type_predicates.cli")
     }
 
-    it("reports detached specs") {
-      checkAction(DetachedSpecs.main(Array()), "detached_specs.cli")
-    }
-
     it("reports refined record types") {
       checkAction(RefinedRecordTypes.main(Array()), "refined_record_types.cli")
     }
