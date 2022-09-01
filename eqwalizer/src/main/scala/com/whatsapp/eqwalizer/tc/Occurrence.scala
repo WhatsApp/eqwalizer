@@ -18,10 +18,51 @@ import scala.collection.mutable.ListBuffer
 object Occurrence {
   sealed trait Prop
   case object Unknown extends Prop
+  case object True extends Prop
+  case object False extends Prop
   case class Pos(obj: Obj, t: Type) extends Prop
   case class Neg(obj: Obj, t: Type) extends Prop
   case class And(props: List[Prop]) extends Prop
   case class Or(props: List[Prop]) extends Prop
+
+  /** Prefer these functions to And.apply and Or.apply */
+  def and(props: List[Prop]): Prop = {
+    if (props.isEmpty) True
+    else if (props.contains(False)) False
+    else {
+      val flattenedProps = props.flatMap {
+        case And(l) => l
+        case True   => List()
+        case p      => List(p)
+      }
+      val (propsUkn, propsNotUkn) = flattenedProps.partition(_ == Unknown)
+      val simplProps =
+        if (propsUkn.isEmpty) propsNotUkn
+        else Unknown :: propsNotUkn
+      if (simplProps.isEmpty) True
+      else if (simplProps.size == 1) simplProps.head
+      else And(simplProps)
+    }
+  }
+
+  def or(props: List[Prop]): Prop = {
+    if (props.isEmpty) False
+    else if (props.contains(True)) True
+    else {
+      val flattenedProps = props.flatMap {
+        case Or(l) => l
+        case False => List()
+        case p     => List(p)
+      }
+      val (propsUkn, propsNotUkn) = flattenedProps.partition(_ == Unknown)
+      val simplProps =
+        if (propsUkn.isEmpty) propsNotUkn
+        else Unknown :: propsNotUkn
+      if (simplProps.isEmpty) False
+      else if (simplProps.size == 1) simplProps.head
+      else Or(simplProps)
+    }
+  }
 
   sealed trait Obj
   case class VarObj(v: String) extends Obj
@@ -185,7 +226,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
           case h :: Nil =>
             propsAcc :+ h
           case zz =>
-            propsAcc :+ Or(zz)
+            propsAcc :+ or(zz)
         }
       }
     }
@@ -222,7 +263,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
           case h :: Nil =>
             propsAcc :+ h
           case zz =>
-            propsAcc :+ Or(zz)
+            propsAcc :+ or(zz)
         }
       }
     }
@@ -270,13 +311,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
       (None, None)
     else {
       val (pos, neg) = guards.map(guardProp(_, aMap)).unzip
-      (Some(Or(pos)), Some(And(neg)))
+      (Some(or(pos)), Some(and(neg)))
     }
 
   private def guardProp(guard: Guard, aMap: Map[Name, Obj]): (Prop, Prop) = {
     // the same as connecting via AND
     val (pos, neg) = guard.tests.map(testProps(_, aMap)).unzip
-    (And(pos), Or(neg))
+    (and(pos), or(neg))
   }
 
   private def testProps(test: Test, aMap: Map[Name, Obj]): (Prop, Prop) = {
@@ -299,11 +340,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case TestBinOp("and" | "andalso", test1, test2) =>
         val (pos1, neg1) = testProps(test1, aMap)
         val (pos2, neg2) = testProps(test2, aMap)
-        (And(List(pos1, pos2)), Or(List(neg1, neg2)))
+        (and(List(pos1, pos2)), or(List(neg1, neg2)))
       case TestBinOp("or" | "orelse", test1, test2) =>
         val (pos1, neg1) = testProps(test1, aMap)
         val (pos2, neg2) = testProps(test2, aMap)
-        (Or(List(pos1, pos2)), And(List(neg1, neg2)))
+        (or(List(pos1, pos2)), and(List(neg1, neg2)))
       case TestBinOp("==" | "=:=", TestVar(v), TestAtom(s)) =>
         val obj = aMap.getOrElse(v, VarObj(v))
         val pos = Pos(obj, AtomLitType(s))
@@ -321,12 +362,16 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   private def negateGuardProp(prop: Prop): Prop =
     prop match {
+      case True =>
+        False
+      case False =>
+        True
       case Unknown =>
         Unknown
       case And(props) =>
-        Or(props.map(negateGuardProp))
+        or(props.map(negateGuardProp))
       case Or(props) =>
-        And(props.map(negateGuardProp))
+        and(props.map(negateGuardProp))
       case Pos(obj, t) =>
         Neg(obj, t)
       case Neg(obj, t) =>
@@ -360,10 +405,10 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val (posThat, negThat) = elems.zipWithIndex.flatMap { case (elem, i) =>
           patProps(x, path :+ TupleField(i, arity), elem, env)
         }.unzip
-        val pos = And(posThis :: posThat)
+        val pos = and(posThis :: posThat)
         val neg =
           if (negThat.isEmpty) negThis
-          else Or(List(negThis, And(List(posThis, Or(negThat)))))
+          else or(List(negThis, and(List(posThis, or(negThat)))))
         Some(pos, neg)
       case PatRecord(recName, fields, gen) =>
         val obj = mkObj(x, path)
@@ -387,10 +432,10 @@ final class Occurrence(pipelineContext: PipelineContext) {
                 (posNamed ++ posGen, negNamed ++ negGen)
             }
         }
-        val pos = And(posThis :: posThat)
+        val pos = and(posThis :: posThat)
         val neg =
           if (negThat.isEmpty) negThis
-          else Or(List(negThis, And(List(posThis, Or(negThat)))))
+          else or(List(negThis, and(List(posThis, or(negThat)))))
         Some(pos, neg)
       case PatMatch(PatVar(alias), pat1) =>
         env.get(alias) match {
@@ -693,14 +738,15 @@ final class Occurrence(pipelineContext: PipelineContext) {
     val dnfs = dnf(propEnv, List((Nil, Nil)))
     var result: Env = Map.empty
     val names = typeEnv.keySet ++ aMap.keySet
+    val refinedEnvs = dnfs.map(refineTypeEnv(typeEnv, _))
     for (name <- names) {
       val ts = aMap.get(name) match {
         case Some(obj) =>
           val id = objId(obj)
           val path = objPath(obj)
-          dnfs.map(chooseType(typeEnv, id, _)).map(typePathRef(_, path))
+          refinedEnvs.map(chooseType(_, id, typeEnv)).map(typePathRef(_, path))
         case None =>
-          dnfs.map(chooseType(typeEnv, name, _))
+          refinedEnvs.map(chooseType(_, name, typeEnv))
       }
       val t = ts match {
         case List(t1) => t1
@@ -715,6 +761,10 @@ final class Occurrence(pipelineContext: PipelineContext) {
     props match {
       case Nil =>
         pairs
+      case False :: _ =>
+        List()
+      case True :: props =>
+        dnf(props, pairs)
       case Unknown :: props =>
         dnf(props, pairs)
       case Pos(x, t) :: props =>
@@ -727,15 +777,19 @@ final class Occurrence(pipelineContext: PipelineContext) {
         ps.flatMap(p => dnf(p :: props, pairs))
     }
 
-  private def chooseType(typeEnv: Env, x: String, pair: PosNeg): Type = {
+  private def refineTypeEnv(typeEnv: Env, pair: PosNeg): Env = {
     var te = typeEnv
     for (Pos(oT, t) <- pair._1)
       te = updateTypeEnv(te, +, oT, t)
     for (Neg(oT, t) <- pair._2)
       te = updateTypeEnv(te, -, oT, t)
+    te
+  }
+
+  private def chooseType(typeEnv: Env, x: String, originalEnv: Env): Type = {
     // The second isNoneType check is there to reduce unwanted noise when none() is not introduced by refining
-    if (te.exists { case (s, t) => subtype.isNoneType(t) && !subtype.isNoneType(typeEnv(s)) }) NoneType
-    else te(x)
+    if (typeEnv.exists { case (s, t) => subtype.isNoneType(t) && !subtype.isNoneType(originalEnv(s)) }) NoneType
+    else typeEnv(x)
   }
 
   private def updateTypeEnv(typeEnv: Env, pol: Polarity, obj: Obj, t: Type): Env = {
