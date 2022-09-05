@@ -300,8 +300,17 @@ final class Elab(pipelineContext: PipelineContext) {
             (booleanType, env2)
           case "orelse" =>
             val env1 = check.checkExpr(arg1, booleanType, env)
-            val (t2, env2) = elabExpr(arg2, env1)
-            (subtype.join(trueType, t2), env2)
+            Filters.asTest(arg1) match {
+              case Some(test) =>
+                val ifClause1 =
+                  Clause(List.empty, List(Guard(List(test))), Body(List(AtomLit("true")(arg1.pos))))(arg1.pos)
+                val ifClause2 = Clause(List.empty, List.empty, Body(List(arg2)))(arg2.pos)
+                val ifExpr = If(List(ifClause1, ifClause2))(expr.pos)
+                elabExpr(ifExpr, env)
+              case None =>
+                val (t2, env2) = elabExpr(arg2, env1)
+                (subtype.join(trueType, t2), env2)
+            }
           case "andalso" =>
             val (t1, env1) = elabExpr(arg1, env)
             if (!subtype.subType(t1, booleanType))
