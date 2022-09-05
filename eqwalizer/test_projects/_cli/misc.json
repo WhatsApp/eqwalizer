@@ -1237,7 +1237,9 @@
           "timestamp_neg/1",
           "orelse1/2",
           "orelse2/2",
-          "orelse3_neg/2"
+          "orelse3_neg/2",
+          "orelse4/1",
+          "orelse5_neg/1"
         ]
       },
       {

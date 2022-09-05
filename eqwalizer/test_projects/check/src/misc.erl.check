@@ -1231,3 +1231,25 @@ orelse3_neg(Flag, Pid) ->                  | ERROR   |
                                            |         | Expected: boolean()
                                            |         | Got     : atom()
     Res.                                   |         |
+                                           |         |
+-spec orelse4(                             |         |
+    undefined | fun(() -> boolean())       |         |
+) -> boolean().                            |         |
+orelse4(Validator) ->                      | ERROR   |
+    Res =                                  |         |
+        Validator =:= undefined            |         |
+            orelse Validator(),            |         | Validator.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: 'undefined' | fun(() -> boolean())
+    Res.                                   |         |
+                                           |         |
+-spec orelse5_neg(                         |         |
+    undefined | fun(() -> boolean())       |         |
+) -> boolean().                            |         |
+orelse5_neg(Validator) ->                  | ERROR   |
+    Res =                                  |         |
+        Validator =/= undefined            |         |
+            orelse Validator(),            |         | Validator.
+                                           |         | Expected fun type with arity 0
+                                           |         | Got: 'undefined' | fun(() -> boolean())
+    Res.                                   |         |

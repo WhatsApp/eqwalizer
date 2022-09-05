@@ -985,3 +985,21 @@ orelse2(Flag, Pid) ->
 orelse3_neg(Flag, Pid) ->
     Res = (Flag orelse Pid),
     Res.
+
+-spec orelse4(
+    undefined | fun(() -> boolean())
+) -> boolean().
+orelse4(Validator) ->
+    Res =
+        Validator =:= undefined
+            orelse Validator(),
+    Res.
+
+-spec orelse5_neg(
+    undefined | fun(() -> boolean())
+) -> boolean().
+orelse5_neg(Validator) ->
+    Res =
+        Validator =/= undefined
+            orelse Validator(),
+    Res.
