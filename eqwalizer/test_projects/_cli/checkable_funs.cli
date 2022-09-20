@@ -1,10 +1,10 @@
 all funs:
-                                               All : 2722
-                                         Checkable : 2461
+                                               All : 2724
+                                         Checkable : 2463
                               Well-typed checkable : 1588
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 872
+                         Health ratio of checkable : 64%
+                                       error count : 874
 
 --------------------------------------------
 generated funs:
@@ -26,19 +26,19 @@ generated non-test funs:
 
 --------------------------------------------
 non-generated funs:
-                                               All : 2722
-                                         Checkable : 2461
+                                               All : 2724
+                                         Checkable : 2463
                               Well-typed checkable : 1588
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 872
+                         Health ratio of checkable : 64%
+                                       error count : 874
 
 --------------------------------------------
 non-generated non-test funs (most important):
-                                               All : 2720
-                                         Checkable : 2459
+                                               All : 2722
+                                         Checkable : 2461
                               Well-typed checkable : 1587
                                    Checkable ratio : 90%
-                         Health ratio of checkable : 65%
-                                       error count : 871
+                         Health ratio of checkable : 64%
+                                       error count : 873
 

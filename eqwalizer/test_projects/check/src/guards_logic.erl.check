@@ -106,3 +106,16 @@ test17(X, Y) when X and Y == false -> Y.   | OK      |
                                            |         |
 -spec test18(atom(), atom()) -> boolean(). |         |
 test18(X, Y) when X or Y -> Y.             | OK      |
+                                           |         |
+-spec test19(term()) -> string().          |         |
+test19(S) when S == "foo" -> S.            | ERROR   | S.
+                                           |         | Expected: string()
+                                           |         | Got     : term()
+                                           |         |
+-spec test20(term()) -> string().          |         |
+test20(S) ->                               | ERROR   |
+    if "foo" == S orelse "bar" == S ->     |         |
+        S                                  |         | S.
+                                           |         | Expected: string()
+                                           |         | Got     : term()
+    end.                                   |         |

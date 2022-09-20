@@ -87,3 +87,12 @@ test17(X, Y) when X and Y == false -> Y.
 
 -spec test18(atom(), atom()) -> boolean().
 test18(X, Y) when X or Y -> Y.
+
+-spec test19(term()) -> string().
+test19(S) when S == "foo" -> S.
+
+-spec test20(term()) -> string().
+test20(S) ->
+    if "foo" == S orelse "bar" == S ->
+        S
+    end.
