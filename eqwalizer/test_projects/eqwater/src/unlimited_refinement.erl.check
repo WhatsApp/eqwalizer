@@ -38,7 +38,7 @@ is_special(_N) ->                          | OK      |
                                            |         |
 -spec bar                                  |         |
     (binary() | integer()) -> boolean().   |         |
-bar(B) when is_binary(B) ->                | ERROR   |
+bar(B) when is_binary(B) ->                | OK      |
   foo(binary_to_integer(B));               |         |
 bar(X) when 100 =< X, X =< 200 ->          |         |
   true;                                    |         |
@@ -57,10 +57,4 @@ bar(X) when 1300 =< X, X =< 1400 ->        |         |
 bar(X) when 1500 =< X, X =< 1600 ->        |         |
   true;                                    |         |
 bar(X) ->                                  |         |
-  is_special(X).                           |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : binary() | number()
-                                           |         | 
-                                           |         |   binary() | number() is not a subtype of number()
-                                           |         |   because
-                                           |         |   binary() is not a subtype of number()
+  is_special(X).                           |         |
