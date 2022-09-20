@@ -177,7 +177,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
     for (clause <- i.clauses) {
       val aMap = Map.empty[Name, Obj]
       val (testPos, testNeg) = guardsProps(clause.guards, aMap)
-      val clauseProps = propsAcc ++ testPos
+      val clauseProps = combine(testPos.toList, propsAcc)
       val clauseEnv = batchSelect(env, clauseProps, aMap)
       clauseEnvs.addOne(clauseEnv)
       propsAcc = testNeg match {
@@ -215,7 +215,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
       val (patPos, patNeg) = patProps(x, Nil, pat, env).unzip
       val aMap = aliases(x, Nil, pat, env).toMap
       val (testPos, testNeg) = guardsProps(clause.guards, aMap)
-      val clauseProps = propsAcc ++ patPos.toList ++ testPos
+      val clauseProps = combine(patPos.toList ++ testPos, propsAcc)
       val clauseEnv = batchSelect(env1, clauseProps, aMap ++ eMap)
       clauseEnvs.addOne(clauseEnv)
       propsAcc = {
@@ -252,7 +252,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
         aMap = aMap ++ aliases(x, Nil, pat, env).toMap
       }
       val (testPos, testNeg) = guardsProps(clause.guards, aMap)
-      val clauseProps = propsAcc ++ allPos ++ testPos
+      val clauseProps = combine((allPos ++ testPos).toList, propsAcc)
       val clauseEnv = batchSelect(env1, clauseProps, aMap)
       clauseEnvs.addOne(clauseEnv)
       propsAcc = {
@@ -268,6 +268,32 @@ final class Occurrence(pipelineContext: PipelineContext) {
       }
     }
     clauseEnvs.toList
+  }
+
+  /** Combines the propositions from `posProps` and `props` into a single list,
+    * taking the positive statements from `posProps` to filter out redundant
+    * negative statements from `props`.
+    */
+  private def combine(posProps: List[Prop], props: List[Prop]): List[Prop] = {
+    def collectPos(p: Prop): List[(Obj, Type)] = {
+      p match {
+        case Pos(obj, t) => List((obj, t))
+        case And(ps)     => ps.flatMap(collectPos)
+        case _           => List()
+      }
+    }
+    val posTypes: List[(Obj, Type)] = posProps.flatMap(collectPos)
+    def isRedundant(p: Prop): Boolean = {
+      p match {
+        case Neg(obj, t) =>
+          posTypes.exists { case (obj2, t2) => obj == obj2 && overlap(t, t2).contains(false) }
+        case Or(ps) =>
+          ps.exists(isRedundant)
+        case _ =>
+          false
+      }
+    }
+    props.filter(!isRedundant(_)) ++ posProps
   }
 
   private def aliases(x: String, path: Path, pat: Pat, env: Env): List[(Name, Obj)] =
@@ -735,10 +761,9 @@ final class Occurrence(pipelineContext: PipelineContext) {
     }
 
   private def batchSelect(typeEnv: Env, propEnv: PropEnv, aMap: AMap): Env = {
-    val dnfs = dnf(propEnv, List((Nil, Nil)))
+    val refinedEnvs = applyProps(propEnv, List(typeEnv))
     var result: Env = Map.empty
     val names = typeEnv.keySet ++ aMap.keySet
-    val refinedEnvs = dnfs.map(refineTypeEnv(typeEnv, _))
     for (name <- names) {
       val ts = aMap.get(name) match {
         case Some(obj) =>
@@ -757,34 +782,41 @@ final class Occurrence(pipelineContext: PipelineContext) {
     result
   }
 
-  private def dnf(props: List[Prop], pairs: List[PosNeg]): List[PosNeg] =
+  private def envSubtype(env1: Env, env2: Env): Boolean =
+    env1.forall { case (k1, t1) => env2.contains(k1) && subtype.gradualSubType(t1, env2(k1)) }
+
+  /** Removes redundant environments from a list
+    * by keeping only the less precise ones for subtyping */
+  private def keepBestEnvs(envs: List[Env]): List[Env] = {
+    var acc: List[Env] = List()
+    envs.foreach { env =>
+      if (!acc.exists(envSubtype(env, _))) {
+        acc = env :: acc.filter(!envSubtype(_, env))
+      }
+    }
+    acc
+  }
+
+  private def applyProps(props: List[Prop], envs: List[Env]): List[Env] =
     props match {
       case Nil =>
-        pairs
+        envs
       case False :: _ =>
         List()
       case True :: props =>
-        dnf(props, pairs)
+        applyProps(props, envs)
       case Unknown :: props =>
-        dnf(props, pairs)
+        applyProps(props, envs)
       case Pos(x, t) :: props =>
-        dnf(props, pairs.map { case (pos, neg) => (pos :+ Pos(x, t), neg) })
+        applyProps(props, keepBestEnvs(envs.map(updateTypeEnv(_, +, x, t))))
       case Neg(x, t) :: props =>
-        dnf(props, pairs.map { case (pos, neg) => (pos, neg :+ Neg(x, t)) })
+        applyProps(props, keepBestEnvs(envs.map(updateTypeEnv(_, -, x, t))))
       case And(ps) :: props =>
-        dnf(ps ++ props, pairs)
+        applyProps(ps ++ props, envs)
       case Or(ps) :: props =>
-        ps.flatMap(p => dnf(p :: props, pairs))
+        val envs2 = applyProps(props, envs)
+        keepBestEnvs(ps.flatMap((p: Prop) => applyProps(List(p), envs2)))
     }
-
-  private def refineTypeEnv(typeEnv: Env, pair: PosNeg): Env = {
-    var te = typeEnv
-    for (Pos(oT, t) <- pair._1)
-      te = updateTypeEnv(te, +, oT, t)
-    for (Neg(oT, t) <- pair._2)
-      te = updateTypeEnv(te, -, oT, t)
-    te
-  }
 
   private def chooseType(typeEnv: Env, x: String, originalEnv: Env): Type = {
     // The second isNoneType check is there to reduce unwanted noise when none() is not introduced by refining
