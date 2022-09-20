@@ -272,6 +272,24 @@ final class ElabGuard(pipelineContext: PipelineContext) {
             env
           // $COVERAGE-ON$
         }
+      case TestBinOp("=:=" | "==", TestVar(v), TestString()) =>
+        env.get(v) match {
+          case Some(ty) =>
+            env + (v -> narrow.meet(ty, stringType))
+          // $COVERAGE-OFF$
+          case None =>
+            env
+          // $COVERAGE-ON$
+        }
+      case TestBinOp("=:=" | "==", TestString(), TestVar(v)) =>
+        env.get(v) match {
+          case Some(ty) =>
+            env + (v -> narrow.meet(ty, stringType))
+          // $COVERAGE-OFF$
+          case None =>
+            env
+          // $COVERAGE-ON$
+        }
       case TestBinOp("=:=" | "==", TestVar(v), TestAtom(a)) =>
         env.get(v) match {
           case Some(ty) =>

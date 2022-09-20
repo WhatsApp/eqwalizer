@@ -108,14 +108,10 @@ test17(X, Y) when X and Y == false -> Y.   | OK      |
 test18(X, Y) when X or Y -> Y.             | OK      |
                                            |         |
 -spec test19(term()) -> string().          |         |
-test19(S) when S == "foo" -> S.            | ERROR   | S.
-                                           |         | Expected: string()
-                                           |         | Got     : term()
+test19(S) when S == "foo" -> S.            | OK      |
                                            |         |
 -spec test20(term()) -> string().          |         |
-test20(S) ->                               | ERROR   |
+test20(S) ->                               | OK      |
     if "foo" == S orelse "bar" == S ->     |         |
-        S                                  |         | S.
-                                           |         | Expected: string()
-                                           |         | Got     : term()
+        S                                  |         |
     end.                                   |         |
