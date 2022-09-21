@@ -3229,7 +3229,11 @@
           "occ55/2",
           "occ56/2",
           "occ57_neg/2",
-          "occ58_neg/2"
+          "occ58_neg/2",
+          "occ_binary_pat_1/2",
+          "occ_binary_pat_2_neg/2",
+          "occ_binary_pat_3/2",
+          "occ_binary_pat_4_neg/2"
         ]
       },
       {

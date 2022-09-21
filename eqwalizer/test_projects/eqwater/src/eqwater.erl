@@ -1130,3 +1130,53 @@ occ58_neg(V, A) ->
         [] -> V;
         A2 -> [A2]
     end.
+
+-spec occ_binary_pat_1(
+  binary() | string(),
+  integer()
+) -> binary().
+occ_binary_pat_1(X, Size) ->
+  case X of
+    <<_:Size/binary>> ->
+      X;
+    _ ->
+      <<>>
+  end.
+
+-spec occ_binary_pat_2_neg(
+    binary() | string(),
+    integer()
+) -> binary().
+occ_binary_pat_2_neg(X, Size) ->
+  case X of
+    <<_:Size/binary>> ->
+      X;
+    _ ->
+      X
+  end.
+
+-spec occ_binary_pat_3(
+  {binary(), binary()} |
+    {atom(), atom()},
+  integer()
+) -> binary().
+occ_binary_pat_3(X, Size) ->
+  case X of
+    {<<_:Size/binary>>, Bin} ->
+      Bin;
+    _ ->
+      <<>>
+  end.
+
+-spec occ_binary_pat_4_neg(
+  {binary(), binary()} |
+    {atom(), atom()},
+  integer()
+) -> binary().
+occ_binary_pat_4_neg(X, Size) ->
+  case X of
+    {<<_:Size/binary>>, Bin} ->
+      Bin;
+    {_, Y} ->
+      Y
+  end.
