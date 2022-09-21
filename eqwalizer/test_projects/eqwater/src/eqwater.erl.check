@@ -1284,16 +1284,10 @@ occ58_neg(V, A) ->                         | ERROR   |
   binary() | string(),                     |         |
   integer()                                |         |
 ) -> binary().                             |         |
-occ_binary_pat_1(X, Size) ->               | ERROR   |
+occ_binary_pat_1(X, Size) ->               | OK      |
   case X of                                |         |
     <<_:Size/binary>> ->                   |         |
-      X;                                   |         | X.
-                                           |         | Expected: binary()
-                                           |         | Got     : binary() | string()
-                                           |         | 
-                                           |         |   binary() | string() is not a subtype of binary()
-                                           |         |   because
-                                           |         |   string() is not a subtype of binary()
+      X;                                   |         |
     _ ->                                   |         |
       <<>>                                 |         |
   end.                                     |         |
@@ -1305,15 +1299,15 @@ occ_binary_pat_1(X, Size) ->               | ERROR   |
 occ_binary_pat_2_neg(X, Size) ->           | ERROR   |
   case X of                                |         |
     <<_:Size/binary>> ->                   |         |
-      X;                                   |         | X.
+      X;                                   |         |
+    _ ->                                   |         |
+      X                                    |         | X.
                                            |         | Expected: binary()
                                            |         | Got     : binary() | string()
                                            |         | 
                                            |         |   binary() | string() is not a subtype of binary()
                                            |         |   because
                                            |         |   string() is not a subtype of binary()
-    _ ->                                   |         |
-      X                                    |         |
   end.                                     |         |
                                            |         |
 -spec occ_binary_pat_3(                    |         |

@@ -492,6 +492,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val pos = Pos(obj, ListType(AnyType))
         val neg = Unknown
         Some(pos, neg)
+      case PatBinary(_) =>
+        val obj = mkObj(x, path)
+        val pos = Pos(obj, BinaryType)
+        val neg = Unknown
+        Some(pos, neg)
       case _ =>
         Some(Unknown, Unknown)
     }
