@@ -160,7 +160,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   def eqwater(clauses: List[Clause]): Boolean = {
     val emptyPatterns = clauses.forall(_.pats.isEmpty)
-    val linearClauses = clauses.forall(linearVars)
+    val linearClauses = (pipelineContext.unlimitedRefinement || clauses.size < 7) && clauses.forall(linearVars)
     pipelineContext.eqwater && (emptyPatterns || linearClauses)
   }
 
