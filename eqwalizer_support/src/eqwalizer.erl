@@ -43,3 +43,12 @@ fix_me(X) -> X.
 %% @end
 -spec reveal_type(any()) -> none().
 reveal_type(_Expr) -> error(eqwalizer_reveal_type).
+
+%% This type can be used in a record type declaration to specify
+%% that the type of a field can be further refined.
+%% For example, -record(rec, {id :: eqwalizer:refinable(term()), id2 :: string()})
+%% creates a record type rec where the field id can be refined later, by
+%% writing for example #rec{id :: atom()} in a spec.
+%% While this is not mandatory, using this type will make the type-checker
+%% smarter about refined record types.
+-type refinable(A) :: A.
