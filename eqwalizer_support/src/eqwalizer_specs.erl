@@ -13,7 +13,12 @@
 -compile(warn_missing_spec).
 -compile([export_all, nowarn_export_all]).
 
+-include_lib("public_key/include/public_key.hrl").
+
 %% -------- application --------
+
+-spec 'application:get_all_env'(App :: atom()) -> [{atom(), eqwalizer:dynamic()}].
+'application:get_all_env'(_) -> error(eqwalizer_specs).
 
 -spec 'application:get_env'(Param :: atom()) -> undefined | {ok, eqwalizer:dynamic()}.
 'application:get_env'(_) -> error(eqwalizer_specs).
@@ -32,20 +37,79 @@
 
 %% -------- code --------
 
+% It's used in WASERVER with known application names.
+% Having {'error', 'bad_name'} in result type is noisy.
+-spec 'code:lib_dir'(atom()) -> file:filename().
+'code:lib_dir'(_) -> error(eqwalizer_specs).
+
 -spec 'code:priv_dir'(atom()) -> file:filename().
 'code:priv_dir'(_) -> error(eqwalizer_specs).
 
+%% -------- compile --------
+
+-spec 'compile:forms'(compile:forms()) ->
+    {ok, module(), binary()}
+    | {ok, module(), binary(), eqwalizer:dynamic()}
+    | error
+    | {error, eqwalizer:dynamic(), eqwalizer:dynamic()}.
+'compile:forms'(_) -> error(eqwalizer_specs).
+
 %% -------- crypto --------
+
+-type crypto_cipher_aead() ::
+    aes_128_ccm
+    | aes_192_ccm
+    | aes_256_ccm
+    | aes_ccm
+    | aes_128_gcm
+    | aes_192_gcm
+    | aes_256_gcm
+    | aes_gcm
+    | chacha20_poly1305.
 
 -type crypto_key_integer() :: integer() | binary().
 -type crypto_dh_params() :: [crypto_key_integer()].
 -type crypto_ecdh_params() :: [crypto:ec_named_curve() | x25519 | x448].
 -type crypto_rsa_params() :: {integer(), crypto_key_integer()}.
+
+-spec 'crypto:crypto_one_time_aead'
+    (Cipher, Key, IV, InText, AAD, EncryptTagLength, true) -> EncryptResult when
+        Cipher :: crypto_cipher_aead(),
+        Key :: iodata(),
+        IV :: iodata(),
+        InText :: iodata(),
+        AAD :: iodata(),
+        EncryptTagLength :: non_neg_integer(),
+        EncryptResult :: {OutCryptoText, OutTag},
+        OutCryptoText :: binary(),
+        OutTag :: binary();
+    (Cipher, Key, IV, InText, AAD, DecryptTag, false) -> DecryptResult when
+        Cipher :: crypto_cipher_aead(),
+        Key :: iodata(),
+        IV :: iodata(),
+        InText :: iodata(),
+        AAD :: iodata(),
+        DecryptTag :: iodata(),
+        DecryptResult :: OutPlainText | error,
+        OutPlainText :: binary().
+'crypto:crypto_one_time_aead'(_, _, _, _, _, _, _) -> error(eqwalizer_specs).
+
 -spec 'crypto:generate_key'
     (dh, crypto_dh_params()) -> {binary(), binary()};
     (ecdh, crypto_ecdh_params()) -> {binary(), binary()};
     (rsa, crypto_rsa_params()) -> {[binary()], [binary()]}.
 'crypto:generate_key'(_, _) -> error(eqwalizer_specs).
+
+%% -------- epp_dodger --------
+
+-spec 'epp_dodger:parse_file'(file:filename_all()) ->
+    {ok, [erl_syntax:syntaxTree()]} | {error, erl_scan:error_info()}.
+'epp_dodger:parse_file'(_) -> error(eqwalizer_specs).
+
+%% -------- erl_syntax_lib --------
+
+-spec 'erl_syntax_lib:fold'(fun((erl_syntax:syntaxTree(), Acc) -> Acc), Acc, erl_syntax:syntaxTree()) -> Acc.
+'erl_syntax_lib:fold'(_, _, _) -> error(eqwalizer_specs).
 
 %% -------- erlang --------
 
@@ -68,6 +132,13 @@
 
 -spec 'erlang:element'(pos_integer(), tuple()) -> eqwalizer:dynamic().
 'erlang:element'(_, _) -> error(eqwalizer_specs).
+
+-spec 'erlang:fun_info'
+    (function(), arity) -> {arity, non_neg_integer()};
+    (function(), module) -> {module, module()};
+    (function(), name) -> {name, atom()};
+    (function(), type) -> {type, local | external}.
+'erlang:fun_info'(_, _) -> error(eqwalizer_specs).
 
 -spec 'erlang:hd'([A, ...]) -> A.
 'erlang:hd'(_) -> error(eqwalizer_specs).
@@ -119,6 +190,23 @@
 -spec 'ets:first'(ets:tab()) -> eqwalizer:dynamic().
 'ets:first'(_) -> error(eqwalizer_specs).
 
+-spec 'ets:foldl'(Function, Acc, Table) -> Acc when
+    Function :: fun((Element :: eqwalizer:dynamic(), Acc) -> Acc),
+    Table :: ets:table().
+'ets:foldl'(_, _, _) -> error(eqwalizer_specs).
+
+-spec 'ets:info'
+    (ets:table(), compressed | decentralized_counters | read_concurrency | write_concurrency) -> boolean();
+    (ets:table(), heir) -> pid() | none;
+    (ets:table(), id) -> ets:tid();
+    (ets:table(), keypos | memory | size) -> non_neg_integer();
+    (ets:table(), name) -> atom();
+    (ets:table(), node) -> node();
+    (ets:table(), owner) -> pid();
+    (ets:table(), protection) -> ets:table_access();
+    (ets:table(), type) -> ets:table_type().
+'ets:info'(_, _) -> error(eqwalizer_specs).
+
 -spec 'ets:next'(ets:tab(), term()) -> eqwalizer:dynamic().
 'ets:next'(_, _) -> error(eqwalizer_specs).
 
@@ -134,8 +222,29 @@
 -spec 'ets:match'(ets:tab(), ets:match_pattern()) -> [eqwalizer:dynamic()].
 'ets:match'(_, _) -> error(eqwalizer_specs).
 
+-spec 'ets:select'(EtsContinuation) ->
+    {[eqwalizer:dynamic()], EtsContinuation} | '$end_of_table'
+when
+    EtsContinuation :: eqwalizer:dynamic().
+'ets:select'(_) -> error(eqwalizer_specs).
+
 -spec 'ets:select'(ets:tab(), ets:match_spec()) -> [eqwalizer:dynamic()].
 'ets:select'(_, _) -> error(eqwalizer_specs).
+
+-spec 'ets:select'(ets:tab(), ets:match_spec(), pos_integer()) ->
+    {[eqwalizer:dynamic()], EtsContinuation} | '$end_of_table'
+when
+    EtsContinuation :: eqwalizer:dynamic().
+'ets:select'(_, _, _) -> error(eqwalizer_specs).
+
+-spec 'ets:select_reverse'(ets:tab(), ets:match_spec()) -> [eqwalizer:dynamic()].
+'ets:select_reverse'(_, _) -> error(eqwalizer_specs).
+
+-spec 'ets:select_reverse'(ets:tab(), ets:match_spec(), pos_integer()) ->
+    {[eqwalizer:dynamic()], EtsContinuation} | '$end_of_table'
+when
+    EtsContinuation :: eqwalizer:dynamic().
+'ets:select_reverse'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'ets:tab2list'(ets:tab()) -> [eqwalizer:dynamic()].
 'ets:tab2list'(_) -> error(eqwalizer_specs).
@@ -156,13 +265,44 @@
         | {Line :: integer(), Mod :: module(), Term :: term()}.
 'file:consult'(_) -> error(eqwalizer_specs).
 
+-spec 'file:list_dir'(Dir) -> {ok, Filenames} | {error, Reason} when
+    Dir :: file:name_all(),
+    Filenames :: [string()],
+    Reason :: file:posix() | badarg.
+'file:list_dir'(_) -> error(eqwalizer_specs).
+
+-spec 'file:list_dir_all'(Dir) -> {ok, Filenames} | {error, Reason} when
+    Dir :: file:name_all(),
+    Filenames :: [string()],
+    Reason :: file:posix() | badarg.
+'file:list_dir_all'(_) -> error(eqwalizer_specs).
+
 %% -------- filename --------
 
--spec 'filename:join'([file:name_all()]) -> eqwalizer:dynamic().
-'filename:join'(_) -> error(eqwalizer_specs).
+-spec 'filename:basename'
+    (string()) -> string();
+    (binary()) -> binary().
+'filename:basename'(_) -> error(eqwalizer_specs).
 
--spec 'filename:join'(file:name_all(), file:name_all()) -> eqwalizer:dynamic().
-'filename:join'(_, _) -> error(eqwalizer_specs).
+-spec 'filename:dirname'
+    (string()) -> string();
+    (binary()) -> binary().
+'filename:dirname'(_) -> error(eqwalizer_specs).
+
+-spec 'filename:extension'
+    (string()) -> string();
+    (binary()) -> binary().
+'filename:extension'(_) -> error(eqwalizer_specs).
+
+-spec 'filename:rootname'
+    (string()) -> string();
+    (binary()) -> binary().
+'filename:rootname'(_) -> error(eqwalizer_specs).
+
+-spec 'filename:rootname'
+    (string(), string()) -> string();
+    (binary(), binary()) -> binary().
+'filename:rootname'(_, _) -> error(eqwalizer_specs).
 
 %% -------- gen_server --------
 
@@ -179,6 +319,11 @@
 
 -spec 'gb_sets:new'() -> gb_sets:set(none()).
 'gb_sets:new'() -> error(eqwalizer_specs).
+
+%% -------- gb_trees --------
+
+-spec 'gb_trees:empty'() -> gb_trees:tree(none(), none()).
+'gb_trees:empty'() -> error(eqwalizer_specs).
 
 %% -------- jsone --------
 
@@ -226,7 +371,7 @@
 -spec 'lists:flatmap'(fun((A) -> [B]), [A]) -> [B].
 'lists:flatmap'(_, _) -> error(eqwalizer_specs).
 
--spec 'lists:flatlength'([any()]) -> non_neg_integer().
+-spec 'lists:flatlength'([term()]) -> non_neg_integer().
 'lists:flatlength'(_) -> error(eqwalizer_specs).
 
 -spec 'lists:foldl'(fun((T, Acc) -> Acc), Acc, [T]) -> Acc.
@@ -235,7 +380,7 @@
 -spec 'lists:foldr'(fun((T, Acc) -> Acc), Acc, [T]) -> Acc.
 'lists:foldr'(_, _, _) -> error(eqwalizer_specs).
 
--spec 'lists:foreach'(fun((T) -> any()), [T]) -> ok.
+-spec 'lists:foreach'(fun((T) -> term()), [T]) -> ok.
 'lists:foreach'(_, _) -> error(eqwalizer_specs).
 
 -spec 'lists:join'(T, [T]) -> [T].
@@ -420,7 +565,7 @@
 -spec 'maps:put'(Key, Value, #{Key => Value}) -> #{Key => Value}.
 'maps:put'(_, _, _) -> error(eqwalizer_specs).
 
--spec 'maps:remove'(Key, #{Key => Value}) -> #{Key => Value}.
+-spec 'maps:remove'(term(), #{Key => Value}) -> #{Key => Value}.
 'maps:remove'(_, _) -> error(eqwalizer_specs).
 
 -spec 'maps:take'(Key :: term(), map()) -> {Value :: eqwalizer:dynamic(), map()} | error.
@@ -439,6 +584,11 @@
 
 -spec 'orddict:new'() -> orddict:orddict(none(), none()).
 'orddict:new'() -> error(eqwalizer_specs).
+
+%% -------- ordsets --------
+
+-spec 'ordsets:subtract'(ordsets:ordset(T), ordsets:ordset(term())) -> ordsets:ordset(T).
+'ordsets:subtract'(_, _) -> error(eqwalizer_specs).
 
 %% -------- persistent_term --------
 
@@ -459,7 +609,7 @@
 
 %% -------- proplists --------
 
--spec 'proplists:delete'(any(), [A]) -> [A].
+-spec 'proplists:delete'(term(), [A]) -> [A].
 'proplists:delete'(_, _) -> error(eqwalizer_specs).
 
 -spec 'proplists:get_all_values'(term(), [term()]) -> [eqwalizer:dynamic()].
@@ -482,11 +632,35 @@
 -spec 'public_key:der_decode'(public_key:asn1_type(), public_key:der_encoded()) -> eqwalizer:dynamic().
 'public_key:der_decode'(_, _) -> error(eqwalizer_specs).
 
+-spec 'public_key:pkix_decode_cert'
+    (binary(), plain) -> #'Certificate'{};
+    (binary(), otp) -> #'OTPCertificate'{}.
+'public_key:pkix_decode_cert'(_, _) -> error(eqwalizer_specs).
+
 %% -------- queue --------
 -spec 'queue:new'() -> queue:queue(none()).
 'queue:new'() -> error(eqwalizer_specs).
 
+%% -------- peer --------
+
+-spec 'peer:call'(
+    Dest :: pid(),
+    Module :: module(),
+    Function :: atom(),
+    Args :: [term()]
+) -> Result :: eqwalizer:dynamic().
+'peer:call'(_, _, _, _) -> error(eqwalizer_specs).
+
 %% -------- re --------
+
+-spec 're:run'(Subject, RE) ->
+    {match, eqwalizer:dynamic()} | match | nomatch | {error, eqwalizer:dynamic()}
+when
+    Subject :: iodata() | unicode:charlist(),
+    RE :: {re_pattern, _, _, _, _} | iodata() | unicode:charlist().
+
+'re:run'(_, _) ->
+    error(eqwalizer_specs).
 
 -spec 're:run'(Subject, RE, Options) ->
     {match, eqwalizer:dynamic()} | match | nomatch | {error, eqwalizer:dynamic()}
@@ -553,6 +727,11 @@ when
     (unicode:unicode_binary(), [string:grapheme_cluster()]) -> [unicode:unicode_binary()].
 'string:lexemes'(_, _) -> error(eqwalizer_specs).
 
+-spec 'string:lowercase'
+    (string()) -> string();
+    (unicode:unicode_binary()) -> unicode:unicode_binary().
+'string:lowercase'(_) -> error(eqwalizer_specs).
+
 -spec 'string:slice'
     (string(), non_neg_integer()) -> string();
     (unicode:unicode_binary(), non_neg_integer()) -> unicode:unicode_binary().
@@ -563,10 +742,55 @@ when
     (unicode:unicode_binary(), non_neg_integer(), 'infinity' | non_neg_integer()) -> unicode:unicode_binary().
 'string:slice'(_, _, _) -> error(eqwalizer_specs).
 
+-spec 'string:replace'
+    (string(), string(), string()) -> [string()];
+    (unicode:unicode_binary(), unicode:unicode_binary(), unicode:unicode_binary()) -> [unicode:unicode_binary()].
+'string:replace'(_, _, _) -> error(eqwalizer_specs).
+
+-spec 'string:replace'
+    (string(), string(), string(), leading | trailing | all) -> [string()];
+    (unicode:unicode_binary(), unicode:unicode_binary(), unicode:unicode_binary(), leading | trailing | all) ->
+        [unicode:unicode_binary()].
+'string:replace'(_, _, _, _) -> error(eqwalizer_specs).
+
+-spec 'string:split'
+    (string(), string()) -> [string()];
+    (unicode:unicode_binary(), unicode:unicode_binary()) -> [unicode:unicode_binary()].
+'string:split'(_, _) -> error(eqwalizer_specs).
+
+-spec 'string:split'
+    (string(), string(), 'leading' | 'trailing' | 'all') -> [string()];
+    (unicode:unicode_binary(), unicode:unicode_binary(), 'leading' | 'trailing' | 'all') -> [unicode:unicode_binary()].
+'string:split'(_, _, _) -> error(eqwalizer_specs).
+
 -spec 'string:trim'
     (string()) -> string();
     (unicode:unicode_binary()) -> unicode:unicode_binary().
 'string:trim'(_) -> error(eqwalizer_specs).
+
+-spec 'string:trim'
+    (string(), 'leading' | 'trailing' | 'both') -> string();
+    (unicode:unicode_binary(), 'leading' | 'trailing' | 'both') -> unicode:unicode_binary().
+'string:trim'(_, _) -> error(eqwalizer_specs).
+
+-spec 'string:trim'
+    (string(), 'leading' | 'trailing' | 'both', [string:grapheme_cluster()]) -> string();
+    (unicode:unicode_binary(), 'leading' | 'trailing' | 'both', [string:grapheme_cluster()]) ->
+        unicode:unicode_binary().
+'string:trim'(_, _, _) -> error(eqwalizer_specs).
+
+-spec 'string:uppercase'
+    (string()) -> string();
+    (unicode:unicode_binary()) -> unicode:unicode_binary().
+'string:uppercase'(_) -> error(eqwalizer_specs).
+
+%% -------- sys --------
+
+-spec 'sys:get_status'(Name) -> Status when
+    Name :: pid() | atom() | {'global', term()} | {'via', module(), term()},
+    Status :: {status, Pid :: pid(), {module, Module :: module()}, [SItem]},
+    SItem :: eqwalizer:dynamic().
+'sys:get_status'(_) -> error(eqwalizer_specs).
 
 %% -------- timer --------
 
@@ -582,3 +806,9 @@ when
 
 -spec 'timer:tc'(module(), atom(), [term()]) -> {integer(), eqwalizer:dynamic()}.
 'timer:tc'(_, _, _) -> error(eqwalizer_specs).
+
+-spec 'filename:join'([file:name_all()]) -> eqwalizer:dynamic().
+'filename:join'(_) -> error(eqwalizer_specs).
+
+-spec 'filename:join'(file:name_all(), file:name_all()) -> eqwalizer:dynamic().
+'filename:join'(_, _) -> error(eqwalizer_specs).
