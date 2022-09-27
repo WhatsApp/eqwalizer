@@ -64,3 +64,40 @@ bar(X) ->                                  |         |
                                            |         |   binary() | number() is not a subtype of number()
                                            |         |   because
                                            |         |   binary() is not a subtype of number()
+                                           |         |
+-type map1() :: #{k11 := any(), k12 := any……         |
+-type map2() :: #{k21 := any(), k22 := any……         |
+-type map3() :: #{k31 := any(), k32 := any……         |
+-type map4() :: #{k41 := any(), k42 := any……         |
+-type map5() :: #{k51 := any(), k52 := any……         |
+-type map6() :: #{k61 := any(), k62 := any……         |
+-type map7() :: #{k71 := any(), k72 := any……         |
+-type map8() :: #{k81 := any(), k82 := any……         |
+-type map9() :: #{k91 := any(), k92 := any……         |
+-type or_map() ::                          |         |
+    #{ty := ok1, data := map1()} |         |         |
+    #{ty := ok2, data := map2()} |         |         |
+    #{ty := ok3, data := map3()} |         |         |
+    #{ty := ok4, data := map4()} |         |         |
+    #{ty := ok5, data := map5()} |         |         |
+    #{ty := ok6, data := map6()} |         |         |
+    #{ty := ok7, data := map7()} |         |         |
+    #{ty := ok8, data := map8()} |         |         |
+    #{ty := ok9, data := map9()}.          |         |
+                                           |         |
+-spec map_union_neg(or_map()) -> ok.       |         |
+map_union_neg(#{ty := Ty, data := Data}) -…… ERROR   |
+    case {Ty, Data} of                     |         |
+        {ok1, #{k11 := V1, k12 := V2, k13 ……         |
+        {ok2, #{k21 := V1, k22 := V2, k23 ……         |
+        {ok3, #{k31 := V1, k32 := V2, k33 ……         |
+        {ok4, #{k41 := V1, k42 := V2, k43 ……         |
+        {ok5, #{k51 := V1, k52 := V2, k53 ……         |
+        {ok6, #{k61 := V1, k62 := V2, k63 ……         |
+        {ok7, #{k71 := V1, k72 := V2, k73 ……         |
+        {ok8, #{k81 := V1, k82 := V2, k83 ……         |
+        {ok9, #{k91 := V1, k92 := V2, k93 ……         |
+        V -> V                             |         | V.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : {'ok4' | 'ok3' | 'ok8' | 'ok2' | 'ok9' | 'ok1' | 'ok6' | 'ok5' | 'ok7', map4() | map3() | map8() | map2() | map9() | map1() | map6() | map5() | map7()}
+    end.                                   |         |

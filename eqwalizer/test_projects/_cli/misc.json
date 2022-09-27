@@ -3253,6 +3253,18 @@
         ]
       },
       {
+        "module": "eqwater_maps",
+        "exported_funs": [
+          "map_occ_01/1",
+          "map_occ_02/1",
+          "map_occ_03/1",
+          "map_occ_04_neg/1",
+          "map_occ_05/1",
+          "map_occ_06_neg/1",
+          "map_occ_07_neg/1"
+        ]
+      },
+      {
         "module": "eqwater_records",
         "exported_funs": [
           "id1/1",
@@ -3296,7 +3308,8 @@
         "exported_funs": [
           "foo/1",
           "is_special/1",
-          "bar/1"
+          "bar/1",
+          "map_union_neg/1"
         ]
       }
     ]
