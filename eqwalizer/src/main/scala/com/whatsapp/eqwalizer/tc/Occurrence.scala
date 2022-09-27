@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Guards._
 import com.whatsapp.eqwalizer.ast.Exprs._
-import com.whatsapp.eqwalizer.ast.{Id, Vars}
+import com.whatsapp.eqwalizer.ast.{Id, Types, Vars}
 import com.whatsapp.eqwalizer.ast.Pats._
 import com.whatsapp.eqwalizer.ast.Types._
 
@@ -71,6 +71,7 @@ object Occurrence {
   sealed trait Field
   case class TupleField(index: Int, arity: Int) extends Field
   case class RecordField(field: String, recName: String) extends Field
+  case class ShapeField(field: String) extends Field
 
   type PropEnv = List[Prop]
   type AMap = Map[String, Obj]
@@ -327,6 +328,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
         }
       case PatMatch(pat1, pat2) =>
         aliases(x, path, pat1, env) ++ aliases(x, path, pat2, env)
+      case PatMap(pats) =>
+        pats.collect { case (PatAtom(key), patR) =>
+          val pathI = path ++ List(ShapeField(key))
+          aliases(x, pathI, patR, env)
+        }.flatten
       case _ =>
         Nil
     }
@@ -477,10 +483,25 @@ final class Occurrence(pipelineContext: PipelineContext) {
           case None =>
             patProps(x, path, pat1, env)
         }
-      case PatMap(Nil) =>
+      case PatMap(pats) =>
         val obj = mkObj(x, path)
-        val pos = Pos(obj, DictMap(AnyType, AnyType))
-        val neg = Neg(obj, DictMap(AnyType, AnyType))
+        val posThis = Pos(obj, DictMap(AnyType, AnyType))
+        val negThis = Neg(obj, DictMap(AnyType, AnyType))
+        val fields = pats.map {
+          case (PatAtom(field), pat) => (field, pat)
+          case _                     => return Some(posThis, Unknown)
+        }
+        val (posThat, negThat) = fields.flatMap { case (field, pat) =>
+          patProps(x, path :+ ShapeField(field), pat, env)
+        }.unzip
+        val (posFields, negFields) = fields.map { case (field, _) =>
+          val objField = mkObj(x, path :+ ShapeField(field))
+          (Pos(objField, AnyType), Neg(objField, AnyType))
+        }.unzip
+        val pos = and(posThis :: posFields ::: posThat)
+        val neg =
+          if (negThat.isEmpty && negFields.isEmpty) negThis
+          else or(List(negThis, and(List(posThis, or(negThat ::: negFields)))))
         Some(pos, neg)
       case PatNil() =>
         val obj = mkObj(x, path)
@@ -709,6 +730,23 @@ final class Occurrence(pipelineContext: PipelineContext) {
     else
       TupleType(elems)
 
+  private def ShapeMap_*(props: List[Types.Prop]): Type = {
+    val hasPropEmpty =
+      props.exists {
+        case ReqProp(_, tp) => subtype.isNoneType(tp)
+        case _              => false
+      }
+    val propsNonEmpty =
+      props.filter {
+        case OptProp(_, tp) if subtype.isNoneType(tp) => false
+        case _                                        => true
+      }
+    if (hasPropEmpty)
+      NoneType
+    else
+      ShapeMap(propsNonEmpty)
+  }
+
   private def refineRecord(t: Type, field: String, refined: Type): Type = {
     if (subtype.isNoneType(refined)) {
       NoneType
@@ -761,6 +799,16 @@ final class Occurrence(pipelineContext: PipelineContext) {
             case None => rt
           }
         }
+      case (ShapeMap(props), ShapeField(field) :: path) if props.exists(_.key == field) =>
+        val refinedProps = props.map {
+          case ReqProp(key, tp) if key == field =>
+            ReqProp(key, update(tp, path, pol, s))
+          case OptProp(key, tp) if key == field =>
+            if (pol == +) ReqProp(key, update(tp, path, pol, s))
+            else OptProp(key, update(tp, path, pol, s))
+          case p => p
+        }
+        ShapeMap_*(refinedProps)
       case (_, _) =>
         t
     }
@@ -889,6 +937,14 @@ final class Occurrence(pipelineContext: PipelineContext) {
             .map(typePathRef(_, path1))
             .getOrElse(AnyType)
         }
+      case (ShapeMap(props), ShapeField(field) :: path1) =>
+        props
+          .find(_.key == field)
+          .map(_.tp)
+          .map(typePathRef(_, path1))
+          .getOrElse(AnyType)
+      case (DictMap(_, vTy), ShapeField(_) :: path1) =>
+        typePathRef(vTy, path1)
       case (RemoteType(rid, args), path) =>
         val body = util.getTypeDeclBody(rid, args)
         typePathRef(body, path)

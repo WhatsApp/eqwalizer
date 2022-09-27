@@ -8,44 +8,24 @@
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
 -spec map_occ_01(#{a := integer()} | ok) -……         |
-map_occ_01(#{a := I}) when is_integer(I) -…… ERROR   |
-map_occ_01(V) -> V.                        |         | V.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : #S{a := number()} | 'ok'
-                                           |         | 
-                                           |         |   #S{a := number()} | 'ok' is not a subtype of 'ok'
-                                           |         |   because
-                                           |         |   #S{a := number()} is not a subtype of 'ok'
+map_occ_01(#{a := I}) when is_integer(I) -…… OK      |
+map_occ_01(V) -> V.                        |         |
                                            |         |
 -spec map_occ_02(#{a := any(), b := intege……         |
     -> #{a := integer(), b := integer()}.  |         |
-map_occ_02(M = #{a := I}) when is_integer(…… ERROR   | M.
-                                           |         | Expected: #S{a := number(), b := number()}
-                                           |         | Got     : #S{a := term(), b := number()}
-                                           |         | 
-                                           |         |   at shape key 'a':
-                                           |         |   #S{a := term(), b := number()} is not a subtype of #S{a := number(), b := number()}
-                                           |         |   because
-                                           |         |   term() is not a subtype of number()
+map_occ_02(M = #{a := I}) when is_integer(…… OK      |
 map_occ_02(M) -> M#{a => 0}.               |         |
                                            |         |
 -spec map_occ_03(#{a => any(), b => intege……         |
     -> #{a := integer(), b => integer()}.  |         |
-map_occ_03(M = #{a := I}) when is_integer(…… ERROR   | M.
-                                           |         | Expected: #S{a := number(), b => number()}
-                                           |         | Got     : #S{a := term(), b => number()}
-                                           |         | 
-                                           |         |   at shape key 'a':
-                                           |         |   #S{a := term(), b => number()} is not a subtype of #S{a := number(), b => number()}
-                                           |         |   because
-                                           |         |   term() is not a subtype of number()
+map_occ_03(M = #{a := I}) when is_integer(…… OK      |
 map_occ_03(M) -> M#{a => 0}.               |         |
                                            |         |
 -spec map_occ_04_neg(#{a => any(), b => in……         |
     -> #{a := integer(), b := integer()}.  |         |
 map_occ_04_neg(M = #{a := I}) when is_inte…… ERROR   | M.
                                            |         | Expected: #S{a := number(), b := number()}
-                                           |         | Got     : #S{a := term(), b => number()}
+                                           |         | Got     : #S{a := number(), b => number()}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -58,28 +38,18 @@ map_occ_04_neg(M) -> M#{a => 0}.           |         |
                                            |         |
 -spec map_occ_05(#{a => integer(), b => in……         |
     -> #{a := integer(), b := integer()}.  |         |
-map_occ_05(M = #{a := _, b := _}) -> M;    | ERROR   | M.
-                                           |         | Expected: #S{a := number(), b := number()}
-                                           |         | Got     : #S{a => number(), b := number()}
-                                           |         | 
-                                           |         | These associations do not match:
-                                           |         | 
-                                           |         |   #S{
-                                           |         | -    a := ...
-                                           |         | +    a => ...
-                                           |         |      ...
-                                           |         |   }
+map_occ_05(M = #{a := _, b := _}) -> M;    | OK      |
 map_occ_05(M) -> M#{a => 0, b => 0}.       |         |
                                            |         |
 -spec map_occ_06_neg(#{a => integer()} | o……         |
 map_occ_06_neg(#{a := I}) when is_integer(…… ERROR   |
 map_occ_06_neg(V) -> V.                    |         | V.
                                            |         | Expected: 'ok'
-                                           |         | Got     : #S{a => number()} | 'ok'
+                                           |         | Got     : #S{} | 'ok'
                                            |         | 
-                                           |         |   #S{a => number()} | 'ok' is not a subtype of 'ok'
+                                           |         |   #S{} | 'ok' is not a subtype of 'ok'
                                            |         |   because
-                                           |         |   #S{a => number()} is not a subtype of 'ok'
+                                           |         |   #S{} is not a subtype of 'ok'
                                            |         |
 -spec map_occ_07_neg                       |         |
     (#{a := integer()} | #{c := integer()}……         |
@@ -87,4 +57,14 @@ map_occ_06_neg(V) -> V.                    |         | V.
 map_occ_07_neg(#{a := _}) -> #{b => 0};    | ERROR   |
 map_occ_07_neg(M) -> M.                    |         | M.
                                            |         | Expected: #S{b := number()}
-                                           |         | Got     : #S{a := number()} | #S{c := number()}
+                                           |         | Got     : none() | #S{c := number()}
+                                           |         | 
+                                           |         |   none() | #S{c := number()} is not a subtype of #S{b := number()}
+                                           |         |   because
+                                           |         |   #S{c := number()} is not a subtype of #S{b := number()}
+                                           |         |   These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | -    b := ...
+                                           |         | +    c := ...
+                                           |         |   }
