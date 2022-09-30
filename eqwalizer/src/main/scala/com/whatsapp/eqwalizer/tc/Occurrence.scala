@@ -72,6 +72,8 @@ object Occurrence {
   case class TupleField(index: Int, arity: Int) extends Field
   case class RecordField(field: String, recName: String) extends Field
   case class ShapeField(field: String) extends Field
+  case object ListHead extends Field
+  case object ListTail extends Field
 
   type PropEnv = List[Prop]
   type AMap = Map[String, Obj]
@@ -333,6 +335,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
           val pathI = path ++ List(ShapeField(key))
           aliases(x, pathI, patR, env)
         }.flatten
+      case PatCons(hpat, tpat) =>
+        aliases(x, path ++ List(ListHead), hpat, env) ++ aliases(x, path ++ List(ListTail), tpat, env)
       case _ =>
         Nil
     }
@@ -508,10 +512,14 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val pos = Pos(obj, NilType)
         val neg = Neg(obj, NilType)
         Some(pos, neg)
-      case PatCons(_, _) =>
+      case PatCons(hpat, tpat) =>
         val obj = mkObj(x, path)
-        val pos = Pos(obj, ListType(AnyType))
-        val neg = Unknown
+        val posThis = And(List(Pos(obj, ListType(AnyType)), Neg(obj, NilType)))
+        val negThis = Or(List(Neg(obj, ListType(AnyType)), Pos(obj, NilType)))
+        val (posThat, negThat) =
+          List(patProps(x, path :+ ListHead, hpat, env), patProps(x, path :+ ListTail, tpat, env)).flatten.unzip
+        val pos = And(posThis :: posThat)
+        val neg = Or(List(negThis, And(List(posThis, Or(negThat)))))
         Some(pos, neg)
       case PatBinary(_) =>
         val obj = mkObj(x, path)
@@ -809,6 +817,16 @@ final class Occurrence(pipelineContext: PipelineContext) {
           case p => p
         }
         ShapeMap_*(refinedProps)
+      case (ListType(lt), ListHead :: path) =>
+        if (subtype.isNoneType(update(lt, path, pol, s)))
+          NoneType
+        else
+          ListType(lt)
+      case (ListType(lt), ListTail :: path) =>
+        if (subtype.isNoneType(update(ListType(lt), path, pol, s)))
+          NoneType
+        else
+          ListType(lt)
       case (_, _) =>
         t
     }
@@ -948,6 +966,10 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case (RemoteType(rid, args), path) =>
         val body = util.getTypeDeclBody(rid, args)
         typePathRef(body, path)
+      case (ListType(lt), ListHead :: path) =>
+        typePathRef(lt, path)
+      case (ListType(lt), ListTail :: path) =>
+        typePathRef(ListType(lt), path)
       case _ =>
         AnyType
     }
