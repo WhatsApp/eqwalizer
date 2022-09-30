@@ -202,7 +202,7 @@ test28_neg(B) -> boolean_id(B).            | ERROR   | B.
 -spec test29_neg() -> [].                  |         |
 test29_neg() -> [true, false].             | ERROR   | ['true', 'false'].
                                            |         | Expected: []
-                                           |         | Got     : ['true']
+                                           |         | Got     : ['true' | 'false']
                                            |         |
 -spec test30_neg() -> atom.                |         |
 test30_neg() -> 1.                         | ERROR   | 1.
@@ -840,16 +840,16 @@ fun generics_with_unions:test_03_neg/3.    |         | Unbound var: generics_wit
 -spec list_with_vars_neg                   |         |
 (number(), number()) -> pid().             |         |
 list_with_vars_neg(X, Y) ->                | ERROR   |
-    [X, 1, 2, 3 | Y].                      |         | [X, 1, 2, 3 | Y].
-                                           |         | Expected: pid()
-                                           |         | Got     : [number()]
+    [X, 1, 2, 3 | Y].                      |         | Y.
+                                           |         | Expected: [term()]
+                                           |         | Got     : number()
                                            |         |
 -spec improper_list1                       |         |
     (number()) -> pid().                   |         |
 improper_list1(X) ->                       | ERROR   |
-    [X, 1, 2, 3 | an_atom].                |         | [X, 1, 2, 3 | 'an_atom'].
-                                           |         | Expected: pid()
-                                           |         | Got     : [number()]
+    [X, 1, 2, 3 | an_atom].                |         | 'an_atom'.
+                                           |         | Expected: [term()]
+                                           |         | Got     : 'an_atom'
                                            |         |
 -spec improper_list2                       |         |
     (number()) -> pid().                   |         |

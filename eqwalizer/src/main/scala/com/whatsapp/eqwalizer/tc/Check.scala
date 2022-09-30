@@ -127,12 +127,6 @@ final class Check(pipelineContext: PipelineContext) {
           val litType = NilType
           if (subtype.subType(litType, resTy)) env
           else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType)
-        case Cons(head, tail) =>
-          val (headType, env1) = elab.elabExpr(head, env)
-          val typeList1 = ListType(headType)
-          if (!subtype.subType(typeList1, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = typeList1)
-          checkExpr(tail, resTy, env1)
         case LocalCall(id, args) =>
           val funId = util.globalFunId(module, id)
           if (elabApplyCustom.isCustom(funId)) {
@@ -446,11 +440,11 @@ final class Check(pipelineContext: PipelineContext) {
             throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = indT)
           else
             env
-        case _: MapCreate | _: GenMapUpdate | _: ReqMapUpdate =>
-          // delegating all map stuff to elaborate for now
-          val (mapT, env1) = elab.elabExpr(expr, env)
-          if (!subtype.subType(mapT, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = mapT)
+        case _: MapCreate | _: GenMapUpdate | _: ReqMapUpdate | _: Cons =>
+          // delegating this stuff to elaborate for now
+          val (t1, env1) = elab.elabExpr(expr, env)
+          if (!subtype.subType(t1, resTy))
+            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = t1)
           else
             env1
       }
