@@ -1,0 +1,16 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(lists_tests).                      |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-spec lists_union_neg                      |         |
+    (atom(), binary()) -> [atom()] | [bina……         |
+lists_union_neg(V1, V2) -> [V1, V2].       | OK      |
+                                           |         |
+-spec lists_union_2_neg                    |         |
+    (atom(), [atom()] | [binary()]) -> [at……         |
+lists_union_2_neg(V, L) -> [V | L].        | OK      |

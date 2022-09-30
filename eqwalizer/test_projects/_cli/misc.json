@@ -1054,6 +1054,13 @@
         ]
       },
       {
+        "module": "lists_tests",
+        "exported_funs": [
+          "lists_union_neg/2",
+          "lists_union_2_neg/2"
+        ]
+      },
+      {
         "module": "misc",
         "exported_funs": [
           "atomize/1",
