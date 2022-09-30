@@ -3260,6 +3260,28 @@
         ]
       },
       {
+        "module": "eqwater_lists",
+        "exported_funs": [
+          "occ_list_01/1",
+          "occ_list_02/1",
+          "occ_list_03/1",
+          "occ_list_04_neg/1",
+          "occ_list_05/1",
+          "occ_list_06/1",
+          "occ_list_07_neg/1",
+          "occ_list_08_neg/1",
+          "occ_list_09/1",
+          "occ_list_10/1",
+          "occ_list_11_neg/1",
+          "occ_list_12/1",
+          "occ_list_13/1",
+          "occ_list_14_neg/1",
+          "occ_list_15/1",
+          "occ_list_16/1",
+          "occ_list_17/1"
+        ]
+      },
+      {
         "module": "eqwater_maps",
         "exported_funs": [
           "map_occ_01/1",
