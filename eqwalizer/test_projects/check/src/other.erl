@@ -44,3 +44,8 @@ get_inter2() ->
 -spec any_as_metadata_neg(any()) ->
     logger:metadata().
 any_as_metadata_neg(M) -> M.
+
+-spec elab_var_scope(any()) -> any().
+elab_var_scope(_) ->
+    (begin X = 3, X, fun () -> ok end end)(),
+    X.

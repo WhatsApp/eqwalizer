@@ -1546,7 +1546,8 @@
           "slice_inter2/1",
           "get_inter1/0",
           "get_inter2/0",
-          "any_as_metadata_neg/1"
+          "any_as_metadata_neg/1",
+          "elab_var_scope/1"
         ]
       },
       {

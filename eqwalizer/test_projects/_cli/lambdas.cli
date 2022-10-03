@@ -1,6 +1,6 @@
 
  
-lambda count: 212
+lambda count: 213
 
  
 named lambda count: 22
@@ -18,7 +18,7 @@ lambdas last-in-fun-decl: 56 (26% of of lambdas)
  
 
 
-non-generated lambda count: 212
+non-generated lambda count: 213
 non-generated lambdas directly as record fields: 1 (0% of of non-generated lambdas)
 non-generated lambdas assigned directly to variables: 15 (7% of of non-generated lambdas)
 non-generated lambdas assigned directly to variables used once: 11 (5% of of non-generated lambdas)
@@ -33,7 +33,7 @@ non-generated last-in-fun-decl lambdas: 56 (26% of of non-generated lambdas)
  
 
 
-non-generated lambdas not appearing on lines with macros count: 212
+non-generated lambdas not appearing on lines with macros count: 213
 non-generated non-macro-line lambdas directly as record fields: 1 (0% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line lambdas assigned directly to variables: 15 (7% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line lambdas assigned directly to variables used once: 11 (5% of of non-generated non-macro-line lambdas)
@@ -45,7 +45,7 @@ non-generated non-macro-line last-in-case-clause lambdas: 2 (0% of of non-genera
 non-generated non-macro-line last-in-fun-decl lambdas: 56 (26% of of non-generated non-macro-line lambdas)
 
  
- All uncategorized lambdas: 11 (5% of all lambdas)
+ All uncategorized lambdas: 12 (5% of all lambdas)
 
  
 
