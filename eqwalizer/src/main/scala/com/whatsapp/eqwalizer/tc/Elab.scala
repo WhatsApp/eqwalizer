@@ -147,9 +147,9 @@ final class Elab(pipelineContext: PipelineContext) {
           val (_, env2) = elabExprs(args, env1)
           (NoneType, env2)
         } else {
-          val (argTys, env1) = elabExprs(args, env)
-          val resTys = funTys.map(elabApply.elabApply(_, args, argTys, env1))
-          (subtype.join(resTys), env1)
+          val (argTys, env2) = elabExprs(args, env1)
+          val resTys = funTys.map(elabApply.elabApply(_, args, argTys, env2))
+          (subtype.join(resTys), env2)
         }
       // $COVERAGE-OFF$
       case DynRemoteFun(mod, name) =>

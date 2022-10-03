@@ -54,7 +54,6 @@ any_as_metadata_neg(M) -> M.               | ERROR   | M.
                                            |         |   term() is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
                                            |         |
 -spec elab_var_scope(any()) -> any().      |         |
-elab_var_scope(_) ->                       | ERROR   |
+elab_var_scope(_) ->                       | OK      |
     (begin X = 3, X, fun () -> ok end end)……         |
-    X.                                     |         | Unbound var: X
-
+    X.                                     |         |
