@@ -3241,7 +3241,12 @@
           "occ_binary_pat_1/2",
           "occ_binary_pat_2_neg/2",
           "occ_binary_pat_3/2",
-          "occ_binary_pat_4_neg/2"
+          "occ_binary_pat_4_neg/2",
+          "occ_guard_binary_1/1",
+          "occ_guard_binary_2_neg/1",
+          "occ_guard_binary_3_neg/1",
+          "occ_guard_binary_4/1",
+          "occ_guard_integer/1"
         ]
       },
       {

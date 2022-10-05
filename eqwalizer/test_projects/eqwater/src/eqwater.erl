@@ -1180,3 +1180,24 @@ occ_binary_pat_4_neg(X, Size) ->
     {_, Y} ->
       Y
   end.
+
+-spec occ_guard_binary_1(any()) -> binary().
+occ_guard_binary_1(V) when V =:= <<"ok">> -> V;
+occ_guard_binary_1(V) -> <<"err">>.
+
+-spec occ_guard_binary_2_neg(any()) -> binary().
+occ_guard_binary_2_neg(V) when V =:= <<"ok">>; V =:= ok -> V;
+occ_guard_binary_2_neg(V) -> <<"err">>.
+
+-spec occ_guard_binary_3_neg(binary() | ok) -> ok.
+occ_guard_binary_3_neg(V) when V =:= <<"ok">> -> ok;
+occ_guard_binary_3_neg(V) -> V.
+
+-spec occ_guard_binary_4(any()) -> binary().
+occ_guard_binary_4(V) when V =/= <<"ok">> -> <<"err">>;
+occ_guard_binary_4(V) -> V.
+
+-spec occ_guard_integer(any()) -> integer().
+occ_guard_integer(V) when V =:= 0 -> V;
+occ_guard_integer(V) when V =/= 1 -> -1;
+occ_guard_integer(V) -> V.
