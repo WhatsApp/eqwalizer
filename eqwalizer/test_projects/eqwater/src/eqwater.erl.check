@@ -1343,15 +1343,17 @@ occ_binary_pat_4_neg(X, Size) ->           | ERROR   |
   end.                                     |         |
                                            |         |
 -spec occ_guard_binary_1(any()) -> binary(……         |
-occ_guard_binary_1(V) when V =:= <<"ok">> …… ERROR   | V.
-                                           |         | Expected: binary()
-                                           |         | Got     : term()
+occ_guard_binary_1(V) when V =:= <<"ok">> …… OK      |
 occ_guard_binary_1(V) -> <<"err">>.        |         |
                                            |         |
 -spec occ_guard_binary_2_neg(any()) -> bin……         |
 occ_guard_binary_2_neg(V) when V =:= <<"ok…… ERROR   | V.
                                            |         | Expected: binary()
-                                           |         | Got     : term()
+                                           |         | Got     : 'ok' | binary()
+                                           |         | 
+                                           |         |   'ok' | binary() is not a subtype of binary()
+                                           |         |   because
+                                           |         |   'ok' is not a subtype of binary()
 occ_guard_binary_2_neg(V) -> <<"err">>.    |         |
                                            |         |
 -spec occ_guard_binary_3_neg(binary() | ok……         |
@@ -1365,14 +1367,10 @@ occ_guard_binary_3_neg(V) -> V.            |         | V.
                                            |         |   binary() is not a subtype of 'ok'
                                            |         |
 -spec occ_guard_binary_4(any()) -> binary(……         |
-occ_guard_binary_4(V) when V =/= <<"ok">> …… ERROR   |
-occ_guard_binary_4(V) -> V.                |         | V.
-                                           |         | Expected: binary()
-                                           |         | Got     : term()
+occ_guard_binary_4(V) when V =/= <<"ok">> …… OK      |
+occ_guard_binary_4(V) -> V.                |         |
                                            |         |
 -spec occ_guard_integer(any()) -> integer(……         |
-occ_guard_integer(V) when V =:= 0 -> V;    | ERROR   |
+occ_guard_integer(V) when V =:= 0 -> V;    | OK      |
 occ_guard_integer(V) when V =/= 1 -> -1;   |         |
-occ_guard_integer(V) -> V.                 |         | V.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+occ_guard_integer(V) -> V.                 |         |
