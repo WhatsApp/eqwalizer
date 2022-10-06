@@ -167,3 +167,35 @@ occ_list_16(L) -> L.                       |         | L.
 occ_list_17([H | _]) when is_binary(H)     | OK      |
     -> [];                                 |         |
 occ_list_17(L) -> L.                       |         |
+                                           |         |
+-spec occ_list_18                          |         |
+    (atom() | binary()) -> [atom()] | [bin……         |
+occ_list_18(V) -> [V].                     | ERROR   | [V].
+                                           |         | Expected: [atom()] | [binary()]
+                                           |         | Got     : [atom() | binary()]
+                                           |         | 
+                                           |         |   [atom() | binary()] is not a subtype of [atom()] | [binary()]
+                                           |         |   because
+                                           |         |   [atom() | binary()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   binary() is not a subtype of atom()
+                                           |         |
+-spec occ_list_19                          |         |
+    (atom() | binary()) -> [atom() | binar……         |
+occ_list_19(V) -> [ok | [V]].              | OK      |
+                                           |         |
+-spec occ_list_20_neg                      |         |
+    (atom() | binary()) -> [atom()] | [bin……         |
+occ_list_20_neg(V) -> [ok | [V]].          | ERROR   | ['ok', V].
+                                           |         | Expected: [atom()] | [binary()]
+                                           |         | Got     : [atom() | binary()]
+                                           |         | 
+                                           |         |   [atom() | binary()] is not a subtype of [atom()] | [binary()]
+                                           |         |   because
+                                           |         |   [atom() | binary()] is not a subtype of [atom()]
+                                           |         |   because
+                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   because
+                                           |         |   binary() is not a subtype of atom()

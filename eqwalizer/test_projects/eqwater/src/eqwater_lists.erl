@@ -117,3 +117,15 @@ occ_list_16(L) -> L.
 occ_list_17([H | _]) when is_binary(H)
     -> [];
 occ_list_17(L) -> L.
+
+-spec occ_list_18
+    (atom() | binary()) -> [atom()] | [binary()].
+occ_list_18(V) -> [V].
+
+-spec occ_list_19
+    (atom() | binary()) -> [atom() | binary()].
+occ_list_19(V) -> [ok | [V]].
+
+-spec occ_list_20_neg
+    (atom() | binary()) -> [atom()] | [binary()].
+occ_list_20_neg(V) -> [ok | [V]].
