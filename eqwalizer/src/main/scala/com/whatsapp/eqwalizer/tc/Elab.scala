@@ -82,6 +82,10 @@ final class Elab(pipelineContext: PipelineContext) {
         (litType, env)
       case NilLit() =>
         (NilType, env)
+      case Cons(head, NilLit()) =>
+        val (headT, env1) = elabExpr(head, env)
+        val resType = subtype.join(util.flattenUnions(headT).map(ListType).toSet)
+        (resType, env1)
       case Cons(head, tail) =>
         val (headT, env1) = elabExpr(head, env)
         val (tailT, env2) = elabExpr(tail, env1)

@@ -170,17 +170,7 @@ occ_list_17(L) -> L.                       |         |
                                            |         |
 -spec occ_list_18                          |         |
     (atom() | binary()) -> [atom()] | [bin……         |
-occ_list_18(V) -> [V].                     | ERROR   | [V].
-                                           |         | Expected: [atom()] | [binary()]
-                                           |         | Got     : [atom() | binary()]
-                                           |         | 
-                                           |         |   [atom() | binary()] is not a subtype of [atom()] | [binary()]
-                                           |         |   because
-                                           |         |   [atom() | binary()] is not a subtype of [atom()]
-                                           |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom()
-                                           |         |   because
-                                           |         |   binary() is not a subtype of atom()
+occ_list_18(V) -> [V].                     | OK      |
                                            |         |
 -spec occ_list_19                          |         |
     (atom() | binary()) -> [atom() | binar……         |

@@ -1254,11 +1254,11 @@ occ57_neg(V, _) ->                         | ERROR   |
         [_] -> V;                          |         |
         A -> [A]                           |         | [A].
                                            |         | Expected: [atom()]
-                                           |         | Got     : [[atom()] | atom()]
+                                           |         | Got     : [[atom()]] | [atom()]
                                            |         | 
-                                           |         |   [[atom()] | atom()] is not a subtype of [atom()]
+                                           |         |   [[atom()]] | [atom()] is not a subtype of [atom()]
                                            |         |   because
-                                           |         |   [atom()] | atom() is not a subtype of atom()
+                                           |         |   [[atom()]] is not a subtype of [atom()]
                                            |         |   because
                                            |         |   [atom()] is not a subtype of atom()
     end.                                   |         |
@@ -1271,11 +1271,11 @@ occ58_neg(V, A) ->                         | ERROR   |
         [] -> V;                           |         |
         A2 -> [A2]                         |         | [A2].
                                            |         | Expected: [atom()]
-                                           |         | Got     : [[atom()] | atom()]
+                                           |         | Got     : [[atom()]] | [atom()]
                                            |         | 
-                                           |         |   [[atom()] | atom()] is not a subtype of [atom()]
+                                           |         |   [[atom()]] | [atom()] is not a subtype of [atom()]
                                            |         |   because
-                                           |         |   [atom()] | atom() is not a subtype of atom()
+                                           |         |   [[atom()]] is not a subtype of [atom()]
                                            |         |   because
                                            |         |   [atom()] is not a subtype of atom()
     end.                                   |         |
