@@ -40,7 +40,7 @@ mod progress {
 
     pub fn spinner(message: &'static str, done_message: &'static str) -> ProgressBar {
         let pb = ProgressBar::new_spinner();
-        pb.enable_steady_tick(120);
+        pb.enable_steady_tick(std::time::Duration::from_millis(120));
         pb.set_message(message);
         pb.set_style(
             ProgressStyle::default_spinner()
