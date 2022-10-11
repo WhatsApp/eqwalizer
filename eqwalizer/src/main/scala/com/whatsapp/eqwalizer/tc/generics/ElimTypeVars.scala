@@ -41,8 +41,7 @@ object ElimTypeVars {
         DictMap(elim(kt), elim(vt))
       case ShapeMap(props) =>
         ShapeMap(props.map(elimVarsInProp(_, mode, vars)))
-      case _: BuiltinType | _: AtomLitType | NilType | BinaryType | _: RefinedRecordType | _: RecordType |
-          AnyTupleType | AnyFunType =>
+      case _ =>
         ty
     }
   }

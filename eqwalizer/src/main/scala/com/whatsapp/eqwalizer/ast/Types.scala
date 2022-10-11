@@ -39,15 +39,14 @@ object Types {
   case class ReqProp(key: String, tp: Type) extends Prop
   case class OptProp(key: String, tp: Type) extends Prop
 
-  sealed trait BuiltinType extends Type
-  case object AnyType extends BuiltinType
-  case object AtomType extends BuiltinType
-  case object DynamicType extends BuiltinType
-  case object NoneType extends BuiltinType
-  case object PidType extends BuiltinType
-  case object PortType extends BuiltinType
-  case object ReferenceType extends BuiltinType
-  case object NumberType extends BuiltinType
+  case object AnyType extends Type
+  case object AtomType extends Type
+  case object DynamicType extends Type
+  case object NoneType extends Type
+  case object PidType extends Type
+  case object PortType extends Type
+  case object ReferenceType extends Type
+  case object NumberType extends Type
 
   private val ioListRid = RemoteId("erlang", "iolist", 0)
 

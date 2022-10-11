@@ -32,7 +32,7 @@ object Subst {
       case ShapeMap(props)                    => ShapeMap(props.map(substInProp(s, _)))
       case DictMap(kTy, vTy)                  => DictMap(sub(kTy), sub(vTy))
       case RefinedRecordType(recType, fields) => RefinedRecordType(recType, fields.map(f => f._1 -> sub(f._2)))
-      case _: BuiltinType | _: AtomLitType | NilType | BinaryType | _: RecordType | AnyTupleType | AnyFunType =>
+      case _ =>
         t
     }
   }

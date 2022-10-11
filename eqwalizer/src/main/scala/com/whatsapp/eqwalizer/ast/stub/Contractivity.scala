@@ -81,9 +81,6 @@ private class Contractivity(module: String) {
         props.map(_.tp).forall(isFoldable(_, history1))
       case rt: RefinedRecordType =>
         rt.fields.values.forall(isFoldable(_, history1))
-      case _: AtomLitType | AnyFunType | AnyTupleType | NilType | _: VarType | _: RecordType | BinaryType |
-          _: BuiltinType =>
-        true
       case RemoteType(rid, argTys) =>
         val hasHe = history.exists(HomeomorphicEmbedding.heByCoupling(_, ty))
         !hasHe && (getTypeDeclBody(rid, argTys) match {
@@ -92,6 +89,8 @@ private class Contractivity(module: String) {
           case None =>
             true
         })
+      case _ =>
+        true
     }
   }
 
@@ -102,8 +101,7 @@ private class Contractivity(module: String) {
       false
     case _: UnionType =>
       false
-    case _: AtomLitType | AnyFunType | AnyTupleType | NilType | _: VarType | _: RecordType | BinaryType |
-        _: BuiltinType =>
+    case _ =>
       // $COVERAGE-OFF$
       throw new IllegalStateException("unreachable: this is a leaf node of the graph and can't wind up in `history`")
     // $COVERAGE-ON$

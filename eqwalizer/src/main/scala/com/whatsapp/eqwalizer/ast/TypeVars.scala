@@ -39,9 +39,7 @@ object TypeVars {
     case DictMap(kType, vType)        => kType :: vType :: Nil
     case ListType(ty)                 => ty :: Nil
     case RefinedRecordType(_, fields) => fields.toList.map(_._2)
-    case _: AtomLitType | AnyFunType | AnyTupleType | NilType | _: VarType | _: RecordType | BinaryType |
-        _: BuiltinType =>
-      Nil
+    case _                            => Nil
   }
 
   /** For subtyping comparison, make ft1 and ft2 such that their `forall`s quantify over variables with the same
@@ -134,7 +132,7 @@ object TypeVars {
         ShapeMap(props.map(incrInProp(_, toIncr, incr)))
       case RefinedRecordType(recType, fields) =>
         RefinedRecordType(recType, fields.map(f => f._1 -> r(f._2)))
-      case _: BuiltinType | _: AtomLitType | NilType | BinaryType | _: RecordType | AnyTupleType | AnyFunType =>
+      case _ =>
         t
     }
   }

@@ -212,12 +212,7 @@ class Constraints(pipelineContext: PipelineContext) {
             t2 = kvs2(prop1.key)
           } yield (t1, t2)
           constrainSeq(state, uppersAndLowers)
-        case (
-              _: AtomLitType | AnyFunType | AnyTupleType | NilType | _: RecordType | BinaryType | _: BuiltinType |
-              _: TupleType | _: DictMap | _: ShapeMap | _: OpaqueType | _: VarType | _: ListType | _: FunType |
-              _: RefinedRecordType,
-              _,
-            ) =>
+        case _ =>
           if (!subtype.subType(lowerBound, upperBound)) fail()
           else state
       }

@@ -70,7 +70,7 @@ class TypeTraverse(val listener: TypeListener) {
     case bt @ BinaryType =>
       listener.enterType(bt)
       listener.exitType(bt)
-    case bt: BuiltinType =>
+    case bt =>
       listener.enterType(bt)
       listener.exitType(bt)
   }

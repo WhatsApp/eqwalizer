@@ -682,9 +682,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
         throw new IllegalStateException(t2.toString)
       // $COVERAGE-ON$
 
-      case (_: BuiltinType, _: BuiltinType) =>
-        Some(subtype.subType(t1, t2) || subtype.subType(t2, t1))
-
       case (ListType(_) | NilType, ListType(_) | NilType) =>
         Some(true)
       case (ListType(_) | NilType, _) =>

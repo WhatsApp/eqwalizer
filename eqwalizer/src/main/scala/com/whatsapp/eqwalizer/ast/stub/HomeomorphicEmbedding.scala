@@ -35,8 +35,7 @@ private object HomeomorphicEmbedding {
         props.map(_.tp).exists(isHe(s, _))
       case RefinedRecordType(_, fields) =>
         fields.values.exists(isHe(s, _))
-      case _: AtomLitType | AnyFunType | AnyTupleType | NilType | _: VarType | _: RecordType | BinaryType |
-          _: BuiltinType =>
+      case _ =>
         false
     }
 
@@ -86,11 +85,8 @@ private object HomeomorphicEmbedding {
         true
       case (_: VarType, _) =>
         false
-      case (_: AtomLitType | AnyFunType | AnyTupleType | NilType | _: RecordType | BinaryType | _: BuiltinType, _)
-          if s == t =>
-        true
       case _ =>
-        false
+        s == t
     }
 
   private def heProp(sProp: Prop, tProp: Prop): Boolean = (sProp, tProp) match {
