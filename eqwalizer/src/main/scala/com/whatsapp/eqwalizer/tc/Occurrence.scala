@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Guards._
 import com.whatsapp.eqwalizer.ast.Exprs._
-import com.whatsapp.eqwalizer.ast.{Id, Types, Vars}
+import com.whatsapp.eqwalizer.ast.{Id, Types}
 import com.whatsapp.eqwalizer.ast.Pats._
 import com.whatsapp.eqwalizer.ast.Types._
 
@@ -89,7 +89,6 @@ object Occurrence {
   private case object + extends Polarity
   private case object - extends Polarity
   type Path = List[Field]
-  type PosNeg = (List[Pos], List[Neg])
 
   val unary_predicates: Map[String, Type] =
     Map(
@@ -687,13 +686,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case (ListType(_) | NilType, _) =>
         Some(false)
       case (_, ListType(_) | NilType) =>
-        Some(false)
-
-      case (BinaryType, BinaryType) =>
-        Some(true)
-      case (BinaryType, _) =>
-        Some(false)
-      case (_, BinaryType) =>
         Some(false)
 
       case _ =>
