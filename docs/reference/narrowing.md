@@ -63,6 +63,45 @@ code in eqWAlizer.
         end.
     ```
 
+#### Opaque types
+
+EqWAlizer allows partial introspection of opaque types in patterns, however the type
+of internal values will not be narrowed and will always be `term()`. For example,
+if a module `m1` contains the following declaration:
+
+```Erlang
+-module(m1).
+-export_type([res/0]).
+-opaque res() :: {ok, atom()} | undefined.
+```
+
+then, in another module `m2`, the following code will type-check in eqWAlizer:
+
+```Erlang
+-module(m2).
+
+-spec get_res(res()) -> atom().
+get_res({ok, A}) when is_atom(A) -> A;
+get_res(_) -> undefined.
+```
+
+However, the following will not, since `A` will be given type `term()` in the first
+clause, which is not compatible with the expected return type `atom()`:
+
+```Erlang
+-module(m2).
+
+-spec get_res(res()) -> atom().
+get_res({ok, A}) -> A;
+get_res(_) -> undefined.
+```
+
+The technical reason for this is that a value of type `res()` is included (by subtyping)
+into type `term()`, and can therefore be pattern-matched in any way, without violating
+opacity (if upcast to `term()`). Values having an opaque type therefore obey the same rules as values of
+type `term()` for pattern-matching: eqWAlizer will perform very limited narrowing,
+keeping the internals as `term()`.
+
 
 ## Occurrence typing
 
