@@ -97,10 +97,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(DiscardedSpecs.main(Array()), "discarded_specs.cli")
     }
 
-    it("reports nullary unspecced funs") {
-      checkAction(NullaryUnspecced.main(Array()), "nullary_unspecced.cli")
-    }
-
     it("reports tryOf expressions") {
       checkAction(TryOf.main(Array()), "try_of.cli")
     }
