@@ -22,6 +22,7 @@ pub fn compile_deps(loaded: &LoadResult) -> Result<()> {
 #[allow(dead_code)]
 mod progress {
     use std::borrow::Cow;
+    use std::time::Duration;
 
     use indicatif::ProgressBar;
     use indicatif::ProgressFinish;
@@ -33,20 +34,16 @@ mod progress {
         pb.set_style(
             ProgressStyle::default_bar()
                 .template("  {msg:25} {bar} {pos}/{len}")
-                .on_finish(ProgressFinish::WithMessage(Cow::Borrowed(done_message))),
+                .expect("BUG: invalid template"),
         );
-        pb
+        pb.with_finish(ProgressFinish::WithMessage(Cow::Borrowed(done_message)))
     }
 
     pub fn spinner(message: &'static str, done_message: &'static str) -> ProgressBar {
         let pb = ProgressBar::new_spinner();
-        pb.enable_steady_tick(120);
+        pb.enable_steady_tick(Duration::from_millis(120));
         pb.set_message(message);
-        pb.set_style(
-            ProgressStyle::default_spinner()
-                .on_finish(ProgressFinish::WithMessage(Cow::Borrowed(done_message))),
-        );
-        pb
+        pb.with_finish(ProgressFinish::WithMessage(Cow::Borrowed(done_message)))
     }
 }
 
