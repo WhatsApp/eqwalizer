@@ -12,6 +12,9 @@ import java.io.File
 import java.nio.file.Paths
 
 object Project {
+
+  val thirdPartySuffix = "/third-party"
+
   def relativePath(file: String): String = {
     val projectRoot = Paths.get(config.sourceRoot)
     val otpRoot = Paths.get(config.otpLibRoot)
@@ -22,6 +25,12 @@ object Project {
         projectRoot.relativize(canonical).toString
       } else if (canonical.startsWith(otpRoot)) {
         s"/otp/${otpRoot.relativize(canonical)}"
+      } else if (canonical.toString().contains(thirdPartySuffix)) {
+        // buck case, converts
+        // /data/users/$user/whatsapp/server/buck-out/lsp/gen/waserver/f6717464dc059109/third-party/__proper__/proper/include/proper.hrl
+        // into /third-party/__proper__/proper/include/proper.hrl
+        val subPath = canonical.toString().split(thirdPartySuffix)(1)
+        s"$thirdPartySuffix$subPath"
       } else {
         // $COVERAGE-OFF$
         throw new IllegalStateException(s"cannot relativize the path: $file")
