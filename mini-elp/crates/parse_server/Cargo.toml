@@ -1,21 +1,21 @@
 [package]
-edition = "2018"
+edition.workspace = true
 name = "elp_parse_server"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.56"
-crossbeam-channel = "0.5.4"
-eetf = "0.8"
-fxhash = "0.2.1"
-jod-thread = "0.1.2"
-log = "0.4.16"
-stdx = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
-tempfile = "3.3.0"
-text-size = "1.1.0"
+anyhow.workspace = true
+crossbeam-channel.workspace = true
+eetf.workspace = true
+fxhash.workspace = true
+jod-thread.workspace = true
+log.workspace = true
+stdx.workspace = true
+tempfile.workspace = true
+text-size.workspace = true
 
 [dev-dependencies]
-expect-test = "1.2.2"
-lazy_static = "1.4.0"
+expect-test.workspace = true
+lazy_static.workspace = true

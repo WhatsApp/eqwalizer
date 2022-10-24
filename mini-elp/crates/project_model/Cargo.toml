@@ -1,16 +1,16 @@
 [package]
-edition = "2018"
+edition.workspace = true
 name = "elp_project_model"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.56"
-eetf = "0.8"
-fxhash = "0.2.1"
-lazy_static = "1.4.0"
-log = "0.4.16"
-paths = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
-tempfile = "3.3.0"
-walkdir = "2.3.2"
+anyhow.workspace = true
+eetf.workspace = true
+fxhash.workspace = true
+lazy_static.workspace = true
+log.workspace = true
+paths.workspace = true
+tempfile.workspace = true
+walkdir.workspace = true

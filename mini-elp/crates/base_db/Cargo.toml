@@ -1,5 +1,5 @@
 [package]
-edition = "2018"
+edition.workspace = true
 name = "elp_base_db"
 version = "0.1.0"
 
@@ -11,17 +11,17 @@ doctest = false
 [dependencies]
 elp_project_model = {path = "../project_model"}
 
-eetf = "0.8.0"
-env_logger = "0.9.0"
-fxhash = "0.2.1"
-log = "0.4.16"
-paths = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
-profile = {features = ["jemalloc"], git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
-salsa = "0.17.0-pre.2"
-smol_str = "0.1.21"
-stdx = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
-text-size = "1.1.0"
-vfs = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
+eetf.workspace = true
+env_logger.workspace = true
+fxhash.workspace = true
+log.workspace = true
+paths.workspace = true
+profile.workspace = true
+salsa.workspace = true
+smol_str.workspace = true
+stdx.workspace = true
+text-size.workspace = true
+vfs.workspace = true
 
 [dev-dependencies]
-expect-test = "1.2.2"
+expect-test.workspace = true

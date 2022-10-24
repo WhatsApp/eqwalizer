@@ -1,5 +1,5 @@
 [package]
-edition = "2018"
+edition.workspace = true
 name = "elp_ide_db"
 version = "0.1.0"
 
@@ -11,19 +11,19 @@ elp_eqwalizer = {path = "../eqwalizer"}
 elp_parse_server = {path = "../parse_server"}
 elp_project_model = {path = "../project_model"}
 
-anyhow = "1.0.56"
-crossbeam-channel = "0.5.4"
-eetf = "0.8"
-fxhash = "0.2.1"
-log = "0.4.16"
-profile = {features = ["jemalloc"], git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
-salsa = "0.17.0-pre.2"
-serde = {version = "1.0.136", features = ["derive"]}
-serde_json = "1.0.79"
-stdx = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
-text-size = "1.1.0"
-tempfile = "3.3.0"
-text_edit = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
+anyhow.workspace = true
+crossbeam-channel.workspace = true
+eetf.workspace = true
+fxhash.workspace = true
+log.workspace = true
+profile.workspace = true
+salsa.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+stdx.workspace = true
+text-size.workspace = true
+tempfile.workspace = true
+text_edit.workspace = true
 
 [dev-dependencies]
-expect-test = "1.2.2"
+expect-test.workspace = true
