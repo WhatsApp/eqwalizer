@@ -23,7 +23,6 @@ log = "0.4.16"
 lsp-types = "0.93.0"
 paths = {git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
 pico-args = "0.4.2"
-profile = {features = ["jemalloc"], git = "https://github.com/rust-analyzer/rust-analyzer", rev = "2022-04-04"}
 rayon = "1.5.1"
 salsa = "0.17.0-pre.2"
 serde = {version = "1.0.136", features = ["derive"]}

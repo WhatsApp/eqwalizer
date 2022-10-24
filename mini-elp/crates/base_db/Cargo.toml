@@ -16,7 +16,6 @@ env_logger.workspace = true
 fxhash.workspace = true
 log.workspace = true
 paths.workspace = true
-profile.workspace = true
 salsa.workspace = true
 smol_str.workspace = true
 stdx.workspace = true

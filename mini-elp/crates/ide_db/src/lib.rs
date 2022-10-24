@@ -85,7 +85,6 @@ impl salsa::ParallelDatabase for RootDatabase {
 
 impl RootDatabase {
     pub fn request_cancellation(&mut self) {
-        let _p = profile::span("RootDatabase::request_cancellation");
         self.salsa_runtime_mut()
             .synthetic_write(salsa::Durability::LOW);
     }

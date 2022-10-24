@@ -16,7 +16,6 @@ crossbeam-channel.workspace = true
 eetf.workspace = true
 fxhash.workspace = true
 log.workspace = true
-profile.workspace = true
 salsa.workspace = true
 serde.workspace = true
 serde_json.workspace = true
