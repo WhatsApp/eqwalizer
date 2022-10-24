@@ -30,12 +30,12 @@ mod progress {
 
     pub fn progress(len: u64, message: &'static str, done_message: &'static str) -> ProgressBar {
         let pb = ProgressBar::new(len);
-        pb.set_message(message);
         pb.set_style(
             ProgressStyle::default_bar()
                 .template("  {msg:25} {bar} {pos}/{len}")
                 .expect("BUG: invalid template"),
         );
+        pb.set_message(message);
         pb.with_finish(ProgressFinish::WithMessage(Cow::Borrowed(done_message)))
     }
 
