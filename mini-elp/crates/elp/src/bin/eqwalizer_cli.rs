@@ -104,7 +104,11 @@ fn eqwalize(
         util::compile_deps(&loaded)?;
     }
     pre_parse_for_speed(analysis.clone(), &file_ids, format);
-    let output = analysis.eqwalizer_diagnostics(loaded.project_id, file_ids, format)?;
+    let pb = util::progress(file_ids.len() as u64, "eqWAlizing", "eqWAlized");
+    let output = loaded.with_eqwalizer_progress_bar(pb.clone(), move |analysis| {
+        analysis.eqwalizer_diagnostics(loaded.project_id, file_ids, format)
+    })?;
+    pb.finish();
     match &*output {
         EqwalizerDiagnostics::Diagnostics(diagnostics_by_module) => {
             for (module, diagnostics) in diagnostics_by_module {

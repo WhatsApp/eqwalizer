@@ -14,6 +14,7 @@ use anyhow::Result;
 use crossbeam_channel::unbounded;
 use crossbeam_channel::Receiver;
 use elp::reload::ProjectFolders;
+use elp_ide::elp_ide_db::EqwalizerProgressReporter;
 use elp_ide::Analysis;
 use elp_ide::AnalysisHost;
 use elp_ide_db::elp_base_db::loader;
@@ -31,6 +32,7 @@ use elp_ide_db::elp_base_db::Vfs;
 use elp_project_model::Profile;
 use elp_project_model::Project;
 use elp_project_model::ProjectManifest;
+use indicatif::ProgressBar;
 
 use crate::util;
 
@@ -49,6 +51,32 @@ impl LoadResult {
             project_id,
             project,
         }
+    }
+
+    pub fn with_eqwalizer_progress_bar<R>(
+        &self,
+        pb: ProgressBar,
+        f: impl FnOnce(Analysis) -> R,
+    ) -> R {
+        struct Reporter(ProgressBar);
+
+        impl EqwalizerProgressReporter for Reporter {
+            fn report(&self, done: usize) {
+                self.0.set_position(done as u64)
+            }
+        }
+
+        self.analysis_host
+            .raw_database()
+            .set_eqwalizer_progress_reporter(Some(Box::new(Reporter(pb))));
+
+        let r = f(self.analysis());
+
+        self.analysis_host
+            .raw_database()
+            .set_eqwalizer_progress_reporter(None);
+
+        r
     }
 
     pub fn analysis(&self) -> Analysis {

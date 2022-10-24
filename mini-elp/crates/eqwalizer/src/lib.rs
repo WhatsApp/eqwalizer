@@ -63,7 +63,7 @@ pub struct EqwalizerDiagnostic {
 
 pub trait DbApi {
     fn unwind_if_cancelled(&self) -> ();
-    fn get_ast(&self, module: &str) -> Option<Arc<Vec<u8>>>;
+    fn get_ast(&mut self, module: &str) -> Option<Arc<Vec<u8>>>;
 }
 
 fn deserialize_text_range<'de, D>(deserializer: D) -> Result<TextRange, D::Error>
@@ -142,7 +142,7 @@ impl Eqwalizer {
     pub fn typecheck(
         &self,
         build_info_path: &Path,
-        db_api: impl DbApi,
+        mut db_api: impl DbApi,
         modules: Vec<&str>,
     ) -> Result<EqwalizerDiagnostics> {
         let mut cmd = self.cmd();

@@ -5,7 +5,9 @@
  */
 
 use std::fmt;
+use std::panic::RefUnwindSafe;
 use std::sync::Arc;
+use std::sync::Mutex;
 use std::sync::RwLock;
 
 use anyhow::Result;
@@ -39,6 +41,12 @@ pub use line_index::LineCol;
 pub use line_index::LineIndex;
 // ---------------------------------------------------------------------
 
+type EqwalizerProgressReporterBox = Arc<Mutex<Option<Box<dyn EqwalizerProgressReporter>>>>;
+
+pub trait EqwalizerProgressReporter: Send + Sync + RefUnwindSafe {
+    fn report(&self, done: usize);
+}
+
 #[salsa::database(
     LineIndexDatabaseStorage,
     elp_base_db::SourceDatabaseExtStorage,
@@ -51,6 +59,7 @@ pub struct RootDatabase {
     storage: salsa::Storage<Self>,
     parse_servers: Arc<RwLock<FxHashMap<ProjectId, Connection>>>,
     eqwalizer: Eqwalizer,
+    eqwalizer_progress_reporter: EqwalizerProgressReporterBox,
 }
 
 impl Upcast<dyn SourceDatabase> for RootDatabase {
@@ -79,6 +88,7 @@ impl salsa::ParallelDatabase for RootDatabase {
             storage: self.storage.snapshot(),
             parse_servers: self.parse_servers.clone(),
             eqwalizer: self.eqwalizer.clone(),
+            eqwalizer_progress_reporter: self.eqwalizer_progress_reporter.clone(),
         })
     }
 }
@@ -109,6 +119,13 @@ impl RootDatabase {
             .unwrap()
             .insert(project_id, connection);
         Ok(())
+    }
+
+    pub fn set_eqwalizer_progress_reporter(
+        &self,
+        report: Option<Box<dyn EqwalizerProgressReporter>>,
+    ) {
+        *self.eqwalizer_progress_reporter.lock().unwrap() = report
     }
 
     pub fn eqwalizer(&self) -> &Eqwalizer {
