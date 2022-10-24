@@ -17,27 +17,22 @@ elp_ide = {path = "../ide"}
 elp_project_model = {path = "../project_model"}
 elp_parse_server = {path = "../parse_server"}
 
-always-assert.workspace = true
 anyhow.workspace = true
 codespan-reporting.workspace = true
 crossbeam-channel.workspace = true
 env_logger.workspace = true
 fxhash.workspace = true
 indicatif.workspace = true
-itertools.workspace = true
 lazy_static.workspace = true
 log.workspace = true
 lsp-types.workspace = true
 pico-args.workspace = true
 profile.workspace = true
 rayon.workspace = true
-regex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-serde_path_to_error.workspace = true
 stdx.workspace = true
 tempfile.workspace = true
-text_edit.workspace = true
 text-size.workspace = true
 vfs-notify.workspace = true
 

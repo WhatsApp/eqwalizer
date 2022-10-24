@@ -207,7 +207,6 @@ checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 name = "elp"
 version = "0.5.30-dev"
 dependencies = [
- "always-assert",
  "anyhow",
  "codespan-reporting",
  "crossbeam-channel",
@@ -220,21 +219,17 @@ dependencies = [
  "expect-test",
  "fxhash",
  "indicatif",
- "itertools",
  "lazy_static",
  "log",
  "lsp-types",
  "pico-args",
  "profile",
  "rayon",
- "regex",
  "serde",
  "serde_json",
- "serde_path_to_error",
  "stdx",
  "tempfile",
  "text-size",
- "text_edit",
  "tikv-jemallocator",
  "vfs-notify",
 ]
@@ -305,7 +300,6 @@ dependencies = [
  "stdx",
  "tempfile",
  "text-size",
- "text_edit",
 ]
 
 [[package]]
@@ -520,15 +514,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
  "cfg-if 1.0.0",
-]
-
-[[package]]
-name = "itertools"
-version = "0.10.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
-dependencies = [
- "either",
 ]
 
 [[package]]
@@ -1101,15 +1086,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_path_to_error"
-version = "0.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7868ad3b8196a8a0aea99a8220b124278ee5320a55e4fde97794b6f85b1a377"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "serde_repr"
 version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1195,15 +1171,6 @@ name = "text-size"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "288cb548dbe72b652243ea797201f3d481a0609a967980fcc5b2315ea811560a"
-
-[[package]]
-name = "text_edit"
-version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer?rev=2022-04-04#46d7ee68f26285db26b2640f2c07d6332380c756"
-dependencies = [
- "itertools",
- "text-size",
-]
 
 [[package]]
 name = "thiserror"
