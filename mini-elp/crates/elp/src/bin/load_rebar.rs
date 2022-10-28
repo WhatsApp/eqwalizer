@@ -21,7 +21,6 @@ use elp_ide_db::elp_base_db::loader;
 use elp_ide_db::elp_base_db::loader::Handle;
 use elp_ide_db::elp_base_db::AbsPathBuf;
 use elp_ide_db::elp_base_db::FileSetConfig;
-use elp_ide_db::elp_base_db::IncludeOtp;
 use elp_ide_db::elp_base_db::ProjectApps;
 use elp_ide_db::elp_base_db::ProjectId;
 use elp_ide_db::elp_base_db::SourceDatabase;
@@ -84,11 +83,7 @@ impl LoadResult {
     }
 }
 
-pub fn load_project_at(
-    root: &Path,
-    project_profile: &Profile,
-    include_otp: IncludeOtp,
-) -> Result<LoadResult> {
+pub fn load_project_at(root: &Path, project_profile: &Profile) -> Result<LoadResult> {
     let root = AbsPathBuf::assert(std::env::current_dir()?.join(root));
     let root = ProjectManifest::discover_single(&root, project_profile)?;
 
@@ -98,7 +93,7 @@ pub fn load_project_at(
     let project = Project::load(root)?;
     pb.finish();
 
-    load_project(project, include_otp)
+    load_project(project)
 }
 
 pub fn load_project_with_caching_at(
@@ -126,10 +121,10 @@ pub fn load_project_with_caching_at(
 
     pb.finish();
 
-    load_project(project, IncludeOtp::No)
+    load_project(project)
 }
 
-pub fn load_project(project: Project, include_otp: IncludeOtp) -> Result<LoadResult> {
+pub fn load_project(project: Project) -> Result<LoadResult> {
     let project_id = ProjectId(0);
 
     let (sender, receiver) = unbounded();
@@ -141,7 +136,7 @@ pub fn load_project(project: Project, include_otp: IncludeOtp) -> Result<LoadRes
     };
 
     let projects = [project.clone()];
-    let project_apps = ProjectApps::new(&projects, include_otp);
+    let project_apps = ProjectApps::new(&projects);
     let folders = ProjectFolders::new(&project_apps);
 
     let vfs_loader_config = loader::Config {

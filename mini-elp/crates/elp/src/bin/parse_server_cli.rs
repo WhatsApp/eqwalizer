@@ -14,7 +14,6 @@ use elp::convert;
 use elp_ide::parse_server;
 use elp_ide::Analysis;
 use elp_ide_db::elp_base_db::FileId;
-use elp_ide_db::elp_base_db::IncludeOtp;
 use elp_ide_db::LineCol;
 use elp_parse_server::Location;
 use elp_project_model::AppType;
@@ -33,7 +32,7 @@ use crate::util;
 
 pub fn parse_all(args: &ParseAll, out: &mut impl std::io::Write) -> Result<()> {
     let profile = args.profile.clone().map(Profile).unwrap_or_default();
-    let loaded = load_rebar::load_project_at(&args.project, &profile, IncludeOtp::No)?;
+    let loaded = load_rebar::load_project_at(&args.project, &profile)?;
     fs::create_dir_all(&args.to)?;
     let format = match args.offset_positions {
         true => parse_server::Format::OffsetEtf,

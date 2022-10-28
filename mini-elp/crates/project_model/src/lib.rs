@@ -204,7 +204,6 @@ pub struct Project {
 
 #[derive(Clone)]
 pub enum BuildInfo {
-    Otp,
     Cached(RebarConfig, AbsPathBuf),
     Loaded(RebarConfig, Arc<TempPath>),
 }
@@ -232,7 +231,6 @@ impl Project {
 
     pub fn build_info_file(&self) -> Option<AbsPathBuf> {
         match &self.build_info {
-            BuildInfo::Otp => None,
             BuildInfo::Cached(_, cached) => Some(cached.clone()),
             BuildInfo::Loaded(_, loaded) => Some(AbsPathBuf::assert(loaded.to_path_buf())),
         }
@@ -379,7 +377,6 @@ pub struct Otp {
 impl Project {
     pub fn compile_deps(&self) -> Result<()> {
         let build = match &self.build_info {
-            BuildInfo::Otp => return Ok(()),
             BuildInfo::Cached(build, _) => build,
             BuildInfo::Loaded(build, _) => build,
         };

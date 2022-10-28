@@ -20,7 +20,6 @@ pub use input::AppData;
 pub use input::AppRoots;
 pub use input::AppStructure;
 pub use input::FileSource;
-pub use input::IncludeOtp;
 pub use input::ProjectApps;
 pub use input::ProjectData;
 pub use input::ProjectId;

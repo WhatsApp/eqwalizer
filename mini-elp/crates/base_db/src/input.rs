@@ -7,18 +7,14 @@
 use std::borrow::Borrow;
 use std::hash::Hash;
 use std::path::Path;
-use std::path::PathBuf;
 use std::sync::Arc;
 
 use elp_project_model::AppName;
 use elp_project_model::AppType;
-use elp_project_model::BuildInfo;
 use elp_project_model::Otp;
 use elp_project_model::Project;
 use elp_project_model::ProjectAppData;
-use elp_project_model::RebarProject;
 use fxhash::FxHashMap;
-use paths::AbsPath;
 use paths::RelPath;
 use vfs::file_set::FileSet;
 use vfs::AbsPathBuf;
@@ -216,12 +212,6 @@ impl AppRoots {
 
 // ---------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum IncludeOtp {
-    Yes,
-    No,
-}
-
 #[derive(Debug)]
 pub struct ProjectApps<'a> {
     /// All the applications in a set of projects.  The order here
@@ -233,8 +223,8 @@ pub struct ProjectApps<'a> {
 }
 
 impl<'a> ProjectApps<'a> {
-    pub fn new(projects: &'a [Project], include_otp: IncludeOtp) -> ProjectApps<'a> {
-        let mut all_apps: Vec<(ProjectId, &ProjectAppData)> = projects
+    pub fn new(projects: &'a [Project]) -> ProjectApps<'a> {
+        let all_apps: Vec<(ProjectId, &ProjectAppData)> = projects
             .iter()
             .enumerate()
             .map(|(project_idx, project)| {
@@ -248,32 +238,8 @@ impl<'a> ProjectApps<'a> {
             .flatten()
             .collect();
 
-        // We assume that all of the `Project`s use the same OTP.
-        // And so we treat the very first one as another
-        // `RebarProject`, but for OTP.
-        let otp = &projects[0].otp;
-        let mut projects: Vec<_> = projects.into();
-        let otp_project_id = if include_otp == IncludeOtp::Yes {
-            let otp_project_id = ProjectId(projects.len() as u32);
-            let mut all_otp_apps: Vec<(ProjectId, &ProjectAppData)> =
-                otp.apps.iter().map(|app| (otp_project_id, app)).collect();
-            all_apps.append(&mut all_otp_apps);
-            // The only part of this we (currently) use in
-            // ProjectRootMap::app_structure() is Project.otp
-            let otp_project = Project {
-                build_info: BuildInfo::Otp,
-                otp: otp.clone(),
-                rebar: RebarProject {
-                    apps: vec![],
-                    deps: vec![],
-                    root: AbsPath::assert(&PathBuf::from("/")).normalize(),
-                },
-            };
-            projects.push(otp_project);
-            Some(otp_project_id)
-        } else {
-            None
-        };
+        let projects: Vec<_> = projects.into();
+        let otp_project_id = None;
 
         ProjectApps {
             all_apps,

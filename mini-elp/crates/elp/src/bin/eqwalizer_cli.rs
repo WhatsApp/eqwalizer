@@ -11,7 +11,6 @@ use codespan_reporting::term::termcolor::WriteColor;
 use elp_ide::Analysis;
 use elp_ide_db::elp_base_db::FileId;
 use elp_ide_db::elp_base_db::FileSource;
-use elp_ide_db::elp_base_db::IncludeOtp;
 use elp_ide_db::elp_base_db::ModuleIndex;
 use elp_ide_db::EqwalizerDiagnostics;
 use elp_project_model::AppType;
@@ -59,7 +58,7 @@ pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> 
 
 pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> {
     let profile = args.profile.clone().map(Profile).unwrap_or_default();
-    let loaded = &load_rebar::load_project_at(&args.project, &profile, IncludeOtp::No)?;
+    let loaded = &load_rebar::load_project_at(&args.project, &profile)?;
     let analysis = &loaded.analysis();
 
     let mut reporter: Box<dyn reporting::Reporter> = match args.format {
