@@ -63,15 +63,9 @@ impl ProjectFolders {
             .all_apps
             .iter()
             .flat_map(|(project_id, app)| iter::repeat(project_id).zip(app.all_source_dirs()))
-            .filter_map(|(project_id, root)| {
-                if Some(*project_id) != project_apps.otp_project_id {
-                    Some(lsp_types::FileSystemWatcher {
-                        glob_pattern: format!("{}/**/*.{{e,h}}rl", root.display()),
-                        kind: None,
-                    })
-                } else {
-                    None
-                }
+            .map(|(_project_id, root)| lsp_types::FileSystemWatcher {
+                glob_pattern: format!("{}/**/*.{{e,h}}rl", root.display()),
+                kind: None,
             })
             .collect();
 

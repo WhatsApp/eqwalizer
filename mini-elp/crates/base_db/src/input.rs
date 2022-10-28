@@ -217,7 +217,6 @@ pub struct ProjectApps<'a> {
     /// All the applications in a set of projects.  The order here
     /// will correspond with the vfs sourceRootId's
     pub all_apps: Vec<(ProjectId, &'a ProjectAppData)>,
-    pub otp_project_id: Option<ProjectId>,
     // We store the original projects to we can make the AppStructure later
     projects: Vec<Project>,
 }
@@ -239,13 +238,8 @@ impl<'a> ProjectApps<'a> {
             .collect();
 
         let projects: Vec<_> = projects.into();
-        let otp_project_id = None;
 
-        ProjectApps {
-            all_apps,
-            otp_project_id,
-            projects,
-        }
+        ProjectApps { all_apps, projects }
     }
 
     pub fn app_structure(&self) -> AppStructure {
@@ -321,20 +315,9 @@ impl<'a> ProjectApps<'a> {
 
     pub fn app_roots(&self, project_id: ProjectId) -> AppRoots {
         let project_root_map = ProjectApps::app_source_roots(&self.all_apps);
-        let mut app_roots = project_root_map
+        project_root_map
             .get(&project_id)
             .unwrap_or(&AppRoots::new(FxHashMap::default()))
-            .clone();
-        // This leads to duplicating the OTP AppRoots in every
-        // project.  It is a small amount of data, and there are not a
-        // large number of projects, so it is probably OK.
-        if let Some(otp_project_id) = self.otp_project_id {
-            let otp_app_roots = project_root_map
-                .get(&otp_project_id)
-                .unwrap_or(&AppRoots::new(FxHashMap::default()))
-                .clone();
-            app_roots.merge(otp_app_roots);
-        }
-        app_roots
+            .clone()
     }
 }
