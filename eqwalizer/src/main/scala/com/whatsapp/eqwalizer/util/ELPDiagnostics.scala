@@ -79,7 +79,7 @@ object ELPDiagnostics {
       Error(
         te.pos,
         te.msg,
-        te.fburl,
+        te.docURL,
         te.errorName,
         explanation = te.explanation,
         shownExpression = te.erroneousExpr.map(Show.show),

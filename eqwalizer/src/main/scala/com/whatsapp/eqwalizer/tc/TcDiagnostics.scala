@@ -19,8 +19,8 @@ object TcDiagnostics {
     val pos: Pos
     val msg: String
     def explanation: Option[String] = None
-    def errorName: String // stable identifier for the class of error, to be used in fburls and metrics
-    def fburl: String = s"https://fburl.com/eqwalizer_$errorName"
+    def errorName: String // stable identifier for the class of error, to be used in metrics
+    def docURL: String = s"https://fb.me/eqwalizer_errors#$errorName"
     def erroneousExpr: Option[Expr]
   }
   case class ExpectedSubtype(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit pipelineContext: PipelineContext)
