@@ -115,8 +115,8 @@ pattern matched to ensure that `Atom = a`.
 
 For best practices for writing specs, see writing specs.
 For more information about the type system, including dynamic(), term(),
-and shapes, see [Syntax of types and specs in eqWAlizer](types.md)
-and [Subtyping in eqWAlizer](subtyping.md).
+and shapes, see [Syntax of types and specs in eqWAlizer](./types.md)
+and [Subtyping in eqWAlizer](./subtyping.md).
 
 
 ### not_enough_info_to_branch
@@ -143,7 +143,7 @@ with `b`.
 If you see this error, most likely the problem is with the overloaded function,
 not the function that is calling the overloaded function and can be fixed by
 ensuring the sub-specs of overloaded functions do not have overlapping domains.
-See [Overloaded Specs](advanced.md#overloaded-specs).
+See [Overloaded Specs](./advanced.md#overloaded-specs).
 
 
 ### fun_arity_mismatch
@@ -376,7 +376,7 @@ Otherwise, it is also possible to use *refined record fields*:
 -type good_refined(T) :: #good{field :: {T, number()}}.
 ```
 
-For more information, see [Records and Tuples](subtyping.md#records-and-tuples).
+For more information, see [Records and Tuples](./subtyping.md#records-and-tuples).
 
 
 ### ty_var_with_multiple_constraints
