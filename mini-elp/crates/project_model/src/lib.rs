@@ -24,10 +24,13 @@ use anyhow::anyhow;
 use anyhow::bail;
 use anyhow::Context;
 use anyhow::Result;
+use eetf::Term;
+use eetf::Term::Atom;
 use fxhash::FxHashSet;
 use lazy_static::lazy_static;
 use paths::AbsPath;
 use paths::AbsPathBuf;
+use serde::Deserialize;
 use tempfile::NamedTempFile;
 use tempfile::TempPath;
 use walkdir::WalkDir;
@@ -64,6 +67,11 @@ impl RebarConfig {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Ord, PartialOrd)]
+pub struct JSONConfig {
+    pub json_config: AbsPathBuf,
+}
+
 pub struct CommandProxy<'a>(MutexGuard<'a, ()>, Command);
 
 impl<'a> Deref for CommandProxy<'a> {
@@ -83,6 +91,7 @@ impl<'a> DerefMut for CommandProxy<'a> {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Ord, PartialOrd)]
 pub enum ProjectManifest {
     RebarConfig(RebarConfig),
+    JSONConfig(JSONConfig),
     OTP,
 }
 
@@ -193,19 +202,24 @@ impl ProjectManifest {
         res.sort();
         res
     }
+
+    pub fn from_json_file(json_config: AbsPathBuf) -> ProjectManifest {
+        ProjectManifest::JSONConfig(JSONConfig { json_config })
+    }
 }
 
 #[derive(Clone)]
 pub struct Project {
     pub build_info: BuildInfo,
+    pub manifest: ProjectManifest,
     pub otp: Otp,
     pub rebar: RebarProject,
 }
 
 #[derive(Clone)]
 pub enum BuildInfo {
-    Cached(RebarConfig, AbsPathBuf),
-    Loaded(RebarConfig, Arc<TempPath>),
+    Cached(AbsPathBuf),
+    Loaded(Arc<TempPath>),
 }
 
 impl PartialEq for Project {
@@ -231,8 +245,8 @@ impl Project {
 
     pub fn build_info_file(&self) -> Option<AbsPathBuf> {
         match &self.build_info {
-            BuildInfo::Cached(_, cached) => Some(cached.clone()),
-            BuildInfo::Loaded(_, loaded) => Some(AbsPathBuf::assert(loaded.to_path_buf())),
+            BuildInfo::Cached(cached) => Some(cached.clone()),
+            BuildInfo::Loaded(loaded) => Some(AbsPathBuf::assert(loaded.to_path_buf())),
         }
     }
 
@@ -256,6 +270,7 @@ impl fmt::Debug for Project {
         f.debug_struct("Project")
             .field("otp", &self.otp)
             .field("rebar", &self.rebar)
+            .field("manifest", &self.manifest)
             .finish_non_exhaustive()
     }
 }
@@ -265,6 +280,15 @@ pub struct RebarProject {
     pub apps: Vec<ProjectAppData>,
     pub deps: Vec<ProjectAppData>,
     pub root: AbsPathBuf,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+struct JsonProject {
+    pub apps: Vec<JsonProjectAppData>,
+    #[serde(default)]
+    pub deps: Vec<JsonProjectAppData>,
+    #[serde(default)]
+    pub root: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -294,6 +318,30 @@ pub struct ProjectAppData {
     pub macros: Vec<eetf::Term>,
     pub parse_transforms: Vec<eetf::Term>,
     pub app_type: AppType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+struct JsonProjectAppData {
+    pub name: String,
+    pub dir: String,
+    #[serde(default = "default_ebin")]
+    pub ebin: String,
+    #[serde(default = "default_src_dirs")]
+    pub src_dirs: Vec<String>,
+    #[serde(default)]
+    pub extra_src_dirs: Vec<String>,
+    #[serde(default)]
+    pub include_dirs: Vec<String>,
+    #[serde(default)]
+    pub macros: Vec<String>,
+}
+
+fn default_ebin() -> String {
+    "ebin".to_string()
+}
+
+fn default_src_dirs() -> Vec<String> {
+    vec!["src".to_string()]
 }
 
 impl ProjectAppData {
@@ -331,6 +379,33 @@ impl ProjectAppData {
             macros: vec![],
             parse_transforms: vec![],
             app_type: AppType::Otp,
+        }
+    }
+
+    fn from_json_app_data(
+        json_data: JsonProjectAppData,
+        dir: &AbsPathBuf,
+        is_dep: AppType,
+    ) -> Self {
+        let dir = dir.join(json_data.dir);
+        Self {
+            name: AppName(json_data.name),
+            ebin: dir.join(json_data.ebin),
+            src_dirs: json_data.src_dirs,
+            extra_src_dirs: json_data.extra_src_dirs,
+            include_dirs: json_data
+                .include_dirs
+                .into_iter()
+                .map(|inc| dir.join(inc))
+                .collect(),
+            macros: json_data
+                .macros
+                .into_iter()
+                .map(|mac| Term::from(eetf::Atom::from(mac)))
+                .collect(),
+            parse_transforms: vec![],
+            app_type: is_dep,
+            dir,
         }
     }
 
@@ -376,22 +451,21 @@ pub struct Otp {
 
 impl Project {
     pub fn compile_deps(&self) -> Result<()> {
-        let build = match &self.build_info {
-            BuildInfo::Cached(build, _) => build,
-            BuildInfo::Loaded(build, _) => build,
-        };
-
-        let mut cmd = build.rebar3_command();
-        cmd.arg("compile");
-        cmd.arg("--deps_only");
-
-        let _ = utf8_stdout(&mut cmd)?;
-
-        Ok(())
+        match &self.manifest {
+            ProjectManifest::RebarConfig(rebar) => {
+                let mut cmd = rebar.rebar3_command();
+                cmd.arg("compile");
+                cmd.arg("--deps_only");
+                let _ = utf8_stdout(&mut cmd)?;
+                Ok(())
+            }
+            ProjectManifest::JSONConfig(_) => return Ok(()),
+            ProjectManifest::OTP => return Ok(()),
+        }
     }
 
     pub fn load(manifest: ProjectManifest) -> Result<Project> {
-        let (manifest, out_file) = match manifest {
+        match &manifest {
             ProjectManifest::OTP => {
                 unreachable!(
                     "We cannot load OTP, because we do not know its structure (no build info)"
@@ -404,55 +478,88 @@ impl Project {
                     utf8_stdout(&mut cmd)?
                 };
 
-                let loaded = Project::load_rebar_build_info(&rebar_setting).with_context(|| {
+                let loaded = Project::load_rebar_build_info(rebar_setting).with_context(|| {
                     format!(
                         "Failed to read rebar build info for config file {}, {}",
                         rebar_setting.config_file.display(),
                         rebar_version
                     )
                 })?;
-                (rebar_setting, loaded)
+                let (rebar, otp_root) =
+                    RebarProject::from_rebar_build_info(&loaded).with_context(|| {
+                        format!(
+                            "Failed to decode rebar build info for config file {:?}",
+                            manifest
+                        )
+                    })?;
+                Ok(Project {
+                    build_info: BuildInfo::Loaded(Arc::new(loaded)),
+                    manifest,
+                    otp: Otp::discover(otp_root),
+                    rebar,
+                })
             }
-        };
-
-        let (rebar, otp_root) =
-            RebarProject::from_rebar_build_info(&out_file).with_context(|| {
-                format!(
-                    "Failed to decode rebar build info for config file {:?}",
-                    manifest
-                )
-            })?;
-
-        Ok(Project {
-            build_info: BuildInfo::Loaded(manifest, Arc::new(out_file)),
-            otp: Otp::discover(otp_root),
-            rebar,
-        })
+            ProjectManifest::JSONConfig(json_config) => {
+                let (rebar, otp_root) = RebarProject::from_json(&json_config.json_config)
+                    .with_context(|| {
+                        format!(
+                            "Failed to decode JSON build info for config file {:?}",
+                            manifest
+                        )
+                    })?;
+                let build_info_term = make_build_info(&rebar, &otp_root);
+                let build_info = save_build_info(build_info_term)?;
+                Ok(Project {
+                    build_info,
+                    manifest,
+                    otp: Otp::discover(otp_root),
+                    rebar,
+                })
+            }
+        }
     }
 
     pub fn load_cached(manifest: ProjectManifest, build_info: AbsPathBuf) -> Result<Project> {
-        let manifest = match manifest {
+        match &manifest {
             ProjectManifest::OTP => {
                 unreachable!(
                     "We cannot load OTP, because we do not know its structure (no build info)"
                 )
             }
-            ProjectManifest::RebarConfig(rebar_setting) => rebar_setting,
-        };
+            ProjectManifest::RebarConfig(rebar_setting) => {
+                let (rebar, otp_root) = RebarProject::from_rebar_build_info(&build_info)
+                    .with_context(|| {
+                        format!(
+                            "Failed to decode rebar build info for config file {:?}",
+                            rebar_setting
+                        )
+                    })?;
 
-        let (rebar, otp_root) =
-            RebarProject::from_rebar_build_info(&build_info).with_context(|| {
-                format!(
-                    "Failed to decode rebar build info for config file {:?}",
-                    manifest
-                )
-            })?;
-
-        Ok(Project {
-            build_info: BuildInfo::Cached(manifest, build_info),
-            otp: Otp::discover(otp_root),
-            rebar,
-        })
+                Ok(Project {
+                    build_info: BuildInfo::Cached(build_info),
+                    manifest,
+                    otp: Otp::discover(otp_root),
+                    rebar,
+                })
+            }
+            ProjectManifest::JSONConfig(json_config) => {
+                let (rebar, otp_root) = RebarProject::from_json(&json_config.json_config)
+                    .with_context(|| {
+                        format!(
+                            "Failed to decode JSON build info for config file {:?}",
+                            json_config
+                        )
+                    })?;
+                let build_info_term = make_build_info(&rebar, &otp_root);
+                let build_info = save_build_info(build_info_term)?;
+                Ok(Project {
+                    build_info,
+                    manifest,
+                    otp: Otp::discover(otp_root),
+                    rebar,
+                })
+            }
+        }
     }
 
     fn load_rebar_build_info(build: &RebarConfig) -> Result<TempPath> {
@@ -516,6 +623,42 @@ impl RebarProject {
         }
     }
 
+    fn from_json(json: &AbsPathBuf) -> Result<(RebarProject, PathBuf)> {
+        let data = fs::read_to_string(json)?;
+        let root = json.parent().unwrap().normalize();
+        let json: JsonProject = serde_json::from_str(&data).unwrap();
+        let root_project_dir = root.join(json.root);
+        let otp_dir = find_otp()?;
+        Ok((
+            RebarProject {
+                apps: json
+                    .apps
+                    .into_iter()
+                    .map(|json_app| {
+                        ProjectAppData::from_json_app_data(
+                            json_app,
+                            &root_project_dir,
+                            AppType::App,
+                        )
+                    })
+                    .collect(),
+                deps: json
+                    .deps
+                    .into_iter()
+                    .map(|json_app| {
+                        ProjectAppData::from_json_app_data(
+                            json_app,
+                            &root_project_dir,
+                            AppType::Dep,
+                        )
+                    })
+                    .collect(),
+                root: root_project_dir,
+            },
+            otp_dir,
+        ))
+    }
+
     /// Replicates behaviour of -include_lib through
     /// the -include fallback in a regularly structured
     /// rebar3 project without compiling modules
@@ -529,6 +672,120 @@ impl RebarProject {
             .into_iter()
             .collect()
     }
+}
+
+fn str_to_binary(s: &str) -> Term {
+    Term::Binary(s.as_bytes().into())
+}
+
+fn path_to_binary(path: &Path) -> Term {
+    str_to_binary(path.as_os_str().to_str().unwrap())
+}
+
+fn build_info_app(project_data: &ProjectAppData, ebin: &AbsPath) -> Term {
+    let dir = path_to_binary(project_data.dir.as_ref());
+    let ebin = path_to_binary(ebin.as_ref());
+
+    let extra_src_dirs = Term::List(
+        project_data
+            .extra_src_dirs
+            .iter()
+            .map(|s| str_to_binary(s.as_ref()))
+            .collect::<Vec<Term>>()
+            .into(),
+    );
+
+    let include_dirs = Term::List(
+        project_data
+            .include_dirs
+            .iter()
+            .map(|inc| path_to_binary(inc.as_ref()))
+            .collect::<Vec<Term>>()
+            .into(),
+    );
+
+    let macros = Term::List(project_data.macros.clone().into());
+    let name = str_to_binary(&project_data.name.0);
+    let parse_transforms = Term::List(project_data.parse_transforms.clone().into());
+
+    let src_dirs = Term::List(
+        project_data
+            .src_dirs
+            .iter()
+            .map(|path| str_to_binary(path.as_ref()))
+            .collect::<Vec<Term>>()
+            .into(),
+    );
+
+    Term::Map(
+        vec![
+            (Atom("dir".into()), dir),
+            (Atom("ebin".into()), ebin),
+            (Atom("extra_src_dirs".into()), extra_src_dirs),
+            (Atom("include_dirs".into()), include_dirs),
+            (Atom("macros".into()), macros),
+            (Atom("name".into()), name),
+            (Atom("parse_transforms".into()), parse_transforms),
+            (Atom("src_dirs".into()), src_dirs),
+        ]
+        .into(),
+    )
+}
+
+fn make_build_info(rebar: &RebarProject, otp_root: &Path) -> Term {
+    let mut apps = vec![];
+    let mut deps = vec![];
+    for project in &rebar.apps {
+        let ebin = &project.ebin;
+        apps.push(build_info_app(project, ebin));
+    }
+    for project in &rebar.deps {
+        let ebin = &project.ebin;
+        deps.push(build_info_app(project, ebin));
+    }
+    let apps = Term::List(apps.into());
+    let deps = Term::List(deps.into());
+    let otp_lib_dir = path_to_binary(otp_root);
+    let source_root = path_to_binary(rebar.root.as_path().as_ref());
+
+    Term::Map(
+        vec![
+            (Atom("apps".into()), apps),
+            (Atom("deps".into()), deps),
+            (Atom("otp_lib_dir".into()), otp_lib_dir),
+            (Atom("source_root".into()), source_root),
+        ]
+        .into(),
+    )
+}
+
+fn save_build_info(term: Term) -> Result<BuildInfo> {
+    let mut out_file = NamedTempFile::new()?;
+    term.encode(&mut out_file)?;
+    let build_info_path = out_file.into_temp_path();
+    Ok(BuildInfo::Loaded(Arc::new(build_info_path)))
+}
+
+fn find_otp() -> Result<PathBuf> {
+    let output = Command::new("erl")
+        .arg("-noshell")
+        .arg("-eval")
+        .arg("io:format('~s', [code:root_dir()])")
+        .arg("-s")
+        .arg("erlang")
+        .arg("halt")
+        .output()?;
+
+    if !output.status.success() {
+        bail!(
+            "Failed to get OTP dir, error code: {:?}, stderr: {:?}",
+            output.status.code(),
+            String::from_utf8(output.stderr)
+        );
+    }
+    let path = String::from_utf8(output.stdout)?;
+    let result: PathBuf = format!("{}/lib", path).into();
+    Ok(result)
 }
 
 impl Otp {
@@ -643,6 +900,9 @@ mod tests {
             }) => {
                 let expected = root.join("nested").join("rebar.config.script");
                 assert_eq!(actual, &expected);
+            }
+            ProjectManifest::JSONConfig(_) => {
+                unreachable!()
             }
         }
     }

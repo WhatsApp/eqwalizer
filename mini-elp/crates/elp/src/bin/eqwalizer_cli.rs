@@ -35,8 +35,16 @@ struct EqwalizerInternalArgs<'a> {
 }
 
 pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> {
-    let profile = args.profile.clone().map(Profile).unwrap_or_default();
-    let loaded = &load_rebar::load_project_with_caching_at(&args.project, &profile, args.fast)?;
+    let loaded = &match args.project.extension() {
+        None => {
+            let profile = args.profile.clone().map(Profile).unwrap_or_default();
+            load_rebar::load_project_with_caching_at(&args.project, &profile, args.fast)
+        }
+        Some(ext) => match ext.to_str() {
+            Some("json") => load_rebar::load_json_project_at(&args.project),
+            _ => panic!("Unknown file type for option --project"),
+        },
+    }?;
     let analysis = &loaded.analysis();
     let file_id = analysis
         .module_file_id(loaded.project_id, &args.module)?
@@ -57,8 +65,16 @@ pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> 
 }
 
 pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> {
-    let profile = args.profile.clone().map(Profile).unwrap_or_default();
-    let loaded = &load_rebar::load_project_at(&args.project, &profile)?;
+    let loaded = &match args.project.extension() {
+        None => {
+            let profile = args.profile.clone().map(Profile).unwrap_or_default();
+            load_rebar::load_project_at(&args.project, &profile)
+        }
+        Some(ext) => match ext.to_str() {
+            Some("json") => load_rebar::load_json_project_at(&args.project),
+            _ => panic!("Unknown file type for option --project"),
+        },
+    }?;
     let analysis = &loaded.analysis();
 
     let mut reporter: Box<dyn reporting::Reporter> = match args.format {

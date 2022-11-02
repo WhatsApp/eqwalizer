@@ -83,6 +83,17 @@ impl LoadResult {
     }
 }
 
+pub fn load_json_project_at(json: &Path) -> Result<LoadResult> {
+    let json_file = AbsPathBuf::assert(std::env::current_dir()?.join(json)).normalize();
+    let manifest = ProjectManifest::from_json_file(json_file);
+
+    let pb = util::spinner("Loading JSON manifest", "Loaded JSON manifest");
+    let project = Project::load(manifest)?;
+    pb.finish();
+
+    load_project(project)
+}
+
 pub fn load_project_at(root: &Path, project_profile: &Profile) -> Result<LoadResult> {
     let root = AbsPathBuf::assert(std::env::current_dir()?.join(root));
     let root = ProjectManifest::discover_single(&root, project_profile)?;

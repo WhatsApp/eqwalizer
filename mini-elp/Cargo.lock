@@ -300,6 +300,8 @@ dependencies = [
  "lazy_static",
  "log",
  "paths",
+ "serde",
+ "serde_json",
  "tempfile",
  "walkdir",
 ]
