@@ -82,6 +82,7 @@ mod tests {
     use expect_test::expect_file;
     use expect_test::ExpectFile;
     use tempfile::Builder;
+    use test_case::test_case;
 
     use super::*;
 
@@ -195,55 +196,47 @@ mod tests {
         eqwalize_snapshot("parse_error", "parse_error_a", false).unwrap();
     }
 
-    #[test]
-    fn eqwalize_module_diagnostics_match_snapshot_jsonl() {
+    #[test_case(false ; "rebar")]
+    #[test_case(true  ; "JSON")]
+    fn eqwalize_module_diagnostics_match_snapshot_jsonl(json_config: bool) {
         simple_snapshot(
-            args_vec![
-                "eqwalize",
-                "app_a_mod2",
-                "--project",
-                "../../test_projects/standard",
-                "--format",
-                "json"
-            ],
+            args_vec!["eqwalize", "app_a_mod2", "--format", "json"],
             expect_file!["../resources/test/standard/eqwalize_app_a_mod2_diagnostics.jsonl"],
+            json_config,
+            "../../test_projects/standard".into(),
         );
     }
 
-    #[test]
-    fn eqwalize_module_diagnostics_match_snapshot_json_lsp() {
+    #[test_case(false ; "rebar")]
+    #[test_case(true  ; "JSON")]
+    fn eqwalize_module_diagnostics_match_snapshot_json_lsp(json_config: bool) {
         simple_snapshot(
-            args_vec![
-                "eqwalize",
-                "app_a_mod2",
-                "--project",
-                "../../test_projects/standard",
-                "--format",
-                "json-lsp"
-            ],
+            args_vec!["eqwalize", "app_a_mod2", "--format", "json-lsp"],
             expect_file!["../resources/test/standard/eqwalize_app_a_mod2_diagnostics_lsp.jsonl"],
+            json_config,
+            "../../test_projects/standard".into(),
         );
     }
 
-    #[test]
-    fn eqwalize_all_diagnostics_match_snapshot_jsonl() {
+    #[test_case(false ; "rebar")]
+    #[test_case(true  ; "JSON")]
+    fn eqwalize_all_diagnostics_match_snapshot_jsonl(json_config: bool) {
         simple_snapshot(
-            args_vec![
-                "eqwalize-all",
-                "--project",
-                "../../test_projects/standard",
-                "--format",
-                "json"
-            ],
+            args_vec!["eqwalize-all", "--format", "json"],
             expect_file!["../resources/test/standard/eqwalize_all_diagnostics.jsonl"],
+            json_config,
+            "../../test_projects/standard".into(),
         );
     }
 
-    #[test]
-    fn eqwalize_all_diagnostics_match_snapshot_pretty() {
+    #[test_case(false ; "rebar")]
+    #[test_case(true  ; "JSON")]
+    fn eqwalize_all_diagnostics_match_snapshot_pretty(json_config: bool) {
         simple_snapshot(
-            args_vec!["eqwalize-all", "--project", "../../test_projects/standard"],
+            args_vec!["eqwalize-all"],
             expect_file!["../resources/test/standard/eqwalize_all_diagnostics.pretty"],
+            json_config,
+            "../../test_projects/standard".into(),
         );
     }
 
@@ -264,7 +257,18 @@ mod tests {
         )
     }
 
-    fn simple_snapshot(args: Vec<OsString>, expected: ExpectFile) {
+    fn simple_snapshot(
+        args: Vec<OsString>,
+        expected: ExpectFile,
+        json_config: bool,
+        project: PathBuf,
+    ) {
+        let project_path = if json_config {
+            project.join("build_info.json")
+        } else {
+            project
+        };
+        let args = [args, args_vec!["--project", project_path]].concat();
         let (stdout, stderr, code) = elp(args);
         assert_eq!(
             code, 0,

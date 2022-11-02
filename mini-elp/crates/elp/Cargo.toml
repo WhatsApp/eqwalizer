@@ -40,3 +40,5 @@ jemallocator.workspace = true
 
 [dev-dependencies]
 expect-test.workspace = true
+test-case.workspace = true
+test-env-helpers.workspace = true

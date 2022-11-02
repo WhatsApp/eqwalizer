@@ -1,0 +1,31 @@
+{
+  "apps": [
+    {
+      "name": "app_a",
+      "dir": "app_a",
+      "ebin": "../_build/test/lib/app_a/ebin",
+      "extra_src_dirs": ["test"],
+      "include_dirs": ["include"],
+      "macros": ["TEST"],
+      "src_dirs": ["src"]
+    },
+    {
+      "name": "app_b",
+      "dir": "app_b",
+      "ebin": "../_build/test/lib/app_b/ebin",
+      "macros": ["TEST"],
+      "src_dirs": ["src"]
+    },
+    {
+      "name": "eqwalizer",
+      "dir": "eqwalizer",
+      "ebin": "../_build/test/lib/eqwalizer/ebin",
+      "macros": ["TEST"],
+      "src_dirs": ["src"]
+    }
+  ],
+  "deps": [
+
+  ],
+  "root": ""
+}
