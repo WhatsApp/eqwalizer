@@ -32,8 +32,8 @@ non-generated specs:
     containing range: 0.19%
     containing int lit: 0.38%
 all records:
-    containing number: 5.10%
-    containing integer: 18.37%
+    containing number: 5.05%
+    containing integer: 18.18%
     containing pos_integer: 0.00%
     containing non_neg_integer: 0.00%
     containing neg_integer: 0.00%
@@ -41,4 +41,4 @@ all records:
     containing char: 0.00%
     containing float: 0.00%
     containing range: 0.00%
-    containing int lit: 2.04%
+    containing int lit: 2.02%

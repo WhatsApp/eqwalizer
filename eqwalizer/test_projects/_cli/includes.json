@@ -43,5 +43,14 @@
         "target_path": "check/include/my_header.hrl"
       }
     ]
+  },
+  {
+    "file": "third_party/src/skip_me.erl",
+    "includes": [
+      {
+        "line": 6,
+        "target_path": "check/include/my_header.hrl"
+      }
+    ]
   }
 ]

@@ -34,7 +34,7 @@ object Main {
       case "stats"       => StatDiagnostics.printStats()
       case "smoke"       => smokeRun()
       case "index"       => gleanIndex(args)
-      case "custom-lint" => custom_lint()
+      case "custom-lint" => custom_lint(args1)
       case _             => help()
     }
   }
@@ -78,10 +78,12 @@ object Main {
     Console.flush()
   }
 
-  private def custom_lint(): Unit = {
+  private def custom_lint(customLintArgs: Array[String]): Unit = {
+    val ignoredApps = customLintArgs.tail.toList
     val analysis = Class.forName("com.whatsapp.eqwalizer.custom.ApplicationEnv")
-    val main = analysis.getDeclaredMethod("main")
-    main.invoke(null)
+
+    val main = analysis.getDeclaredMethod("main", classOf[List[String]])
+    main.invoke(null, ignoredApps)
     ()
   }
 
