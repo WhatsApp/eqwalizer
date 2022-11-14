@@ -36,6 +36,8 @@ private object Db {
     otpApps.values.flatMap(_.modules).toSet
   lazy val projectApps: Map[String, App] =
     config.apps.map { case (n, ai) => n -> App(n, ai.ebin, erlModules(ai), hasEqwalizerMarker(ai)) }
+  lazy val projectModules: Set[String] =
+    projectApps.values.flatMap(_.modules).toSet
   lazy val depApps: Map[String, App] =
     config.deps.map { case (n, ai) => n -> App(n, ai.ebin, erlModules(ai), hasEqwalizerMarker = false) }
   lazy val depModules: Set[String] =
@@ -170,7 +172,7 @@ private object Db {
       }
 
   def fromBeam(module: String): Boolean =
-    otpModules(module) || depModules(module) || !config.useElp
+    ((otpModules(module) || depModules(module)) && !projectModules(module)) || !config.useElp
 
   // $COVERAGE-OFF$
   private val generatedMark: String = "@" + "generated"
