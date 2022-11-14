@@ -43,7 +43,7 @@ object Vars {
       case PatRecordIndex(_, _) =>
         Set.empty
       case PatMap(kvs) =>
-        kvs.flatMap(kv => patVars(kv._1) ++ patVars(kv._2)).toSet
+        kvs.flatMap(kv => patVars(kv._2)).toSet
     }
 
   private def binaryElemVars(elem: PatBinaryElem): Set[String] =
@@ -200,7 +200,7 @@ final class Vars(pipelineContext: PipelineContext) {
       case PatRecordIndex(_, _) =>
         List.empty
       case PatMap(kvs) =>
-        kvs.flatMap(kv => patVarsL(kv._1) ++ patVarsL(kv._2))
+        kvs.flatMap(kv => patVarsL(kv._2))
     }
 
   private def binaryElemVarsL(elem: PatBinaryElem): List[String] =

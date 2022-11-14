@@ -1,4 +1,3 @@
-check/src/generics_with_unions.erl:50
 check/src/misc.erl:158
 check/src/misc.erl:162
 check/src/misc.erl:166
@@ -18,18 +17,7 @@ check/src/pinned.erl:41
 check/src/pinned.erl:43
 check/src/pinned.erl:52
 check/src/pinned.erl:54
-check/src/recursive_aliases.erl:128
-check/src/recursive_aliases.erl:150
 check/src/subtype_pos.erl:93
-check/src/t_maps.erl:294
-check/src/t_maps.erl:302
-check/src/t_maps.erl:363
-check/src/t_maps.erl:372
-check/src/t_maps.erl:381
-check/src/t_maps.erl:389
-check/src/t_maps.erl:398
-check/src/t_maps.erl:407
-check/src/t_maps.erl:436
 check/src/tries.erl:136
 check/src/tries.erl:144
 eqwater/src/eqwater_records.erl:46
@@ -38,4 +26,4 @@ eqwater/src/eqwater_sound.erl:70
 eqwater/src/eqwater_sound.erl:74
 eqwater/src/eqwater_sound.erl:81
 eqwater/src/eqwater_sound.erl:90
-Total: 40
+Total: 28

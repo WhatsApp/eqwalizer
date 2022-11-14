@@ -35,5 +35,5 @@ object Pats {
   case class PatBinaryElem(pat: Pat, size: Option[Expr], specifier: Specifier)(val pos: Pos)
 
   case class PatRecordFieldNamed(name: String, pat: Pat)
-  case class PatMap(kvs: List[(Pat, Pat)])(val pos: Pos) extends Pat
+  case class PatMap(kvs: List[(Guards.Test, Pat)])(val pos: Pos) extends Pat
 }

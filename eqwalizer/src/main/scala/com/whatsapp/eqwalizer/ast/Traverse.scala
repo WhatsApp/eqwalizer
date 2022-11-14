@@ -290,7 +290,7 @@ class Traverse(val listener: AstListener) {
     case pm @ PatMap(kvs) =>
       listener.enterPat(pm)
       kvs.foreach { kv =>
-        traversePat(kv._1)
+        traverseTest(kv._1)
         traversePat(kv._2)
       }
       listener.exitPat(pm)

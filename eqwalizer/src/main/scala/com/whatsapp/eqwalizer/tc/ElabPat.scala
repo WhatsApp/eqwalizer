@@ -7,9 +7,10 @@
 package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.BinarySpecifiers
+import com.whatsapp.eqwalizer.ast.Guards.TestAtom
 import com.whatsapp.eqwalizer.ast.Pats._
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{UnhandledOp, UnboundRecord}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{UnboundRecord, UnhandledOp}
 
 final class ElabPat(pipelineContext: PipelineContext) {
   private lazy val module = pipelineContext.module
@@ -136,14 +137,14 @@ final class ElabPat(pipelineContext: PipelineContext) {
         val mapType = narrow.asMapType(t)
         var refinedMapType = mapType
         var envAcc = env
-        for ((keyPat, valPat) <- kvs) {
-          keyPat match {
-            case PatAtom(key) =>
+        for ((keyTest, valPat) <- kvs) {
+          keyTest match {
+            case TestAtom(key) =>
               val (_, env1) = elabPat(valPat, narrow.getValType(key, mapType), envAcc)
               refinedMapType = narrow.withRequiredProp(key, mapType)
               envAcc = env1
             case _ =>
-              val (_, env1) = elabPat(keyPat, narrow.getKeyType(mapType), envAcc)
+              val env1 = pipelineContext.elabGuard.elabTestT(keyTest, narrow.getKeyType(mapType), envAcc)
               val (_, env2) = elabPat(valPat, narrow.getValType(mapType), env1)
               envAcc = env2
           }

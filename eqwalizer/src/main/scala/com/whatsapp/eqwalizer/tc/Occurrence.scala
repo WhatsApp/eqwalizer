@@ -330,7 +330,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case PatMatch(pat1, pat2) =>
         aliases(x, path, pat1, env) ++ aliases(x, path, pat2, env)
       case PatMap(pats) =>
-        pats.collect { case (PatAtom(key), patR) =>
+        pats.collect { case (TestAtom(key), patR) =>
           val pathI = path ++ List(ShapeField(key))
           aliases(x, pathI, patR, env)
         }.flatten
@@ -497,8 +497,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val posThis = Pos(obj, DictMap(AnyType, AnyType))
         val negThis = Neg(obj, DictMap(AnyType, AnyType))
         val fields = pats.map {
-          case (PatAtom(field), pat) => (field, pat)
-          case _                     => return Some(posThis, Unknown)
+          case (TestAtom(field), pat) => (field, pat)
+          case _                      => return Some(posThis, Unknown)
         }
         val (posThat, negThat) = fields.flatMap { case (field, pat) =>
           patProps(x, path :+ ShapeField(field), pat, env)

@@ -190,7 +190,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     }
   }
 
-  private def elabTestT(test: Test, upper: Type, env: Env): Env =
+  def elabTestT(test: Test, upper: Type, env: Env): Env =
     test match {
       case TestVar(v) =>
         val testType = env.get(v) match {

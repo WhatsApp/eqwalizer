@@ -2560,7 +2560,8 @@
         "exported_funs": [
           "use_invalid_opaque_1/1",
           "use_invalid_opaque_2/1",
-          "f/1"
+          "f/1",
+          "g/1"
         ]
       },
       {

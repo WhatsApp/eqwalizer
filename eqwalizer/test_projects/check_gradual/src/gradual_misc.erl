@@ -24,3 +24,7 @@ use_invalid_opaque_2(X) ->
 -spec f(map()) -> ok.
 f(#{(#{} =/= a) := _}) ->
   ok.
+  
+-spec g(map()) -> ok.
+g(#{(a #{ b => c }) := _})  -> 
+    ok.

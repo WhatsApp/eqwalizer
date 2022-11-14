@@ -618,9 +618,9 @@ class ConvertAst(fromBeam: Boolean) {
       // $COVERAGE-ON$
     }
 
-  private def convertPatKV(term: EObject): (Pat, Pat) = {
-    val ETuple(List(EAtom("map_field_exact" | "map_field_assoc"), _, pat1, pat2)) = term
-    (convertPat(pat1), convertPat(pat2))
+  private def convertPatKV(term: EObject): (Test, Pat) = {
+    val ETuple(List(EAtom("map_field_exact" | "map_field_assoc"), _, test, pat)) = term
+    (convertTest(test), convertPat(pat))
   }
 
   private def convertPatRecordField(term: EObject): Option[PatRecordFieldNamed] = {
