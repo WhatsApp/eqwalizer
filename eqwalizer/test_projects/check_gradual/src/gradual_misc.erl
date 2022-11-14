@@ -20,3 +20,7 @@ use_invalid_opaque_1(X) ->
 ) -> opaque:contravariant(a).
 use_invalid_opaque_2(X) ->
   X.
+
+-spec f(map()) -> ok.
+f(#{(#{} =/= a) := _}) ->
+  ok.

@@ -191,6 +191,8 @@ final class ElabPat(pipelineContext: PipelineContext) {
           case _ => (NoneType, env2)
           // $COVERAGE-ON$
         }
+      case ">" | "<" | "/=" | ">=" | "=<" | "=/=" | "=:=" | "==" =>
+        (booleanType, env)
       // $COVERAGE-OFF$
       case _ => throw UnhandledOp(binOp.pos, op)
       // $COVERAGE-ON$
