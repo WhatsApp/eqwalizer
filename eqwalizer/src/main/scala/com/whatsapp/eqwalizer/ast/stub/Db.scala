@@ -73,7 +73,7 @@ private object Db {
     }
   }
 
-  private var globalizedModuleStubs: Map[String, ExtModuleStub] =
+  private var rawModuleStubs: Map[String, ExtModuleStub] =
     Map.empty
   private var expandedModuleStubs: Map[String, ModuleStub] =
     Map.empty
@@ -114,30 +114,22 @@ private object Db {
       else None
     }
 
-  def getGlobalizedModuleStub(module: String): Option[ExtModuleStub] = {
-    if (globalizedModuleStubs.contains(module))
-      Some(globalizedModuleStubs(module))
+  def getRawModuleStub(module: String): Option[ExtModuleStub] = {
+    if (rawModuleStubs.contains(module))
+      Some(rawModuleStubs(module))
     else
       getExtModuleStub(module).map { s =>
         var types: Set[Id] = Set.empty
-        val globalizedForms = s.forms.map {
+        s.forms.foreach {
           case f: ExternalTypeDecl =>
             types += f.id
-            Globalize.globalizeTypeDecl(module, f)
           case f: ExternalOpaqueDecl =>
             types += f.id
-            Globalize.globalizeOpaqueDecl(module, f)
-          case f: ExternalFunSpec =>
-            Globalize.globalizeSpec(module, f)
-          case f: ExternalRecDecl =>
-            Globalize.globalizeRecDecl(module, f)
-          case f: ExternalCallback =>
-            Globalize.globalizeCallback(module, f)
-          case f =>
-            f
+          case _ =>
+            ()
         }
-        val stub = s.copy(forms = globalizedForms, types = types)
-        globalizedModuleStubs = globalizedModuleStubs.updated(module, stub)
+        val stub = s.copy(types = types)
+        rawModuleStubs = rawModuleStubs.updated(module, stub)
         stub
       }
   }
@@ -146,7 +138,7 @@ private object Db {
     if (expandedModuleStubs.contains(module))
       Some(expandedModuleStubs(module))
     else
-      getGlobalizedModuleStub(module).map { s =>
+      getRawModuleStub(module).map { s =>
         val stub = Expander.expandStub(s)
         expandedModuleStubs = expandedModuleStubs.updated(module, stub)
         stub

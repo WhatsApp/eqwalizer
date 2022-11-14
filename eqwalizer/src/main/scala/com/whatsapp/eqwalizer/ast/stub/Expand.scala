@@ -101,8 +101,12 @@ private class Expand(module: String) {
 
   private def expand(t: ExtType): ExtType =
     t match {
+      case LocalExtType(Id(n, arity), params) =>
+        val id = RemoteId(module, n, arity)
+        val expandedParams = params.map(expand)
+        RemoteExtType(id, expandedParams)(t.pos)
       case RemoteExtType(id, params) =>
-        val stub = Db.getGlobalizedModuleStub(id.module).getOrElse(throw InvalidDiagnostics.UnknownId(t.pos, id))
+        val stub = Db.getRawModuleStub(id.module).getOrElse(throw InvalidDiagnostics.UnknownId(t.pos, id))
         val localId = Id(id.name, id.arity)
         val isDefined = stub.types(localId)
         if (!isDefined)
@@ -136,9 +140,6 @@ private class Expand(module: String) {
       case _: VarExtType | _: BuiltinExtType | _: RangeExtType | _: IntLitExtType | _: AtomLitExtType |
           _: RecordExtType | _: UnOpType | _: BinOpType =>
         t
-      // $COVERAGE-OFF$
-      case LocalExtType(_, _) => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def isBadProp(prop: ExtProp): Boolean =
@@ -165,6 +166,9 @@ private class Expand(module: String) {
 
   private def expandConstraints(t: ExtType, s: Map[String, ExtType], stack: Set[String]): ExtType =
     t match {
+      case LocalExtType(Id(n, arity), params) =>
+        val id = RemoteId(module, n, arity)
+        RemoteExtType(id, params.map(expandConstraints(_, s, stack)))(t.pos)
       case RemoteExtType(id, params) =>
         RemoteExtType(id, params.map(expandConstraints(_, s, stack)))(t.pos)
       case FunExtType(args, resType) =>
@@ -196,9 +200,6 @@ private class Expand(module: String) {
       case _: BuiltinExtType | _: RangeExtType | _: IntLitExtType | _: AtomLitExtType | _: RecordExtType |
           _: AnyMapExtType | _: UnOpType | _: BinOpType | _: AnyListExtType =>
         t
-      // $COVERAGE-OFF$
-      case LocalExtType(_, _) => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def expandProp(prop: ExtProp, s: Map[String, ExtType], stack: Set[String]): ExtProp =
