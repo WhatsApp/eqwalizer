@@ -2590,6 +2590,17 @@
         ]
       },
       {
+        "module": "gradual_regression_01",
+        "exported_funs": [
+          "maybe1/1",
+          "maybe2/1",
+          "simple1/1",
+          "simple2/1",
+          "tuple1/2",
+          "tuple2/2"
+        ]
+      },
+      {
         "module": "gradual_untyped",
         "exported_funs": [
           "reveal_any_list/1",
