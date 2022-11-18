@@ -101,22 +101,14 @@ as_rec1a(R)                                |         |
 as_rec1_neg(R)                             | ERROR   |
     when is_record(R, rec2) -> R.          |         | R.
                                            |         | Expected: #rec1{}
-                                           |         | Got     : none() | #rec2{}
-                                           |         | 
-                                           |         |   none() | #rec2{} is not a subtype of #rec1{}
-                                           |         |   because
-                                           |         |   #rec2{} is not a subtype of #rec1{}
+                                           |         | Got     : #rec2{}
                                            |         |
 -spec as_rec1a_neg                         |         |
     (#rec1{} | #rec2{}) -> #rec1{}.        |         |
 as_rec1a_neg(R)                            | ERROR   |
     when is_record(R, rec2, 1) -> R.       |         | R.
                                            |         | Expected: #rec1{}
-                                           |         | Got     : none() | #rec2{}
-                                           |         | 
-                                           |         |   none() | #rec2{} is not a subtype of #rec1{}
-                                           |         |   because
-                                           |         |   #rec2{} is not a subtype of #rec1{}
+                                           |         | Got     : #rec2{}
                                            |         |
 -spec any_fun_x(any()) -> fun().           |         |
 any_fun_x(F) when is_function(F, 2) -> F;  | OK      |

@@ -10,7 +10,7 @@
 -spec reveal_type1                         |         |
     (atom() | binary()) -> any().          |         |
 reveal_type1(A) when is_atom(A) ->         | ERROR   |
-    eqwalizer:reveal_type(A),              |         | atom() | none()
+    eqwalizer:reveal_type(A),              |         | atom()
 
     A;                                     |         |
 reveal_type1(B) ->                         |         |

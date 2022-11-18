@@ -694,14 +694,14 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   private def restrict(t1: Type, t2: Type): Type = {
     (t1, t2) match {
-      case (UnionType(ts), s) =>
-        UnionType(ts.map(restrict(_, s)))
       case (t, s) if overlap(t, s).isFalse =>
         NoneType
       case (t, s) if subtype.gradualSubType(t, s) =>
         t
       case (t, s) if subtype.gradualSubType(s, t) =>
         s
+      case (UnionType(ts), s) =>
+        UnionType(ts.map(restrict(_, s)))
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
         restrict(body, t2)

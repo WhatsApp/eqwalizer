@@ -1249,5 +1249,5 @@ orelse5_neg(Validator) ->                  | ERROR   |
         Validator =/= undefined            |         |
             orelse Validator(),            |         | Validator.
                                            |         | Expected fun type with arity 0
-                                           |         | Got: 'undefined' | none()
+                                           |         | Got: 'undefined'
     Res.                                   |         |

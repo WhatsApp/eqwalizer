@@ -55,23 +55,14 @@ tuple1(X, Y) ->                            | OK      |
                                            |         |
 -spec tuple2(term(), term()) ->            |         |
   {binary(), binary()}.                    |         |
-tuple2(X, Y) ->                            | ERROR   |
+tuple2(X, Y) ->                            | OK      |
   Maybe1 = maybe2(X),                      |         |
   Maybe2 = maybe2(Y),                      |         |
   case {Maybe1, Maybe2} of                 |         |
     {none, none} ->                        |         |
       {<< >>, << >>};                      |         |
     {Bin1, none} ->                        |         |
-      {Bin1, << >>};                       |         | {Bin1, <<..>>}.
-                                           |         | Expected: {binary(), binary()}
-                                           |         | Got     : {dynamic() | 'none', binary()}
-                                           |         | 
-                                           |         |   at tuple index 1:
-                                           |         |   {dynamic() | 'none', binary()} is not a subtype of {binary(), binary()}
-                                           |         |   because
-                                           |         |   dynamic() | 'none' is not a subtype of binary()
-                                           |         |   because
-                                           |         |   'none' is not a subtype of binary()
+      {Bin1, << >>};                       |         |
     {none, Bin2} ->                        |         |
       {<< >>, Bin2};                       |         |
     {Bin1, Bin2} ->                        |         |

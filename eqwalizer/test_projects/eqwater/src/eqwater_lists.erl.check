@@ -63,9 +63,9 @@ occ_list_07_neg(L) -> L.                   |         | L.
 occ_list_08_neg([_ | _]) -> ok;            | ERROR   |
 occ_list_08_neg(A) -> A.                   |         | A.
                                            |         | Expected: atom()
-                                           |         | Got     : none() | atom() | [] | none()
+                                           |         | Got     : none() | atom() | []
                                            |         | 
-                                           |         |   none() | atom() | [] | none() is not a subtype of atom()
+                                           |         |   none() | atom() | [] is not a subtype of atom()
                                            |         |   because
                                            |         |   [] is not a subtype of atom()
                                            |         |
@@ -76,9 +76,9 @@ occ_list_09([_ | _]) -> ok;                | ERROR   |
 occ_list_09([]) -> nil;                    |         |
 occ_list_09(A) -> A.                       |         | A.
                                            |         | Expected: atom()
-                                           |         | Got     : none() | atom() | [] | none()
+                                           |         | Got     : none() | atom() | []
                                            |         | 
-                                           |         |   none() | atom() | [] | none() is not a subtype of atom()
+                                           |         |   none() | atom() | [] is not a subtype of atom()
                                            |         |   because
                                            |         |   [] is not a subtype of atom()
                                            |         |
