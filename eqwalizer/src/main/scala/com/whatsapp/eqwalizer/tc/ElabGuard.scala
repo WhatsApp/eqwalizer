@@ -345,6 +345,14 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         (booleanType, env2)
       case ">=" | ">" | "=<" | "<" | "/=" | "=/=" | "==" | "=:=" =>
         (booleanType, elabComparison(binOp, env))
+      case "andalso" =>
+        val env1 = elabTestT(arg1, booleanType, env)
+        val (t2, env2) = elabTest(arg2, env1)
+        (subtype.join(List(t2, falseType)), env2)
+      case "orelse" =>
+        val env1 = elabTestT(arg1, booleanType, env)
+        val (t2, env2) = elabTest(arg2, env1)
+        (subtype.join(List(t2, trueType)), env2)
       case _ =>
         // $COVERAGE-OFF$
         throw new IllegalStateException(s"unexpected $op")

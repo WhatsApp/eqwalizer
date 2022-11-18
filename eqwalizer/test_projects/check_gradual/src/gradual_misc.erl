@@ -28,3 +28,7 @@ f(#{(#{} =/= a) := _}) ->
 -spec g(map()) -> ok.
 g(#{(a #{ b => c }) := _})  -> 
     ok.
+
+-spec fuzz01() -> ok.
+fuzz01() when #{(true andalso false) => {}} ->
+    ok.
