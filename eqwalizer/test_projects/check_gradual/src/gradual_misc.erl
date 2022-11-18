@@ -32,3 +32,7 @@ g(#{(a #{ b => c }) := _})  ->
 -spec fuzz01() -> ok.
 fuzz01() when #{(true andalso false) => {}} ->
     ok.
+
+-spec fuzz02() -> ok.
+fuzz02() ->
+    <<X || X <- [], (X ++ X) >>.

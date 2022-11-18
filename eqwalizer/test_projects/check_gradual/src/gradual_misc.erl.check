@@ -34,3 +34,9 @@ g(#{(a #{ b => c }) := _})  ->             | OK      |
 -spec fuzz01() -> ok.                      |         |
 fuzz01() when #{(true andalso false) => {}…… OK      |
     ok.                                    |         |
+                                           |         |
+-spec fuzz02() -> ok.                      |         |
+fuzz02() ->                                | ERROR   |
+    <<X || X <- [], (X ++ X) >>.           |         | << || >>.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : binary()

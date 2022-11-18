@@ -28,6 +28,37 @@ object Filters {
       "is_tuple",
     )
 
+  val guards_binop: Set[String] =
+    Set(
+      "/",
+      "*",
+      "-",
+      "+",
+      "div",
+      "rem",
+      "band",
+      "bor",
+      "bxor",
+      "bsl",
+      "bsr",
+      "or",
+      "xor",
+      "and",
+      ">=",
+      ">",
+      "=<",
+      "<",
+      "/=",
+      "=/=",
+      "==",
+      "=:=",
+      "andalso",
+      "orelse",
+    )
+
+  val guards_unop: Set[String] =
+    Set("bnot", "+", "-", "not")
+
   private def isPredicateFun(name: String, arity: Int): Boolean =
     (name, arity) match {
       case (_, 1) =>
@@ -54,11 +85,11 @@ object Filters {
         for {
           argsT <- asTests(args)
         } yield TestCall(Id(f, arity), argsT)(expr.pos)
-      case UnOp(op, arg) =>
+      case UnOp(op, arg) if guards_unop(op) =>
         for {
           argT <- asTest(arg)
         } yield TestUnOp(op, argT)(expr.pos)
-      case BinOp(op, arg1, arg2) =>
+      case BinOp(op, arg1, arg2) if guards_binop(op) =>
         for {
           arg1T <- asTest(arg1)
           arg2T <- asTest(arg2)
