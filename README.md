@@ -37,6 +37,42 @@ Adding `eqwalizer_support` and `eqwalizer_rebar3`:
 ]}.
 ```
 
+
+## Using it with non-rebar projects
+
+1. Use OTP 25 (it will be detected automatically by eqWAlizer)
+2. Download the `elp` binary for your system from https://github.com/WhatsApp/eqwalizer/releases
+3. Write a `project.json` file describing your project, see below for the file structure.
+Ensure `eqwalizer_support` is added as a dependency, and that its `ebin` folder is reachable and populated
+with `.beam` files.
+4. From the project directory, assuming your `.json` file is called `project.json` run:
+  - `elp eqwalize <module> --project project.json` to type-check a single module
+  - `elp eqwalize-all --project project.json` to type-check all `src` modules in the project
+
+The `.json` file should be structured in this way:
+```
+{
+  "apps": [app list],
+  "deps": [app list],      // 3rd party dependencies (not type-checked), defaults to []
+  "root": "path/to/root"   // Defaults to ""
+}
+```
+where an `app` is a map structured as such:
+```
+{
+  "name": "app_name",
+  "dir": "path/to/app",                         // Relative to project root
+  "src_dirs": ["path/to/src", ...],             // Relative to app dir, defaults to ["src"]
+  "extra_src_dirs": ["path/to/extra_src", ...], // Relative to app dir, defaults to []
+  "ebin": "path/to/ebin",                       // Relative to app dir, defaults to "ebin"
+  "include_dirs": ["include", ...],             // Relative to app dir, defaults to []
+  "macros": ["MACRO", ...],                     // Defaults to []
+}
+```
+As an example, see the [build_info.json](https://github.com/WhatsApp/eqwalizer/blob/main/mini-elp/test_projects/standard/build_info.json)
+file used to test mini-elp.
+
+
 ## FAQ
 
 Please refer to [the FAQ document](./FAQ.md) for answers to some common questions,
