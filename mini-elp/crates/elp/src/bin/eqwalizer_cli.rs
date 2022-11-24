@@ -32,6 +32,7 @@ struct EqwalizerInternalArgs<'a> {
     file_ids: Vec<FileId>,
     reporter: &'a mut dyn reporting::Reporter,
     fast: bool,
+    strict: bool,
 }
 
 pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> {
@@ -61,6 +62,7 @@ pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> 
         file_ids: vec![file_id],
         reporter,
         fast: args.fast,
+        strict: args.strict,
     })
 }
 
@@ -101,6 +103,7 @@ pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> 
         file_ids,
         reporter,
         fast: false,
+        strict: args.strict,
     })
 }
 
@@ -111,6 +114,7 @@ fn eqwalize(
         file_ids,
         reporter,
         fast,
+        strict,
     }: EqwalizerInternalArgs,
 ) -> Result<()> {
     let format = elp_parse_server::Format::OffsetEtf;
@@ -121,7 +125,7 @@ fn eqwalize(
     pre_parse_for_speed(analysis.clone(), &file_ids, format);
     let pb = util::progress(file_ids.len() as u64, "eqWAlizing", "eqWAlized");
     let output = loaded.with_eqwalizer_progress_bar(pb.clone(), move |analysis| {
-        analysis.eqwalizer_diagnostics(loaded.project_id, file_ids, format)
+        analysis.eqwalizer_diagnostics(loaded.project_id, file_ids, format, strict)
     })?;
     pb.finish();
     match &*output {

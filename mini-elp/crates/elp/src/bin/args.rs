@@ -40,6 +40,7 @@ pub struct Eqwalize {
     pub fast: bool,
     pub profile: Option<String>,
     pub format: Format,
+    pub strict: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -47,6 +48,7 @@ pub struct EqwalizeAll {
     pub project: PathBuf,
     pub profile: Option<String>,
     pub format: Format,
+    pub strict: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -86,9 +88,11 @@ COMMANDS:
         --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)
         --fast                 Refresh AST information for only the specified module
         --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
+        --strict               Eqwalize in strict mode
     eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
         --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)
         --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
+        --strict               Eqwalize in strict mode
 
 ENV VARS:
     ELP_EQWALIZER_PATH         Path to the eqwalizer executable, otherwise local one is used
@@ -147,21 +151,25 @@ impl Args {
                 let module = arguments.free_from_str()?;
                 let fast = arguments.contains("--fast");
                 let format = get_format(&mut arguments)?;
+                let strict = arguments.contains("--strict");
                 Command::Eqwalize(Eqwalize {
                     project,
                     module,
                     fast,
                     profile,
                     format,
+                    strict,
                 })
             }
             "eqwalize-all" => {
                 let project = get_project(&mut arguments)?;
                 let format = get_format(&mut arguments)?;
+                let strict = arguments.contains("--strict");
                 Command::EqwalizeAll(EqwalizeAll {
                     project,
                     profile,
                     format,
+                    strict,
                 })
             }
             _ => Command::Help,

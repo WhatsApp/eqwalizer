@@ -25,6 +25,7 @@ pub trait EqwalizerLoader {
         build_info_path: &AbsPath,
         modules: Vec<FileId>,
         format: elp_parse_server::Format,
+        strict: bool,
     ) -> Result<EqwalizerDiagnostics>;
 }
 
@@ -35,6 +36,7 @@ impl EqwalizerLoader for crate::RootDatabase {
         build_info_path: &AbsPath,
         modules: Vec<FileId>,
         format: elp_parse_server::Format,
+        strict: bool,
     ) -> Result<EqwalizerDiagnostics> {
         let module_index = self.module_index(project_id);
         let module_names = modules
@@ -50,7 +52,7 @@ impl EqwalizerLoader for crate::RootDatabase {
         };
 
         self.eqwalizer
-            .typecheck(build_info_path.as_ref(), db_api, module_names)
+            .typecheck(build_info_path.as_ref(), db_api, module_names, strict)
     }
 }
 
@@ -69,6 +71,7 @@ pub trait EqwalizerDatabase: SourceDatabase + EqwalizerLoader + ErlAstDatabase {
         project_id: ProjectId,
         file_ids: Vec<FileId>,
         format: elp_parse_server::Format,
+        strict: bool,
     ) -> Arc<EqwalizerDiagnostics>;
 }
 
@@ -77,10 +80,11 @@ fn eqwalizer_diagnostics(
     project_id: ProjectId,
     file_ids: Vec<FileId>,
     format: elp_parse_server::Format,
+    strict: bool,
 ) -> Arc<EqwalizerDiagnostics> {
     let project = db.project_data(project_id);
     if let Some(build_info_path) = &project.build_info_path {
-        match db.typecheck(project_id, build_info_path, file_ids, format) {
+        match db.typecheck(project_id, build_info_path, file_ids, format, strict) {
             Ok(diags) => Arc::new(diags),
             Err(error) => {
                 log::error!("EqWAlizing failed: {}", error);

@@ -144,11 +144,14 @@ impl Eqwalizer {
         build_info_path: &Path,
         mut db_api: impl DbApi,
         modules: Vec<&str>,
+        strict: bool,
     ) -> Result<EqwalizerDiagnostics> {
         let mut cmd = self.cmd();
         cmd.arg("ipc");
         cmd.args(modules);
         cmd.env("EQWALIZER_IPC", "true");
+        let gradual_typing = if strict { "false" } else { "true" };
+        cmd.env("EQWALIZER_GRADUAL_TYPING", gradual_typing);
         add_env(&mut cmd, build_info_path, None);
 
         let handle = &mut IpcHandle::from_command(&mut cmd)?;

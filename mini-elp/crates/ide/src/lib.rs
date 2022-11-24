@@ -78,8 +78,9 @@ impl Analysis {
         project_id: ProjectId,
         file_ids: Vec<FileId>,
         format: parse_server::Format,
+        strict: bool,
     ) -> Cancellable<Arc<EqwalizerDiagnostics>> {
-        self.with_db(|db| db.eqwalizer_diagnostics(project_id, file_ids, format))
+        self.with_db(|db| db.eqwalizer_diagnostics(project_id, file_ids, format, strict))
     }
 
     /// Low-level access to eqwalizer

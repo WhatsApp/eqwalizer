@@ -240,6 +240,17 @@ mod tests {
         );
     }
 
+    #[test_case(false ; "rebar")]
+    #[test_case(true  ; "JSON")]
+    fn eqwalize_all_strict_diagnostics_match_snapshot_pretty(json_config: bool) {
+        simple_snapshot(
+            args_vec!["eqwalize-all", "--strict"],
+            expect_file!["../resources/test/standard/eqwalize_all_strict_diagnostics.pretty"],
+            json_config,
+            "../../test_projects/standard".into(),
+        );
+    }
+
     #[test]
     fn help() {
         let (stdout, stderr, code) = elp(args_vec!["--help"]);

@@ -1,0 +1,466 @@
+error: expected_subtype
+   ┌─ app_a/src/app_a_errors_generated.erl:13:10
+   │
+13 │ foo() -> wrong_ret.
+   │          ^^^^^^^^^ 'wrong_ret'.
+Expected: 'foo'
+Got     : 'wrong_ret'
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:230:17
+    │
+230 │ last([E|Es]) -> last(E, Es).
+    │                 ^^^^^^^^^^^ Unbound var: last/2
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:247:5
+    │
+247 │     seq_loop(Last-First+1, Last, []).
+    │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: seq_loop/3
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:270:13
+    │
+270 │             seq_loop(N, Inc*(N-1)+First, Inc, []);
+    │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: seq_loop/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:291:20
+    │
+291 │ sum(L)          -> sum(L, 0).
+    │                    ^^^^^^^^^ Unbound var: sum/2
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:305:47
+    │
+305 │ duplicate(N, X) when is_integer(N), N >= 0 -> duplicate(N, X, []).
+    │                                               ^^^^^^^^^^^^^^^^^^^ Unbound var: duplicate/3
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:334:5
+    │
+334 │     sublist_2(List, L).
+    │     ^^^^^^^^^^^^^^^^^^ Unbound var: sublist_2/2
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:380:14
+    │
+380 │ unzip(Ts) -> unzip(Ts, [], []).
+    │              ^^^^^^^^^^^^^^^^^ Unbound var: unzip/3
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:412:15
+    │
+412 │ unzip3(Ts) -> unzip3(Ts, [], [], []).
+    │               ^^^^^^^^^^^^^^^^^^^^^^ Unbound var: unzip3/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:471:6
+    │
+471 │         sort_1(Y, L, [X]);
+    │         ^^^^^^^^^^^^^^^^^ Unbound var: sort_1/3
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:512:5
+    │
+512 │     mergel(L, []).
+    │     ^^^^^^^^^^^^^ Unbound var: mergel/2
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:531:18
+    │
+531 │    lists:reverse(merge3_1(L1, [], H2, T2, H3, T3), []).
+    │                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: merge3_1/6
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:543:18
+    │
+543 │    lists:reverse(rmerge3_1(L1, [], H2, T2, H3, T3), []).
+    │                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rmerge3_1/6
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:558:19
+    │
+558 │     lists:reverse(merge2_1(T1, H2, T2, []), []).
+    │                   ^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: merge2_1/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:570:19
+    │
+570 │     lists:reverse(rmerge2_1(T1, H2, T2, []), []).
+    │                   ^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rmerge2_1/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:581:13
+    │
+581 │     flatmap(fun thing_to_list/1, List).
+    │             ^^^^^^^^^^^^^^^^^^^ Unbound var: thing_to_list/1
+
+
+error: recursive_constraint
+    ┌─ app_a/src/app_a_lists.erl:593:29
+    │
+593 │       DeepList :: [term() | DeepList],
+    │                             ^^^^^^^^ Recursive constraint: DeepList
+
+
+error: recursive_constraint
+    ┌─ app_a/src/app_a_lists.erl:600:29
+    │
+600 │       DeepList :: [term() | DeepList],
+    │                             ^^^^^^^^ Recursive constraint: DeepList
+
+
+error: recursive_constraint
+    ┌─ app_a/src/app_a_lists.erl:618:29
+    │
+618 │       DeepList :: [term() | DeepList].
+    │                             ^^^^^^^^ Recursive constraint: DeepList
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:668:5
+    │
+668 │     keydelete3(K, N, L).
+    │     ^^^^^^^^^^^^^^^^^^^ Unbound var: keydelete3/3
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:684:5
+    │
+684 │     keyreplace3(K, N, L, New).
+    │     ^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: keyreplace3/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:700:5
+    │
+700 │     keytake(Key, N, L, []).
+    │     ^^^^^^^^^^^^^^^^^^^^^^ Unbound var: keytake/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:717:5
+    │
+717 │     keystore2(K, N, L, New).
+    │     ^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: keystore2/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:752:8
+    │
+752 │                 keysort_1(I, Y, EY, T, [X]);
+    │                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: keysort_1/5
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:802:10
+    │
+802 │         M = keymerge2_1(Index, T1, E2, H2, T2, []),
+    │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: keymerge2_1/6
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:817:10
+    │
+817 │         M = rkeymerge2_1(Index, T1, E2, H2, T2, []),
+    │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rkeymerge2_1/6
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:834:21
+    │
+834 │                     ukeysort_1(I, X, EX, T);
+    │                     ^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: ukeysort_1/4
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:905:10
+    │
+905 │         M = ukeymerge2_2(Index, T1, E1, H1, T2, []),
+    │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: ukeymerge2_2/6
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:920:10
+    │
+920 │         M = rukeymerge2_1(Index, T1, E2, T2, [], H2),
+    │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rukeymerge2_1/6
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:951:6
+    │
+951 │         fsplit_1(Y, X, Fun, T, [], []);
+    │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: fsplit_1/6
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:965:19
+    │
+965 │     lists:reverse(fmerge2_1(T1, H2, Fun, T2, []), []);
+    │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: fmerge2_1/5
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:974:19
+    │
+974 │     lists:reverse(rfmerge2_1(T1, H2, Fun, T2, []), []);
+    │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rfmerge2_1/5
+
+
+error: unbound_var
+    ┌─ app_a/src/app_a_lists.erl:989:5
+    │
+989 │     usort_1(Fun, X, L).
+    │     ^^^^^^^^^^^^^^^^^^ Unbound var: usort_1/3
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1020:19
+     │
+1020 │     lists:reverse(ufmerge2_2(H1, T1, Fun, T2, []), []).
+     │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: ufmerge2_2/5
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1029:19
+     │
+1029 │     lists:reverse(rufmerge2_1(T1, H2, Fun, T2, []), []).
+     │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rufmerge2_1/5
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1054:6
+     │
+1054 │         usplit_1(X, Y, L, [], [])
+     │         ^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: usplit_1/5
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1099:5
+     │
+1099 │     umergel(L).
+     │     ^^^^^^^^^^ Unbound var: umergel/1
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1119:18
+     │
+1119 │    lists:reverse(umerge3_1(L1, [H2 | H3], T2, H2, [], T3, H3), []).
+     │                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: umerge3_1/7
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1132:18
+     │
+1132 │    lists:reverse(rumerge3_1(L1, T2, H2, [], T3, H3),[]).
+     │                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rumerge3_1/6
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1147:19
+     │
+1147 │     lists:reverse(umerge2_2(T1, T2, [], H1), []).
+     │                   ^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: umerge2_2/4
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1160:19
+     │
+1160 │     lists:reverse(rumerge2_1(T1, T2, [], H2), []).
+     │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: rumerge2_1/4
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1279:5
+     │
+1279 │     partition(Pred, L, [], []).
+     │     ^^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: partition/4
+
+
+error: expected_subtype
+     ┌─ app_a/src/app_a_lists.erl:1310:15
+     │
+1310 │     filtermap(F, L).
+     │               ^
+     │               │
+     │               F.
+Expected: fun((term()) -> boolean() | {'true', term()})
+Got     : fun((T) -> boolean() | {'true', X})
+
+     │               
+
+  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((term()) -> boolean() | {'true', term()})
+  because
+  term() is not a subtype of T
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1403:5
+     │
+1403 │     splitwith(Pred, List, []).
+     │     ^^^^^^^^^^^^^^^^^^^^^^^^^ Unbound var: splitwith/3
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1421:10
+     │
+1421 │     case split(N, List, []) of
+     │          ^^^^^^^^^^^^^^^^^^ Unbound var: split/3
+
+
+error: unbound_var
+     ┌─ app_a/src/app_a_lists.erl:1443:23
+     │
+1443 │ join(Sep, [H|T]) -> [H|join_prepend(Sep, T)].
+     │                       ^^^^^^^^^^^^^^^^^^^^^^ Unbound var: join_prepend/2
+
+
+error: type_alias_is_non_productive
+   ┌─ app_a/src/app_a_mod2.erl:27:1
+   │
+27 │ -type invalid() :: invalid().
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ recursive type invalid/0 is not productive
+
+
+error: expected_subtype
+   ┌─ app_b/src/app_b.erl:21:5
+   │
+21 │     L.
+   │     ^ L.
+Expected: T
+Got     : [T]
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:14:5
+   │
+14 │     ?OK.
+   │     ^^^ 'error'.
+Expected: 'ok'
+Got     : 'error'
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:18:5
+   │
+18 │     error.
+   │     ^^^^^ 'error'.
+Expected: 'ok'
+Got     : 'error'
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:22:13
+   │
+22 │     _ = 3 * an_atom, ok.
+   │             ^^^^^^^ 'an_atom'.
+Expected: number()
+Got     : 'an_atom'
+
+
+error: unbound_var
+   ┌─ app_a/src/app_a.erl:28:13
+   │
+28 │             unspecced();
+   │             ^^^^^^^^^^^ Unbound var: unspecced/0
+
+
+error: unbound_var
+   ┌─ app_a/src/app_a.erl:49:5
+   │
+49 │     meinong:meinong(2).
+   │     ^^^^^^^^^^^^^^^^^^ Unbound var: meinong:meinong/1
+
+
+error: redundant_fixme
+   ┌─ app_a/src/app_a.erl:60:5
+   │
+60 │     % eqwalizer:fixme redundant issue should be reported
+   │     ^^^^^^^^^^^^^^^^^ redundant fixme
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a.erl:82:5
+   │
+82 │     X.
+   │     ^
+   │     │
+   │     X.
+Expected: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
+Got     : #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
+
+   │     
+
+These associations do not match:
+
+  #S{
++    k_extra  => ...
+-    k_req1   := ...
++    k_req1   => ...
+-    k_req2   := ...
++    k_req2   => ...
+-    k_req3   := ...
+     ...
+  }
+
+error: expected_subtype
+    ┌─ app_a/src/app_a.erl:106:5
+    │
+106 │     X.
+    │     ^
+    │     │
+    │     X.
+Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+Got     : id(#S{a := 'va', b := #S{c := #S{d => atom()}}})
+
+    │     
+
+  id(#S{a := 'va', b := #S{c := #S{d => atom()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'b':
+  #S{a := 'va', b := #S{c := #S{d => atom()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'c':
+  #S{c := #S{d => atom()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  because
+  #S{d => atom()} is not a subtype of id(#S{d := atom(), e := atom()})
+
+error: expected_subtype
+    ┌─ app_a/src/app_a.erl:129:5
+    │
+129 │     X.
+    │     ^
+    │     │
+    │     X.
+Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+Got     : id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}})
+
+    │     
+
+  id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'b':
+  #S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  because
+  at shape key 'c':
+  #S{c := #S{d := pid(), e := pid()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  because
+  #S{d := pid(), e := pid()} is not a subtype of id(#S{d := atom(), e := atom()})
+
+57 ERRORS
