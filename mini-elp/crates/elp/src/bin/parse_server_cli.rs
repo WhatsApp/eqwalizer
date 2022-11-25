@@ -63,7 +63,7 @@ pub fn do_parse_all(
     let pb = util::progress(file_cnt as u64, "Parsing modules", "Parsed modules");
     let mut result = loaded
         .analysis()
-        .module_index(loaded.project_id)?
+        .module_index(loaded.project_id)
         .iter()
         .par_bridge()
         .progress_with(pb)
@@ -78,7 +78,7 @@ pub fn do_parse_all(
                     }
                     _ => {}
                 }
-                if db.file_app_type(file_id).ok() == Some(Some(AppType::Dep)) {
+                if db.file_app_type(file_id) == Some(AppType::Dep) {
                     return empty;
                 }
 
@@ -105,7 +105,7 @@ pub fn do_parse_one(
         parse_server::Format::Text => panic!("text format is for test purposes only!"),
     };
 
-    match db.module_ast(file_id, format)? {
+    match db.module_ast(file_id, format) {
         Ok(module_ast) => {
             if let Some((name, to)) = to {
                 let to_path = to.join(format!("{}.{}", name, ext));
@@ -114,8 +114,8 @@ pub fn do_parse_one(
             Ok(vec![])
         }
         Err(errs) => {
-            let line_index = db.line_index(file_id)?;
-            let root_dir = &db.project_data(file_id)?.unwrap().root_dir;
+            let line_index = db.line_index(file_id);
+            let root_dir = &db.project_data(file_id).unwrap().root_dir;
             let diagnostic = errs
                 .iter()
                 .map(|err| {

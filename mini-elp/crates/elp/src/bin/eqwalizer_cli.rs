@@ -48,7 +48,7 @@ pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> 
     }?;
     let analysis = &loaded.analysis();
     let file_id = analysis
-        .module_file_id(loaded.project_id, &args.module)?
+        .module_file_id(loaded.project_id, &args.module)
         .with_context(|| format!("Module {} not found", &args.module))?;
     let mut reporter: Box<dyn reporting::Reporter> = match args.format {
         Format::Json => Box::new(reporting::JsonReporter::new(analysis, loaded, &mut out)),
@@ -85,7 +85,7 @@ pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> 
         Format::Pretty => Box::new(reporting::PrettyReporter::new(analysis, loaded, &mut out)),
     };
     let reporter = reporter.as_mut();
-    let module_index = analysis.module_index(loaded.project_id)?;
+    let module_index = analysis.module_index(loaded.project_id);
     let file_ids: Vec<FileId> = module_index
         .iter()
         .map(|(_name, _source, file_id)| file_id)
@@ -126,13 +126,13 @@ fn eqwalize(
     let pb = util::progress(file_ids.len() as u64, "eqWAlizing", "eqWAlized");
     let output = loaded.with_eqwalizer_progress_bar(pb.clone(), move |analysis| {
         analysis.eqwalizer_diagnostics(loaded.project_id, file_ids, format, strict)
-    })?;
+    });
     pb.finish();
     match &*output {
         EqwalizerDiagnostics::Diagnostics(diagnostics_by_module) => {
             for (module, diagnostics) in diagnostics_by_module {
                 let file_id = analysis
-                    .module_index(loaded.project_id)?
+                    .module_index(loaded.project_id)
                     .file_for_module(module.as_str())
                     .with_context(|| format!("module {} not found", module))?;
                 reporter.write_eqwalizer_diagnostics(file_id, diagnostics)?;
@@ -141,7 +141,7 @@ fn eqwalize(
             Ok(())
         }
         EqwalizerDiagnostics::NoAst { module } => {
-            if let Some(file_id) = analysis.module_file_id(loaded.project_id, module)? {
+            if let Some(file_id) = analysis.module_file_id(loaded.project_id, module) {
                 let parse_diagnostics =
                     parse_server_cli::do_parse_one(analysis, None, file_id, format)?;
                 // The cached parse errors must be non-empty otherwise we wouldn't have `NoAst`
@@ -167,7 +167,7 @@ fn pre_parse_for_speed(analysis: Analysis, file_ids: &[FileId], format: elp_pars
 }
 
 fn should_eqwalize(analysis: &Analysis, module_index: &ModuleIndex, file_id: FileId) -> bool {
-    let is_in_app = analysis.file_app_type(file_id).ok() == Some(Some(AppType::App));
+    let is_in_app = analysis.file_app_type(file_id) == Some(AppType::App);
     is_in_app
         && module_index.module_for_file(file_id).is_some()
         && module_index.file_source_for_file(file_id) == Some(FileSource::Src)

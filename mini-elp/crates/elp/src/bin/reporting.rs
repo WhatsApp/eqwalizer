@@ -95,7 +95,7 @@ where
         let file_path = &self.loaded.vfs.file_path(file_id);
         let root_path = &self
             .analysis
-            .project_data(file_id)?
+            .project_data(file_id)
             .with_context(|| "could not find project data")?
             .root_dir;
         let relative_path = get_relative_path(root_path, file_path);
@@ -198,11 +198,11 @@ impl<'a, W: Write> Reporter for JsonReporter<'a, W> {
         file_id: FileId,
         diagnostics: &[EqwalizerDiagnostic],
     ) -> Result<()> {
-        let line_index = self.analysis.line_index(file_id)?;
+        let line_index = self.analysis.line_index(file_id);
         let file_path = &self.loaded.vfs.file_path(file_id);
         let root_path = &self
             .analysis
-            .project_data(file_id)?
+            .project_data(file_id)
             .with_context(|| "could not find project data")?
             .root_dir;
         let relative_path = get_relative_path(root_path, file_path);
@@ -235,7 +235,7 @@ impl<'a, W: Write> Reporter for JsonReporter<'a, W> {
         let file_path = &self.loaded.vfs.file_path(file_id);
         let root_path = &self
             .analysis
-            .project_data(file_id)?
+            .project_data(file_id)
             .with_context(|| "could not find project data")?
             .root_dir;
         let relative_path = get_relative_path(root_path, file_path);
@@ -273,11 +273,11 @@ impl<'a, W: Write> Reporter for JsonLSPReporter<'a, W> {
         file_id: FileId,
         diagnostics: &[EqwalizerDiagnostic],
     ) -> Result<()> {
-        let line_index = self.analysis.line_index(file_id)?;
+        let line_index = self.analysis.line_index(file_id);
         let file_path = &self.loaded.vfs.file_path(file_id);
         let root_path = &self
             .analysis
-            .project_data(file_id)?
+            .project_data(file_id)
             .with_context(|| "could not find project data")?
             .root_dir;
         let relative_path = get_relative_path(root_path, file_path);
@@ -313,7 +313,7 @@ impl<'a, W: Write> Reporter for JsonLSPReporter<'a, W> {
         let file_path = &self.loaded.vfs.file_path(file_id);
         let root_path = &self
             .analysis
-            .project_data(file_id)?
+            .project_data(file_id)
             .with_context(|| "could not find project data")?
             .root_dir;
         let relative_path = get_relative_path(root_path, file_path);
