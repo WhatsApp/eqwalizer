@@ -40,7 +40,6 @@ pub trait Reporter {
         diagnostics: &[EqwalizerDiagnostic],
     ) -> Result<()>;
     fn write_parse_diagnostics(&mut self, diagnostics: &[ParseDiagnostic]) -> Result<()>;
-    fn write_file_advice(&mut self, file_id: FileId, description: String) -> Result<()>;
     fn write_error_count(&mut self) -> Result<()>;
 }
 
@@ -153,16 +152,6 @@ impl<'a, W: WriteColor> Reporter for PrettyReporter<'a, W> {
         Ok(())
     }
 
-    fn write_file_advice(&mut self, file_id: FileId, description: String) -> Result<()> {
-        let (reporting_files, reporting_id) = self.get_reporting_data(file_id)?;
-        let label = Label::primary(reporting_id, 1..2).with_message(&description);
-        let d: ReportingDiagnostic<usize> = ReportingDiagnostic::note()
-            .with_message("advice")
-            .with_labels(vec![label]);
-        term::emit(self.out, &REPORTING_CONFIG, &reporting_files, &d).unwrap();
-        Ok(())
-    }
-
     fn write_error_count(&mut self) -> Result<()> {
         if self.error_count == 0 {
             self.out.set_color(&GREEN_COLOR_SPEC)?;
@@ -231,27 +220,6 @@ impl<'a, W: Write> Reporter for JsonReporter<'a, W> {
         Ok(())
     }
 
-    fn write_file_advice(&mut self, file_id: FileId, description: String) -> Result<()> {
-        let file_path = &self.loaded.vfs.file_path(file_id);
-        let root_path = &self
-            .analysis
-            .project_data(file_id)
-            .with_context(|| "could not find project data")?
-            .root_dir;
-        let relative_path = get_relative_path(root_path, file_path);
-        let diagnostic = arc_types::Diagnostic::new(
-            relative_path,
-            1,
-            None,
-            "ELP".to_string(),
-            description,
-            None,
-        );
-        let diagnostic = serde_json::to_string(&diagnostic)?;
-        writeln!(self.out, "{}", diagnostic)?;
-        Ok(())
-    }
-
     fn write_error_count(&mut self) -> Result<()> {
         Ok(())
     }
@@ -306,27 +274,6 @@ impl<'a, W: Write> Reporter for JsonLSPReporter<'a, W> {
             let diagnostic = serde_json::to_string(&diagnostic)?;
             writeln!(self.out, "{}", diagnostic)?;
         }
-        Ok(())
-    }
-
-    fn write_file_advice(&mut self, file_id: FileId, description: String) -> Result<()> {
-        let file_path = &self.loaded.vfs.file_path(file_id);
-        let root_path = &self
-            .analysis
-            .project_data(file_id)
-            .with_context(|| "could not find project data")?
-            .root_dir;
-        let relative_path = get_relative_path(root_path, file_path);
-        let diagnostic = arc_types::Diagnostic::new(
-            relative_path,
-            1,
-            None,
-            "ELP".to_string(),
-            description,
-            None,
-        );
-        let diagnostic = serde_json::to_string(&diagnostic)?;
-        writeln!(self.out, "{}", diagnostic)?;
         Ok(())
     }
 
