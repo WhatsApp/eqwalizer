@@ -10,6 +10,8 @@ scalaVersion := "2.13.8"
 
 scalacOptions += "-deprecation"
 
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 target := {
@@ -21,8 +23,6 @@ target := {
   else
     defaultValue
 }
-
-libraryDependencies += "org.erlang.otp" % "jinterface" % "1.6.1"
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.1"
 
