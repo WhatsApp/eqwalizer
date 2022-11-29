@@ -1,0 +1,3 @@
+{application, dbg_trace,
+  [{description, "dbg_trace"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
+}.

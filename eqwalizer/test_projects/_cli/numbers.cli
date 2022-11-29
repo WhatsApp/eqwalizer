@@ -1,14 +1,14 @@
 all specs:
-    containing number: 13.27%
-    containing integer: 10.47%
-    containing pos_integer: 3.33%
-    containing non_neg_integer: 2.04%
-    containing neg_integer: 1.51%
+    containing number: 13.16%
+    containing integer: 10.72%
+    containing pos_integer: 3.25%
+    containing non_neg_integer: 2.00%
+    containing neg_integer: 1.48%
     containing byte: 0.26%
-    containing char: 0.23%
-    containing float: 0.57%
-    containing range: 0.19%
-    containing int lit: 0.38%
+    containing char: 0.22%
+    containing float: 0.55%
+    containing range: 0.18%
+    containing int lit: 0.37%
 generated specs:
     containing number: 0.00%
     containing integer: 0.00%
@@ -21,19 +21,19 @@ generated specs:
     containing range: 0.00%
     containing int lit: 0.00%
 non-generated specs:
-    containing number: 13.27%
-    containing integer: 10.47%
-    containing pos_integer: 3.33%
-    containing non_neg_integer: 2.04%
-    containing neg_integer: 1.51%
+    containing number: 13.16%
+    containing integer: 10.72%
+    containing pos_integer: 3.25%
+    containing non_neg_integer: 2.00%
+    containing neg_integer: 1.48%
     containing byte: 0.26%
-    containing char: 0.23%
-    containing float: 0.57%
-    containing range: 0.19%
-    containing int lit: 0.38%
+    containing char: 0.22%
+    containing float: 0.55%
+    containing range: 0.18%
+    containing int lit: 0.37%
 all records:
-    containing number: 5.05%
-    containing integer: 18.18%
+    containing number: 5.00%
+    containing integer: 19.00%
     containing pos_integer: 0.00%
     containing non_neg_integer: 0.00%
     containing neg_integer: 0.00%
@@ -41,4 +41,4 @@ all records:
     containing char: 0.00%
     containing float: 0.00%
     containing range: 0.00%
-    containing int lit: 2.02%
+    containing int lit: 2.00%

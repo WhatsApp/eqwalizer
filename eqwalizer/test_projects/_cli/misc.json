@@ -2656,6 +2656,30 @@
     ]
   },
   {
+    "app": "dbg_trace",
+    "modules": [
+      {
+        "module": "base_trace_tests",
+        "exported_funs": [
+          "run/0"
+        ]
+      },
+      {
+        "module": "trace_tests_runner",
+        "exported_funs": [
+          "base_trace_tests/0",
+          "type_trace_tests/0"
+        ]
+      },
+      {
+        "module": "type_trace_tests",
+        "exported_funs": [
+          "run/0"
+        ]
+      }
+    ]
+  },
+  {
     "app": "debug",
     "modules": [
       {

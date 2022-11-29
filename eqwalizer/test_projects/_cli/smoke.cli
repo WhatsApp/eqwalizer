@@ -2,6 +2,8 @@ check
 
 check_gradual
 
+dbg_trace
+
 debug
 
 elm_core
