@@ -36,3 +36,7 @@ fuzz01() when #{(true andalso false) => {}} ->
 -spec fuzz02() -> ok.
 fuzz02() ->
     <<X || X <- [], (X ++ X) >>.
+
+-spec fuzz03(term()) -> ok.
+fuzz03([_ | {}]) -> 
+    ok.

@@ -40,3 +40,7 @@ fuzz02() ->                                | ERROR   |
     <<X || X <- [], (X ++ X) >>.           |         | << || >>.
                                            |         | Expected: 'ok'
                                            |         | Got     : binary()
+                                           |         |
+-spec fuzz03(term()) -> ok.                |         |
+fuzz03([_ | {}]) ->                        | OK      |
+    ok.                                    |         |
