@@ -19,6 +19,7 @@ use rayon::prelude::*;
 
 use crate::args::Eqwalize;
 use crate::args::EqwalizeAll;
+use crate::args::EqwalizeApp;
 use crate::args::Format;
 use crate::load_rebar;
 use crate::load_rebar::LoadResult;
@@ -91,6 +92,48 @@ pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> 
         .map(|(_name, _source, file_id)| file_id)
         .filter_map(|file_id| {
             if should_eqwalize(analysis, &module_index, file_id) {
+                Some(file_id)
+            } else {
+                None
+            }
+        })
+        .collect();
+    eqwalize(EqwalizerInternalArgs {
+        analysis,
+        loaded,
+        file_ids,
+        reporter,
+        fast: false,
+        strict: args.strict,
+    })
+}
+
+pub fn eqwalize_app(args: &EqwalizeApp, mut out: impl WriteColor) -> Result<()> {
+    let loaded = &match args.project.extension() {
+        None => {
+            let profile = args.profile.clone().map(Profile).unwrap_or_default();
+            load_rebar::load_project_at(&args.project, &profile)
+        }
+        Some(ext) => match ext.to_str() {
+            Some("json") => load_rebar::load_json_project_at(&args.project),
+            _ => panic!("Unknown file type for option --project"),
+        },
+    }?;
+    let analysis = &loaded.analysis();
+
+    let mut reporter: Box<dyn reporting::Reporter> = match args.format {
+        Format::Json => Box::new(reporting::JsonReporter::new(analysis, loaded, &mut out)),
+        Format::JsonLSP => Box::new(reporting::JsonLSPReporter::new(analysis, loaded, &mut out)),
+        Format::Pretty => Box::new(reporting::PrettyReporter::new(analysis, loaded, &mut out)),
+    };
+    let reporter = reporter.as_mut();
+    let module_index = analysis.module_index(loaded.project_id);
+    let file_ids: Vec<FileId> = module_index
+        .iter()
+        .filter_map(|(_name, _source, file_id)| {
+            if analysis.file_app_name(file_id) == Some(args.app.clone())
+                && should_eqwalize(analysis, &module_index, file_id)
+            {
                 Some(file_id)
             } else {
                 None

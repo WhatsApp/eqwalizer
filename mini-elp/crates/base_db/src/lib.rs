@@ -90,6 +90,8 @@ pub trait SourceDatabase: FileLoader + salsa::Database {
     fn module_index(&self, project_id: ProjectId) -> Arc<ModuleIndex>;
 
     fn file_app_type(&self, file_id: FileId) -> Option<AppType>;
+
+    fn file_app_name(&self, file_id: FileId) -> Option<String>;
 }
 
 fn module_index(db: &dyn SourceDatabase, project_id: ProjectId) -> Arc<ModuleIndex> {
@@ -112,6 +114,15 @@ fn module_index(db: &dyn SourceDatabase, project_id: ProjectId) -> Arc<ModuleInd
 fn file_app_type(db: &dyn SourceDatabase, file_id: FileId) -> Option<AppType> {
     let app_data = db.app_data(db.file_source_root(file_id))?;
     Some(app_data.app_type)
+}
+
+fn file_app_name(db: &dyn SourceDatabase, file_id: FileId) -> Option<String> {
+    let app_data = db.app_data(db.file_source_root(file_id))?;
+    app_data
+        .dir
+        .file_name()
+        .and_then(|s| s.to_str())
+        .map(|s| s.to_string())
 }
 
 /// We don't want to give HIR knowledge of source roots, hence we extract these

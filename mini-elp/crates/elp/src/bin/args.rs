@@ -30,6 +30,7 @@ pub enum Command {
     Help,
     Eqwalize(Eqwalize),
     EqwalizeAll(EqwalizeAll),
+    EqwalizeApp(EqwalizeApp),
     ParseAll(ParseAll),
 }
 
@@ -46,6 +47,15 @@ pub struct Eqwalize {
 #[derive(Debug, Clone)]
 pub struct EqwalizeAll {
     pub project: PathBuf,
+    pub profile: Option<String>,
+    pub format: Format,
+    pub strict: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct EqwalizeApp {
+    pub project: PathBuf,
+    pub app: String,
     pub profile: Option<String>,
     pub format: Format,
     pub strict: bool,
@@ -90,6 +100,10 @@ COMMANDS:
         --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
         --strict               Eqwalize in strict mode
     eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
+        --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)
+        --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
+        --strict               Eqwalize in strict mode
+    eqwalize-app <app>         Eqwalize all opted-in modules in specified application
         --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)
         --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
         --strict               Eqwalize in strict mode
@@ -167,6 +181,19 @@ impl Args {
                 let strict = arguments.contains("--strict");
                 Command::EqwalizeAll(EqwalizeAll {
                     project,
+                    profile,
+                    format,
+                    strict,
+                })
+            }
+            "eqwalize-app" => {
+                let project = get_project(&mut arguments)?;
+                let app = arguments.free_from_str()?;
+                let format = get_format(&mut arguments)?;
+                let strict = arguments.contains("--strict");
+                Command::EqwalizeApp(EqwalizeApp {
+                    project,
+                    app,
                     profile,
                     format,
                     strict,

@@ -58,6 +58,7 @@ fn try_main(
         args::Command::ParseAll(args) => parse_server_cli::parse_all(&args, out)?,
         args::Command::Eqwalize(args) => eqwalizer_cli::eqwalize_module(&args, out)?,
         args::Command::EqwalizeAll(args) => eqwalizer_cli::eqwalize_all(&args, out)?,
+        args::Command::EqwalizeApp(args) => eqwalizer_cli::eqwalize_app(&args, out)?,
         args::Command::Version => {
             writeln!(out, "elp {}", env!("CARGO_PKG_VERSION"))?;
         }
@@ -246,6 +247,17 @@ mod tests {
         simple_snapshot(
             args_vec!["eqwalize-all", "--strict"],
             expect_file!["../resources/test/standard/eqwalize_all_strict_diagnostics.pretty"],
+            json_config,
+            "../../test_projects/standard".into(),
+        );
+    }
+
+    #[test_case(false ; "rebar")]
+    #[test_case(true  ; "JSON")]
+    fn eqwalize_app_diagnostics_match_snapshot_pretty(json_config: bool) {
+        simple_snapshot(
+            args_vec!["eqwalize-app", "app_a",],
+            expect_file!["../resources/test/standard/eqwalize_app_diagnostics.pretty"],
             json_config,
             "../../test_projects/standard".into(),
         );

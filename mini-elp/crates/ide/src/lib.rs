@@ -123,6 +123,11 @@ impl Analysis {
         self.db.module_index(project_id).file_for_module(module)
     }
 
+    /// Returns the app name for a file
+    pub fn file_app_name(&self, file_id: FileId) -> Option<String> {
+        self.db.file_app_name(file_id)
+    }
+
     /// Returns the app_type for a file
     pub fn file_app_type(&self, file_id: FileId) -> Option<AppType> {
         self.db.file_app_type(file_id)
