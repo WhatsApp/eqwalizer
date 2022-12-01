@@ -27,6 +27,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
 
   private lazy val custom: Set[RemoteId] =
     Set(
+      RemoteId("erlang", "map_get", 2),
       RemoteId("file", "open", 2),
       RemoteId("lists", "filtermap", 2),
       RemoteId("lists", "flatten", 1),
@@ -275,7 +276,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         validateAccumulatorTy(accTy3)
         (accTy3, env1)
 
-      case RemoteId("maps", "get", 2) =>
+      case RemoteId("maps", "get", 2) | RemoteId("erlang", "map_get", 2) =>
         val List(key, map) = args
         val List(keyTy, mapTy) = argTys
         val anyMapTy = DictMap(AnyType, AnyType)

@@ -227,6 +227,7 @@
           "map_get_2_4/2",
           "map_get_2_5_neg/2",
           "map_get_2_6/1",
+          "map_get_2_6_2/1",
           "map_get_2_7_neg/1",
           "map_get_2_8_neg/1",
           "map_get_2_9_neg/1",

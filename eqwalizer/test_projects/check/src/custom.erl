@@ -50,6 +50,16 @@ map_get_2_6(M) ->
     },
     Res.
 
+-spec map_get_2_6_2(
+    #{a => atom(), n => number()}
+) -> {atom(), number()}.
+map_get_2_6_2(M) ->
+    Res = {
+        map_get(a, M),
+        map_get(n, M)
+    },
+    Res.
+
 -spec map_get_2_7_neg(
     any()
 ) -> any().
