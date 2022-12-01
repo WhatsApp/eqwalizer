@@ -99,11 +99,11 @@ COMMANDS:
         --fast                 Refresh AST information for only the specified module
         --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
         --strict               Eqwalize in strict mode
-    eqwalize-all               Eqwalize all opted-in modules in a project (modules with `-typing([eqwalizer])`)
+    eqwalize-all               Eqwalize all modules in a project
         --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)
         --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
         --strict               Eqwalize in strict mode
-    eqwalize-app <app>         Eqwalize all opted-in modules in specified application
+    eqwalize-app <app>         Eqwalize all modules in specified application
         --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)
         --format FORMAT        Specify format for the diagnostics. FORMAT can be `pretty` (default), `json` or `json-lsp`
         --strict               Eqwalize in strict mode
