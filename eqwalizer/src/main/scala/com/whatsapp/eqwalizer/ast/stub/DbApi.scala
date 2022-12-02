@@ -69,6 +69,9 @@ object DbApi {
   def otpApps: Map[String, App] =
     Db.otpApps
 
+  def otpModules: Set[String] =
+    Db.otpModules
+
   def projectApps: Map[String, App] =
     Db.projectApps
 

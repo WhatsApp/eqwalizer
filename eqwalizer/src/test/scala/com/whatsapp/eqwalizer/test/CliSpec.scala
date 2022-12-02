@@ -109,6 +109,10 @@ class CliSpec extends SnapshotSpec {
       checkAction(UnspeccedCallbackImpls.main(Array()), "unspecced_callback_impls.cli")
     }
 
+    it("reports OTP function calls") {
+      checkAction(OTPFuns.main(Array()), "otp_funs.cli")
+    }
+
     it("runs MiscInfo utility") {
       val tmpdir = Files.createTempDirectory("tmpDirPrefix").toFile.getAbsolutePath
       val tmpFile = s"$tmpdir/misc.json"
