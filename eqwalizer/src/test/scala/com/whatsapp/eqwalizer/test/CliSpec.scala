@@ -124,9 +124,6 @@ class CliSpec extends SnapshotSpec {
     it("reports lambdas summary") {
       checkAction(Lambdas.main(Array()), "lambdas.cli")
     }
-    it("reports numberic types summary") {
-      checkAction(Numbers.main(Array()), "numbers.cli")
-    }
     it("reports long error messages") {
       checkAction(LongErrors.main(Array()), "long_errors.cli")
     }
