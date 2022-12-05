@@ -53,10 +53,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(PinnedVars.main(Array()), "pinned.cli")
     }
 
-    it("reports negated type predicates") {
-      checkAction(NegatedTypePredicates.main(Array()), "negated_type_predicates.cli")
-    }
-
     it("reports refined record types") {
       checkAction(RefinedRecordTypes.main(Array()), "refined_record_types.cli")
     }
