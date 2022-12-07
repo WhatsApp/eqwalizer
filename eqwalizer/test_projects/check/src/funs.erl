@@ -270,3 +270,75 @@ lambda_app() ->
             Fib(N - 2) + Fib(N - 1)
     end)(4),
     Res.
+    
+-type getter(A) :: fun((atom()) -> A).
+
+-spec getter1
+    (getter(A)) -> getter(A).
+getter1(F) ->
+    fun(A) ->
+        F(A)
+    end.
+
+-spec getter2
+    (fun((atom()) -> A)) -> fun((atom()) -> A).
+getter2(F) ->
+    fun(A) ->
+        F(A)
+    end.
+
+-spec getter3
+    (fun((atom()) -> A)) -> ((fun((atom()) -> A)) | (fun ((atom()) -> A))).
+getter3(F) ->
+    fun(A) ->
+        F(A)
+    end.
+
+-spec getter4_neg
+    (fun((atom()) -> A)) -> ((fun((atom()) -> A)) | (fun ((term()) -> ok))).
+getter4_neg(F) ->
+    fun(A) ->
+        F(A)
+    end.
+    
+-spec getter5_neg
+    (fun((atom()) -> A)) -> ((fun ((term()) -> ok)) | (fun((atom()) -> A))) .
+getter5_neg(F) ->
+    fun(A) ->
+        F(A)
+    end.
+    
+-spec getter6_neg
+    (fun((atom()) -> _)) -> ((fun()) | (fun ((term()) -> ok))).
+getter6_neg(F) ->
+    fun(A) ->
+        F(A)
+    end.
+    
+-spec getter7
+    (fun((atom()) -> A)) -> ok | (fun ((atom()) -> A)).
+getter7(F) ->
+    fun(A) ->
+        F(A)
+    end.
+    
+-spec getter8_neg
+    (fun((atom()) -> _)) -> ok | getter(other).
+getter8_neg(F) ->
+    fun(A) ->
+        F(A)
+    end.
+    
+-spec getter9_neg
+    (fun((atom()) -> A)) -> a | ((fun ((term(), term()) -> ok)) | (fun((term()) -> A))).
+getter9_neg(F) ->
+    fun(A) ->
+        F(A)
+    end.
+
+-spec getter10
+    (fun((atom()) -> A)) -> a | ((fun ((term(), term()) -> ok)) | (fun((atom()) -> A))).
+getter10(F) ->
+    fun(A) ->
+        F(A)
+    end.

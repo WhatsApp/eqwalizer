@@ -697,7 +697,17 @@
           "named_match/0",
           "atoms_to_binaries/1",
           "ints/1",
-          "lambda_app/0"
+          "lambda_app/0",
+          "getter1/1",
+          "getter2/1",
+          "getter3/1",
+          "getter4_neg/1",
+          "getter5_neg/1",
+          "getter6_neg/1",
+          "getter7/1",
+          "getter8_neg/1",
+          "getter9_neg/1",
+          "getter10/1"
         ]
       },
       {
@@ -2553,7 +2563,9 @@
           "n_lambda_2/0",
           "n_lambda_3_neg/1",
           "n_lambda_4_neg/0",
-          "lambda_app/0"
+          "lambda_app/0",
+          "ex1_neg/0",
+          "ex2/0"
         ]
       },
       {

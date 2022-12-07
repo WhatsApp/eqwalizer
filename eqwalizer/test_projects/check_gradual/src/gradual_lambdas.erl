@@ -63,3 +63,14 @@ lambda_app() ->
       Fib(N - 2) + Fib(N - 1)
   end)(4),
   Res.
+
+-spec ex1_neg() ->
+  fun ((string()) -> string()).
+ex1_neg() ->
+  fun(X) -> X + 1 end.
+
+-spec ex2() ->
+  fun((term()) -> term()) |
+  fun ((string()) -> string()).
+ex2() ->
+  fun(X) -> X + 1 end.

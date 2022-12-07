@@ -67,3 +67,16 @@ lambda_app() ->                            | OK      |
       Fib(N - 2) + Fib(N - 1)              |         |
   end)(4),                                 |         |
   Res.                                     |         |
+                                           |         |
+-spec ex1_neg() ->                         |         |
+  fun ((string()) -> string()).            |         |
+ex1_neg() ->                               | ERROR   |
+  fun(X) -> X + 1 end.                     |         | X.
+                                           |         | Expected: number()
+                                           |         | Got     : string()
+                                           |         |
+-spec ex2() ->                             |         |
+  fun((term()) -> term()) |                |         |
+  fun ((string()) -> string()).            |         |
+ex2() ->                                   | OK      |
+  fun(X) -> X + 1 end.                     |         |
