@@ -451,30 +451,41 @@ final class Check(pipelineContext: PipelineContext) {
 
   private def lambdaArity(lambda: Lambda): Int = lambda.clauses.head.pats.size
 
+  private def checkLambdaFunType(lambda: Lambda, funTy: FunType, env: Env): Env = {
+    val FunType(_, fParamTys, fResTy) = funTy
+    val arity = lambdaArity(lambda)
+    if (arity != fParamTys.size)
+      throw LambdaArityMismatch(lambda.pos, lambda, lambdaArity = arity, argsArity = fParamTys.size)
+    val env1 = lambda.name match {
+      case Some(name) =>
+        env.updated(name, funTy)
+      case _ =>
+        env
+    }
+    if (occurrence.eqwater(lambda.clauses)) {
+      val envs = occurrence.clausesEnvs(lambda.clauses, fParamTys, env1)
+      lambda.clauses
+        .lazyZip(envs)
+        .map((clause, occEnv) => checkClause(clause, fParamTys, fResTy, occEnv, Set.empty))
+    } else {
+      lambda.clauses.foreach(checkClause(_, fParamTys, fResTy, env1, exportedVars = Set.empty))
+    }
+    env
+  }
+
   def checkLambda(lambda: Lambda, resTy: Type, env: Env): Env = {
     resTy match {
-      case FunType(_, fParamTys, fResTy) =>
-        val arity = lambdaArity(lambda)
-        if (arity != fParamTys.size)
-          throw LambdaArityMismatch(lambda.pos, lambda, lambdaArity = arity, argsArity = fParamTys.size)
-        val env1 = lambda.name match {
-          case Some(name) =>
-            env.updated(name, resTy)
-          case _ =>
-            env
-        }
-        if (occurrence.eqwater(lambda.clauses)) {
-          val envs = occurrence.clausesEnvs(lambda.clauses, fParamTys, env1)
-          lambda.clauses
-            .lazyZip(envs)
-            .map((clause, occEnv) => checkClause(clause, fParamTys, fResTy, occEnv, Set.empty))
-        } else {
-          lambda.clauses.foreach(checkClause(_, fParamTys, fResTy, env1, exportedVars = Set.empty))
-        }
+      case t: FunType =>
+        checkLambdaFunType(lambda, t, env)
       case _ =>
-        val (ty, _) = elab.elabExpr(lambda, env)
-        if (!subtype.subType(ty, resTy))
-          throw ExpectedSubtype(lambda.pos, lambda, expected = resTy, got = ty)
+        val arity = lambdaArity(lambda)
+        narrow.extractFunTypes(resTy, arity).toList match {
+          case List(funTy) => checkLambdaFunType(lambda, funTy, env)
+          case _ =>
+            val (ty, _) = elab.elabExpr(lambda, env)
+            if (!subtype.subType(ty, resTy))
+              throw ExpectedSubtype(lambda.pos, lambda, expected = resTy, got = ty)
+        }
     }
     env
   }

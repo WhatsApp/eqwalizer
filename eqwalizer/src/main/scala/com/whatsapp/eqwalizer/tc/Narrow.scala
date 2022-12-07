@@ -229,6 +229,25 @@ class Narrow(pipelineContext: PipelineContext) {
       None
   }
 
+  def extractFunTypes(ty: Type, arity: Int): Set[FunType] = ty match {
+    case DynamicType =>
+      Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
+    case AnyFunType if pipelineContext.gradualTyping =>
+      Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
+    case AnyFunType =>
+      Set(FunType(List.empty, List.fill(arity)(NoneType), AnyType))
+    case ft: FunType =>
+      if (ft.argTys.size == arity) Set(ft)
+      else Set()
+    case UnionType(tys) =>
+      tys.flatMap(extractFunTypes(_, arity))
+    case RemoteType(rid, args) =>
+      val body = util.getTypeDeclBody(rid, args)
+      extractFunTypes(body, arity)
+    case _ =>
+      Set()
+  }
+
   def asTupleType(t: Type, arity: Int): List[TupleType] =
     asTupleTypeAux(t, arity)
 

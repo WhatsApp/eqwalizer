@@ -326,16 +326,8 @@ lambda_app() ->                            | ERROR   |
                                            |         |
 -spec getter1                              |         |
     (getter(A)) -> getter(A).              |         |
-getter1(F) ->                              | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expected: getter(A)
-                                           |         | Got     : fun((none()) -> term())
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not a subtype of getter(A)
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not a subtype of fun((atom()) -> A)
-                                           |         |   because
-                                           |         |   term() is not a subtype of A
+getter1(F) ->                              | OK      |
+    fun(A) ->                              |         |
         F(A)                               |         |
     end.                                   |         |
                                            |         |
@@ -348,16 +340,8 @@ getter2(F) ->                              | OK      |
                                            |         |
 -spec getter3                              |         |
     (fun((atom()) -> A)) -> ((fun((atom())……         |
-getter3(F) ->                              | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expected: fun((atom()) -> A)
-                                           |         | Got     : fun((none()) -> term())
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not a subtype of fun((atom()) -> A)
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not a subtype of fun((atom()) -> A)
-                                           |         |   because
-                                           |         |   term() is not a subtype of A
+getter3(F) ->                              | OK      |
+    fun(A) ->                              |         |
         F(A)                               |         |
     end.                                   |         |
                                            |         |
@@ -406,52 +390,32 @@ getter6_neg(F) ->                          | ERROR   |
                                            |         |
 -spec getter7                              |         |
     (fun((atom()) -> A)) -> ok | (fun ((at……         |
-getter7(F) ->                              | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expected: 'ok' | fun((atom()) -> A)
-                                           |         | Got     : fun((none()) -> term())
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not a subtype of 'ok' | fun((atom()) -> A)
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not a subtype of 'ok'
+getter7(F) ->                              | OK      |
+    fun(A) ->                              |         |
         F(A)                               |         |
     end.                                   |         |
                                            |         |
 -spec getter8_neg                          |         |
     (fun((atom()) -> _)) -> ok | getter(ot……         |
 getter8_neg(F) ->                          | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expected: 'ok' | getter('other')
-                                           |         | Got     : fun((none()) -> term())
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not a subtype of 'ok' | getter('other')
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not a subtype of 'ok'
-        F(A)                               |         |
+    fun(A) ->                              |         |
+        F(A)                               |         | F(A).
+                                           |         | Expected: 'other'
+                                           |         | Got     : term()
     end.                                   |         |
                                            |         |
 -spec getter9_neg                          |         |
     (fun((atom()) -> A)) -> a | ((fun ((te……         |
 getter9_neg(F) ->                          | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expected: 'a' | fun((term(), term()) -> 'ok') | fun((term()) -> A)
-                                           |         | Got     : fun((none()) -> term())
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not a subtype of 'a' | fun((term(), term()) -> 'ok') | fun((term()) -> A)
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not a subtype of 'a'
-        F(A)                               |         |
+    fun(A) ->                              |         |
+        F(A)                               |         | A.
+                                           |         | Expected: atom()
+                                           |         | Got     : term()
     end.                                   |         |
                                            |         |
 -spec getter10                             |         |
     (fun((atom()) -> A)) -> a | ((fun ((te……         |
-getter10(F) ->                             | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expected: 'a' | fun((term(), term()) -> 'ok') | fun((atom()) -> A)
-                                           |         | Got     : fun((none()) -> term())
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not a subtype of 'a' | fun((term(), term()) -> 'ok') | fun((atom()) -> A)
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not a subtype of 'a'
+getter10(F) ->                             | OK      |
+    fun(A) ->                              |         |
         F(A)                               |         |
     end.                                   |         |
