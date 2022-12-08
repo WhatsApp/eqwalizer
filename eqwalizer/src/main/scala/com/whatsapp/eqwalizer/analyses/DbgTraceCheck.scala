@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.analyses
 
-import com.ericsson.otp.erlang.{OtpErlangObject, OtpInputStream}
+import com.ericsson.otp.erlang.{OtpErlangObject, OtpExternal, OtpInputStream, OtpOutputStream}
 import com.whatsapp.eqwalizer.ast.Forms.TypeDecl
 import com.whatsapp.eqwalizer.ast.{Id, RemoteId}
 import com.whatsapp.eqwalizer.ast.Types._
@@ -23,22 +23,42 @@ import scala.collection.mutable.ListBuffer
 // It analyses `call` and `return_from` elements of the trace.
 // See https://www.erlang.org/doc/man/dbg.html for more details.
 object DbgTraceCheck {
+  // $COVERAGE-OFF$
+  def main(args: Array[String]): Unit = {
+    if (args.length != 1) {
+      Console.println("usage: com.whatsapp.eqwalizer.analyses.DbgTraceCheck <trace_file>")
+      return
+    }
+    val traceFile = args.head
+    val errorsFile = Paths.get(traceFile ++ ".errors")
+    var index = 0
+    val errBuffer = ListBuffer.empty[EObject]
+
+    iterateTrace(Paths.get(traceFile)) { chunk =>
+      for (error <- analyzeChunk(chunk)) {
+        val elem = error match {
+          case _: ResultError     => EAtom("res")
+          case err: ArgumentError => ETuple(List(EAtom("arg"), ELong(err.index)))
+        }
+        errBuffer.addOne(ETuple(List(ELong(index), elem)))
+      }
+      index += 1
+    }
+
+    val bytes = {
+      val outs = new OtpOutputStream()
+      outs.write(OtpExternal.versionTag)
+      outs.write_any(toJava(EList(errBuffer.toList, None)))
+      outs.toByteArray
+    }
+
+    Files.write(errorsFile, bytes)
+  }
+  // $COVERAGE-ON$
 
   sealed trait Error
   case class ResultError(module: String, id: Id, value: EObject) extends Error
   case class ArgumentError(module: String, id: Id, index: Int, value: EObject) extends Error
-
-  def main(args: Array[String]): Unit = {
-    if (args.length != 1) {
-      Console.println("usage: com.whatsapp.eqwalizer.trace.Check <trace_file>")
-      return
-    }
-    val traceFile = args.head
-    iterateTrace(Paths.get(traceFile)) { chunk =>
-      for (error <- analyzeChunk(chunk))
-        println(error)
-    }
-  }
 
   def check(traceFile: String): List[Error] = {
     val result = ListBuffer.empty[Error]

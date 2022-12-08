@@ -61,11 +61,24 @@ object EData {
         EFun
     }
 
+  // $COVERAGE-OFF$
+  def toJava(eObject: EObject): OtpErlangObject = eObject match {
+    case EAtom(a) =>
+      new OtpErlangAtom(a)
+    case ELong(l) =>
+      new OtpErlangLong(l.longValue)
+    case ETuple(elems) =>
+      new OtpErlangTuple(elems.map(toJava).toArray)
+    case EList(elems, None) =>
+      new OtpErlangList(elems.map(toJava).toArray)
+    case _ =>
+      throw new IllegalStateException()
+  }
+
   trait Visitor {
     def visit(obj: EObject): Unit = ()
   }
 
-  // $COVERAGE-OFF$
   def traverse(obj: EObject, visitor: Visitor): Unit = obj match {
     case eAtom: EAtom =>
       visitor.visit(eAtom)
