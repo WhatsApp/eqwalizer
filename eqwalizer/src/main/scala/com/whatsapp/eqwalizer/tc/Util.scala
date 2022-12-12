@@ -9,7 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.stub.DbApi
-import com.whatsapp.eqwalizer.ast.{Id, Pos, RemoteId}
+import com.whatsapp.eqwalizer.ast.{Id, RemoteId}
 
 import scala.collection.immutable.TreeSeqMap
 
@@ -24,11 +24,7 @@ class Util(pipelineContext: PipelineContext) {
   }
 
   def getFunType(module: String, id: Id): Option[FunType] =
-    for {
-      imports <- DbApi.getImports(module)
-      hostModule = imports.getOrElse(id, module)
-      ft <- getFunType(RemoteId(hostModule, id.name, id.arity))
-    } yield ft
+    getFunType(globalFunId(module, id))
 
   private def typeAndGetRecord(module: String, name: String): Option[RecDeclTyped] =
     DbApi.getRecord(module, name) map { rec =>
