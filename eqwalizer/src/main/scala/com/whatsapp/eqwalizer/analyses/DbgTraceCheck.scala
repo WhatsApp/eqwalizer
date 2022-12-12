@@ -26,10 +26,22 @@ object DbgTraceCheck {
   // $COVERAGE-OFF$
   def main(args: Array[String]): Unit = {
     if (args.length != 1) {
-      Console.println("usage: com.whatsapp.eqwalizer.analyses.DbgTraceCheck <trace_file>")
+      Console.println("usage: com.whatsapp.eqwalizer.analyses.DbgTraceCheck <trace_file>|<trace_dir>")
       return
     }
-    val traceFile = args.head
+    val traceObj = args.head
+    if (Paths.get(traceObj).toFile.isDirectory)
+      processTraceDirectory(traceObj)
+    else
+      processTraceFile(traceObj)
+  }
+
+  private def processTraceDirectory(traceDir: String): Unit =
+    Paths.get(traceDir).toFile.listFiles((_, f) => f.endsWith(".dbg_trace")).foreach { file =>
+      processTraceFile(file.getPath)
+    }
+
+  private def processTraceFile(traceFile: String): Unit = {
     val errorsFile = Paths.get(traceFile ++ ".errors")
     var index = 0
     val errBuffer = ListBuffer.empty[EObject]
@@ -37,8 +49,10 @@ object DbgTraceCheck {
     iterateTrace(Paths.get(traceFile)) { chunk =>
       for (error <- analyzeChunk(chunk)) {
         val elem = error match {
-          case _: ResultError     => EAtom("res")
-          case err: ArgumentError => ETuple(List(EAtom("arg"), ELong(err.index)))
+          case _: ResultError =>
+            EAtom("res")
+          case err: ArgumentError =>
+            ETuple(List(EAtom("arg"), ELong(err.index)))
         }
         errBuffer.addOne(ETuple(List(ELong(index), elem)))
       }
