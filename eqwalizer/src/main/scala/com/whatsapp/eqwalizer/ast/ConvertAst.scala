@@ -15,7 +15,7 @@ import com.whatsapp.eqwalizer.ast.Pats._
 import com.whatsapp.eqwalizer.io.EData
 import com.whatsapp.eqwalizer.io.EData._
 
-class ConvertAst(fromBeam: Boolean) {
+class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
 
   private val specifiers: Map[String, Specifier] =
     Map(
@@ -59,6 +59,16 @@ class ConvertAst(fromBeam: Boolean) {
   object EArity {
     def unapply(eLong: ELong): Option[Int] = Some(eLong.value.intValue)
   }
+
+  def extractNoAutoImport(term: EObject): Option[List[Id]] =
+    term match {
+      case ETuple(
+            List(EAtom("attribute"), EPos(_), EAtom("compile"), ETuple(List(EAtom("no_auto_import"), EList(ids, None))))
+          ) =>
+        Some(ids.map(convertIdInAttr))
+      case _ =>
+        None
+    }
 
   def convertForm(term: EObject): Option[ExternalForm] =
     term match {
@@ -422,7 +432,7 @@ class ConvertAst(fromBeam: Boolean) {
             RemoteCall(RemoteId(m, f, eArgs.size), eArgs.map(convertExp))(p)
           case ETuple(List(EAtom("atom"), EPos(_), EAtom(fname))) =>
             val localId = Id(fname, eArgs.size)
-            if (AutoImport.funs(localId)) {
+            if (AutoImport.funs(localId) && !noAutoImport(localId)) {
               val remoteId = RemoteId("erlang", fname, eArgs.size)
               RemoteCall(remoteId, eArgs.map(convertExp))(p)
             } else {
@@ -469,7 +479,7 @@ class ConvertAst(fromBeam: Boolean) {
             Lambda(eClauses.map(convertClause))(p, name = None)
           case ETuple(List(EAtom("function"), EAtom(name), EArity(arity))) =>
             val localId = Id(name, arity)
-            if (AutoImport.funs(localId)) {
+            if (AutoImport.funs(localId) && !noAutoImport(localId)) {
               val remoteId = RemoteId("erlang", name, arity)
               RemoteFun(remoteId)(p)
             } else {

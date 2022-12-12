@@ -47,6 +47,14 @@
         ]
       },
       {
+        "module": "auto_imports",
+        "exported_funs": [
+          "error/2",
+          "use_local_error/0",
+          "use_erlang_error/0"
+        ]
+      },
+      {
         "module": "behave",
         "exported_funs": [
           

@@ -82,7 +82,8 @@ object Forms {
       case _: DbApi.AstBeam => true
       case _                => false
     }
-    rawForms.flatMap(new ConvertAst(isBeam).convertForm)
+    val noAutoImport = rawForms.flatMap(new ConvertAst(isBeam).extractNoAutoImport).flatten.toSet
+    rawForms.flatMap(new ConvertAst(isBeam, noAutoImport).convertForm)
   }
 
   def isFunForm(o: OtpErlangObject): Boolean =

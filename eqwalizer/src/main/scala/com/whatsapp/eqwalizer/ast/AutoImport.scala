@@ -7,9 +7,6 @@
 package com.whatsapp.eqwalizer.ast
 
 object AutoImport {
-  // see erl_internal:bif/2 (both OTP 23 and 24 - they are identical)
-  // TODO -  see D27999555 and D28026682:
-  // There is only ONE module in WASERVER - wa_fbpkg which uses no_auto_import.
   val funs: Set[Id] = Set(
     Id("abs", 1),
     Id("apply", 2),
