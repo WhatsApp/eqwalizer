@@ -6,6 +6,7 @@
 
 package com.whatsapp.eqwalizer
 
+import com.whatsapp.eqwalizer.analyses.DbgTraceCheck
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.util.{ELPDiagnostics, StatDiagnostics, TcDiagnosticsText}
 
@@ -35,6 +36,7 @@ object Main {
       case "smoke"       => smokeRun()
       case "index"       => gleanIndex(args)
       case "custom-lint" => custom_lint(args1)
+      case "check-trace" => DbgTraceCheck.main(args1.tail)
       case _             => help()
     }
   }
