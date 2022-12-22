@@ -6,16 +6,23 @@
 
 package com.whatsapp.eqwalizer.tc.generics
 
+import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.tc.PipelineContext
 
 object ElimTypeVars {
   sealed trait VarElimMode
   case object Promote extends VarElimMode
   case object Demote extends VarElimMode
 
+  private def containsVars(ty: Type, tv: Set[Int]): Boolean = ty match {
+    case VarType(n) => tv(n)
+    case ty         => TypeVars.children(ty).exists(containsVars(_, tv))
+  }
+
   /** Pierce and Turner Local Type Inference section 3.2
     */
-  def elimTypeVars(ty: Type, mode: VarElimMode, vars: Set[Int]): Type = {
+  def elimTypeVars(ty: Type, mode: VarElimMode, vars: Set[Int])(implicit pipelineContext: PipelineContext): Type = {
     def elim(t: Type): Type = elimTypeVars(t, mode, vars)
     ty match {
       case FunType(forall, args, resType) =>
@@ -28,7 +35,15 @@ object ElimTypeVars {
       case UnionType(params) =>
         UnionType(params.map(elim))
       case RemoteType(id, params) =>
-        RemoteType(id, params.map(elim))
+        val variances = pipelineContext.variance.paramVariances(id)
+        val elimmedParams = params.lazyZip(variances).map {
+          case (param, Variance.Constant | Variance.Covariant) => elimTypeVars(param, mode, vars)
+          case (param, Variance.Contravariant)                 => elimTypeVars(param, switchMode(mode), vars)
+          case (param, Variance.Invariant) =>
+            if (containsVars(param, vars)) modeToType(mode)
+            else param
+        }
+        RemoteType(id, elimmedParams)
       case OpaqueType(id, params) =>
         // $COVERAGE-OFF$
         OpaqueType(id, params.map(elim))
@@ -46,7 +61,9 @@ object ElimTypeVars {
     }
   }
 
-  private def elimVarsInProp(prop: Prop, mode: VarElimMode, vars: Set[Int]): Prop = prop match {
+  private def elimVarsInProp(prop: Prop, mode: VarElimMode, vars: Set[Int])(implicit
+      pipelineContext: PipelineContext
+  ): Prop = prop match {
     case ReqProp(key, ty) => ReqProp(key, elimTypeVars(ty, mode, vars))
     case OptProp(key, ty) => OptProp(key, elimTypeVars(ty, mode, vars))
   }

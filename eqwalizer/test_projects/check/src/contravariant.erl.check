@@ -158,17 +158,7 @@ log_id4(F) ->                              | OK      |
 id_predicate(P) -> P.                      | OK      |
                                            |         |
 -spec wrap_id(predicate(A)) -> predicate(A……         |
-wrap_id(P) -> id_predicate(P).             | ERROR   | P.
-                                           |         | Expected: predicate(A)
-                                           |         | Got     : predicate(A)
-                                           |         | 
-                                           |         |   predicate(A) is not a subtype of predicate(A)
-                                           |         |   because
-                                           |         |   'fail' | {'next', fun((stream(A)) -> predicate(A))} is not a subtype of predicate(A)
-                                           |         |   because
-                                           |         |   'fail' | {'next', fun((stream(A)) -> predicate(A))} is not a subtype of 'fail' | {'next', fun((stream(A)) -> predicate(A))}
-                                           |         |   because
-                                           |         |   {'next', fun((stream(A)) -> predicate(A))} is not a subtype of 'fail' | {'next', fun((stream(A)) -> predicate(A))}
+wrap_id(P) -> id_predicate(P).             | OK      |
                                            |         |
 -type constant(X) :: {a, constant(X)} | ni……         |
                                            |         |
