@@ -1,0 +1,177 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(contravariant).                    |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-type contravariant(X) :: fun((X) -> ok).  | INVALID | X. Type vars in aliases are not allowed in function parameter position.
+
+                                           |         |
+-type ref_contravariant(X) :: contravarian…… INVALID | ref_contravariant/1 references type with invalid definition: contravariant/1
+
+                                           |         |
+-type ref_contravariant_ab() :: ref_contra…… INVALID | ref_contravariant_ab/0 references type with invalid definition: ref_contravariant/1
+
+                                           |         |
+-opaque opaque_contra(X) :: fun((X) -> ok)…… INVALID | X. Type vars in aliases are not allowed in function parameter position.
+
+                                           |         |
+-opaque opaque_ref_contra(X) :: ref_contra…… INVALID | opaque_ref_contra/1 references type with invalid definition: ref_contravariant/1
+
+                                           |         |
+-opaque opaque_ref_contra_ab() :: ref_cont…… INVALID | opaque_ref_contra_ab/0 references type with invalid definition: ref_contravariant_ab/0
+
+                                           |         |
+-opaque opaque_ref_opaque(X) :: opaque_con…… INVALID | opaque_ref_opaque/1 references type with invalid definition: opaque_contra/1
+
+                                           |         |
+-opaque recur_contra(X) :: fun((recur_cont…… INVALID | X. Type vars in aliases are not allowed in function parameter position.
+
+                                           |         |
+-type complex_expansion_1(X) :: #{a => con…… INVALID | complex_expansion_1/1 references type with invalid definition: contravariant/1
+
+                                           |         |
+-type complex_expansion_2(X) :: {complex_e…… INVALID | complex_expansion_2/1 references type with invalid definition: complex_expansion_1/1
+
+                                           |         |
+-opaque complex_expansion_opaque(X) :: com…… INVALID | complex_expansion_opaque/1 references type with invalid definition: complex_expansion_2/1
+
+                                           |         |
+-opaque contra_in_res(X) :: fun((a) -> con…… INVALID | contra_in_res/1 references type with invalid definition: contravariant/1
+
+                                           |         |
+-opaque opaque_ok(X) :: X.                 |         |
+                                           |         |
+-opaque contra_in_opaque(X) :: opaque_ok(c…… INVALID | contra_in_opaque/1 references type with invalid definition: contravariant/1
+
+                                           |         |
+-record(my_rec, {a :: eqwalizer:refinable(……         |
+                                           |         |
+-opaque contra_in_rec_ref(X) :: #my_rec{a …… INVALID | contra_in_rec_ref/1 references type with invalid definition: contravariant/1
+
+                                           |         |
+-opaque contra_in_dict_values(X) :: #{atom…… INVALID | contra_in_dict_values/1 references type with invalid definition: contravariant/1
+
+                                           |         |
+-opaque contra_in_shape(X) :: #{a => ok, b…… INVALID | contra_in_shape/1 references type with invalid definition: contravariant/1
+
+                                           |         |
+-spec contravariant_subtype                | INVALID | contravariant_subtype/1 references types with invalid definitions: ref_contravariant/1, ref_contravariant_ab/0
+
+    (ref_contravariant_ab()) ->            |         |
+    ref_contravariant(a).                  |         |
+contravariant_subtype(F) -> F.             | NO SPEC |
+                                           |         |
+-spec contravariant_subtype_neg            | INVALID | contravariant_subtype_neg/1 references types with invalid definitions: ref_contravariant_ab/0, ref_contravariant/1
+
+    (ref_contravariant(a)) ->              |         |
+    ref_contravariant_ab().                |         |
+contravariant_subtype_neg(F) -> F.         | NO SPEC |
+                                           |         |
+-type runnable(A) :: fun((A) -> ok).       | INVALID | A. Type vars in aliases are not allowed in function parameter position.
+
+-type id(A) :: fun((A) -> A).              | INVALID | A. Type vars in aliases are not allowed in function parameter position.
+
+                                           |         |
+-spec log(term()) -> ok.                   |         |
+log(Thing) ->                              | OK      |
+    io:format("~p~n", [Thing]).            |         |
+                                           |         |
+-spec log_runnable1                        | INVALID | log_runnable1/1 references type with invalid definition: runnable/1
+
+    (runnable(A)) -> runnable(A).          |         |
+log_runnable1(F) ->                        | NO SPEC |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-spec log_runnable2                        |         |
+    (fun((A) -> ok)) -> fun((A) -> ok).    |         |
+log_runnable2(F) ->                        | OK      |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-spec log_runnable3                        | INVALID | log_runnable3/1 references type with invalid definition: runnable/1
+
+    (runnable(atom())) -> runnable(atom())……         |
+log_runnable3(F) ->                        | NO SPEC |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-spec log_runnable4                        |         |
+    (fun((atom()) -> ok)) -> fun((atom()) ……         |
+log_runnable4(F) ->                        | OK      |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-spec log_id1                              | INVALID | log_id1/1 references type with invalid definition: id/1
+
+    (id(A)) -> id(A).                      |         |
+log_id1(F) ->                              | NO SPEC |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-spec log_id2                              |         |
+    (fun((A) -> A)) -> fun((A) -> A).      |         |
+log_id2(F) ->                              | OK      |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-spec log_id3                              | INVALID | log_id3/1 references type with invalid definition: id/1
+
+    (id(atom())) -> id(atom()).            |         |
+log_id3(F) ->                              | NO SPEC |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-spec log_id4                              |         |
+    (fun((atom()) -> atom())) -> fun((atom……         |
+log_id4(F) ->                              | OK      |
+    fun(A) ->                              |         |
+        log(A),                            |         |
+        F(A)                               |         |
+    end.                                   |         |
+                                           |         |
+-type stream(A) :: eos | {head, A}.        |         |
+-type predicate(A) :: fail | {next, fun((s…… INVALID | A. Type vars in aliases are not allowed in function parameter position.
+
+                                           |         |
+-spec id_predicate(predicate(A)) -> predic…… INVALID | id_predicate/1 references type with invalid definition: predicate/1
+
+id_predicate(P) -> P.                      | NO SPEC |
+                                           |         |
+-spec wrap_id(predicate(A)) -> predicate(A…… INVALID | wrap_id/1 references type with invalid definition: predicate/1
+
+wrap_id(P) -> id_predicate(P).             | NO SPEC |
+                                           |         |
+-type constant(X) :: {a, constant(X)} | ni……         |
+                                           |         |
+-spec constant_f(constant(X)) -> constant(……         |
+constant_f(C) -> C.                        | OK      |
+                                           |         |
+-spec apply_f(constant(X)) -> constant(X). |         |
+apply_f(C) -> constant_f(C).               | OK      |
+                                           |         |
+-spec hd_contravariant([predicate(A)]) -> …… INVALID | hd_contravariant/1 references type with invalid definition: predicate/1
+
+hd_contravariant([F | _]) -> F.            | NO SPEC |
+                                           |         |
+-spec test_contravariant() -> (predicate(t…… INVALID | test_contravariant/0 references type with invalid definition: predicate/1
+
+test_contravariant() -> hd_contravariant([…… NO SPEC |

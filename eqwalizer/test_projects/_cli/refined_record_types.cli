@@ -1,3 +1,4 @@
+check/src/contravariant.erl:40
 check/src/records.erl:213
 check/src/records.erl:220
 check/src/records.erl:224
@@ -15,4 +16,4 @@ check/src/records.erl:514
 check_gradual/src/dynamic_refine.erl:283
 debug/src/records_wip.erl:31
 eqwater/src/eqwater.erl:598
-Total: 17
+Total: 18

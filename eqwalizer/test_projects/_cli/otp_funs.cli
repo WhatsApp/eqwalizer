@@ -1,4 +1,5 @@
 Per module stats:
+io  1
 sets  2
 code  2
 filelib  2
@@ -21,4 +22,4 @@ Per app stats:
 runtime_tools  12
 kernel  22
 erts  356
-stdlib  480
+stdlib  481

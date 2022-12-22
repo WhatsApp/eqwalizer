@@ -227,6 +227,28 @@
         ]
       },
       {
+        "module": "contravariant",
+        "exported_funs": [
+          "contravariant_subtype/1",
+          "contravariant_subtype_neg/1",
+          "log/1",
+          "log_runnable1/1",
+          "log_runnable2/1",
+          "log_runnable3/1",
+          "log_runnable4/1",
+          "log_id1/1",
+          "log_id2/1",
+          "log_id3/1",
+          "log_id4/1",
+          "id_predicate/1",
+          "wrap_id/1",
+          "constant_f/1",
+          "apply_f/1",
+          "hd_contravariant/1",
+          "test_contravariant/0"
+        ]
+      },
+      {
         "module": "custom",
         "exported_funs": [
           "map_get_2_1/2",
