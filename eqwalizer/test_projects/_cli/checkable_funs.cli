@@ -1,10 +1,10 @@
 all funs:
                                                All : 2878
                                          Checkable : 2623
-                              Well-typed checkable : 1675
+                              Well-typed checkable : 1676
                                    Checkable ratio : 91%
                          Health ratio of checkable : 64%
-                                       error count : 947
+                                       error count : 946
 
 --------------------------------------------
 generated funs:
@@ -28,17 +28,17 @@ generated non-test funs:
 non-generated funs:
                                                All : 2878
                                          Checkable : 2623
-                              Well-typed checkable : 1675
+                              Well-typed checkable : 1676
                                    Checkable ratio : 91%
                          Health ratio of checkable : 64%
-                                       error count : 947
+                                       error count : 946
 
 --------------------------------------------
 non-generated non-test funs (most important):
                                                All : 2876
                                          Checkable : 2621
-                              Well-typed checkable : 1674
+                              Well-typed checkable : 1675
                                    Checkable ratio : 91%
                          Health ratio of checkable : 64%
-                                       error count : 946
+                                       error count : 945
 

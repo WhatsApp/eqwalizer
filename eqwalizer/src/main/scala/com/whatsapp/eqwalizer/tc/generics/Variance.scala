@@ -27,7 +27,7 @@ class Variance(pipelineContext: PipelineContext) {
       history: Set[(RemoteType, Boolean)]
   ): Option[Variance.Variance] = ty match {
     case VarType(n) if tv == n =>
-      if (isPositivePosition) Some(ConstantOrCovariant)
+      if (isPositivePosition) Some(Covariant)
       else Some(Contravariant)
     case FunType(forall, argTys, resTy) =>
       val variancesInArgTys = if (forall.contains(tv)) {
@@ -41,7 +41,7 @@ class Variance(pipelineContext: PipelineContext) {
       combineVariances(variances)
     case t @ RemoteType(rid, args) =>
       if (history((t, isPositivePosition))) {
-        Some(ConstantOrCovariant)
+        Some(Constant)
       } else {
         val body = util.getTypeDeclBody(rid, args)
         getVarianceOf(body, tv, isPositivePosition)(history + ((t, isPositivePosition)))
@@ -56,10 +56,9 @@ class Variance(pipelineContext: PipelineContext) {
       case Some(variance) =>
         variance
       case None =>
-        combineVariances(ft.argTys.map(varianceOf(_, tv, isPositivePosition = false)))
-          .getOrElse(ConstantOrCovariant) match {
-          case ConstantOrCovariant | Invariant =>
-            ConstantOrCovariant
+        combineVariances(ft.argTys.map(varianceOf(_, tv, isPositivePosition = false))).getOrElse(Constant) match {
+          case Constant | Covariant | Invariant =>
+            Covariant
           case Contravariant =>
             Contravariant
         }
@@ -70,6 +69,8 @@ class Variance(pipelineContext: PipelineContext) {
       (v1Opt, v2Opt) match {
         case (None, Some(v))                  => Some(v)
         case (Some(v), None)                  => Some(v)
+        case (v, Some(Constant))              => v
+        case (Some(Constant), v)              => v
         case (None, None)                     => None
         case (Some(v1), Some(v2)) if v1 == v2 => Some(v1)
         case (Some(_), Some(_))               => Some(Invariant)
@@ -80,7 +81,8 @@ class Variance(pipelineContext: PipelineContext) {
 object Variance {
 
   sealed trait Variance
-  object ConstantOrCovariant extends Variance
+  object Constant extends Variance
+  object Covariant extends Variance
   object Contravariant extends Variance
   object Invariant extends Variance
 

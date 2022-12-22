@@ -182,14 +182,4 @@ apply_f(C) -> constant_f(C).               | OK      |
 hd_contravariant([F | _]) -> F.            | OK      |
                                            |         |
 -spec test_contravariant() -> (predicate(t……         |
-test_contravariant() -> hd_contravariant([…… ERROR   | hd_contravariant([]).
-                                           |         | Expected: predicate(term())
-                                           |         | Got     : predicate(none())
-                                           |         | 
-                                           |         |   predicate(none()) is not a subtype of predicate(term())
-                                           |         |   because
-                                           |         |   'fail' | {'next', fun((stream(none())) -> predicate(none()))} is not a subtype of predicate(term())
-                                           |         |   because
-                                           |         |   'fail' | {'next', fun((stream(none())) -> predicate(none()))} is not a subtype of 'fail' | {'next', fun((stream(term())) -> predicate(term()))}
-                                           |         |   because
-                                           |         |   {'next', fun((stream(none())) -> predicate(none()))} is not a subtype of 'fail' | {'next', fun((stream(term())) -> predicate(term()))}
+test_contravariant() -> hd_contravariant([…… OK      |

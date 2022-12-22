@@ -9,7 +9,7 @@ import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.ExpectedSubtype
-import com.whatsapp.eqwalizer.tc.generics.Variance.{ConstantOrCovariant, Contravariant, Invariant, Variance}
+import com.whatsapp.eqwalizer.tc.generics.Variance._
 import com.whatsapp.eqwalizer.tc.{PipelineContext, Subst}
 
 import scala.annotation.tailrec
@@ -277,7 +277,7 @@ class Constraints(pipelineContext: PipelineContext) {
     cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
 
   def constraintToType(c: Constraint, variance: Variance): Type = variance match {
-    case ConstantOrCovariant =>
+    case Constant | Covariant =>
       if (subtype.isNoneType(c.lower) && pipelineCtx.gradualTyping) DynamicType
       else c.lower
     case Invariant =>
