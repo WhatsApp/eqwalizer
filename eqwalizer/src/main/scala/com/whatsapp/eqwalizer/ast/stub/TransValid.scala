@@ -140,7 +140,7 @@ private class TransValid {
     else if (invalidRefs.contains(ref)) invalidRefs(ref).isEmpty
     else {
       inProgress += ref
-      val invalids = Db.getContractiveModuleStub(ref.refModule) match {
+      val invalids = Db.getValidatedModuleStub(ref.refModule) match {
         case Some(cStub) =>
           ref match {
             case RidRef(rid) =>

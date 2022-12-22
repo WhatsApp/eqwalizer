@@ -290,11 +290,9 @@ atom_or_number() :: atom() | number().     |         |
                                            |         |
 -type my_booleans() :: my_list(boolean()). |         |
                                            |         |
--type my_unary_fun(A, B) ::                | INVALID | A. Type vars in aliases are not allowed in function parameter position.
-
+-type my_unary_fun(A, B) ::                |         |
     fun((A) -> B).                         |         |
--type my_boolean_unary_fun() ::            | INVALID | my_boolean_unary_fun/0 references type with invalid definition: my_unary_fun/2
-
+-type my_boolean_unary_fun() ::            |         |
     my_unary_fun(boolean(), boolean()).    |         |
                                            |         |
 -spec atom_list_id(AList) -> AList when AL……         |

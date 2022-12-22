@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.ast.Vars
-import com.whatsapp.eqwalizer.tc.generics.Constraints
+import com.whatsapp.eqwalizer.tc.generics.{Constraints, Variance}
 
 package object tc {
   type Env = Map[String, Type]
@@ -55,7 +55,10 @@ package object tc {
       new ElabPat(this)
     val occurrence: Occurrence =
       new Occurrence(this)
-    val unlimitedRefinement: Boolean =
+    val unlimitedRefinement: Boolean = {
       options.unlimitedRefinement.getOrElse(false)
+    }
+    val variance: Variance =
+      new Variance(this)
   }
 }

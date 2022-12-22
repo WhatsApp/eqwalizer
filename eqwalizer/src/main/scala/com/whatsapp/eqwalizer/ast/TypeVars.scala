@@ -27,6 +27,11 @@ object TypeVars {
     case ty         => children(ty).exists(hasTypeVars)
   }
 
+  def containsVar(ty: Type, tv: VarType): Boolean = ty match {
+    case VarType(_) => ty == tv
+    case ty         => children(ty).exists(containsVar(_, tv))
+  }
+
   /** note: returns Nil for record types because they can't have type vars
     */
   def children(ty: Type): List[Type] = ty match {

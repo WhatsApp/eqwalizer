@@ -9,7 +9,6 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.ast.ExternalTypes._
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.tc.generics.Variance
 
 class ConvertTypes(module: String) {
   def convertSpec(spec: ExternalFunSpec): FunSpec = {
@@ -67,9 +66,6 @@ class ConvertTypes(module: String) {
       val params = extDecl.params.zipWithIndex.map { case (n, i) => VarType(i)(n) }
       val sub = params.map(v => v.name -> v.n).toMap
       val body = convertType(sub, extDecl.body)(None)
-      val Id(name, arity) = extDecl.id
-      val rid = RemoteId(module, name, arity)
-      checkAliasParamVariance(body, extDecl, params, rid)
       TypeDecl(extDecl.id, params, body)(extDecl.pos)
     } catch {
       case e: InvalidDiagnostics.Invalid =>
@@ -84,34 +80,11 @@ class ConvertTypes(module: String) {
       val params = extDecl.params.zipWithIndex.map { case (n, i) => VarType(i)(n) }
       val sub = params.map(v => v.name -> v.n).toMap
       val body = convertType(sub, extDecl.body)(None)
-      val Id(name, arity) = extDecl.id
-      val rid = RemoteId(module, name, arity)
-      checkAliasParamVariance(body, extDecl, params, rid)
       TypeDecl(extDecl.id, params, body)(extDecl.pos)
     } catch {
       case e: InvalidDiagnostics.Invalid =>
         InvalidTypeDecl(extDecl.id, e)(extDecl.pos)
     }
-
-  private def checkAliasParamVariance(
-      ty: Type,
-      extDecl: ExternalForm,
-      tyVars: List[VarType],
-      rid: RemoteId,
-  ): Unit = {
-    val badTypeVar = tyVars.find(tv =>
-      Variance.varianceOf(ty, tv.n, isPositivePosition = true) match {
-        case None | Some(Variance.ConstantOrCovariant) => false
-        case _                                         => true
-      }
-    )
-    badTypeVar match {
-      case Some(tv) =>
-        throw InvalidDiagnostics.AliasWithNonCovariantParam(extDecl.pos, Id(rid.name, rid.arity).toString, tv.name)
-      case None =>
-        ()
-    }
-  }
 
   def convertType(s: Map[String, Int], extTy: ExtType)(implicit ctx: Option[ExternalRecDecl]): Type = {
     def c(eTy: ExtType): Type = convertType(s, eTy)

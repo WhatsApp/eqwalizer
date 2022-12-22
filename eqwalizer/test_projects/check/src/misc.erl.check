@@ -962,14 +962,12 @@ use_o_cycle1(X) -> X.                      | OK      |
     misc:o_cycle().                        |         |
 use_o_cycle2(X) -> X.                      | OK      |
                                            |         |
--type contravariant(T)                     | INVALID | T. Type vars in aliases are not allowed in function parameter position.
-
+-type contravariant(T)                     |         |
 :: fun((T) -> ok).                         |         |
                                            |         |
--spec use_contra_neg(fun((ok) -> ok))      | INVALID | use_contra_neg/1 references type with invalid definition: contravariant/1
-
+-spec use_contra_neg(fun((ok) -> ok))      |         |
         -> contravariant(ok).              |         |
-use_contra_neg(X) -> X.                    | NO SPEC |
+use_contra_neg(X) -> X.                    | OK      |
                                            |         |
 -spec use_spec_from_behaviour() ->         |         |
     ok | stop.                             |         |

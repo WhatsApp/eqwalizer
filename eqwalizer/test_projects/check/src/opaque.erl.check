@@ -200,8 +200,8 @@ use_o_cycle1(X) -> X.                      | OK      |
   misc:o_cycle().                          |         |
 use_o_cycle2(X) -> X.                      | OK      |
                                            |         |
--opaque contravariant(T)                   | INVALID | T. Type vars in aliases are not allowed in function parameter position.
-
+-opaque contravariant(T)                   | INVALID | Opaque contravariant expands to a type in which T appears in function parameter position
+                                           |         | 	contravariant expands to fun((T) -> 'ok')
                 :: fun((T) -> ok).         |         |
                                            |         |
 -spec use_contra_neg(fun((ok) -> ok))      | INVALID | use_contra_neg/1 references type with invalid definition: contravariant/1

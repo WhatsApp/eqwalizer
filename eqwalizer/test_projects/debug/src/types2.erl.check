@@ -22,8 +22,7 @@
     unknown:my_number().                   |         | Unknown id: unknown:my_number/0
 
                                            |         |
--type my_boolean_unary_fun() ::            | INVALID | my_boolean_unary_fun/0 references type with invalid definition: types1:my_unary_fun/2
-
+-type my_boolean_unary_fun() ::            |         |
 types1:my_unary_fun(boolean(), boolean()). |         |
                                            |         |
 -opaque o(X) :: {X}.                       |         |

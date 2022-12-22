@@ -12,7 +12,7 @@ import com.whatsapp.eqwalizer.tc.PipelineContext
 
 import scala.annotation.tailrec
 
-case class Show(pipelineContext: PipelineContext) {
+case class Show(pipelineContext: Option[PipelineContext]) {
   import Show.NamedType
 
   def show(tp: Type): String =
@@ -56,7 +56,7 @@ case class Show(pipelineContext: PipelineContext) {
       case RecordType(n) =>
         s"#$n{}"
       case RefinedRecordType(r, fields) =>
-        pipelineContext.util.getRecord(r.module, r.name) match {
+        pipelineContext.flatMap(_.util.getRecord(r.module, r.name)) match {
           case None => s"#${r.name}{}"
           case Some(recDecl) =>
             fields
@@ -106,15 +106,17 @@ case class Show(pipelineContext: PipelineContext) {
         s"$key => ${show(tp)}"
     }
 
-  private def showRid(rid: RemoteId, forceShowModule: Boolean = false): String =
-    if (
-      !forceShowModule &&
-      ((rid.module == "erlang" && builtinTypes.contains(rid.name)) ||
-        rid.module == pipelineContext.module ||
-        (pipelineContext.gradualTyping && rid == RemoteId("eqwalizer", "dynamic", 0)))
-    )
-      rid.name
-    else s"${rid.module}:${rid.name}"
+  private def showRid(rid: RemoteId, forceShowModule: Boolean = false): String = {
+    pipelineContext match {
+      case Some(ctx)
+          if !forceShowModule &&
+            ((rid.module == "erlang" && builtinTypes.contains(rid.name)) ||
+              rid.module == ctx.module ||
+              (ctx.gradualTyping && rid == RemoteId("eqwalizer", "dynamic", 0))) =>
+        rid.name
+      case _ => s"${rid.module}:${rid.name}"
+    }
+  }
 }
 
 object Show {
@@ -128,10 +130,10 @@ object Show {
   }
 
   def show(tp: Type)(implicit pipelineContext: PipelineContext): String =
-    Show(pipelineContext).show(tp)
+    Show(Some(pipelineContext)).show(tp)
 
   def showNotSubtype(t1: Type, t2: Type)(implicit pipelineContext: PipelineContext): (String, String) =
-    Show(pipelineContext).showNotSubtype(t1, t2)
+    Show(Some(pipelineContext)).showNotSubtype(t1, t2)
 
   @tailrec
   private def foldCons(cons: Expr, soFar: List[Expr]): (List[Expr], Option[Expr]) = cons match {

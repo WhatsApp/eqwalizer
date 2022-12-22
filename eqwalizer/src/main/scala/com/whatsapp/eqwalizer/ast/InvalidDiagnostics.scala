@@ -58,9 +58,14 @@ object InvalidDiagnostics {
     }
     def errorName = "reference_to_invalid_type"
   }
-  case class AliasWithNonCovariantParam(pos: Pos, name: String, typeVar: String) extends Exception with Invalid {
-    val msg: String =
-      s"$typeVar. Type vars in aliases are not allowed in function parameter position."
+  case class AliasWithNonCovariantParam(pos: Pos, name: String, typeVar: String, exps: List[String])
+      extends Exception
+      with Invalid {
+    val msg: String = {
+      val expands = s"\t$name expands to ${exps.head}" :: exps.tail.map(exp => s"\twhich expands to ${exp}")
+      val explain = s"Opaque $name expands to a type in which $typeVar appears in function parameter position"
+      (explain :: expands).mkString("\n")
+    }
     def errorName = "type_var_in_parameter_position"
   }
   case class BadMapKey(pos: Pos) extends Invalid {

@@ -27,6 +27,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private lazy val constraints = pipelineContext.constraints
   private lazy val occurrence = pipelineContext.occurrence
+  private lazy val variance = pipelineContext.variance
   implicit val pipelineCtx = pipelineContext
 
   private type Var = Int
@@ -78,7 +79,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
     val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
 
-    val variances = Variance.toVariances(ft)
+    val variances = variance.toVariances(ft)
     val cs1 = nonLambdaArgs.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
       constraints.constraintGen(
         toSolve,

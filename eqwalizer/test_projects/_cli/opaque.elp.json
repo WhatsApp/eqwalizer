@@ -138,7 +138,7 @@
         "end": 2863
       },
       "lineAndCol": null,
-      "message": "T. Type vars in aliases are not allowed in function parameter position.",
+      "message": "Opaque contravariant expands to a type in which T appears in function parameter position\n\tcontravariant expands to fun((T) -> 'ok')",
       "uri": "https://fb.me/eqwalizer_errors#type_var_in_parameter_position",
       "code": "type_var_in_parameter_position",
       "expressionOrNull": null,

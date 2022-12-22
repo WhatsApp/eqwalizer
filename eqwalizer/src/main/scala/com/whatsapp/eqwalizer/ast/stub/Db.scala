@@ -81,6 +81,8 @@ private object Db {
     Map.empty
   private var contractiveModuleStubs: Map[String, ModuleStub] =
     Map.empty
+  private var validatedModuleStubs: Map[String, ModuleStub] =
+    Map.empty
   private var transValidStubs: Map[String, ModuleStub] =
     Map.empty
 
@@ -159,13 +161,25 @@ private object Db {
       }
   }
 
+  def getValidatedModuleStub(module: String): Option[ModuleStub] = {
+    if (validatedModuleStubs.contains(module))
+      Some(validatedModuleStubs(module))
+    else
+      getContractiveModuleStub(module).map { s =>
+        val typesValid = new TypesValid()
+        val stub = typesValid.checkStub(s)
+        validatedModuleStubs = validatedModuleStubs.updated(module, stub)
+        stub
+      }
+  }
+
   /** module stub suitable for type-checking
     */
   def getModuleStub(module: String): Option[ModuleStub] =
     if (transValidStubs.contains(module))
       Some(transValidStubs(module))
     else
-      getContractiveModuleStub(module).map { s =>
+      getValidatedModuleStub(module).map { s =>
         val stub = new TransValid().checkStub(s)
         transValidStubs = transValidStubs.updated(module, stub)
         stub

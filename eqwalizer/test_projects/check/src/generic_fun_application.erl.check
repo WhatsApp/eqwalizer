@@ -658,14 +658,11 @@ test_tuplify() ->                          | OK      |
 contravariant(_) ->                        | OK      |
     throw(not_implemented).                |         |
                                            |         |
--type invar(T) :: fun((T) -> T).           | INVALID | T. Type vars in aliases are not allowed in function parameter position.
-
--type contravar(T) :: fun((T) -> ok).      | INVALID | T. Type vars in aliases are not allowed in function parameter position.
-
+-type invar(T) :: fun((T) -> T).           |         |
+-type contravar(T) :: fun((T) -> ok).      |         |
                                            |         |
--spec invariant(T) -> invar(T).            | INVALID | invariant/1 references type with invalid definition: invar/1
-
-invariant(_) -> throw(not_implemented).    | NO SPEC |
+-spec invariant(T) -> invar(T).            |         |
+invariant(_) -> throw(not_implemented).    | OK      |
                                            |         |
 -spec test_contravariant_1() ->            |         |
     fun((any()) -> ok).                    |         |
@@ -679,59 +676,85 @@ test_contravariant_2() ->                  | OK      |
     X = contravariant(3),                  |         |
     X.                                     |         |
                                            |         |
--spec test_contravariant_3(                | INVALID | test_contravariant_3/1 references type with invalid definition: contravar/1
-
+-spec test_contravariant_3(                |         |
     contravar(a | b)                       |         |
 ) -> contravar(a).                         |         |
-test_contravariant_3(X) ->                 | NO SPEC |
+test_contravariant_3(X) ->                 | OK      |
     X.                                     |         |
                                            |         |
--spec test_contravariant_4_neg(            | INVALID | test_contravariant_4_neg/1 references type with invalid definition: contravar/1
-
+-spec test_contravariant_4_neg(            |         |
     contravar(contravar(a | b))            |         |
 ) -> contravar(contravar(a)).              |         |
-test_contravariant_4_neg(X) ->             | NO SPEC |
-    X.                                     |         |
+test_contravariant_4_neg(X) ->             | ERROR   |
+    X.                                     |         | X.
+                                           |         | Expected: contravar(contravar('a'))
+                                           |         | Got     : contravar(contravar('a' | 'b'))
+                                           |         | 
+                                           |         |   contravar(contravar('a' | 'b')) is not a subtype of contravar(contravar('a'))
+                                           |         |   because
+                                           |         |   fun((contravar('a' | 'b')) -> 'ok') is not a subtype of contravar(contravar('a'))
+                                           |         |   because
+                                           |         |   fun((contravar('a' | 'b')) -> 'ok') is not a subtype of fun((contravar('a')) -> 'ok')
+                                           |         |   because
+                                           |         |   contravar('a') is not a subtype of contravar('a' | 'b')
                                            |         |
--spec test_contravariant_5(                | INVALID | test_contravariant_5/1 references type with invalid definition: contravar/1
-
+-spec test_contravariant_5(                |         |
     contravar(contravar(a))                |         |
 ) -> contravar(contravar(a | b)).          |         |
-test_contravariant_5(X) ->                 | NO SPEC |
+test_contravariant_5(X) ->                 | OK      |
     X.                                     |         |
                                            |         |
 -spec test_invariant_neg() ->              |         |
     fun((atom()) -> atom()).               |         |
 test_invariant_neg() ->                    | ERROR   |
-    X = invariant(a),                      |         | Unbound var: invariant/1
-
-    X.                                     |         |
-                                           |         |
--spec test_invariant_neg_2() ->            | INVALID | test_invariant_neg_2/0 references type with invalid definition: invar/1
-
-    invar(atom()).                         |         |
-test_invariant_neg_2() ->                  | NO SPEC |
     X = invariant(a),                      |         |
-    X.                                     |         |
+    X.                                     |         | X.
+                                           |         | Expected: fun((atom()) -> atom())
+                                           |         | Got     : invar('a')
+                                           |         | 
+                                           |         |   invar('a') is not a subtype of fun((atom()) -> atom())
+                                           |         |   because
+                                           |         |   fun(('a') -> 'a') is not a subtype of fun((atom()) -> atom())
+                                           |         |   because
+                                           |         |   atom() is not a subtype of 'a'
+                                           |         |
+-spec test_invariant_neg_2() ->            |         |
+    invar(atom()).                         |         |
+test_invariant_neg_2() ->                  | ERROR   |
+    X = invariant(a),                      |         |
+    X.                                     |         | X.
+                                           |         | Expected: invar(atom())
+                                           |         | Got     : invar('a')
+                                           |         | 
+                                           |         |   invar('a') is not a subtype of invar(atom())
+                                           |         |   because
+                                           |         |   fun(('a') -> 'a') is not a subtype of invar(atom())
+                                           |         |   because
+                                           |         |   fun(('a') -> 'a') is not a subtype of fun((atom()) -> atom())
+                                           |         |   because
+                                           |         |   atom() is not a subtype of 'a'
                                            |         |
 -spec test_invariant_pos_1(any()) ->       |         |
     fun((any()) -> any()).                 |         |
-test_invariant_pos_1(Any) ->               | ERROR   |
-    X = invariant(Any),                    |         | Unbound var: invariant/1
-
+test_invariant_pos_1(Any) ->               | OK      |
+    X = invariant(Any),                    |         |
     X.                                     |         |
                                            |         |
 -spec test_invariant_pos_2() ->            |         |
     fun((a) -> a).                         |         |
-test_invariant_pos_2() ->                  | ERROR   |
-    invariant(a).                          |         | Unbound var: invariant/1
-
+test_invariant_pos_2() ->                  | OK      |
+    invariant(a).                          |         |
                                            |         |
--spec test_invariant_pos_3() ->            | INVALID | test_invariant_pos_3/0 references type with invalid definition: invar/1
-
+-spec test_invariant_pos_3() ->            |         |
     invar(a).                              |         |
-test_invariant_pos_3() ->                  | NO SPEC |
-    a.                                     |         |
+test_invariant_pos_3() ->                  | ERROR   |
+    a.                                     |         | 'a'.
+                                           |         | Expected: invar('a')
+                                           |         | Got     : 'a'
+                                           |         | 
+                                           |         |   'a' is not a subtype of invar('a')
+                                           |         |   because
+                                           |         |   'a' is not a subtype of fun(('a') -> 'a')
                                            |         |
 -spec arg_eqv(                             |         |
     fun((T) -> pid()),                     |         |

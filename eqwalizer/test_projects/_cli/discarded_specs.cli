@@ -2,16 +2,6 @@
 approx:test_trans_invalid1_neg/1
 approx:test_trans_invalid2_neg/1
 approx:test_trans_invalid3_neg/1
-contravariant:contravariant_subtype/1
-contravariant:contravariant_subtype_neg/1
-contravariant:hd_contravariant/1
-contravariant:id_predicate/1
-contravariant:log_id1/1
-contravariant:log_id3/1
-contravariant:log_runnable1/1
-contravariant:log_runnable3/1
-contravariant:test_contravariant/0
-contravariant:wrap_id/1
 expand:double_constrain/1
 expand:fun_with_rec_constraints/0
 expand:mk_bad_rec/0
@@ -20,16 +10,9 @@ expand:uses_trans_unbound_var/2
 expand:uses_ty_w_unbound_var/2
 expand:uses_ty_w_unbound_var2/0
 fault_tolerance:use_invalid/1
-generic_fun_application:invariant/1
-generic_fun_application:test_contravariant_3/1
-generic_fun_application:test_contravariant_4_neg/1
-generic_fun_application:test_contravariant_5/1
-generic_fun_application:test_invariant_neg_2/0
-generic_fun_application:test_invariant_pos_3/0
 generics_with_unions:test_uses_ty_var_from_nowhere/1
 gradual_misc:use_invalid_opaque_1/1
 gradual_misc:use_invalid_opaque_2/1
-misc:use_contra_neg/1
 misc:use_opaque_w_bad_arg_neg/1
 opaque:use_contra_neg/1
 overloaded:use_invalid_neg/1
@@ -58,6 +41,6 @@ type_aliases:use_bad_inside_neg/1
 type_aliases:uses_trans_unbound_var/2
 type_aliases:uses_ty_w_unbound_var/2
 type_aliases:uses_ty_w_unbound_var2/0
-Discarded specs: 59
+Discarded specs: 42
 Total specs: 2751
-Discarded ratio: 2.1447 %
+Discarded ratio: 1.5267 %
