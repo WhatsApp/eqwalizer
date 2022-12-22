@@ -350,3 +350,9 @@ id_predicate(P) -> P.
 
 -spec wrap_id(fun((stream(A)) -> ok)) -> (fun((stream(A)) -> ok)).
 wrap_id(P) -> id_predicate(P).
+
+-spec hd_invariant([fun((A) -> A)]) -> (fun((A) -> A)).
+hd_invariant([F | _]) -> F.
+
+-spec test_invariant() -> (fun((atom()) -> atom())).
+test_invariant() -> hd_invariant([]).

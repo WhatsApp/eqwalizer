@@ -717,7 +717,9 @@
           "getter9_neg/1",
           "getter10/1",
           "id_predicate/1",
-          "wrap_id/1"
+          "wrap_id/1",
+          "hd_invariant/1",
+          "test_invariant/0"
         ]
       },
       {
@@ -2575,7 +2577,9 @@
           "n_lambda_4_neg/0",
           "lambda_app/0",
           "ex1_neg/0",
-          "ex2/0"
+          "ex2/0",
+          "hd_invariant/1",
+          "test_invariant/0"
         ]
       },
       {

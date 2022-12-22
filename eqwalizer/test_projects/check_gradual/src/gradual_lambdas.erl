@@ -74,3 +74,9 @@ ex1_neg() ->
   fun ((string()) -> string()).
 ex2() ->
   fun(X) -> X + 1 end.
+
+-spec hd_invariant([fun((A) -> A)]) -> (fun((A) -> A)).
+hd_invariant([F | _]) -> F.
+
+-spec test_invariant() -> (fun((atom()) -> atom())).
+test_invariant() -> hd_invariant([]).
