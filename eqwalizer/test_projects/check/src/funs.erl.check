@@ -426,14 +426,4 @@ getter10(F) ->                             | OK      |
 id_predicate(P) -> P.                      | OK      |
                                            |         |
 -spec wrap_id(fun((stream(A)) -> ok)) -> (……         |
-wrap_id(P) -> id_predicate(P).             | ERROR   | P.
-                                           |         | Expected: fun((stream(A)) -> 'ok')
-                                           |         | Got     : fun((stream(A)) -> 'ok')
-                                           |         | 
-                                           |         |   fun((stream(A)) -> 'ok') is not a subtype of fun((stream(A)) -> 'ok')
-                                           |         |   because
-                                           |         |   stream(A) is not a subtype of stream(A)
-                                           |         |   because
-                                           |         |   'eos' | {'head', A} is not a subtype of stream(A)
-                                           |         |   because
-                                           |         |   'eos' | {'head', A} is not a subtype of 'eos' | {'head', A}
+wrap_id(P) -> id_predicate(P).             | OK      |

@@ -132,7 +132,8 @@ class Constraints(pipelineContext: PipelineContext) {
         case (_, UnionType(tys)) if TypeVars.hasTypeVars(upperBound) =>
           val candidates = tys.filter { ty =>
             val elimmedUpper = ElimTypeVars.elimTypeVars(ty, ElimTypeVars.Promote, toSolve ++ varsToElim)
-            subtype.subType(lowerBound, elimmedUpper)
+            val elimmedLower = ElimTypeVars.elimTypeVars(lowerBound, ElimTypeVars.Demote, toSolve ++ varsToElim)
+            subtype.subType(elimmedLower, elimmedUpper)
           }.toList
           val (varTypes, others) = candidates.partition {
             case _: VarType => true
