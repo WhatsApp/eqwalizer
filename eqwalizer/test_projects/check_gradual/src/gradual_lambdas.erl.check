@@ -85,10 +85,4 @@ ex2() ->                                   | OK      |
 hd_invariant([F | _]) -> F.                | OK      |
                                            |         |
 -spec test_invariant() -> (fun((atom()) ->……         |
-test_invariant() -> hd_invariant([]).      | ERROR   | hd_invariant([]).
-                                           |         | Expected: fun((atom()) -> atom())
-                                           |         | Got     : fun((none()) -> none())
-                                           |         | 
-                                           |         |   fun((none()) -> none()) is not a subtype of fun((atom()) -> atom())
-                                           |         |   because
-                                           |         |   atom() is not a subtype of none()
+test_invariant() -> hd_invariant([]).      | OK      |

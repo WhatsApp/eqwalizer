@@ -282,7 +282,8 @@ class Constraints(pipelineContext: PipelineContext) {
       else c.lower
     case Invariant =>
       // Safe because we check all argument types against param types once we have a substitution.
-      c.lower
+      if (subtype.isNoneType(c.lower) && pipelineCtx.gradualTyping) DynamicType
+      else c.lower
     case Contravariant =>
       c.upper
   }
