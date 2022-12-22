@@ -715,7 +715,9 @@
           "getter7/1",
           "getter8_neg/1",
           "getter9_neg/1",
-          "getter10/1"
+          "getter10/1",
+          "id_predicate/1",
+          "wrap_id/1"
         ]
       },
       {

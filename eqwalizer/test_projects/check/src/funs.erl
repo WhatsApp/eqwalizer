@@ -342,3 +342,11 @@ getter10(F) ->
     fun(A) ->
         F(A)
     end.
+
+-type stream(A) :: eos | {head, A}.
+
+-spec id_predicate(fun((stream(A)) -> ok)) -> (fun((stream(A)) -> ok)).
+id_predicate(P) -> P.
+
+-spec wrap_id(fun((stream(A)) -> ok)) -> (fun((stream(A)) -> ok)).
+wrap_id(P) -> id_predicate(P).
