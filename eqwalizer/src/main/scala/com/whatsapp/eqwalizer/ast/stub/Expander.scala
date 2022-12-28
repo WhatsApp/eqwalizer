@@ -37,7 +37,7 @@ private object Expander {
 
     def typeDecl(t: ExternalTypeDecl): Unit =
       expand.expandTypeDecl(t) match {
-        case decl: ExternalTypeDecl =>
+        case Right(decl) =>
           convertTypes.convertTypeDecl(decl) match {
             case tDecl: TypeDecl =>
               types.addOne(tDecl)
@@ -49,18 +49,14 @@ private object Expander {
               throw new IllegalStateException()
             // $COVERAGE-ON$
           }
-        case invalid: InvalidForm =>
+        case Left(invalid) =>
           if (currentFile == moduleFile)
             invalidForms.addOne(invalid)
-        // $COVERAGE-OFF$
-        case _ =>
-          throw new IllegalStateException()
-        // $COVERAGE-ON$
       }
 
     def opaqueDecl(t: ExternalOpaqueDecl): Unit =
       expand.expandOpaqueDecl(t) match {
-        case decl: ExternalOpaqueDecl =>
+        case Right(decl) =>
           publicOpaques.addOne(convertTypes.convertOpaqueDeclPublic(decl))
           convertTypes.convertOpaquePrivate(decl) match {
             case tDecl: TypeDecl =>
@@ -73,18 +69,14 @@ private object Expander {
               throw new IllegalStateException()
             // $COVERAGE-ON$
           }
-        case invalid: InvalidForm =>
+        case Left(invalid) =>
           if (currentFile == moduleFile)
             invalidForms.addOne(invalid)
-        // $COVERAGE-OFF$
-        case _ =>
-          throw new IllegalStateException()
-        // $COVERAGE-ON$
       }
 
     def recordDecl(r: ExternalRecDecl): Unit =
       expand.expandRecDecl(r) match {
-        case decl: ExternalRecDecl =>
+        case Right(decl) =>
           convertTypes.convertRecDecl(decl) match {
             case recDecl: RecDecl =>
               records.addOne(recDecl)
@@ -96,42 +88,30 @@ private object Expander {
               throw new IllegalStateException()
             // $COVERAGE-ON$
           }
-        case invalid: InvalidForm =>
+        case Left(invalid) =>
           if (currentFile == moduleFile)
             invalidForms.addOne(invalid)
-        // $COVERAGE-OFF$
-        case _ =>
-          throw new IllegalStateException()
-        // $COVERAGE-ON$
       }
 
     def spec(s: ExternalFunSpec): Unit =
       expand.expandFunSpec(s) match {
-        case s1: ExternalFunSpec =>
+        case Right(s1) =>
           if (s1.types.size == 1)
             specs.addOne(convertTypes.convertSpec(s1))
           else
             overloadedSpecs.addOne(convertTypes.convertOverloadedSpec(s1))
-        case invalid: InvalidForm =>
+        case Left(invalid) =>
           if (currentFile == moduleFile)
             invalidForms.addOne(invalid)
-        // $COVERAGE-OFF$
-        case _ =>
-          throw new IllegalStateException()
-        // $COVERAGE-ON$
       }
 
     def callback(cb: ExternalCallback): Unit =
       expand.expandCallback(cb) match {
-        case cb1: ExternalCallback =>
+        case Right(cb1) =>
           callbacks.addOne(convertTypes.convertCallback(cb1))
-        case invalid: InvalidForm =>
+        case Left(invalid) =>
           if (currentFile == moduleFile)
             invalidForms.addOne(invalid)
-        // $COVERAGE-OFF$
-        case _ =>
-          throw new IllegalStateException()
-        // $COVERAGE-ON$
       }
 
     for (f <- stub.forms)

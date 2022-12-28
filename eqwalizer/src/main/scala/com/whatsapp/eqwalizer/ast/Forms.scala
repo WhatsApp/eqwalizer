@@ -59,9 +59,7 @@ object Forms {
   case class OpaqueTypeDecl(id: Id)(val pos: Pos) extends InternalForm
   case class TypeDecl(id: Id, params: List[VarType], body: Type)(val pos: Pos) extends InternalForm
 
-  sealed trait UtilForm extends ExternalForm with InternalForm
-
-  sealed trait InvalidForm extends UtilForm {
+  sealed trait InvalidForm extends InternalForm {
     val te: TypeError
   }
   case class InvalidTypeDecl(id: Id, te: Invalid)(val pos: Pos) extends InvalidForm
@@ -69,7 +67,7 @@ object Forms {
   case class InvalidRecDecl(name: String, te: Invalid)(val pos: Pos) extends InvalidForm
   case class InvalidConvertTypeInRecDecl(name: String, te: Invalid)(val pos: Pos) extends InvalidForm
 
-  case class NoSpecFuncDecl(id: Id)(val pos: Pos) extends UtilForm
+  case class NoSpecFuncDecl(id: Id)(val pos: Pos) extends InternalForm
   case class FuncDecl(id: Id, errors: List[TypeError])(val pos: Pos) extends InternalForm
   case class MisBehaviour(te: BehaviourError)(val pos: Pos) extends InternalForm
 

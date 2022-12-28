@@ -14,11 +14,12 @@ import com.whatsapp.eqwalizer.config
 // Expands spec constraints, applies rewrite rules, and validates
 private class Expand(module: String) {
 
-  def expandFunSpec(funSpec: ExternalFunSpec): ExternalForm = {
+  def expandFunSpec(funSpec: ExternalFunSpec): Either[InvalidFunSpec, ExternalFunSpec] = {
     try {
-      funSpec.copy(types = funSpec.types.map(expandCft))(funSpec.pos)
+      Right(funSpec.copy(types = funSpec.types.map(expandCft))(funSpec.pos))
     } catch {
-      case e: InvalidDiagnostics.Invalid => InvalidFunSpec(funSpec.id, e)(funSpec.pos)
+      case e: InvalidDiagnostics.Invalid =>
+        Left(InvalidFunSpec(funSpec.id, e)(funSpec.pos))
     }
   }
 
@@ -37,30 +38,32 @@ private class Expand(module: String) {
     ConstrainedFunType(ft1, List.empty)(cft.pos)
   }
 
-  def expandCallback(cb: ExternalCallback): ExternalForm = {
+  def expandCallback(cb: ExternalCallback): Either[InvalidFunSpec, ExternalCallback] = {
     try {
-      cb.copy(types = cb.types.map(expandCft))(cb.pos)
-    } catch {
-      case e: InvalidDiagnostics.Invalid => InvalidFunSpec(cb.id, e)(cb.pos)
-    }
-  }
-
-  def expandTypeDecl(decl: ExternalTypeDecl): ExternalForm = {
-    try {
-      validateTypeVars(decl.pos, decl.body, decl.params)
-      decl.copy(body = expand(decl.body))(decl.pos)
+      Right(cb.copy(types = cb.types.map(expandCft))(cb.pos))
     } catch {
       case e: InvalidDiagnostics.Invalid =>
-        InvalidTypeDecl(decl.id, e)(decl.pos)
+        Left(InvalidFunSpec(cb.id, e)(cb.pos))
     }
   }
 
-  def expandOpaqueDecl(decl: ExternalOpaqueDecl): ExternalForm = {
+  def expandTypeDecl(decl: ExternalTypeDecl): Either[InvalidTypeDecl, ExternalTypeDecl] = {
     try {
       validateTypeVars(decl.pos, decl.body, decl.params)
-      decl.copy(body = expand(decl.body))(decl.pos)
+      Right(decl.copy(body = expand(decl.body))(decl.pos))
     } catch {
-      case e: InvalidDiagnostics.Invalid => InvalidTypeDecl(decl.id, e)(decl.pos)
+      case e: InvalidDiagnostics.Invalid =>
+        Left(InvalidTypeDecl(decl.id, e)(decl.pos))
+    }
+  }
+
+  def expandOpaqueDecl(decl: ExternalOpaqueDecl): Either[InvalidTypeDecl, ExternalOpaqueDecl] = {
+    try {
+      validateTypeVars(decl.pos, decl.body, decl.params)
+      Right(decl.copy(body = expand(decl.body))(decl.pos))
+    } catch {
+      case e: InvalidDiagnostics.Invalid =>
+        Left(InvalidTypeDecl(decl.id, e)(decl.pos))
     }
   }
 
@@ -93,10 +96,12 @@ private class Expand(module: String) {
       case None => ()
     }
 
-  def expandRecDecl(decl: ExternalRecDecl): ExternalForm =
-    try decl.copy(fields = decl.fields.map(expandRecField))(decl.pos)
-    catch {
-      case e: InvalidDiagnostics.Invalid => InvalidRecDecl(decl.name, e)(decl.pos)
+  def expandRecDecl(decl: ExternalRecDecl): Either[InvalidRecDecl, ExternalRecDecl] =
+    try {
+      Right(decl.copy(fields = decl.fields.map(expandRecField))(decl.pos))
+    } catch {
+      case e: InvalidDiagnostics.Invalid =>
+        Left(InvalidRecDecl(decl.name, e)(decl.pos))
     }
 
   private def expand(t: ExtType): ExtType =
