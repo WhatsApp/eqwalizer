@@ -2963,19 +2963,6 @@ file_open3_neg(Modes) ->                   | ERROR   |
                                            |         |   because
                                            |         |   pid() is not a subtype of #file_descriptor{}
                                            |         |
--spec file_open4_neg                       |         |
-    (file:mode()) -> file:fd().            |         |
-file_open4_neg(Mode) ->                    | ERROR   |
-    {ok, Device} =                         |         |
-        file:open("/file", Mode),          |         | Mode.
-                                           |         | Expected: [file:mode() | 'ram' | 'directory']
-                                           |         | Got     : file:mode()
-                                           |         | 
-                                           |         |   file:mode() is not a subtype of [file:mode() | 'ram' | 'directory']
-                                           |         |   because
-                                           |         |   'binary' | 'exclusive' | 'raw' | 'read' | {'encoding', unicode:encoding()} | 'sync' | 'read_ahead' | 'delayed_write' | 'append' | {'read_ahead', number()} | {'delayed_write', number(), number()} | 'compressed' | 'write' is not a subtype of [file:mode() | 'ram' | 'directory']
-    Device.                                |         |
-                                           |         |
 -spec file_open5_neg                       |         |
     (file:mode()) -> file:fd().            |         |
 file_open5_neg(Mode) ->                    | ERROR   |

@@ -2232,13 +2232,6 @@ file_open3_neg(Modes) ->
         file:open("/file", Modes),
     Device.
 
--spec file_open4_neg
-    (file:mode()) -> file:fd().
-file_open4_neg(Mode) ->
-    {ok, Device} =
-        file:open("/file", Mode),
-    Device.
-
 -spec file_open5_neg
     (file:mode()) -> file:fd().
 file_open5_neg(Mode) ->

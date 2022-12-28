@@ -6,7 +6,7 @@ filelib  2
 io_lib  3
 rand  3
 string  6
-file  9
+file  8
 timer  10
 application  11
 dbg  12
@@ -20,6 +20,6 @@ maps  164
 erlang  356
 Per app stats:
 runtime_tools  12
-kernel  22
+kernel  21
 erts  356
 stdlib  481
