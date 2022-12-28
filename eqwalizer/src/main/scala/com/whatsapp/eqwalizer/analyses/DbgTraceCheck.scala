@@ -15,9 +15,10 @@ import com.whatsapp.eqwalizer.io.EData
 import com.whatsapp.eqwalizer.io.EData._
 import com.whatsapp.eqwalizer.tc.Subst
 
-import java.io.{ByteArrayInputStream, DataInputStream}
+import java.io.DataInputStream
 import java.nio.file.{Files, Path, Paths}
 import scala.collection.mutable.ListBuffer
+import scala.util.Using
 
 // Checks a dbg trace wrt specs and types.
 // It analyses `call` and `return_from` elements of the trace.
@@ -324,20 +325,17 @@ object DbgTraceCheck {
     }
   }
 
-  private def iterateTrace(path: Path)(f: OtpErlangObject => Unit): Unit = {
-    val bytes = Files.readAllBytes(path)
-
-    val input = new DataInputStream(new ByteArrayInputStream(bytes))
-
-    while (input.available() > 0) {
-      val tag = input.readByte()
-      if (tag != 0)
-        throw new IllegalArgumentException("Incomplete trace")
-      val binarySize = input.readInt()
-      val binary = new Array[Byte](binarySize)
-      input.readFully(binary)
-      val chunk = new OtpInputStream(binary).read_any()
-      f(chunk)
+  private def iterateTrace(path: Path)(f: OtpErlangObject => Unit): Unit =
+    Using(new DataInputStream(Files.newInputStream(path))) { input =>
+      while (input.available() > 0) {
+        val tag = input.readByte()
+        if (tag != 0)
+          throw new IllegalArgumentException("Incomplete trace")
+        val binarySize = input.readInt()
+        val binary = new Array[Byte](binarySize)
+        input.readFully(binary)
+        val chunk = new OtpInputStream(binary).read_any()
+        f(chunk)
+      }
     }
-  }
 }
