@@ -84,6 +84,7 @@ object Forms {
     rawForms.flatMap(new ConvertAst(isBeam, noAutoImport).convertForm)
   }
 
+  private val functionAtom = new OtpErlangAtom("function")
   def isFunForm(o: OtpErlangObject): Boolean =
-    o.asInstanceOf[OtpErlangTuple].elementAt(0).equals(new OtpErlangAtom("function"))
+    o.asInstanceOf[OtpErlangTuple].elementAt(0).equals(functionAtom)
 }
