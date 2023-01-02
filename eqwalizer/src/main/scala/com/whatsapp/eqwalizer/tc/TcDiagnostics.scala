@@ -7,10 +7,9 @@
 package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
-import com.whatsapp.eqwalizer.ast.{Id, Pos, RemoteId, TypeVars}
+import com.whatsapp.eqwalizer.ast.Pos
 import com.whatsapp.eqwalizer.ast.Show.{show, showNotSubtype}
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.stub.DbApi
 
 object TcDiagnostics {
   case class TcDiagnostics(line: Int, msg: String)

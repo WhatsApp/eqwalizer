@@ -9,6 +9,8 @@ name := "eqwalizer"
 scalaVersion := "2.13.8"
 
 scalacOptions += "-deprecation"
+scalacOptions += "-Wunused:imports"
+scalacOptions += "-Werror"
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 

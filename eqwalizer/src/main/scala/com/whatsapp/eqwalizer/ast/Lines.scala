@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer.ast
 
 import scala.collection.Searching
-import scala.collection.mutable.{ArrayBuilder, ListBuffer}
+import scala.collection.mutable.ArrayBuilder
 
 /** Do not use these utils for ELP integration: ELP owns location reporting.
   */

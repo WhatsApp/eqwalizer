@@ -10,11 +10,9 @@ import java.nio.file.{Files, Paths}
 
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.stub.DbApi
-import com.whatsapp.eqwalizer.ast.{Vars, _}
+import com.whatsapp.eqwalizer.ast._
 import com.whatsapp.eqwalizer.io.Project
-import com.whatsapp.eqwalizer.tc.{PipelineContext}
-
-import scala.collection.mutable.ListBuffer
+import com.whatsapp.eqwalizer.tc.PipelineContext
 
 // $COVERAGE-OFF$
 class OverloadingUsesListener extends AstListener {

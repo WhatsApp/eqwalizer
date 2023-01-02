@@ -10,7 +10,7 @@ import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.ExpectedSubtype
-import com.whatsapp.eqwalizer.tc.generics.{Constraints, Variance}
+import com.whatsapp.eqwalizer.tc.generics.Constraints
 import com.whatsapp.eqwalizer.tc.generics.Constraints.ConstraintSeq
 
 /** Implement Pierce and Turner "Local Type Inference" with the following tweaks:

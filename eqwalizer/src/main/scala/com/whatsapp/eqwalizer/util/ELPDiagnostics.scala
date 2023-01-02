@@ -9,7 +9,7 @@ package com.whatsapp.eqwalizer.util
 import java.io.OutputStream
 import com.whatsapp.eqwalizer.{Pipeline, ast}
 import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, InvalidForm, MisBehaviour}
-import com.whatsapp.eqwalizer.ast.{Lines, Pos, Show, TextRange}
+import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.io.Ipc
 import com.whatsapp.eqwalizer.tc.{Options, noOptions}

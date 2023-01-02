@@ -9,7 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Pats.{PatAtom, PatWild}
-import com.whatsapp.eqwalizer.ast.{Filters, RemoteId}
+import com.whatsapp.eqwalizer.ast.Filters
 
 object Predicates {
   def isCaseIf(e: Case): Boolean = {
