@@ -83,6 +83,13 @@ contravariant_subtype_neg(F) -> F.         | ERROR   | F.
 -type runnable(A) :: fun((A) -> ok).       |         |
 -type id(A) :: fun((A) -> A).              |         |
                                            |         |
+-type next(A) ::                           |         |
+    eos | {head, A}.                       |         |
+                                           |         |
+-type pred(A) ::                           |         |
+    {check, fun((next(A)) -> pred(A))}     |         |
+    | stop.                                |         |
+                                           |         |
 -spec log(term()) -> ok.                   |         |
 log(Thing) ->                              | OK      |
     io:format("~p~n", [Thing]).            |         |
@@ -173,3 +180,21 @@ hd_contravariant([F | _]) -> F.            | OK      |
                                            |         |
 -spec test_contravariant() -> (predicate(t……         |
 test_contravariant() -> hd_contravariant([…… OK      |
+                                           |         |
+-spec id_pred                              |         |
+    (pred(A)) -> pred(A).                  |         |
+id_pred(P) -> P.                           | OK      |
+                                           |         |
+-spec apply_id_pred                        |         |
+    (pred(number())) -> pred(number()).    |         |
+apply_id_pred(P) -> id_pred(P).            | ERROR   | P.
+                                           |         | Expected: pred(A)
+                                           |         | Got     : pred(number())
+                                           |         | 
+                                           |         |   pred(number()) is not a subtype of pred(A)
+                                           |         |   because
+                                           |         |   {'check', fun((next(number())) -> pred(number()))} | 'stop' is not a subtype of pred(A)
+                                           |         |   because
+                                           |         |   {'check', fun((next(number())) -> pred(number()))} | 'stop' is not a subtype of {'check', fun((next(A)) -> pred(A))} | 'stop'
+                                           |         |   because
+                                           |         |   {'check', fun((next(number())) -> pred(number()))} is not a subtype of {'check', fun((next(A)) -> pred(A))} | 'stop'

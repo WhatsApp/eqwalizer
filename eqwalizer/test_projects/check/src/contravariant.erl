@@ -56,6 +56,13 @@ contravariant_subtype_neg(F) -> F.
 -type runnable(A) :: fun((A) -> ok).
 -type id(A) :: fun((A) -> A).
 
+-type next(A) ::
+    eos | {head, A}.
+
+-type pred(A) ::
+    {check, fun((next(A)) -> pred(A))}
+    | stop.
+
 -spec log(term()) -> ok.
 log(Thing) ->
     io:format("~p~n", [Thing]).
@@ -146,3 +153,11 @@ hd_contravariant([F | _]) -> F.
 
 -spec test_contravariant() -> (predicate(term())).
 test_contravariant() -> hd_contravariant([]).
+
+-spec id_pred
+    (pred(A)) -> pred(A).
+id_pred(P) -> P.
+
+-spec apply_id_pred
+    (pred(number())) -> pred(number()).
+apply_id_pred(P) -> id_pred(P).

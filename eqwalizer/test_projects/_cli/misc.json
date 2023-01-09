@@ -245,7 +245,9 @@
           "constant_f/1",
           "apply_f/1",
           "hd_contravariant/1",
-          "test_contravariant/0"
+          "test_contravariant/0",
+          "id_pred/1",
+          "apply_id_pred/1"
         ]
       },
       {
