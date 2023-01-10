@@ -84,6 +84,7 @@ class Constraints(pipelineContext: PipelineContext) {
       failure(cs, constraintLoc, variances)
     }
     if (toSolve.isEmpty) state
+    else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) state
     // The logic is similar to Subtype.scala
     else if (seen((lowerBound, upperBound))) state
     else if (lowerBound == upperBound) state
@@ -128,8 +129,8 @@ class Constraints(pipelineContext: PipelineContext) {
 
         case (UnionType(tys), _) =>
           constrainSeq(state, tys.map((_, upperBound)))
-        // when the upper bound is a union with a ty var and there is only one potential match, use it for constraint generation
-        case (_, UnionType(tys)) if TypeVars.hasTypeVars(upperBound) =>
+        // when the upper bound is a union, see if there is only one potential match, use it for constraint generation
+        case (_, UnionType(tys)) =>
           val candidates = tys.filter { ty =>
             val elimmedUpper = ElimTypeVars.elimTypeVars(ty, ElimTypeVars.Promote, toSolve ++ varsToElim)
             val elimmedLower = ElimTypeVars.elimTypeVars(lowerBound, ElimTypeVars.Demote, toSolve ++ varsToElim)

@@ -402,11 +402,11 @@
         "end": 5711
       },
       "lineAndCol": null,
-      "message": "Expected: {'my_rec', atom(), T}\nGot     : #my_rec{}",
+      "message": "Expected: {'my_rec', atom(), atom()}\nGot     : #my_rec{}",
       "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "X",
-      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), T}\n  because\n  number() is not a subtype of atom()"
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), atom()}\n  because\n  number() is not a subtype of atom()"
     },
     {
       "range": {

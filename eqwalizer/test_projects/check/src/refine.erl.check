@@ -422,11 +422,11 @@ ttt2(T, T) -> T.                           | OK      |
 -spec use6_neg                             |         |
 (#my_rec{}) -> atom().                     |         |
 use6_neg(X) -> ttt2(X, x).                 | ERROR   | X.
-                                           |         | Expected: {'my_rec', atom(), T}
+                                           |         | Expected: {'my_rec', atom(), atom()}
                                            |         | Got     : #my_rec{}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), T}
+                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), atom()}
                                            |         |   because
                                            |         |   number() is not a subtype of atom()
                                            |         |
