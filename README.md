@@ -82,6 +82,10 @@ including:
 - Why not extend Dialyzer, rather than creating a new tool?
 - What about Elixir?
 
+## Where can I learn more about eqWAlizer, its technical principles, its relation to dialyzer and elixir support feasibility?
+
+[here](https://www.beamrad.io/35).
+
 ## License
 
 eqWAlizer is [Apache licensed](./LICENSE).
