@@ -45,7 +45,7 @@ test4(L) ->
 -spec test5() -> ok.
 test5() ->
     % so we pull in a lot of deps
-    _ = gen_server:call(?MODULE, req),
+    _ = gen_server:send_request(?MODULE, req),
     meinong:meinong(2).
 
 unspecced() -> anything.
