@@ -1,5 +1,5 @@
 jobs:
-  linux-release:
+  linux-release-otp-25:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -15,6 +15,11 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - name: Install OTP
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '25.2'
+          rebar3-version: '3.20.0'
       - name: Assemble eqwalizer.jar
         run: "cd eqwalizer; sbt assembly"
       - name: Assemble eqwalizer binary
@@ -32,13 +37,18 @@ jobs:
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13/eqwalizer.jar
+      - name: Upload eqwalizer native binary
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: eqwalizer
+          path: eqwalizer/eqwalizer
       - name: Make elp-linux.tar.gz
         run: 'tar -zcvf elp-linux.tar.gz -C mini-elp/target/release/ elp'
       - env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         id: get_release_url
         name: Get release url
-        uses: "bruceadams/get-release@v1.2.2"
+        uses: "bruceadams/get-release@v1.3.2"
       - env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         name: Upload release elp-linux.tar.gz
@@ -48,9 +58,60 @@ jobs:
           asset_name: elp-linux.tar.gz
           asset_path: elp-linux.tar.gz
           upload_url: "${{ steps.get_release_url.outputs.upload_url }}"
+  linux-release-otp-23:
+    needs:
+      - linux-release-otp-25
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: "actions/checkout@v2"
+      - name: Set up GraalVM
+        uses: "DeLaGuardo/setup-graalvm@5.0"
+        with:
+          graalvm: '22.1.0'
+          java: 'java11'
+      - name: Set up rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Install OTP
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '23.3'
+          rebar3-version: '3.20.0'
+      - name: Download eqwalizer.jar
+        uses: "actions/download-artifact@v2"
+        with:
+          name: eqwalizer.jar
+          path: eqwalizer/target/scala-2.13
+      - name: Download eqwalizer binary
+        uses: "actions/download-artifact@v2"
+        with:
+          name: eqwalizer
+          path: eqwalizer
+      - name: Test elp
+        run: "cd mini-elp && cargo test --workspace"
+      - name: Assemble elp
+        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release"
+      - name: Make elp-linux-otp-23.tar.gz
+        run: 'tar -zcvf elp-linux-otp-23.tar.gz -C mini-elp/target/release/ elp'
+      - env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        id: get_release_url
+        name: Get release url
+        uses: "bruceadams/get-release@v1.3.2"
+      - env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        name: Upload release elp-linux-otp-23.tar.gz
+        uses: "actions/upload-release-asset@v1.0.2"
+        with:
+          asset_content_type: application/octet-stream
+          asset_name: elp-linux-otp-23.tar.gz
+          asset_path: elp-linux-otp-23.tar.gz
+          upload_url: "${{ steps.get_release_url.outputs.upload_url }}"
   macos-release:
     needs:
-      - linux-release
+      - linux-release-otp-25
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -85,7 +146,7 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         id: get_release_url
         name: Get release url
-        uses: "bruceadams/get-release@v1.2.2"
+        uses: "bruceadams/get-release@v1.3.2"
       - env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         name: Upload release elp-macos.tar.gz
