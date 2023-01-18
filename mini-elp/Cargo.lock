@@ -179,7 +179,7 @@ checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 
 [[package]]
 name = "elp"
-version = "0.12.13-dev"
+version = "0.13.18"
 dependencies = [
  "anyhow",
  "codespan-reporting",
@@ -211,7 +211,7 @@ dependencies = [
 
 [[package]]
 name = "elp_base_db"
-version = "0.12.13-dev"
+version = "0.13.18"
 dependencies = [
  "eetf",
  "elp_project_model",
@@ -229,7 +229,7 @@ dependencies = [
 
 [[package]]
 name = "elp_eqwalizer"
-version = "0.12.13-dev"
+version = "0.13.18"
 dependencies = [
  "anyhow",
  "fxhash",
@@ -244,7 +244,7 @@ dependencies = [
 
 [[package]]
 name = "elp_ide"
-version = "0.12.13-dev"
+version = "0.13.18"
 dependencies = [
  "anyhow",
  "elp_ide_db",
@@ -255,7 +255,7 @@ dependencies = [
 
 [[package]]
 name = "elp_ide_db"
-version = "0.12.13-dev"
+version = "0.13.18"
 dependencies = [
  "anyhow",
  "crossbeam-channel",
@@ -277,7 +277,7 @@ dependencies = [
 
 [[package]]
 name = "elp_parse_server"
-version = "0.12.13-dev"
+version = "0.13.18"
 dependencies = [
  "anyhow",
  "crossbeam-channel",
@@ -294,7 +294,7 @@ dependencies = [
 
 [[package]]
 name = "elp_project_model"
-version = "0.12.13-dev"
+version = "0.13.18"
 dependencies = [
  "anyhow",
  "eetf",

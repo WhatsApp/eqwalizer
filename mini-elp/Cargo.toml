@@ -6,7 +6,7 @@ default-members = ["crates/elp"]
 
 [workspace.package]
 edition = "2021"
-version = "0.12.13-dev"
+version = "0.13.18"
 
 [workspace.dependencies]
 anyhow = "1.0.64"
