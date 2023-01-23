@@ -16,7 +16,24 @@
           "guard02_pos/1",
           "guard03_neg/1",
           "a_to_a/1",
-          "unsound/0"
+          "unsound/0",
+          "f4_to_f/1",
+          "f5_to_f4/1",
+          "f5_to_f4_cov/1",
+          "f5_to_f4_cov_neg/1",
+          "f5_or_f6_to_f4/1",
+          "apply_f4_neg/1",
+          "f4_id_T/1",
+          "apply_f4_id/1",
+          "fun_to_f4_neg/1",
+          "fun2_to_f4/1",
+          "fun3_to_f4_neg/1",
+          "f4_to_fun_neg/1",
+          "map_f1/2",
+          "map_f2/2",
+          "map_f3_neg/2",
+          "map_f4_neg/2",
+          "map_f5/2"
         ]
       },
       {
@@ -2417,7 +2434,26 @@
           "m_fun7_neg/3",
           "take_fn_in_tup_1/1",
           "lambda_1/0",
-          "lambda_2/0"
+          "lambda_2/0",
+          "f4_to_f/1",
+          "f5_to_f4/1",
+          "f5_to_f4_cov/1",
+          "f5_to_f4_cov_neg/1",
+          "f5_or_f6_to_f4/1",
+          "apply_f4_pos/1",
+          "apply_f4_neg/1",
+          "f4_id_T/1",
+          "apply_f4_id/1",
+          "fun_to_f4/1",
+          "fun2_to_f4/1",
+          "fun3_to_f4_neg/1",
+          "f4_to_fun_pos/1",
+          "f4_to_fun_neg/1",
+          "map_f1/2",
+          "map_f2/2",
+          "map_f3/2",
+          "map_f4/2",
+          "map_f5/2"
         ]
       },
       {

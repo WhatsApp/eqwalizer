@@ -140,3 +140,66 @@ lambda_2() ->                              | OK      |
   take_fn_in_tup_1(                        |         |
     {fun Named(_X) -> b end}               |         |
   ).                                       |         |
+                                           |         |
+-type f4(T) :: fun((...) -> T).            |         |
+                                           |         |
+-type f5(T) :: fun((term()) -> T).         |         |
+                                           |         |
+-type f6(T) :: fun((term(), term()) -> T). |         |
+                                           |         |
+-spec f4_to_f(f4(term())) -> fun().        |         |
+f4_to_f(F) -> F.                           | OK      |
+                                           |         |
+-spec f5_to_f4(f5(term())) -> f4(term()).  |         |
+f5_to_f4(F) -> F.                          | OK      |
+                                           |         |
+-spec f5_to_f4_cov(f5(a)) -> f4(a | b).    |         |
+f5_to_f4_cov(F) -> F.                      | OK      |
+                                           |         |
+-spec f5_to_f4_cov_neg(f5(a | b)) -> f4(a)……         |
+f5_to_f4_cov_neg(F) -> F.                  | OK      |
+                                           |         |
+-spec f5_or_f6_to_f4(f5(atom()) | f6(numbe……         |
+f5_or_f6_to_f4(F) -> F.                    | OK      |
+                                           |         |
+-spec apply_f4_pos(f4(number())) -> number……         |
+apply_f4_pos(F) -> F(a).                   | OK      |
+                                           |         |
+-spec apply_f4_neg(f4(number())) -> boolea……         |
+apply_f4_neg(F) -> F(a).                   | OK      |
+                                           |         |
+-spec f4_id_T(f4(T)) -> f4(T).             |         |
+f4_id_T(F) -> F.                           | OK      |
+                                           |         |
+-spec apply_f4_id(f4(a)) -> f4(a | b).     |         |
+apply_f4_id(F) -> f4_id_T(F).              | OK      |
+                                           |         |
+-spec fun_to_f4(fun()) -> f4(atom()).      |         |
+fun_to_f4(F) -> F.                         | OK      |
+                                           |         |
+-spec fun2_to_f4(fun((term()) -> a)) -> f4……         |
+fun2_to_f4(F) -> F.                        | OK      |
+                                           |         |
+-spec fun3_to_f4_neg(fun((term()) -> a | b……         |
+fun3_to_f4_neg(F) -> F.                    | OK      |
+                                           |         |
+-spec f4_to_fun_pos(f4(a)) -> fun((term())……         |
+f4_to_fun_pos(F) -> F.                     | OK      |
+                                           |         |
+-spec f4_to_fun_neg(f4(a | b)) -> fun((ter……         |
+f4_to_fun_neg(F) -> F.                     | OK      |
+                                           |         |
+-spec map_f1(fun((term()) -> atom()), [ter……         |
+map_f1(F, Ts) -> lists:map(F, Ts).         | OK      |
+                                           |         |
+-spec map_f2(fun((eqwalizer:dynamic()) -> ……         |
+map_f2(F, Ts) -> lists:map(F, Ts).         | OK      |
+                                           |         |
+-spec map_f3(fun((...) -> atom()), [term()……         |
+map_f3(F, Ts) -> lists:map(F, Ts).         | OK      |
+                                           |         |
+-spec map_f4(fun((...) -> A), [term()]) ->……         |
+map_f4(F, Ts) -> lists:map(F, Ts).         | OK      |
+                                           |         |
+-spec map_f5(fun((term()) -> atom()), [ter……         |
+map_f5(F, Ts) -> map_f4(F, Ts).            | OK      |

@@ -15,11 +15,11 @@ ets  16
 filename  21
 gb_sets  26
 proplists  51
-lists  160
 maps  164
+lists  168
 erlang  356
 Per app stats:
 runtime_tools  12
 kernel  21
 erts  356
-stdlib  481
+stdlib  489
