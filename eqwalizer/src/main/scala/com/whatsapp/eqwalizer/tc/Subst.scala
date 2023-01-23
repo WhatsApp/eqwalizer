@@ -15,6 +15,8 @@ object Subst {
       case FunType(forall, args, resType) =>
         val s1 = s -- forall
         FunType(forall, args.map(subst(s1, _)), subst(s1, resType))
+      case AnyArityFunType(resTy) =>
+        AnyArityFunType(sub(resTy))
       case TupleType(params) =>
         TupleType(params.map(sub))
       case ListType(elemT) =>

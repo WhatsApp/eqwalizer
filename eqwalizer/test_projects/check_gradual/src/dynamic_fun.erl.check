@@ -157,7 +157,17 @@ f5_to_f4(F) -> F.                          | OK      |
 f5_to_f4_cov(F) -> F.                      | OK      |
                                            |         |
 -spec f5_to_f4_cov_neg(f5(a | b)) -> f4(a)……         |
-f5_to_f4_cov_neg(F) -> F.                  | OK      |
+f5_to_f4_cov_neg(F) -> F.                  | ERROR   | F.
+                                           |         | Expected: f4('a')
+                                           |         | Got     : f5('a' | 'b')
+                                           |         | 
+                                           |         |   f5('a' | 'b') is not a subtype of f4('a')
+                                           |         |   because
+                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of f4('a')
+                                           |         |   because
+                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of fun((...) -> 'a')
+                                           |         |   because
+                                           |         |   'a' | 'b' is not a subtype of 'a'
                                            |         |
 -spec f5_or_f6_to_f4(f5(atom()) | f6(numbe……         |
 f5_or_f6_to_f4(F) -> F.                    | OK      |
@@ -166,13 +176,23 @@ f5_or_f6_to_f4(F) -> F.                    | OK      |
 apply_f4_pos(F) -> F(a).                   | OK      |
                                            |         |
 -spec apply_f4_neg(f4(number())) -> boolea……         |
-apply_f4_neg(F) -> F(a).                   | OK      |
+apply_f4_neg(F) -> F(a).                   | ERROR   | F('a').
+                                           |         | Expected: boolean()
+                                           |         | Got     : number()
                                            |         |
 -spec f4_id_T(f4(T)) -> f4(T).             |         |
 f4_id_T(F) -> F.                           | OK      |
                                            |         |
 -spec apply_f4_id(f4(a)) -> f4(a | b).     |         |
-apply_f4_id(F) -> f4_id_T(F).              | OK      |
+apply_f4_id(F) -> f4_id_T(F).              | ERROR   | f4_id_T(F).
+                                           |         | Expected: f4('a' | 'b')
+                                           |         | Got     : f4('a')
+                                           |         | 
+                                           |         |   f4('a') is not a subtype of f4('a' | 'b')
+                                           |         |   because
+                                           |         |   fun((...) -> 'a') is not a subtype of f4('a' | 'b')
+                                           |         |   because
+                                           |         |   fun((...) -> 'a') is not a subtype of fun((...) -> 'a' | 'b')
                                            |         |
 -spec fun_to_f4(fun()) -> f4(atom()).      |         |
 fun_to_f4(F) -> F.                         | OK      |
@@ -181,13 +201,33 @@ fun_to_f4(F) -> F.                         | OK      |
 fun2_to_f4(F) -> F.                        | OK      |
                                            |         |
 -spec fun3_to_f4_neg(fun((term()) -> a | b……         |
-fun3_to_f4_neg(F) -> F.                    | OK      |
+fun3_to_f4_neg(F) -> F.                    | ERROR   | F.
+                                           |         | Expected: f4('a')
+                                           |         | Got     : fun((term()) -> 'a' | 'b')
+                                           |         | 
+                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of f4('a')
+                                           |         |   because
+                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of fun((...) -> 'a')
+                                           |         |   because
+                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   because
+                                           |         |   'b' is not a subtype of 'a'
                                            |         |
 -spec f4_to_fun_pos(f4(a)) -> fun((term())……         |
 f4_to_fun_pos(F) -> F.                     | OK      |
                                            |         |
 -spec f4_to_fun_neg(f4(a | b)) -> fun((ter……         |
-f4_to_fun_neg(F) -> F.                     | OK      |
+f4_to_fun_neg(F) -> F.                     | ERROR   | F.
+                                           |         | Expected: fun((term()) -> 'a')
+                                           |         | Got     : f4('a' | 'b')
+                                           |         | 
+                                           |         |   f4('a' | 'b') is not a subtype of fun((term()) -> 'a')
+                                           |         |   because
+                                           |         |   fun((...) -> 'a' | 'b') is not a subtype of fun((term()) -> 'a')
+                                           |         |   because
+                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   because
+                                           |         |   'b' is not a subtype of 'a'
                                            |         |
 -spec map_f1(fun((term()) -> atom()), [ter……         |
 map_f1(F, Ts) -> lists:map(F, Ts).         | OK      |

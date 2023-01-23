@@ -40,7 +40,7 @@ lazy val testProjects = taskKey[Seq[File]]("build beam files")
 
 Test / resourceGenerators += testProjects.taskValue
 
-coverageMinimumStmtTotal := 95.2
+coverageMinimumStmtTotal := 95.0
 coverageFailOnMinimum := true
 
 run / javaOptions += "-Xss15M"

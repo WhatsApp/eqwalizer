@@ -145,6 +145,14 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case (FunType(_, argTys, _), AnyFunType) =>
         argTys.forall(subTypePol(AnyType, _, seen))
+      case (AnyArityFunType(_), AnyFunType) =>
+        true
+      case (AnyFunType, AnyArityFunType(_)) if pipelineContext.gradualTyping =>
+        true
+      case (FunType(_, _, resTy1), AnyArityFunType(resTy2)) =>
+        subTypePol(resTy1, resTy2, seen)
+      case (AnyArityFunType(resTy1), FunType(_, _, resTy2)) if pipelineContext.gradualTyping =>
+        subTypePol(resTy1, resTy2, seen)
       case (TupleType(tys1), TupleType(tys2)) if tys1.size == tys2.size =>
         tys1.lazyZip(tys2).forall(subTypePol(_, _, seen))
       case (NilType, ListType(_)) =>

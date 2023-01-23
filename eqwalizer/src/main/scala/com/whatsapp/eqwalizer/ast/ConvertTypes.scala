@@ -95,8 +95,8 @@ class ConvertTypes(module: String) {
         // all the way on the left:
         // foo(X, fun((X) -> Y) -> ... is foo[X, Y](X, fun((X) -> Y)) -> ...
         FunType(Nil, argTys.map(c), c(resTy))
-      case AnyArityFunExtType(_) =>
-        AnyFunType
+      case AnyArityFunExtType(resTy) =>
+        AnyArityFunType(c(resTy))
       case TupleExtType(argTys) => TupleType(argTys.map(c))
       case ListExtType(t)       => ListType(c(t))
       case UnionExtType(tys)    => UnionType(tys.toSet.map(c))

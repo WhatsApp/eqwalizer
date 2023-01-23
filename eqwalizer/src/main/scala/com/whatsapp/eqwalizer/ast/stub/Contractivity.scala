@@ -67,6 +67,8 @@ private class Contractivity(module: String) {
       case FunType(forall, argTys, resTy) =>
         assert(forall.isEmpty, s"function types in eqWAlizer type aliases are not expected to have nonempty foralls")
         (resTy :: argTys).forall(isFoldable(_, history1))
+      case AnyArityFunType(resTy) =>
+        isFoldable(resTy, history1)
       case TupleType(argTys) =>
         argTys.forall(isFoldable(_, history1))
       case ListType(t) =>
@@ -95,7 +97,8 @@ private class Contractivity(module: String) {
   }
 
   private def isProducer(ty: Type): Boolean = ty match {
-    case _: FunType | _: TupleType | _: ListType | _: OpaqueType | _: DictMap | _: ShapeMap | _: RefinedRecordType =>
+    case _: FunType | _: TupleType | _: ListType | _: OpaqueType | _: DictMap | _: ShapeMap | _: RefinedRecordType |
+        _: AnyArityFunType =>
       true
     case _: RemoteType =>
       false

@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.analyses
 
 import com.whatsapp.eqwalizer.ast.{App, RemoteId, Types}
 import com.whatsapp.eqwalizer.ast.Forms.OverloadedFunSpec
-import com.whatsapp.eqwalizer.ast.Types.{AnyFunType, FunType}
+import com.whatsapp.eqwalizer.ast.Types.{AnyArityFunType, AnyFunType, FunType}
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 
 object FunOverloadedFunSpecs {
@@ -42,7 +42,7 @@ object FunOverloadedFunSpecs {
   private class FunTypeListener() extends TypeListener {
     var hasFun: Boolean = false
     override def enterType(tp: Types.Type): Unit = tp match {
-      case FunType(_, _, _) | AnyFunType =>
+      case FunType(_, _, _) | AnyFunType | AnyArityFunType(_) =>
         hasFun = true
       case _ =>
     }

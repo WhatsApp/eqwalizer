@@ -127,6 +127,17 @@ class Constraints(pipelineContext: PipelineContext) {
               fail()
           }
 
+        case (ft1: AnyArityFunType, ft2: FunType) =>
+          val st = state.copy(varsToElim = varsToElim ++ ft2.forall)
+          constrain(st, ft1.resTy, ft2.resTy)
+
+        case (ft1: FunType, ft2: AnyArityFunType) =>
+          val st = state.copy(varsToElim = varsToElim ++ ft1.forall)
+          constrain(st, ft1.resTy, ft2.resTy)
+
+        case (ft1: AnyArityFunType, ft2: AnyArityFunType) =>
+          constrain(state, ft1.resTy, ft2.resTy)
+
         case (UnionType(tys), _) =>
           constrainSeq(state, tys.map((_, upperBound)))
         // when the upper bound is a union, see if there is only one potential match, use it for constraint generation

@@ -171,6 +171,14 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
       case (FunType(_, argTys, _), AnyFunType) =>
         if (recurSeq(argTys.map((AnyType, _))).nonEmpty) stack
         else Nil
+      case (AnyArityFunType(_), AnyFunType) =>
+        Nil
+      case (AnyFunType, AnyArityFunType(_)) if pipelineContext.gradualTyping =>
+        Nil
+      case (FunType(_, _, resTy1), AnyArityFunType(resTy2)) =>
+        recur(resTy1, resTy2)
+      case (AnyArityFunType(resTy1), FunType(_, _, resTy2)) if pipelineContext.gradualTyping =>
+        recur(resTy1, resTy2)
       case (RecordType(_), AnyTupleType) =>
         Nil
       case (RefinedRecordType(_, _), AnyTupleType) =>

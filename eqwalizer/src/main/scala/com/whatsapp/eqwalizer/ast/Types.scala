@@ -13,6 +13,7 @@ object Types {
   case class AtomLitType(atom: String) extends Type
   case object AnyFunType extends Type
   case class FunType(forall: List[Int], argTys: List[Type], resTy: Type) extends Type
+  case class AnyArityFunType(resTy: Type) extends Type
 
   case object AnyTupleType extends Type
   case class TupleType(argTys: List[Type]) extends Type

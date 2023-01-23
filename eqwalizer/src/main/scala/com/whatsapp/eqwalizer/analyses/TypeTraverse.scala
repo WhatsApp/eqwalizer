@@ -22,6 +22,10 @@ class TypeTraverse(val listener: TypeListener) {
       argTys.foreach(traverse)
       traverse(resTy)
       listener.exitType(ft)
+    case ft @ AnyArityFunType(resTy) =>
+      listener.enterType(ft)
+      traverse(resTy)
+      listener.exitType(ft)
     case att @ AnyTupleType =>
       listener.enterType(att)
       listener.exitType(att)

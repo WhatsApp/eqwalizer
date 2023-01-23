@@ -125,7 +125,7 @@ object Occurrence {
       Some(AtomKind)
     case BinaryType =>
       Some(BinaryKind)
-    case AnyFunType | FunType(_, _, _) =>
+    case AnyFunType | FunType(_, _, _) | AnyArityFunType(_) =>
       Some(FunKind)
     case NilType | ListType(_) =>
       Some(ListKind)
@@ -608,6 +608,14 @@ final class Occurrence(pipelineContext: PipelineContext) {
         Some(true)
       case (AnyFunType, FunType(_, _, _)) =>
         Some(true)
+      case (AnyArityFunType(_), AnyFunType) =>
+        Some(true)
+      case (AnyFunType, AnyArityFunType(_)) =>
+        Some(true)
+      case (AnyArityFunType(_), FunType(_, _, _)) =>
+        None
+      case (FunType(_, _, _), AnyArityFunType(_)) =>
+        None
       case (FunType(_, _, _), _) =>
         Some(false)
       case (_, FunType(_, _, _)) =>

@@ -19,6 +19,8 @@ private object HomeomorphicEmbedding {
       case FunType(forall, argTys, resTy) =>
         assert(forall.isEmpty, s"function types in eqWAlizer type aliases are not expected to have nonempty foralls")
         (resTy :: argTys).exists(isHe(s, _))
+      case AnyArityFunType(resTy) =>
+        isHe(s, resTy)
       case TupleType(argTys) =>
         argTys.exists(isHe(s, _))
       case ListType(t2) =>
@@ -49,6 +51,8 @@ private object HomeomorphicEmbedding {
         assert(forall1.isEmpty, s"function types in eqWAlizer type aliases are not expected to have nonempty foralls")
         assert(forall2.isEmpty, s"function types in eqWAlizer type aliases are not expected to have nonempty foralls")
         (resTy1 :: argTys1).lazyZip(resTy2 :: argTys2).forall(isHe)
+      case (AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
+        isHe(resTy1, resTy2)
       case (_: FunType, _) =>
         false
       case (ListType(elemTy1), ListType(elemTy2)) =>

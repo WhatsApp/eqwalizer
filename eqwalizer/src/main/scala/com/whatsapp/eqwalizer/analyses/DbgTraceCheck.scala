@@ -185,6 +185,13 @@ object DbgTraceCheck {
           case _ =>
             false
         }
+      case AnyArityFunType(_) =>
+        value match {
+          case EFun =>
+            true
+          case _ =>
+            false
+        }
       case AnyTupleType =>
         value match {
           case ETuple(_) =>

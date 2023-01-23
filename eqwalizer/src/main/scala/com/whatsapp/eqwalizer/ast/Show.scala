@@ -21,6 +21,8 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         s"'$atom'"
       case FunType(_forall, argTys, resTy) =>
         s"""fun((${argTys.map(show).mkString(", ")}) -> ${show(resTy)})"""
+      case AnyArityFunType(resTy) =>
+        s"""fun((...) -> ${show(resTy)})"""
       case TupleType(elems) =>
         elems.map(show).mkString("{", ", ", "}")
       case ListType(elemType) =>

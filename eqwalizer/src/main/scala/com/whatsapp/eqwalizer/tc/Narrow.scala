@@ -59,6 +59,8 @@ class Narrow(pipelineContext: PipelineContext) {
                 meetAux(res1, res2, seen)(promoteNone = false),
               )
           }
+        case (AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
+          AnyArityFunType(meetAux(resTy1, resTy2, seen))
         case (DictMap(kT1, vT1), DictMap(kT2, vT2)) =>
           DictMap(meetAux(kT1, kT2, seen), meetAux(vT1, vT2, seen))
         case (ShapeMap(props1), ShapeMap(props2)) =>
@@ -88,14 +90,18 @@ class Narrow(pipelineContext: PipelineContext) {
           else RefinedRecordType(rt1.recType, fieldsMeet)
 
         // "Non-refinable" types. - Using the main type
-        case (DictMap(_, _), ShapeMap(_))   => t1
-        case (ShapeMap(_), DictMap(_, _))   => t1
-        case (VarType(_), _)                => t1
-        case (_, VarType(_))                => t1
-        case (AnyFunType, FunType(_, _, _)) => t1
-        case (FunType(_, _, _), AnyFunType) => t1
-        case (OpaqueType(_, _), _)          => t1
-        case (_, OpaqueType(_, _))          => t1
+        case (DictMap(_, _), ShapeMap(_))           => t1
+        case (ShapeMap(_), DictMap(_, _))           => t1
+        case (VarType(_), _)                        => t1
+        case (_, VarType(_))                        => t1
+        case (AnyFunType, FunType(_, _, _))         => t1
+        case (FunType(_, _, _), AnyFunType)         => t1
+        case (AnyArityFunType(_), FunType(_, _, _)) => t1
+        case (FunType(_, _, _), AnyArityFunType(_)) => t1
+        case (AnyArityFunType(_), AnyFunType)       => t1
+        case (AnyFunType, AnyArityFunType(_))       => t1
+        case (OpaqueType(_, _), _)                  => t1
+        case (_, OpaqueType(_, _))                  => t1
         // At this point we know for sure that t1 /\ t2 = 0
         case (_, _) =>
           NoneType
@@ -211,6 +217,10 @@ class Narrow(pipelineContext: PipelineContext) {
       Some(List(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)))
     case AnyFunType if pipelineContext.gradualTyping =>
       Some(List(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)))
+    case AnyArityFunType(resTy) if pipelineContext.gradualTyping =>
+      Some(List(FunType(List.empty, List.fill(arity)(DynamicType), resTy)))
+    case AnyArityFunType(resTy) =>
+      Some(List(FunType(List.empty, List.fill(arity)(NoneType), resTy)))
     case _ if subtype.isNoneType(ty) =>
       Some(List())
     case ft: FunType =>
@@ -239,6 +249,10 @@ class Narrow(pipelineContext: PipelineContext) {
     case ft: FunType =>
       if (ft.argTys.size == arity) Set(ft)
       else Set()
+    case AnyArityFunType(resTy) if pipelineContext.gradualTyping =>
+      Set(FunType(List.empty, List.fill(arity)(DynamicType), resTy))
+    case AnyArityFunType(resTy) =>
+      Set(FunType(List.empty, List.fill(arity)(NoneType), resTy))
     case UnionType(tys) =>
       tys.flatMap(extractFunTypes(_, arity))
     case RemoteType(rid, args) =>

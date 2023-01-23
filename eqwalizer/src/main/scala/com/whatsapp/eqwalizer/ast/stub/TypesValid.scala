@@ -114,6 +114,8 @@ private class TypesValid {
           case argExps =>
             argExps.map(FunType(forall, _, resTy))
         }
+      case AnyArityFunType(resTy) =>
+        findContravariantExpansion(resTy, positive).map(AnyArityFunType)
       case TupleType(elemTys) =>
         findInTys(elemTys, positive).map(TupleType)
       case ListType(elemTy) =>

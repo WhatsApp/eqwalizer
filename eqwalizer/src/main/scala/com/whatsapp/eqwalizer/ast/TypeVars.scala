@@ -36,6 +36,7 @@ object TypeVars {
     */
   def children(ty: Type): List[Type] = ty match {
     case FunType(_, argTys, resTy)    => resTy :: argTys
+    case AnyArityFunType(resTy)       => resTy :: Nil
     case TupleType(argTys)            => argTys
     case UnionType(tys)               => tys.toList
     case RemoteType(_, tys)           => tys
@@ -119,6 +120,8 @@ object TypeVars {
       case FunType(forall, args, resType) =>
         val forall1 = forall.map(n => if (toIncr.contains(n)) n + incr else n)
         FunType(forall1, args.map(incrVars(_, toIncr, incr)), incrVars(resType, toIncr, incr))
+      case AnyArityFunType(resType) =>
+        AnyArityFunType(r(resType))
       case TupleType(params) =>
         TupleType(params.map(r))
       case ListType(elemT) =>
