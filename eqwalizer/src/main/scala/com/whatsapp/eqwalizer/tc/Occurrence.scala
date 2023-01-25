@@ -162,7 +162,9 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   def eqwater(clauses: List[Clause]): Boolean = {
     val emptyPatterns = clauses.forall(_.pats.isEmpty)
-    val linearClauses = (pipelineContext.unlimitedRefinement || clauses.size < 7) && clauses.forall(linearVars)
+    val shortGuards = clauses.forall(clause => clause.guards.map(guardSize).sum < 32)
+    val linearClauses =
+      (pipelineContext.unlimitedRefinement || (clauses.size < 7 && shortGuards)) && clauses.forall(linearVars)
     pipelineContext.eqwater && (emptyPatterns || linearClauses)
   }
 
@@ -170,6 +172,21 @@ final class Occurrence(pipelineContext: PipelineContext) {
     val varsL = vars.clausePatVarsL(clause)
     varsL.toSet.size == varsL.size
   }
+
+  private def guardSize(guard: Guard): Int =
+    guard.tests.map(testSize).sum
+
+  private def testSize(test: Test): Int =
+    test match {
+      case TestUnOp("not", test) =>
+        testSize(test)
+      case TestBinOp("and" | "andalso", test1, test2) =>
+        testSize(test1) + testSize(test2)
+      case TestBinOp("or" | "orelse", test1, test2) =>
+        testSize(test1) + testSize(test2)
+      case _ =>
+        1
+    }
 
   // These are specialized methods to upgrade environments/context
   // by occurrence typing
