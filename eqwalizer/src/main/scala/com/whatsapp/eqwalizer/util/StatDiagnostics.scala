@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.util
 
-import com.whatsapp.eqwalizer.Pipeline
+import com.whatsapp.eqwalizer.{Pipeline, config}
 import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.ExternalTypes.ExtType
 import com.whatsapp.eqwalizer.ast.Forms._
@@ -44,7 +44,10 @@ object StatDiagnostics {
   }
 
   private def getModuleToStats(): Map[ModuleName, Stats] = {
-    val modules = DbApi.projectApps.values.flatMap(_.modules).toList.sorted
+    val apps = DbApi.projectApps.filter { case (appName, _) =>
+      !config.apps(appName).dir.contains("third-party")
+    }
+    val modules = apps.values.flatMap(_.modules).toList.sorted
     modules.map(module => module -> toStats(module)).toMap
   }
 
