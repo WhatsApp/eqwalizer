@@ -13,7 +13,6 @@ COMMANDS:
     parse-all                  Dump ast for all files in a project for specified rebar.config file
         --project              Path to directory with rebar project
         --to                   Path to a directory where to dump .etf/.beam files
-        --offset-positions     Emit positions as {StartByte, EndByte} rather than {Line, Col}
         --module               Only process indicated module(s) (can be repeated)
     eqwalize <module>          Eqwalize specified module
         --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)

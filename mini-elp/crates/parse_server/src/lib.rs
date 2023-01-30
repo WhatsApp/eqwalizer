@@ -105,7 +105,6 @@ impl Into<eetf::Term> for CompileOption {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Format {
-    Etf,
     OffsetEtf,
     Text,
 }
@@ -306,11 +305,7 @@ fn decode_errors(buf: &[u8], format: Format) -> Result<Vec<ParseError>> {
                 .map(|(path, position, msg)| ParseError {
                     path: path.into(),
                     location: position.into_result().ok().map(|(a, b)| -> Location {
-                        if format.is_offset() {
-                            Location::TextRange(TextRange::new(a.into(), b.into()))
-                        } else {
-                            Location::StartLocation(StartLocation { line: a, column: b })
-                        }
+                        Location::TextRange(TextRange::new(a.into(), b.into()))
                     }),
                     msg,
                 })
@@ -318,31 +313,16 @@ fn decode_errors(buf: &[u8], format: Format) -> Result<Vec<ParseError>> {
         })
 }
 
-impl Format {
-    pub fn is_offset(&self) -> bool {
-        match self {
-            Format::Etf => false,                            // Line, comment
-            Format::OffsetEtf { .. } | Format::Text => true, // StartByte, EndByte
-        }
-    }
-}
-
 impl ParseRequest {
     fn tag(&self) -> &'static str {
         match self.format {
-            Format::Etf | Format::OffsetEtf { .. } => "COMPILE",
+            Format::OffsetEtf { .. } => "COMPILE",
             Format::Text => "TEXT",
         }
     }
 
     fn encode(self, id: usize) -> Vec<u8> {
-        let location = match self.format {
-            Format::Etf => {
-                let one: eetf::Term = eetf::FixInteger::from(1).into();
-                eetf::Tuple::from(vec![one.clone(), one]).into()
-            }
-            Format::OffsetEtf { .. } | Format::Text => eetf::Atom::from("offset").into(),
-        };
+        let location = eetf::Atom::from("offset").into();
         let location_tuple =
             eetf::Tuple::from(vec![eetf::Atom::from("location").into(), location]).into();
         let options = self

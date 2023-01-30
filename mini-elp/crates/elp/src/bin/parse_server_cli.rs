@@ -34,10 +34,7 @@ pub fn parse_all(args: &ParseAll, out: &mut impl std::io::Write) -> Result<()> {
     let profile = args.profile.clone().map(Profile).unwrap_or_default();
     let loaded = load_rebar::load_project_at(&args.project, &profile)?;
     fs::create_dir_all(&args.to)?;
-    let format = match args.offset_positions {
-        true => parse_server::Format::OffsetEtf,
-        false => parse_server::Format::Etf,
-    };
+    let format = parse_server::Format::OffsetEtf;
 
     util::compile_deps(&loaded)?;
     let parse_diagnostics = do_parse_all(&loaded, &args.to, format, &args.include)?;
@@ -101,7 +98,7 @@ pub fn do_parse_one(
     format: parse_server::Format,
 ) -> Result<Vec<ParseDiagnostic>> {
     let ext = match format {
-        parse_server::Format::Etf | parse_server::Format::OffsetEtf { .. } => "etf",
+        parse_server::Format::OffsetEtf { .. } => "etf",
         parse_server::Format::Text => panic!("text format is for test purposes only!"),
     };
 

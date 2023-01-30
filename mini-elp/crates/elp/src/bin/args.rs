@@ -71,7 +71,6 @@ pub enum ParseAllInclude {
 pub struct ParseAll {
     pub project: PathBuf,
     pub to: PathBuf,
-    pub offset_positions: bool,
     pub profile: Option<String>,
     pub include: ParseAllInclude,
 }
@@ -92,7 +91,6 @@ COMMANDS:
     parse-all                  Dump ast for all files in a project for specified rebar.config file
         --project              Path to directory with rebar project
         --to                   Path to a directory where to dump .etf/.beam files
-        --offset-positions     Emit positions as {StartByte, EndByte} rather than {Line, Col}
         --module               Only process indicated module(s) (can be repeated)
     eqwalize <module>          Eqwalize specified module
         --project              Path to directory with rebar project, or to a JSON file (defaults to `.`)
@@ -140,7 +138,6 @@ impl Args {
             "parse-all" => {
                 let project = get_project(&mut arguments)?;
                 let to = arguments.value_from_str("--to")?;
-                let offset_positions = arguments.contains("--offset-positions");
                 let include = {
                     let modules = arguments
                         .values_from_str("--module")?
@@ -156,7 +153,6 @@ impl Args {
                     project,
                     to,
                     profile,
-                    offset_positions,
                     include,
                 })
             }
