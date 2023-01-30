@@ -21,11 +21,11 @@ test1(R) when is_record(R, r1)             | ERROR   |
         orelse is_record(R, r2) ->         |         |
   R.                                       |         | R.
                                            |         | Expected: r1()
-                                           |         | Got     : #r2{} | #r1{}
+                                           |         | Got     : #r1{} | #r2{}
                                            |         | 
-                                           |         |   #r2{} | #r1{} is not a subtype of r1()
+                                           |         |   #r1{} | #r2{} is not a subtype of r1()
                                            |         |   because
-                                           |         |   #r2{} | #r1{} is not a subtype of #r1{}
+                                           |         |   #r1{} | #r2{} is not a subtype of #r1{}
                                            |         |   because
                                            |         |   #r2{} is not a subtype of #r1{}
                                            |         |
@@ -56,10 +56,18 @@ test3(R) when                              | ERROR   |
                                            |         |   #r2{} is not a subtype of #r1{}
                                            |         |
 -spec test4(all()) -> r1().                |         |
-test4(R) when                              | OK      |
+test4(R) when                              | ERROR   |
   ((is_record(R, r1) andalso is_atom(eleme……         |
     orelse is_record(R, r2) ->             |         |
-  R.                                       |         |
+  R.                                       |         | R.
+                                           |         | Expected: r1()
+                                           |         | Got     : #r1{} | #r2{}
+                                           |         | 
+                                           |         |   #r1{} | #r2{} is not a subtype of r1()
+                                           |         |   because
+                                           |         |   #r1{} | #r2{} is not a subtype of #r1{}
+                                           |         |   because
+                                           |         |   #r2{} is not a subtype of #r1{}
                                            |         |
 -spec test5(all()) -> r1().                |         |
 test5(R) when                              | ERROR   |

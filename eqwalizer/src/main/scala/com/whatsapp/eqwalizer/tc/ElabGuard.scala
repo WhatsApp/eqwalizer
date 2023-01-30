@@ -218,9 +218,10 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         val env1 = elabTestT(arg1, AtomLitType("true"), env)
         val env2 = elabTestT(arg2, upper, env1)
         env2
-      case TestBinOp("orelse", arg1, _) =>
-        val env1 = elabTestT(arg1, booleanType, env)
-        env1
+      case TestBinOp("orelse", arg1, arg2) =>
+        val envTrue = elabTestT(arg1, trueType, env)
+        val envFalse = elabTestT(arg2, upper, env)
+        subtype.joinEnvs(List(envTrue, envFalse))
       case TestBinOp("or", arg1, arg2) =>
         val env1 = elabTestT(arg1, booleanType, env)
         // "or" is not short-circuiting

@@ -20,7 +20,9 @@ test03(X, _) when X -> X;                  | OK      |
 test03(_, Y) when Y -> Y.                  |         |
                                            |         |
 -spec test04(atom(), atom()) -> boolean(). |         |
-test04(X, Y) when X orelse Y -> X.         | OK      |
+test04(X, Y) when X orelse Y -> X.         | ERROR   | X.
+                                           |         | Expected: boolean()
+                                           |         | Got     : atom()
                                            |         |
 -spec test05(atom(), atom()) -> boolean(). |         |
 test05(X, Y) when X andalso Y -> Y.        | OK      |
