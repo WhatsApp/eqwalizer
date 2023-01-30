@@ -15,10 +15,17 @@ jobs:
           java: 'java11'
       - name: Install Native Image Plugin
         run: gu install native-image
+      - name: Install musl-tools for rust toolchain
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: musl-tools
+          version: 1.0
       - name: Set up rust toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          target: x86_64-unknown-linux-musl
+          default: true
       - name: Install OTP
         uses: erlef/setup-beam@v1
         with:
@@ -29,11 +36,11 @@ jobs:
       - name: Assemble eqwalizer binary
         run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
       - name: Test elp
-        run: "cd mini-elp && cargo test --workspace"
+        run: "cd mini-elp && cargo test --workspace --target x86_64-unknown-linux-musl"
       - name: Assemble elp
-        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release"
+        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release --target x86_64-unknown-linux-musl"
       - name: Add elp to path
-        run: 'echo "$GITHUB_WORKSPACE/mini-elp/target/release" >> $GITHUB_PATH'
+        run: 'echo "$GITHUB_WORKSPACE/mini-elp/target/x86_64-unknown-linux-musl/release" >> $GITHUB_PATH'
       - name: Test eqwalizer
         if: matrix.otp != '23.3'
         run: 'cd eqwalizer && sbt test'
