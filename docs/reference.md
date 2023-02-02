@@ -13,6 +13,8 @@
 
 - ### [Subtyping in eqWAlizer](./reference/subtyping.md)
 
+- ### [Escape hatches](./reference/escape.md)
+
 - ### [Advanced features](./reference/advanced.md)
 
     - [Overloaded specs](./reference/advanced.md#overloaded-specs)
