@@ -32,8 +32,8 @@ class CheckCallback(pipelineContext: PipelineContext) {
             !cb.tys.exists { case FunType(_, cbArgTys, _) =>
               val cbArgTy = cbArgTys(index)
               val approxMeet = narrow.meet(implArgTy, cbArgTy)
-              val hasOverlap = subtype.subType(implArgTy, NoneType) || subtype.subType(cbArgTy, NoneType) || !subtype
-                .subType(approxMeet, NoneType)
+              val hasOverlap =
+                subtype.isNoneType(implArgTy) || subtype.isNoneType(cbArgTy) || !subtype.isNoneType(approxMeet)
               hasOverlap
             }
           }
