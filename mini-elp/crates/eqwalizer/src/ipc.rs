@@ -31,6 +31,12 @@ pub enum MsgFromEqWAlizer {
     GetAstBytes {
         module: String,
     },
+    EqwalizingStart {
+        module: String,
+    },
+    EqwalizingDone {
+        module: String,
+    },
     Done {
         diagnostics: FxHashMap<String, Vec<EqwalizerDiagnostic>>,
     },

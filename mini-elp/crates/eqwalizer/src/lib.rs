@@ -64,6 +64,8 @@ pub struct EqwalizerDiagnostic {
 pub trait DbApi {
     fn unwind_if_cancelled(&self) -> ();
     fn get_ast(&mut self, module: &str) -> Option<Arc<Vec<u8>>>;
+    fn eqwalizing_start(&self, module: String) -> ();
+    fn eqwalizing_done(&mut self, module: String) -> ();
 }
 
 fn deserialize_text_range<'de, D>(deserializer: D) -> Result<TextRange, D::Error>
@@ -184,6 +186,8 @@ impl Eqwalizer {
                         }
                     }
                 }
+                MsgFromEqWAlizer::EqwalizingStart { module } => db_api.eqwalizing_start(module),
+                MsgFromEqWAlizer::EqwalizingDone { module } => db_api.eqwalizing_done(module),
                 MsgFromEqWAlizer::Done { diagnostics } => {
                     log::debug!(
                         "received from eqwalizer: Done with diagnostics length {}",

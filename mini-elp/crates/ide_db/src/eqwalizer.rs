@@ -4,7 +4,6 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
-use std::iter::FromIterator;
 use std::sync::Arc;
 
 use anyhow::Result;
@@ -13,7 +12,6 @@ use elp_base_db::FileId;
 use elp_base_db::ProjectId;
 use elp_base_db::SourceDatabase;
 use elp_eqwalizer::EqwalizerDiagnostics;
-use fxhash::FxHashSet;
 use salsa::Database;
 
 use crate::ErlAstDatabase;
@@ -46,7 +44,7 @@ impl EqwalizerLoader for crate::RootDatabase {
         let db_api = DbForEqwalizer {
             db: self,
             total: modules.len(),
-            left: FxHashSet::from_iter(modules),
+            left: modules.len(),
             project_id,
             format,
         };
@@ -59,7 +57,7 @@ impl EqwalizerLoader for crate::RootDatabase {
 struct DbForEqwalizer<'d> {
     db: &'d crate::RootDatabase,
     total: usize,
-    left: FxHashSet<FileId>,
+    left: usize,
     project_id: ProjectId,
     format: elp_parse_server::Format,
 }
@@ -107,10 +105,23 @@ impl<'d> elp_eqwalizer::DbApi for DbForEqwalizer<'d> {
             .db
             .module_index(self.project_id)
             .file_for_module(module)?;
-        self.left.remove(&file_id);
-        if let Some(reporter) = self.db.eqwalizer_progress_reporter.lock().unwrap().as_ref() {
-            reporter.report(self.total - self.left.len())
-        }
         self.db.module_ast(file_id, self.format).ok()
+    }
+
+    fn eqwalizing_start(&self, module: String) -> () {
+        if let Some(reporter) = self.db.eqwalizer_progress_reporter.lock().unwrap().as_ref() {
+            reporter.report_module(module)
+        }
+    }
+
+    fn eqwalizing_done(&mut self, _module: String) -> () {
+        self.left -= 1;
+        if let Some(reporter) = self.db.eqwalizer_progress_reporter.lock().unwrap().as_ref() {
+            reporter.report(self.total - self.left);
+            if self.left == 0 {
+                reporter.clean_module();
+                reporter.finish();
+            }
+        }
     }
 }

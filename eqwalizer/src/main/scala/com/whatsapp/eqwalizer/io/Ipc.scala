@@ -36,7 +36,13 @@ object Ipc {
   def sendDone(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]): Unit =
     send(Done(diagnostics))
 
-  private def send(req: Request): Unit = {
+  def sendEqwalizingStart(module: String): Unit =
+    send(EqwalizingStart(module))
+
+  def sendEqwalizingDone(module: String): Unit =
+    send(EqwalizingDone(module))
+
+  def send(req: Request): Unit = {
     val json = reqToJson(req)
     json.writeBytesTo(Console.out)
     Console.out.println()
@@ -57,6 +63,20 @@ object Ipc {
     case GetAstBytes(module) =>
       ujson.Obj(
         "tag" -> "GetAstBytes",
+        "content" -> ujson.Obj(
+          "module" -> module
+        ),
+      )
+    case EqwalizingStart(module) =>
+      ujson.Obj(
+        "tag" -> "EqwalizingStart",
+        "content" -> ujson.Obj(
+          "module" -> module
+        ),
+      )
+    case EqwalizingDone(module) =>
+      ujson.Obj(
+        "tag" -> "EqwalizingDone",
         "content" -> ujson.Obj(
           "module" -> module
         ),
@@ -99,6 +119,8 @@ object Ipc {
 
   private sealed trait Request
   private case class GetAstBytes(module: String) extends Request
+  private case class EqwalizingStart(module: String) extends Request
+  private case class EqwalizingDone(module: String) extends Request
   private case class Done(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]) extends Request
 
   private sealed trait Reply

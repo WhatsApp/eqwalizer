@@ -63,6 +63,18 @@ impl LoadResult {
             fn report(&self, done: usize) {
                 self.0.set_position(done as u64)
             }
+
+            fn report_module(&self, module: String) {
+                self.0.set_prefix(module)
+            }
+
+            fn clean_module(&self) {
+                self.0.set_prefix("")
+            }
+
+            fn finish(&self) {
+                self.0.finish_using_style()
+            }
         }
 
         self.analysis_host

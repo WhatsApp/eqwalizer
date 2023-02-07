@@ -47,7 +47,10 @@ object ELPDiagnostics {
     // $COVERAGE-OFF$
     try {
       val diagnosticsByModule = modulesAndStorages.map { case (module, astStorage) =>
-        module -> getDiagnostics(module, astStorage, noOptions)
+        Ipc.sendEqwalizingStart(module)
+        val diagnostics = getDiagnostics(module, astStorage, noOptions)
+        Ipc.sendEqwalizingDone(module)
+        module -> diagnostics
       }.toMap
       Ipc.sendDone(diagnosticsByModule)
     } catch {

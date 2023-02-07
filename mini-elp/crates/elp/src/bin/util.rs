@@ -32,7 +32,7 @@ mod progress {
         let pb = ProgressBar::new(len);
         pb.set_style(
             ProgressStyle::default_bar()
-                .template("  {msg:25} {bar} {pos}/{len}")
+                .template("  {msg:25} {bar} {pos}/{len}  {prefix}")
                 .expect("BUG: invalid template"),
         );
         pb.set_message(message);

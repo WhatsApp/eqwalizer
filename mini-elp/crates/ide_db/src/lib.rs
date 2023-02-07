@@ -45,6 +45,9 @@ type EqwalizerProgressReporterBox = Arc<Mutex<Option<Box<dyn EqwalizerProgressRe
 
 pub trait EqwalizerProgressReporter: Send + Sync + RefUnwindSafe {
     fn report(&self, done: usize);
+    fn report_module(&self, module: String);
+    fn clean_module(&self);
+    fn finish(&self);
 }
 
 #[salsa::database(
