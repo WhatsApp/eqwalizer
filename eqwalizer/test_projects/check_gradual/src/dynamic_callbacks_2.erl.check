@@ -1,0 +1,19 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(dynamic_callbacks_2).              |         |
+-export([                                  |         |
+    init/1,                                |         |
+    stop/1                                 |         |
+]).                                        |         |
+-behavior(my_gradual_behaviour).           | ERROR   | Parameter 1 in implementation of my_gradual_behaviour:init/1 has no overlap with expected parameter type. Expected: atom(), Got: number() | dynamic().
+                                           |         | ---
+                                           |         | Parameter 1 in implementation of my_gradual_behaviour:stop/1 has no overlap with expected parameter type. Expected: 'a' | dynamic(), Got: 'ok'.
+                                           |         |
+-spec init(number() | eqwalizer:dynamic())……         |
+init(_) -> ok.                             | OK      |
+                                           |         |
+-spec stop(ok) -> ok.                      |         |
+stop(A) -> A.                              | OK      |

@@ -2414,6 +2414,20 @@
         ]
       },
       {
+        "module": "dynamic_callbacks_1",
+        "exported_funs": [
+          "init/1",
+          "stop/1"
+        ]
+      },
+      {
+        "module": "dynamic_callbacks_2",
+        "exported_funs": [
+          "init/1",
+          "stop/1"
+        ]
+      },
+      {
         "module": "dynamic_catch",
         "exported_funs": [
           "foo/0",
@@ -2726,6 +2740,12 @@
           "no_cast/0",
           "cast1/0",
           "reveal_none/1"
+        ]
+      },
+      {
+        "module": "my_gradual_behaviour",
+        "exported_funs": [
+          
         ]
       },
       {
