@@ -1151,6 +1151,66 @@
       "code": "redundant_fixme",
       "expressionOrNull": null,
       "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5291,
+        "end": 5306
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : term()",
+      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Arg 2 of 'make_pair/2'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5291,
+        "end": 5306
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : term()",
+      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Arg 2 of 'make_pair/2'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5291,
+        "end": 5306
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : term()",
+      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Arg 2 of 'make_pair/2'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5291,
+        "end": 5306
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : term()",
+      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Arg 2 of 'make_pair/2'",
+      "explanationOrNull": null
+    },
+    {
+      "range": {
+        "start": 5291,
+        "end": 5306
+      },
+      "lineAndCol": null,
+      "message": "Expected: number()\nGot     : term()",
+      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
+      "code": "expected_subtype",
+      "expressionOrNull": "Arg 2 of 'make_pair/2'",
+      "explanationOrNull": null
     }
   ]
 }

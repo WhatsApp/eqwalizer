@@ -564,3 +564,32 @@ redundant_fixme() ->                       | OK      |
   % eqwalizer:fixme                        |         | redundant fixme
 
   ok.                                      |         |
+                                           |         |
+% Error tolerance with fun args            |         |
+-spec make_pair(K, number()) -> {K, number……         |
+make_pair(K, V) -> {K, V}.                 | OK      |
+                                           |         |
+-spec map_pair([{K, V}], fun ((K, V) -> {K……         |
+map_pair(_, _) -> error(unimplemented).    | OK      |
+                                           |         |
+-spec apply_map([{atom(), term()}]) -> [{a……         |
+apply_map(L) ->                            | ERROR   |
+    map_pair(L, fun make_pair/2).          |         | Arg 2 of 'make_pair/2'.
+                                           |         | Expected: number()
+                                           |         | Got     : term()
+                                           |         | ---
+                                           |         | Arg 2 of 'make_pair/2'.
+                                           |         | Expected: number()
+                                           |         | Got     : term()
+                                           |         | ---
+                                           |         | Arg 2 of 'make_pair/2'.
+                                           |         | Expected: number()
+                                           |         | Got     : term()
+                                           |         | ---
+                                           |         | Arg 2 of 'make_pair/2'.
+                                           |         | Expected: number()
+                                           |         | Got     : term()
+                                           |         | ---
+                                           |         | Arg 2 of 'make_pair/2'.
+                                           |         | Expected: number()
+                                           |         | Got     : term()

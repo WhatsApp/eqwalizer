@@ -351,3 +351,14 @@ fixmes_neg(Atom) ->
 redundant_fixme() ->
   % eqwalizer:fixme
   ok.
+
+% Error tolerance with fun args
+-spec make_pair(K, number()) -> {K, number()}.
+make_pair(K, V) -> {K, V}.
+
+-spec map_pair([{K, V}], fun ((K, V) -> {K, A})) -> [{K, A}].
+map_pair(_, _) -> error(unimplemented).
+
+-spec apply_map([{atom(), term()}]) -> [{atom(), number()}].
+apply_map(L) ->
+    map_pair(L, fun make_pair/2).

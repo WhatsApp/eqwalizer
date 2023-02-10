@@ -17,17 +17,17 @@
     ]
   },
   "fault_tolerance": {
-    "fun_cnt": 36,
+    "fun_cnt": 39,
     "exported_cnt": 0,
-    "well_typed_cnt": 4,
-    "specced_cnt": 36,
-    "well_typed_specced_cnt": 4,
-    "well_typed_exported_cnt": 4,
-    "well_typed_exported_specced_cnt": 4,
+    "well_typed_cnt": 6,
+    "specced_cnt": 39,
+    "well_typed_specced_cnt": 6,
+    "well_typed_exported_cnt": 6,
+    "well_typed_exported_specced_cnt": 6,
     "fixme_count": 7,
     "is_generated": false,
     "eqwalizer_enabled": true,
-    "error_count": 96,
+    "error_count": 101,
     "is_test": false,
     "type_dependencies": [
       "misc"

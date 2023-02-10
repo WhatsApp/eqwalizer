@@ -3550,7 +3550,10 @@
           "use_invalid/1",
           "fixmes/1",
           "fixmes_neg/1",
-          "redundant_fixme/0"
+          "redundant_fixme/0",
+          "make_pair/2",
+          "map_pair/2",
+          "apply_map/1"
         ]
       }
     ]
