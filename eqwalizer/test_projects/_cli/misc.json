@@ -1038,7 +1038,8 @@
           "test03/1",
           "test04/1",
           "test05/1",
-          "test06_neg/0"
+          "test06_neg/0",
+          "redundant_guard/1"
         ]
       },
       {
@@ -3593,6 +3594,21 @@
         "module": "tricky_deps_2",
         "exported_funs": [
           "id_dep/1"
+        ]
+      }
+    ]
+  },
+  {
+    "app": "options",
+    "modules": [
+      {
+        "module": "redundant_guards",
+        "exported_funs": [
+          "redundant_guard_1/1",
+          "redundant_guard_2/1",
+          "redundant_guard_3/1",
+          "redundant_guard_4/1",
+          "non_redundant_guard/1"
         ]
       }
     ]

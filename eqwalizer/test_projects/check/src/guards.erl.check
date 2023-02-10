@@ -60,3 +60,8 @@ test05(X) when X =:= #{1 => b} ->          | ERROR   |
 -spec test06_neg() -> ok.                  |         |
 test06_neg() when #invalid{} =/= 2 -> ok.  | ERROR   | Unbound rec: invalid
 
+                                           |         |
+-spec redundant_guard(ok) -> ok.           |         |
+redundant_guard(X) ->                      | OK      |
+    (is_atom(X) orelse error(fail)),       |         |
+    X.                                     |         |

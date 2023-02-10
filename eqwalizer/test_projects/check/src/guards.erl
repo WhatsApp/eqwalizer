@@ -55,3 +55,8 @@ test05(X) when X =:= #{1 => b} ->
 
 -spec test06_neg() -> ok.
 test06_neg() when #invalid{} =/= 2 -> ok.
+
+-spec redundant_guard(ok) -> ok.
+redundant_guard(X) ->
+    (is_atom(X) orelse error(fail)),
+    X.
