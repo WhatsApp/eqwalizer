@@ -27,7 +27,7 @@
     "fixme_count": 7,
     "is_generated": false,
     "eqwalizer_enabled": true,
-    "error_count": 101,
+    "error_count": 97,
     "is_test": false,
     "type_dependencies": [
       "misc"

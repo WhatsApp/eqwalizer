@@ -577,19 +577,3 @@ apply_map(L) ->                            | ERROR   |
     map_pair(L, fun make_pair/2).          |         | Arg 2 of 'make_pair/2'.
                                            |         | Expected: number()
                                            |         | Got     : term()
-                                           |         | ---
-                                           |         | Arg 2 of 'make_pair/2'.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
-                                           |         | ---
-                                           |         | Arg 2 of 'make_pair/2'.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
-                                           |         | ---
-                                           |         | Arg 2 of 'make_pair/2'.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
-                                           |         | ---
-                                           |         | Arg 2 of 'make_pair/2'.
-                                           |         | Expected: number()
-                                           |         | Got     : term()

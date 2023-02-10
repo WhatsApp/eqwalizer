@@ -84,6 +84,11 @@ class Patch(erroneousExpr: Expr) {
           ReqMapUpdate(patchExpr(map), kvs.map(patchAtomicKV))(e.pos)
         case u @ GenMapUpdate(map, kvs) =>
           GenMapUpdate(patchExpr(map), kvs.map(patchKV))(e.pos, u.approximated)
+        // The erroneous expr may be a variable introduced by eta-expansion of a functional argument,
+        // in which case e == erroneousExpr will never match and the expr will not be patched.
+        // The case below is a good enough heuristic to detect such cases.
+        case _: LocalFun | _: RemoteFun if erroneousExpr.pos == e.pos && erroneousExpr.isInstanceOf[Var] =>
+          dynamicCast(e)
         case _: Var | _: AtomLit | _: IntLit | FloatLit() | StringLit(_) | NilLit() | _: LocalFun | _: RemoteFun |
             _: DynRemoteFun | _: DynRemoteFunArity | _: RecordIndex =>
           e
