@@ -18,5 +18,6 @@
 - ### [Advanced features](./reference/advanced.md)
 
     - [Overloaded specs](./reference/advanced.md#overloaded-specs)
+    - [Experimental and expert features](./reference/advanced.md#experimental-and-expert-features)
 
 - ### [Reference of errors](./reference/errors.md)

@@ -142,3 +142,33 @@ convert(A) when is_atom(A) ->
 convert(B) when is_binary(B) ->
   binary_to_atom(B).
 ```
+
+
+## Experimental and expert features
+
+Some features of eqWAlizer are disabled by default as they are experimental
+or not meant for casual use. They can be enabled by setting the corresponding
+environment variable when calling `elp eqwalize`, e.g.,
+`EQWALIZER_CHECK_REDUNDANT_GUARDS=1 elp eqwalize-all`.
+
+### Gradual and strict mode
+
+Enable strict mode with `EQWALIZER_GRADUAL_TYPING=false`. By default, eqWAlizer
+uses gradual mode. See [gradual and strict typing modes](./modes.md).
+
+### Occurrence typing
+
+Disable occurrence typing with `EQWALIZER_EQWATER=false`. By default, eqWAlizer
+performs occurrence typing except in some instances (for example if a function
+contains too many clauses). See [occurrence typing](./narrowing.md#occurrence-typing).
+
+### Error tolerance
+
+Disable error tolerance with `EQWALIZER_TOLERATE_ERRORS=false`. By default, eqWAlizer
+attempts to recover from type errors, to provide as much signal as possible for
+a given function or module.
+
+### Redundant type checks detection
+
+Enable with `EQWALIZER_CHECK_REDUNDANT_GUARDS=true`. With this setting, eqWAlizer will
+attempt to detect and report redundant type assertions.
