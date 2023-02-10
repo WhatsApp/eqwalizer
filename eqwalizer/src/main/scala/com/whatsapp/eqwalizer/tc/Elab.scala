@@ -290,7 +290,7 @@ final class Elab(pipelineContext: PipelineContext) {
       case BinOp("orelse", testArg, RemoteCall(RemoteId("erlang", "throw" | "error" | "exit", _), _))
           if Filters.asTest(testArg).isDefined =>
         val test = Filters.asTest(testArg).get
-        val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)
+        val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)(checkRedundancy = true)
         (AtomLitType("true"), env1)
       case BinOp(op, arg1, arg2) =>
         op match {

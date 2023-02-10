@@ -21,6 +21,7 @@ package object tc {
       eqwater: Option[Boolean] = None,
       tolerateErrors: Option[Boolean] = None,
       unlimitedRefinement: Option[Boolean] = None,
+      checkRedundantGuards: Option[Boolean] = None,
   )
 
   val noOptions: Options = Options()
@@ -60,5 +61,7 @@ package object tc {
     }
     val variance: Variance =
       new Variance(this)
+    val checkRedundantGuards: Boolean =
+      options.checkRedundantGuards.getOrElse(config.checkRedundantGuards)
   }
 }

@@ -25,6 +25,7 @@ package object eqwalizer {
       useElp: Boolean,
       useIpc: Boolean,
       tolerateErrors: Boolean,
+      checkRedundantGuards: Boolean,
   )
 
   lazy val config: Config = {
@@ -45,6 +46,7 @@ package object eqwalizer {
       eqwater = config.getBoolean("eqwater"),
       useIpc = config.getBoolean("use_ipc"),
       tolerateErrors = config.getBoolean("tolerate_errors"),
+      checkRedundantGuards = config.getBoolean("check_redundant_guards"),
     )
   }
 }

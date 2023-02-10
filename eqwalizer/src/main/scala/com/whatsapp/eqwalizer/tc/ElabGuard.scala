@@ -7,9 +7,9 @@
 package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Guards._
-import com.whatsapp.eqwalizer.ast.Id
+import com.whatsapp.eqwalizer.ast.{Id, Pos}
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{UnboundRecord, UndefinedField, UnhandledOp}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{RedundantGuard, UnboundRecord, UndefinedField, UnhandledOp}
 
 import scala.collection.mutable.ListBuffer
 
@@ -50,11 +50,11 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       AnyFunType
   }
 
-  def elabGuards(guards: List[Guard], env: Env): Env =
+  def elabGuards(guards: List[Guard], env: Env)(implicit checkRedundancy: Boolean = false): Env =
     if (guards.isEmpty) env
     else subtype.joinEnvs(guards.map(elabGuard(_, env)))
 
-  private def elabGuard(guard: Guard, env: Env): Env = {
+  private def elabGuard(guard: Guard, env: Env)(implicit checkRedundancy: Boolean = false): Env = {
     var envAcc = env
     guard.tests.foreach { test =>
       envAcc = elabTestT(test, trueType, envAcc)
@@ -62,7 +62,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     envAcc
   }
 
-  private def elabTest(test: Test, env: Env): (Type, Env) = {
+  private def elabTest(test: Test, env: Env)(implicit checkRedundancy: Boolean = false): (Type, Env) = {
     test match {
       case TestVar(v) =>
         // safe because we assume no unbound vars
@@ -190,7 +190,27 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     }
   }
 
-  def elabTestT(test: Test, upper: Type, env: Env): Env =
+  /* Same as elabTestT but checks whether a type test on a variable is redundant */
+  private def checkAndElabTestT(test: Test, upper: Type, env: Env, pos: Pos)(implicit
+      checkRedundancy: Boolean = false
+  ): Env = {
+    test match {
+      case TestVar(v) =>
+        val testType = env.get(v) match {
+          case Some(vt) =>
+            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(vt, upper))
+              throw RedundantGuard(pos, v, upper, vt)(pipelineContext)
+            else
+              narrow.meet(vt, upper)
+          case None =>
+            upper
+        }
+        env + (v -> testType)
+      case _ => elabTestT(test, upper, env)
+    }
+  }
+
+  def elabTestT(test: Test, upper: Type, env: Env)(implicit checkRedundancy: Boolean = false): Env = {
     test match {
       case TestVar(v) =>
         val testType = env.get(v) match {
@@ -200,16 +220,16 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         }
         env + (v -> testType)
       case TestCall(Id(pred, 1), List(arg)) if upper == trueType && elabPredicateType1.isDefinedAt(pred) =>
-        elabTestT(arg, elabPredicateType1(pred), env)
+        checkAndElabTestT(arg, elabPredicateType1(pred), env, test.pos)
       case TestCall(Id(pred, 2), List(arg1, arg2))
           if upper == trueType && elabPredicateType22.isDefinedAt((pred, arg2)) =>
-        elabTestT(arg1, elabPredicateType22(pred, arg2), env)
+        checkAndElabTestT(arg1, elabPredicateType22(pred, arg2), env, test.pos)
       case TestCall(Id(pred, 2), List(arg1, arg2))
           if upper == trueType && elabPredicateType21.isDefinedAt((pred, arg1)) =>
-        elabTestT(arg2, elabPredicateType21(pred, arg1), env)
+        checkAndElabTestT(arg2, elabPredicateType21(pred, arg1), env, test.pos)
       case TestCall(Id(pred, 3), List(arg1, arg2, _))
           if upper == trueType && elabPredicateType22.isDefinedAt((pred, arg2)) =>
-        elabTestT(arg1, elabPredicateType22(pred, arg2), env)
+        checkAndElabTestT(arg1, elabPredicateType22(pred, arg2), env, test.pos)
       case TestBinOp("and", arg1, arg2) =>
         val env1 = elabTestT(arg1, AtomLitType("true"), env)
         val env2 = elabTestT(arg2, upper, env1)
@@ -230,6 +250,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case _ =>
         elabTest(test, env)._2
     }
+  }
 
   def elabUnOp(unOp: TestUnOp, env: Env): (Type, Env) = {
     val TestUnOp(op, arg) = unOp
@@ -253,7 +274,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     }
   }
 
-  private def elabComparison(binOp: TestBinOp, env: Env): Env =
+  private def elabComparison(binOp: TestBinOp, env: Env)(implicit checkRedundancy: Boolean = false): Env =
     binOp match {
       case TestBinOp("=:=" | "==", TestVar(v), NumTest(n)) =>
         env.get(v) match {
@@ -294,7 +315,10 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestVar(v), TestAtom(a)) =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> narrow.meet(ty, AtomLitType(a)))
+            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(ty, AtomLitType(a)))
+              throw RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext)
+            else
+              env + (v -> narrow.meet(ty, AtomLitType(a)))
           // $COVERAGE-OFF$
           case None =>
             env
@@ -303,7 +327,10 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestAtom(a), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> narrow.meet(ty, AtomLitType(a)))
+            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(ty, AtomLitType(a)))
+              throw RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext)
+            else
+              env + (v -> narrow.meet(ty, AtomLitType(a)))
           // $COVERAGE-OFF$
           case None =>
             env
@@ -333,7 +360,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         env2
     }
 
-  private def elabBinOp(binOp: TestBinOp, env: Env): (Type, Env) = {
+  private def elabBinOp(binOp: TestBinOp, env: Env)(implicit checkRedundancy: Boolean = false): (Type, Env) = {
     val TestBinOp(op, arg1, arg2) = binOp
     op match {
       case "/" | "*" | "-" | "+" | "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>
