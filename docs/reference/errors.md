@@ -522,3 +522,21 @@ warnings about a function that does not have a type error.
 ```
 
 In such a case, the instruction nowarn_function can be deleted.
+
+
+### redundant_guard
+
+This error indicates that a type assert is redundant, since it always evaluates
+to true.
+
+```Erlang
+-spec redundant_type_assert(ok) -> ok.
+redundant_type_assert(X) ->
+    (is_atom(X) orelse error(fail)),   % The spec guarantees that X is an atom,
+                                       % this test is redundant
+    X.
+```
+
+In such a case, the type test can be deleted. Only redundant asserts of the form
+`type_test(Var) orelse error` are detected. See [experimental features](./advanced.md#redundant-type-checks-detection)
+for how to enable this check.

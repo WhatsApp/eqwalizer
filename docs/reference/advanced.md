@@ -171,4 +171,4 @@ a given function or module.
 ### Redundant type checks detection
 
 Enable with `EQWALIZER_CHECK_REDUNDANT_GUARDS=true`. With this setting, eqWAlizer will
-attempt to detect and report redundant type assertions.
+attempt to detect and report redundant type assertions. See [redundant_guard error](./errors.md#redundant_guard).
