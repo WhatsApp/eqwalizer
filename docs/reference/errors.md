@@ -444,18 +444,21 @@ foo(Arg), % etc
 
 ### type_var_in_parameter_position
 
-The following type alias contains a type variable in parameter position:
+The following opaque type alias contains a type variable in parameter position:
 
 ```Erlang
--type bad_alias(T) -> fun((T) -> undefined).
+-opaque bad_alias(T) -> fun((T) -> undefined).
 ```
 
-Such aliases are not allowed because they break a common property assumed in
+Such opaques are not allowed because they break a common property assumed in
 Erlang code: that if `T` is a subtype of `U` then `alias(T)` is a subtype of
 `alias(U)`. For example, `sets:set(a)` is a subtype of `sets:set(a | b)`.
 But `fun((a) -> undefined)` is **not** a subtype of `fun((a | b) -> undefined)`.
 Put differently, aliases are usually covariant but function types are
 contravariant in their parameters.
+
+eqWAlizer is able to manipulate contravariant type aliases as long as they are
+not opaque, but will throw this error if it detects a contravariant opaque.
 
 This error is extremely rare in practice. If you get this error, the clearest
 thing to do for code readers just not use an alias: write out the full type.
