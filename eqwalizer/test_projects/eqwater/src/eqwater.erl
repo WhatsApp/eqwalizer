@@ -1201,3 +1201,26 @@ occ_guard_binary_4(V) -> V.
 occ_guard_integer(V) when V =:= 0 -> V;
 occ_guard_integer(V) when V =/= 1 -> -1;
 occ_guard_integer(V) -> V.
+
+-spec foo7([term()] | number()) -> number().
+foo7(Args) ->
+    case Args of
+        Args when is_list(Args) -> length(Args);
+        _ -> Args
+    end.
+
+-type my_list() :: {term(), my_list()} | number().
+
+-spec foo8(my_list()) -> number().
+foo8(Args) ->
+    case Args of
+        {_, L} -> 1 + foo8(L);
+        _ -> Args
+    end.
+
+-spec foo8_neg(my_list()) -> number().
+foo8_neg(Args) ->
+    case Args of
+        {_, Args} -> 1 + foo8_neg(Args);
+        _ -> Args
+    end.

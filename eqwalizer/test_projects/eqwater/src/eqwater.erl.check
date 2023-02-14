@@ -1374,3 +1374,38 @@ occ_guard_binary_4(V) -> V.                |         |
 occ_guard_integer(V) when V =:= 0 -> V;    | OK      |
 occ_guard_integer(V) when V =/= 1 -> -1;   |         |
 occ_guard_integer(V) -> V.                 |         |
+                                           |         |
+-spec foo7([term()] | number()) -> number(……         |
+foo7(Args) ->                              | ERROR   |
+    case Args of                           |         |
+        Args when is_list(Args) -> length(……         |
+        _ -> Args                          |         | Args.
+                                           |         | Expected: number()
+                                           |         | Got     : [term()] | number()
+                                           |         | 
+                                           |         |   [term()] | number() is not a subtype of number()
+                                           |         |   because
+                                           |         |   [term()] is not a subtype of number()
+    end.                                   |         |
+                                           |         |
+-type my_list() :: {term(), my_list()} | n……         |
+                                           |         |
+-spec foo8(my_list()) -> number().         |         |
+foo8(Args) ->                              | OK      |
+    case Args of                           |         |
+        {_, L} -> 1 + foo8(L);             |         |
+        _ -> Args                          |         |
+    end.                                   |         |
+                                           |         |
+-spec foo8_neg(my_list()) -> number().     |         |
+foo8_neg(Args) ->                          | ERROR   |
+    case Args of                           |         |
+        {_, Args} -> 1 + foo8_neg(Args);   |         |
+        _ -> Args                          |         | Args.
+                                           |         | Expected: number()
+                                           |         | Got     : {term(), my_list()} | none() | none() | number()
+                                           |         | 
+                                           |         |   {term(), my_list()} | none() | none() | number() is not a subtype of number()
+                                           |         |   because
+                                           |         |   {term(), my_list()} is not a subtype of number()
+    end.                                   |         |

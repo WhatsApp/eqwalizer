@@ -20,10 +20,12 @@ check/src/pinned.erl:54
 check/src/subtype_pos.erl:93
 check/src/tries.erl:136
 check/src/tries.erl:144
+eqwater/src/eqwater.erl:1208
+eqwater/src/eqwater.erl:1224
 eqwater/src/eqwater_records.erl:46
 eqwater/src/eqwater_sound.erl:66
 eqwater/src/eqwater_sound.erl:70
 eqwater/src/eqwater_sound.erl:74
 eqwater/src/eqwater_sound.erl:81
 eqwater/src/eqwater_sound.erl:90
-Total: 28
+Total: 30

@@ -3403,7 +3403,10 @@
           "occ_guard_binary_2_neg/1",
           "occ_guard_binary_3_neg/1",
           "occ_guard_binary_4/1",
-          "occ_guard_integer/1"
+          "occ_guard_integer/1",
+          "foo7/1",
+          "foo8/1",
+          "foo8_neg/1"
         ]
       },
       {
