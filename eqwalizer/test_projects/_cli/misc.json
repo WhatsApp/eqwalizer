@@ -3406,7 +3406,8 @@
           "occ_guard_integer/1",
           "foo7/1",
           "foo8/1",
-          "foo8_neg/1"
+          "foo8_neg/1",
+          "any_tuple_neg/1"
         ]
       },
       {

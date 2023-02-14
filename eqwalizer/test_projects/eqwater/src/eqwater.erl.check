@@ -1403,3 +1403,9 @@ foo8_neg(Args) ->                          | ERROR   |
                                            |         |   because
                                            |         |   {term(), my_list()} is not a subtype of number()
     end.                                   |         |
+                                           |         |
+-spec any_tuple_neg(tuple()) -> ok.        |         |
+any_tuple_neg(T) ->                        | OK      |
+    case T of                              |         |
+        _ when is_tuple(T) -> T            |         |
+    end.                                   |         |

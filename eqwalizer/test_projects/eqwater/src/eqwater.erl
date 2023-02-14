@@ -1224,3 +1224,9 @@ foo8_neg(Args) ->
         {_, Args} -> 1 + foo8_neg(Args);
         _ -> Args
     end.
+
+-spec any_tuple_neg(tuple()) -> ok.
+any_tuple_neg(T) ->
+    case T of
+        _ when is_tuple(T) -> T
+    end.
