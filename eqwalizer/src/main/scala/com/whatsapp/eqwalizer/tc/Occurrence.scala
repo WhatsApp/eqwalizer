@@ -231,7 +231,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
     val clauseEnvs = ListBuffer.empty[Env]
     for (clause <- c.clauses) {
       val pat = clause.pats.head
-      val (patPos, patNeg) = patProps(x, Nil, pat, env).unzip
+      val (patPos, patNeg) =
+        pat match {
+          case PatVar(`x`) => (None, None)
+          case _           => patProps(x, Nil, pat, env).unzip
+        }
       val aMap = aliases(x, Nil, pat, env).toMap
       val (testPos, testNeg) = guardsProps(clause.guards, aMap)
       val clauseProps = combine(patPos.toList ++ testPos, propsAcc)

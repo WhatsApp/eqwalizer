@@ -1376,16 +1376,10 @@ occ_guard_integer(V) when V =/= 1 -> -1;   |         |
 occ_guard_integer(V) -> V.                 |         |
                                            |         |
 -spec foo7([term()] | number()) -> number(……         |
-foo7(Args) ->                              | ERROR   |
+foo7(Args) ->                              | OK      |
     case Args of                           |         |
         Args when is_list(Args) -> length(……         |
-        _ -> Args                          |         | Args.
-                                           |         | Expected: number()
-                                           |         | Got     : [term()] | number()
-                                           |         | 
-                                           |         |   [term()] | number() is not a subtype of number()
-                                           |         |   because
-                                           |         |   [term()] is not a subtype of number()
+        _ -> Args                          |         |
     end.                                   |         |
                                            |         |
 -type my_list() :: {term(), my_list()} | n……         |
