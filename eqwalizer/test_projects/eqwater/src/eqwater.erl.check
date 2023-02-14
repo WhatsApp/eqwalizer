@@ -1405,7 +1405,9 @@ foo8_neg(Args) ->                          | ERROR   |
     end.                                   |         |
                                            |         |
 -spec any_tuple_neg(tuple()) -> ok.        |         |
-any_tuple_neg(T) ->                        | OK      |
+any_tuple_neg(T) ->                        | ERROR   |
     case T of                              |         |
-        _ when is_tuple(T) -> T            |         |
+        _ when is_tuple(T) -> T            |         | T.
+                                           |         | Expected: 'ok'
+                                           |         | Got     : tuple()
     end.                                   |         |

@@ -570,6 +570,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   private def overlap(t1: Type, t2: Type): Option[Boolean] =
     (t1, t2) match {
+      case (_, _) if t1 == t2 =>
+        Some(true)
       case (AnyType, _) =>
         Some(true)
       case (_, AnyType) =>
