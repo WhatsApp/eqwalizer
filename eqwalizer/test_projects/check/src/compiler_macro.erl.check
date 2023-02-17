@@ -1,0 +1,18 @@
+%%% Copyright (c) Meta Platforms, Inc. and……         |
+%%%                                        |         |
+%%% This source code is licensed under the……         |
+%%% the LICENSE file in the root directory……         |
+                                           |         |
+-module(compiler_macro).                   |         |
+                                           |         |
+-compile([export_all, nowarn_export_all]). |         |
+                                           |         |
+-record(foo, {a, b}).                      |         |
+                                           |         |
+-spec record_info_size() -> integer().     |         |
+record_info_size() -> record_info(size, fo…… ERROR   | Unbound var: record_info/2
+
+                                           |         |
+-spec record_info_fields() -> [a | b].     |         |
+record_info_fields() -> record_info(fields…… ERROR   | Unbound var: record_info/2
+

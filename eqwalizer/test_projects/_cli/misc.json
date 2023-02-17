@@ -178,6 +178,13 @@
         ]
       },
       {
+        "module": "compiler_macro",
+        "exported_funs": [
+          "record_info_size/0",
+          "record_info_fields/0"
+        ]
+      },
+      {
         "module": "comprehensions",
         "exported_funs": [
           "gen_atom/1",

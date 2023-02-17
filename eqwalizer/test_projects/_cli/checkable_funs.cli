@@ -1,5 +1,5 @@
 all funs:
-                                               All : 2937
+                                               All : 2939
                                          Checkable : 2682
                               Well-typed checkable : 1709
                                    Checkable ratio : 91%
@@ -26,7 +26,7 @@ generated non-test funs:
 
 --------------------------------------------
 non-generated funs:
-                                               All : 2937
+                                               All : 2939
                                          Checkable : 2682
                               Well-typed checkable : 1709
                                    Checkable ratio : 91%
@@ -35,7 +35,7 @@ non-generated funs:
 
 --------------------------------------------
 non-generated non-test funs (most important):
-                                               All : 2935
+                                               All : 2937
                                          Checkable : 2680
                               Well-typed checkable : 1708
                                    Checkable ratio : 91%
