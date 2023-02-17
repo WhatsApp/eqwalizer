@@ -10,7 +10,8 @@ import scala.annotation.tailrec
 import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, Lambda, NilLit}
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, UnboundVar}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, UnboundVar, UnboundRecord}
+import com.whatsapp.eqwalizer.ast.CompilerMacro
 
 class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val elab = pipelineContext.elab
@@ -44,6 +45,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "put", 3),
       RemoteId("maps", "with", 2),
       RemoteId("maps", "without", 2),
+      RemoteId(CompilerMacro.fake_module, "record_info", 2),
     )
 
   def elabCustom(remoteId: RemoteId, args: List[Expr], env: Env, callPos: Pos): (Type, Env) = {
@@ -498,6 +500,19 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         }
         val ty = without(narrow.asMapType(mapTy))
         (ty, env1)
+
+      case RemoteId(CompilerMacro.fake_module, "record_info", 2) =>
+        val List(AtomLit(access), name) = args
+        val AtomLit(recName) = name
+
+        access match {
+          case "size" => (NumberType, env1)
+          case "fields" =>
+            val record =
+              util.getRecord(pipelineContext.module, recName).getOrElse(throw UnboundRecord(name.pos, recName))
+            val fields = record.fields.keys.map(AtomLitType)
+            (ListType(UnionType(fields.toSet)), env1)
+        }
 
       // $COVERAGE-OFF$
       case rid =>

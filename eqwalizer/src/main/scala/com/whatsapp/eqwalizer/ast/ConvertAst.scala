@@ -432,7 +432,10 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
             RemoteCall(RemoteId(m, f, eArgs.size), eArgs.map(convertExp))(p)
           case ETuple(List(EAtom("atom"), EPos(_), EAtom(fname))) =>
             val localId = Id(fname, eArgs.size)
-            if (AutoImport.funs(localId) && !noAutoImport(localId)) {
+            if (CompilerMacro.funs(localId)) {
+              val remoteId = RemoteId(CompilerMacro.fake_module, fname, eArgs.size)
+              RemoteCall(remoteId, eArgs.map(convertExp))(p)
+            } else if (AutoImport.funs(localId) && !noAutoImport(localId)) {
               val remoteId = RemoteId("erlang", fname, eArgs.size)
               RemoteCall(remoteId, eArgs.map(convertExp))(p)
             } else {
