@@ -2514,7 +2514,9 @@
           "named3_neg/0",
           "step/2",
           "game1/1",
-          "game2/1"
+          "game2/1",
+          "either/2",
+          "unify_dyn_atom/2"
         ]
       },
       {
