@@ -308,7 +308,8 @@ class Constraints(pipelineContext: PipelineContext) {
     case ft: FunType =>
       val bound1 = bound ++ ft.forall
       TypeVars.children(ft).flatMap(freeVarsHelper(_, bound1))
-    case VarType(n) if !bound.contains(n) => Nil
+    case VarType(n) if !bound.contains(n) => List(n)
+    case VarType(_)                       => Nil
     case _                                => TypeVars.children(ty).flatMap(freeVarsHelper(_, bound))
   }
 
