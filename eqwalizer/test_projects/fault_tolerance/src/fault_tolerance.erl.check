@@ -162,7 +162,7 @@ lists_append(M1, M2) ->                    | ERROR   |
                                            |         | Expected: [T]
                                            |         | Got     : #D{dynamic() => dynamic()}
     M2                                     |         | M2.
-                                           |         | Expected: [T]
+                                           |         | Expected: [dynamic()]
                                            |         | Got     : #D{dynamic() => dynamic()}
   ),                                       |         |
   Res.                                     |         | Res.

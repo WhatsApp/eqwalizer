@@ -294,7 +294,7 @@
         "end": 1751
       },
       "lineAndCol": null,
-      "message": "Expected: [T]\nGot     : #D{dynamic() => dynamic()}",
+      "message": "Expected: [dynamic()]\nGot     : #D{dynamic() => dynamic()}",
       "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
       "code": "expected_subtype",
       "expressionOrNull": "M2",

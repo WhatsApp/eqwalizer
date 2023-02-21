@@ -106,7 +106,10 @@ class Constraints(pipelineContext: PipelineContext) {
           state.copy(cs = constraints :+ (n, constraintLoc, constraint))
         case (VarType(n1), VarType(n2)) if n1 == n2 && !toSolve(n1) =>
           state
-        case (DynamicType, _) => state
+        case (DynamicType, _) =>
+          val solveFor = freeVars(upperBound).intersect(toSolve)
+          val newConstraints = solveFor.map(n => (n, constraintLoc, Constraint(DynamicType, AnyType))).toVector
+          state.copy(cs = constraints ++ newConstraints)
         // logic for recursive types is the same as in subtype.scala
         case (RemoteType(rid, args), _) =>
           val lower = util.getTypeDeclBody(rid, args)
@@ -300,8 +303,6 @@ class Constraints(pipelineContext: PipelineContext) {
       c.upper
   }
 
-  /** Only used for asserts: can remove if performance becomes a problem.
-    */
   private def freeVars(ty: Type): Set[Var] = freeVarsHelper(ty, Set.empty).toSet
 
   private def freeVarsHelper(ty: Type, bound: Set[Var]): List[Var] = ty match {

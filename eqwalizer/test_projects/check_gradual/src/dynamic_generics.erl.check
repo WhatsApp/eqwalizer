@@ -200,5 +200,5 @@ game2(L) ->                                | OK      |
 either({_, _}, A) -> A.                    | OK      |
                                            |         |
 -spec unify_dyn_atom(eqwalizer:dynamic(), ……         |
-unify_dyn_atom(D, A) -> eqwalizer:reveal_t…… ERROR   | 'undef'
+unify_dyn_atom(D, A) -> eqwalizer:reveal_t…… ERROR   | dynamic() | 'undef'
 
