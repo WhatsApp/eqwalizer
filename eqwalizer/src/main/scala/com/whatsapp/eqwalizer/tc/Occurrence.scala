@@ -749,7 +749,12 @@ final class Occurrence(pipelineContext: PipelineContext) {
         NoneType
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
-        remove(body, t2)
+        body match {
+          case UnionType(ts) if (!pipelineContext.unlimitedRefinement) && (ts.size > 16) =>
+            t1
+          case _ =>
+            remove(body, t2)
+        }
       case (OpaqueType(_, _), _) =>
         t1
       case (UnionType(ts), s) =>
