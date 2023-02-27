@@ -138,10 +138,10 @@ enum Response {
 
 impl Response {
     /// Unwraps Response into a Result panicking if the response was an Exception
-    pub fn decode(self, format: Format) -> Result<Vec<u8>, Vec<ParseError>> {
+    pub fn decode(self) -> Result<Vec<u8>, Vec<ParseError>> {
         match self {
             Response::Ok(data) => Ok(data),
-            Response::Err(data) => match decode_errors(&data, format) {
+            Response::Err(data) => match decode_errors(&data) {
                 Ok(errors) => Err(errors),
                 Err(error) => panic!("parse_server crashed {:?}", error),
             },
@@ -181,11 +181,10 @@ impl Connection {
 
     pub fn request(&self, request: ParseRequest) -> Result<Vec<u8>, Vec<ParseError>> {
         let (sender, receiver) = bounded::<Response>(0);
-        let format = request.format;
         let request = Request::ParseRequest(request, sender);
         self.sender.send(request).unwrap();
         let response = receiver.recv().unwrap();
-        response.decode(format)
+        response.decode()
     }
 
     pub fn add_code_path(&self, paths: Vec<PathBuf>) {
@@ -292,7 +291,7 @@ fn writer_run(
     Ok(())
 }
 
-fn decode_errors(buf: &[u8], format: Format) -> Result<Vec<ParseError>> {
+fn decode_errors(buf: &[u8]) -> Result<Vec<ParseError>> {
     eetf::Term::decode(buf)?
         .as_match(pattern::VarList((
             pattern::Str(pattern::Unicode),
