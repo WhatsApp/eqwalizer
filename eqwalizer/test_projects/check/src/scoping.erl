@@ -7,10 +7,10 @@
 
 -compile([export_all, nowarn_export_all]).
 
--spec foo() -> any().
+-spec foo() -> term().
 foo() -> atom.
 
--spec bar() -> any().
+-spec bar() -> term().
 bar() -> number.
 
 -spec test01() ->

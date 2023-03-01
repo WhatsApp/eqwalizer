@@ -47,7 +47,7 @@ test_05_pos(Rec) ->                        | OK      |
     Res = Meth(atom),                      |         |
     Res.                                   |         |
                                            |         |
--spec test_06_neg(fun((a) -> b)) -> any(). |         |
+-spec test_06_neg(fun((a) -> b)) -> term()……         |
 test_06_neg(F) -> F(1, 2).                 | ERROR   | F.
                                            |         | Expected fun type with arity 2
                                            |         | Got: fun(('a') -> 'b')
@@ -64,14 +64,14 @@ test_07_neg() ->                           | ERROR   |
                                            |         | Expected: pid()
                                            |         | Got     : 'ok'
                                            |         |
--spec test_08_neg() -> any().              |         |
+-spec test_08_neg() -> term().             |         |
 test_08_neg() ->                           | ERROR   |
     F = fun ret_ok/0,                      |         |
     F(1).                                  |         | F.
                                            |         | Expected fun type with arity 1
                                            |         | Got: fun(() -> 'ok')
                                            |         |
--spec test_09_neg() -> any().              |         |
+-spec test_09_neg() -> term().             |         |
 test_09_neg() ->                           | ERROR   |
     F = fun unspecced/0,                   |         | Unbound var: unspecced/0
 

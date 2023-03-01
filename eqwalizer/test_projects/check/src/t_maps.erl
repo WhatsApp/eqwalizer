@@ -17,7 +17,7 @@ empty_map_01() -> #{}.
 -spec empty_map_02() -> map().
 empty_map_02() -> #{}.
 
--spec empty_map_03() -> any().
+-spec empty_map_03() -> term().
 empty_map_03() -> #{}.
 
 -spec dict_map_01() ->
@@ -70,7 +70,7 @@ empty_update1(M) ->
     M#{}.
 
 -spec empty_update2_neg
-    (any()) -> map().
+    (term()) -> map().
 empty_update2_neg(M) ->
     M#{}.
 
@@ -110,18 +110,18 @@ shape_update3_neg(S) ->
     S#{bar := true}.
 
 -spec shape_update4_neg
-    (any()) -> #{bar := b()}.
+    (term()) -> #{bar := b()}.
 shape_update4_neg(S) ->
     S#{bar := true}.
 
 -spec meet_dict1
-    (#{b() | n() => any()}, #{a() => any()}) ->
-     #{b() => any()}.
+    (#{b() | n() => term()}, #{a() => term()}) ->
+     #{b() => term()}.
 meet_dict1(D, D) -> D.
 
 -spec meet_dict2_neg
-    (#{b() | n() => any()}, #{a() => any()}) ->
-    #{n() => any()}.
+    (#{b() | n() => term()}, #{a() => term()}) ->
+    #{n() => term()}.
 meet_dict2_neg(D, D) -> D.
 
 -spec meet_shape1
@@ -265,11 +265,11 @@ kvs_neg(Dict, K2, V2) ->
 lit_type_neg(A) -> #{A => 3}.
 
 -spec needs_shape_a
-    (#{a := any()}) -> ok.
+    (#{a := term()}) -> ok.
 needs_shape_a(_) -> ok.
 
 -spec needs_shape_ab
-    (#{a := any(), b := any()}) -> ok.
+    (#{a := term(), b := term()}) -> ok.
 needs_shape_ab(_) -> ok.
 
 -spec shapeab_neg(#{a := 3}) -> ok.
@@ -277,7 +277,7 @@ shapeab_neg(X) ->
     needs_shape_a(X),
     needs_shape_a(X#{b => hello}).
 
--spec shape_ab(#{a := any()}) -> ok.
+-spec shape_ab(#{a := term()}) -> ok.
 shape_ab(X) ->
     needs_shape_a(X),
     needs_shape_ab(X#{b => hello}).
@@ -287,7 +287,7 @@ shape_ab(X) ->
 slice_map(#{} = M) -> M;
 slice_map(_) -> #{}.
 
--spec get_kv(any(), #{a() => n()})
+-spec get_kv(term(), #{a() => n()})
     -> {a(), n()}.
 get_kv(K, M) ->
     case M of
@@ -295,7 +295,7 @@ get_kv(K, M) ->
         _ -> {not_found, 0}
     end.
 
--spec get_kv_neg(any(), #{a() => n()})
+-spec get_kv_neg(term(), #{a() => n()})
         -> {n(), a()}.
 get_kv_neg(K, M) ->
     case M of
@@ -315,7 +315,7 @@ f_shape1(#{n := N}) -> {N, n}.
 f_shape2_neg(#{a := A, n := N}) ->
     {A, N}.
 
--spec to_map1(any()) -> map().
+-spec to_map1(term()) -> map().
 to_map1(#{} = M) -> M;
 to_map1(_) -> #{}.
 
@@ -356,7 +356,7 @@ no_map(#{} = M) -> M.
 no_prop(#{foo := V}) -> V.
 
 -spec shape_atom_key(
-    any(), #{a := a(), b := b()}
+    term(), #{a := a(), b := b()}
 ) -> {a(), a()}.
 shape_atom_key(K, Shape) ->
     case Shape of
@@ -365,7 +365,7 @@ shape_atom_key(K, Shape) ->
     end.
 
 -spec shape_atom_key_neg(
-    any(), #{a := a(), b := b()}
+    term(), #{a := a(), b := b()}
 ) -> {n(), a()}.
 shape_atom_key_neg(K, Shape) ->
     case Shape of
@@ -382,7 +382,7 @@ no_kv_neg(K, Props) ->
     end.
 
 -spec k_union1(
-    any(), #{pid() => any()} | #{number() => any()}
+    term(), #{pid() => term()} | #{number() => term()}
 ) -> pid() | number() | undefined.
 k_union1(K, Dict) ->
     case Dict of
@@ -391,7 +391,7 @@ k_union1(K, Dict) ->
     end.
 
 -spec no_key(
-    any(), a() | [{a(), any()}]
+    term(), a() | [{a(), term()}]
 ) -> undefined.
 no_key(K, Dict) ->
     case Dict of
@@ -400,7 +400,7 @@ no_key(K, Dict) ->
     end.
 
 -spec no_val(
-    any(), a() | [{a(), any()}]
+    term(), a() | [{a(), term()}]
 ) -> undefined.
 no_val(K, Dict) ->
     case Dict of
@@ -446,37 +446,37 @@ guard1(A) when is_atom(A) -> #{A => A}.
 guard2(M) when is_map(M) -> M.
 
 -spec guard3
-    (any()) -> map().
+    (term()) -> map().
 guard3(A) when is_map(A#{}) -> A.
 
 -spec guard4
-    (any()) -> map().
+    (term()) -> map().
 guard4(A) when is_map(A#{a := 1}) -> A.
 
 -spec guard5
-    (any(), any()) -> {map(), map()}.
+    (term(), term()) -> {map(), map()}.
 guard5(M1, M2) when
     M1#{} == M2#{} -> {M1, M2}.
 
 -spec guard6
-    (any(), any()) -> {map(), map()}.
+    (term(), term()) -> {map(), map()}.
 guard6(M1, M2) when
     M1#{a := 1} == M2#{a := 1}
     -> {M1, M2}.
 
 -spec guard7
-    (any()) -> map().
+    (term()) -> map().
 guard7(M) when M#{a => 1} == #{a => 1}
     -> M.
 
 -spec refine(
-    #{a := any(), b => atom()},
-    #{a => atom(), b := any()}
+    #{a := term(), b => atom()},
+    #{a => atom(), b := term()}
 ) -> #{a := atom(), b := atom()}.
 refine(S1, S1) -> S1.
 
 %% checking constraints
--spec c_map1() -> #{any() => Atom}
+-spec c_map1() -> #{term() => Atom}
     when Atom :: atom().
 c_map1() -> #{ok => ok}.
 
@@ -685,16 +685,16 @@ expected_required_got_opt_2_neg(X) ->
 
 -spec misc_mismatch_1_neg(
    #{
-       k_ok => any(),
+       k_ok => term(),
        k_wrong1 => pid(),
        k_wrong2 => pid(),
-       k_req1 => any(),
-       k_req2 => any(),
-       k_extra => any()
+       k_req1 => term(),
+       k_req2 => term(),
+       k_extra => term()
    }
 ) ->
     #{
-        k_ok => any(),
+        k_ok => term(),
         k_wrong1 => atom(),
         k_wrong2 => atom(),
         k_req1 := atom(),

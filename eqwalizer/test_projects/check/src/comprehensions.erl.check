@@ -7,11 +7,11 @@
                                            |         |
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
--spec gen_atom(any()) -> atom().           |         |
+-spec gen_atom(term()) -> atom().          |         |
 gen_atom(A) when is_atom(A) -> A;          | OK      |
 gen_atom(_) -> not_atom.                   |         |
                                            |         |
--spec gen_number(any()) -> number().       |         |
+-spec gen_number(term()) -> number().      |         |
 gen_number(N) when is_number(N) -> N;      | OK      |
 gen_number(_) -> 0.                        |         |
                                            |         |
@@ -41,7 +41,7 @@ test03(L) ->                               | OK      |
     X = x,                                 |         |
     {Atoms, X}.                            |         |
                                            |         |
--spec test04_neg(any()) -> [any()].        |         |
+-spec test04_neg(term()) -> [term()].      |         |
 test04_neg(L) ->                           | ERROR   |
     [X || X <- L].                         |         | L.
                                            |         | Expected: [term()]
@@ -51,7 +51,7 @@ test04_neg(L) ->                           | ERROR   |
 test05(B) ->                               | OK      |
     [Y || <<Y>> <= B ].                    |         |
                                            |         |
--spec test06_neg(binary()) -> list(any()). |         |
+-spec test06_neg(binary()) -> list(term())……         |
 test06_neg(B) ->                           | ERROR   |
     << Y || <<Y>> <= B >>.                 |         | << || >>.
                                            |         | Expected: [term()]
@@ -109,7 +109,7 @@ test15_neg(LB) ->                          | OK      |
         <<Y>> <= LB,                       |         |
         gen_atom(Y) >>.                    |         |
                                            |         |
--spec test16_neg(any()) -> [any()].        |         |
+-spec test16_neg(term()) -> [term()].      |         |
 test16_neg(L) ->                           | ERROR   |
     Res = [X || X <- L],                   |         | L.
                                            |         | Expected: [term()]
@@ -213,12 +213,12 @@ test31(X) ->                               | ERROR   |
         <<Y>> <= X >>,                     |         |
     Res.                                   |         |
                                            |         |
--spec test32([any()]) -> [atom()].         |         |
+-spec test32([term()]) -> [atom()].        |         |
 test32(L) ->                               | OK      |
     Res = [X || X <- L, is_atom(X)],       |         |
     Res.                                   |         |
                                            |         |
--spec test33_neg([any()]) -> [binary()].   |         |
+-spec test33_neg([term()]) -> [binary()].  |         |
 test33_neg(L) ->                           | ERROR   |
     Res = [X || X <- L, is_atom(X)],       |         |
     Res.                                   |         | Res.
@@ -258,16 +258,16 @@ convert_data2(Bin) ->                      | OK      |
     ],                                     |         |
     Res.                                   |         |
                                            |         |
--spec test34([any()]) -> [true].           |         |
+-spec test34([term()]) -> [true].          |         |
 test34(L) ->                               | OK      |
     [X || X <- L, X].                      |         |
                                            |         |
--spec test35([any()]) -> [true].           |         |
+-spec test35([term()]) -> [true].          |         |
 test35(L) ->                               | OK      |
     Res = [X || X <- L, X],                |         |
     Res.                                   |         |
                                            |         |
--spec test36_neg([any()]) -> [false].      |         |
+-spec test36_neg([term()]) -> [false].     |         |
 test36_neg(L) ->                           | ERROR   |
     [X || X <- L, X].                      |         | [ || ].
                                            |         | Expected: ['false']
@@ -277,7 +277,7 @@ test36_neg(L) ->                           | ERROR   |
                                            |         |   because
                                            |         |   'true' is not a subtype of 'false'
                                            |         |
--spec test37_neg([any()]) -> [false].      |         |
+-spec test37_neg([term()]) -> [false].     |         |
 test37_neg(L) ->                           | ERROR   |
     Res = [X || X <- L, X],                |         |
     Res.                                   |         | Res.

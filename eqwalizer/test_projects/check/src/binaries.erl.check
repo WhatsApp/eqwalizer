@@ -20,7 +20,7 @@ test02_pos(<<X, Y/binary>>) -> {X, Y}.     | OK      |
 test03_pos(<<N, _:N, Rest/binary>>) ->     | OK      |
     Rest.                                  |         |
                                            |         |
--spec test04_neg() -> list(any()).         |         |
+-spec test04_neg() -> list(term()).        |         |
 test04_neg() -> <<>>.                      | ERROR   | <<..>>.
                                            |         | Expected: [term()]
                                            |         | Got     : binary()

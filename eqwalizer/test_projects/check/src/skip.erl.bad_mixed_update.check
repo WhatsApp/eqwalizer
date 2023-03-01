@@ -1,4 +1,4 @@
    5 -spec bad_mixed_update                     |         |
-   6     (any()) -> any().                      |         |
+   6     (term()) -> term().                      |         |
    7 bad_mixed_update(M)                        | OK      |
    8     when is_map(M#{b => b, a := a}) -> M.  |         |

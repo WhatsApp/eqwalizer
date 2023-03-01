@@ -11,7 +11,7 @@
 atom_id1(X) ->
     X.
 
--spec atom_pat(atom()) -> any().
+-spec atom_pat(atom()) -> term().
 atom_pat(1) ->
     ok.
 
@@ -36,7 +36,7 @@ match_example() ->
     M = match,
     {match} = {M}.
 
--spec clauses(any()) ->
+-spec clauses(term()) ->
     atom() | number().
 clauses(X) ->
     case X of

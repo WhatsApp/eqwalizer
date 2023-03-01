@@ -16,7 +16,7 @@ param1(X, X) -> X.
 param2(X, X) -> X.
 
 -spec maps(
-    #{a := any()},
+    #{a := term()},
     #{atom() => atom()}
 ) -> none().
 maps(M, M) -> M.
@@ -125,8 +125,8 @@ binary_refine_tvar_neg
 record_refine_tvar_neg
     (#my_rec{n = N, a = A}) -> {N, A}.
 
--spec refine_w_char(any())
-        -> fun(() -> any()).
+-spec refine_w_char(term())
+        -> fun(() -> term()).
 refine_w_char(X)
     when is_function(X, $\x00) ->
     X.
@@ -210,7 +210,7 @@ record_as_tuple2_neg(R, R) -> R.
 record_as_tuple3(R) -> R.
 
 -spec record_as_tuple4
-(#my_rec{}) -> {my_rec, any(), any()}.
+(#my_rec{}) -> {my_rec, term(), term()}.
 record_as_tuple4(R) -> R.
 
 -spec record_as_tuple5_neg
@@ -218,7 +218,7 @@ record_as_tuple4(R) -> R.
 record_as_tuple5_neg(R) -> R.
 
 -spec record_as_tuple6_neg
-(#my_rec{}) -> {not_my_rec, any(), any()}.
+(#my_rec{}) -> {not_my_rec, term(), term()}.
 record_as_tuple6_neg(R) -> R.
 
 % subtyping "bad" record
@@ -391,7 +391,7 @@ double_id(#{id := Id} = S) ->
 double_id(S) ->
     S.
 
--record(any_rec, {field :: any()}).
+-record(any_rec, {field :: term()}).
 -type tagged() :: {tag, integer()}.
 
 -spec snd(#any_rec{} | tagged()) ->

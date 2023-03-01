@@ -7,29 +7,29 @@
 
 -compile([export_all, nowarn_export_all]).
 
--spec foo(any()) -> {atom(), atom()}.
+-spec foo(term()) -> {atom(), atom()}.
 foo(_) -> {any, any}.
 
--spec bar(any()) ->
+-spec bar(term()) ->
     {atom(), atom()} | {number()}.
 bar(true) -> {any, any};
 bar(_) -> {0}.
 
--spec app_foo(any()) -> atom().
+-spec app_foo(term()) -> atom().
 app_foo(X) ->
     Res = case foo(X) of
               {Y, _} -> Y
           end,
     Res.
 
--spec app_foo_neg(any()) -> binary().
+-spec app_foo_neg(term()) -> binary().
 app_foo_neg(X) ->
     Res = case foo(X) of
               {_, Y} -> Y
           end,
     Res.
 
--spec app_bar(any()) ->
+-spec app_bar(term()) ->
     {atom()} | number().
 app_bar(X) ->
     Res = case bar(X) of
@@ -38,7 +38,7 @@ app_bar(X) ->
           end,
     Res.
 
--spec app_bar_neg(any()) ->
+-spec app_bar_neg(term()) ->
     {atom()} | number().
 app_bar_neg(X) ->
     Res = case bar(X) of
@@ -47,7 +47,7 @@ app_bar_neg(X) ->
           end,
     Res.
 
--spec catch_foo(any()) -> atom().
+-spec catch_foo(term()) -> atom().
 catch_foo(X) ->
     Res =
         try foo(X)
@@ -57,7 +57,7 @@ catch_foo(X) ->
         end,
     Res.
 
--spec catch_foo1(any()) -> atom().
+-spec catch_foo1(term()) -> atom().
 catch_foo1(X) ->
     try foo(X)
     of {Y, _} -> Y
@@ -65,7 +65,7 @@ catch_foo1(X) ->
         A:_  -> A
     end.
 
--spec catch_foo1_neg(any()) -> number().
+-spec catch_foo1_neg(term()) -> number().
 catch_foo1_neg(X) ->
     Res =
         try foo(X)
@@ -75,7 +75,7 @@ catch_foo1_neg(X) ->
         end,
     Res.
 
--spec catch_foo2_neg(any()) -> number().
+-spec catch_foo2_neg(term()) -> number().
 catch_foo2_neg(X) ->
     Res =
         try foo(X)
@@ -85,7 +85,7 @@ catch_foo2_neg(X) ->
         end,
     Res.
 
--spec catch_foo3_neg(any()) -> number().
+-spec catch_foo3_neg(term()) -> number().
 catch_foo3_neg(X) ->
     try foo(X)
     of {_Y, _} -> 1
@@ -93,7 +93,7 @@ catch_foo3_neg(X) ->
         A:_  -> A
     end.
 
--spec catch_foo4_neg(any()) -> number().
+-spec catch_foo4_neg(term()) -> number().
 catch_foo4_neg(X) ->
     try foo(X)
     of {_Y, _} -> 1

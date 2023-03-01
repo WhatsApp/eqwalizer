@@ -7,22 +7,22 @@
 
 -compile([export_all, nowarn_export_all]).
 
--spec any_tuple(any()) -> tuple().
+-spec any_tuple(term()) -> tuple().
 any_tuple(T) when is_tuple(T) -> T;
 any_tuple(_) -> {}.
 
 -spec tuple_slice
-    ({any(), any()} | number())
-    -> {any(), any()} | {}.
+    ({term(), term()} | number())
+    -> {term(), term()} | {}.
 tuple_slice(T) when is_tuple(T) -> T;
 tuple_slice(_) -> {}.
 
 -spec tuple_gen
-    ({} | {any()} | {any(), any()}) ->
+    ({} | {term()} | {term(), term()}) ->
     tuple().
 tuple_gen(T) -> T.
 
--spec any_list(any()) -> list().
+-spec any_list(term()) -> list().
 any_list(L) when is_list(L) -> L;
 any_list(_) -> [].
 
@@ -34,11 +34,11 @@ list_slice(_) -> [].
     ([number()] | [atom()]) -> list().
 list_gen(L) -> L.
 
--spec any_binary(any()) -> binary().
+-spec any_binary(term()) -> binary().
 any_binary(B) when is_binary(B) -> B;
 any_binary(_) -> <<>>.
 
--spec any_bitstring(any()) -> bitstring().
+-spec any_bitstring(term()) -> bitstring().
 any_bitstring(B)
     when is_bitstring(B) -> B;
 any_bitstring(_) -> <<>>.
@@ -50,16 +50,16 @@ binary_slice(B) when is_binary(B) -> B.
 -spec unit_fun() -> {}.
 unit_fun() -> {}.
 
--spec id_any(any()) -> any().
+-spec id_any(term()) -> term().
 id_any(X) -> X.
 
--spec any_fun(any()) -> fun().
+-spec any_fun(term()) -> fun().
 any_fun(F) when is_function(F) -> F;
 any_fun(_) -> fun unit_fun/0.
 
 -spec fun_slice
-    (fun((any()) -> any()) | atom())
-    -> fun((any()) -> any()).
+    (fun((term()) -> term()) | atom())
+    -> fun((term()) -> term()).
 fun_slice(F) when is_function(F) -> F;
 fun_slice(_) -> fun id_any/1.
 
@@ -106,33 +106,33 @@ as_rec1_neg(R)
 as_rec1a_neg(R)
     when is_record(R, rec2, 1) -> R.
 
--spec any_fun_x(any()) -> fun().
+-spec any_fun_x(term()) -> fun().
 any_fun_x(F) when is_function(F, 2) -> F;
 any_fun_x(F) when is_function(F, 3) -> F;
 any_fun_x(_) -> fun unit_fun/0.
 
--spec any_fun_x(any(), number()) -> fun().
+-spec any_fun_x(term(), number()) -> fun().
 any_fun_x(F, Arity)
     when is_function(F, Arity) -> F;
 any_fun_x(_, _) -> fun unit_fun/0.
 
--spec any_mk(any(), any()) -> map().
+-spec any_mk(term(), term()) -> map().
 any_mk(M, K) when is_map_key(K, M) -> M;
 any_mk(_, _) -> #{}.
 
 -record(f0, {
-    f :: fun(() -> any())
+    f :: fun(() -> term())
 }).
 -record(f1, {
-    f :: fun((any()) -> any())
+    f :: fun((term()) -> term())
 }).
 -record(f2, {
-    f :: fun((any(), any()) -> any())
+    f :: fun((term(), term()) -> term())
 }).
 
 -type fs() :: #f0{} | #f1{} | #f2{}.
 
--spec as_fs(any()) -> fs().
+-spec as_fs(term()) -> fs().
 as_fs(F) when is_function(F, 0) ->
     #f0{f = F};
 as_fs(F) when is_function(F, 1) ->
@@ -140,10 +140,10 @@ as_fs(F) when is_function(F, 1) ->
 as_fs(F) when is_function(F, 2) ->
     #f2{f = F}.
 
--spec as_f0_neg(any(), any()) -> fs().
+-spec as_f0_neg(term(), term()) -> fs().
 as_f0_neg(F, A)
     when is_function(F, A) -> #f0{f = F}.
 
--spec as_f1_neg(any()) -> #f1{}.
+-spec as_f1_neg(term()) -> #f1{}.
 as_f1_neg(F)
     when is_function(F, 2) -> #f1{f = F}.

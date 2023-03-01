@@ -14,11 +14,11 @@
 %% Values of dynamic types slip through
 %% the fingers of eqWAlizer in GRADUAL mode.
 %% dynamic() is a special type which is a subtype and a supertype of all types.
-%% It is defined as an alias to any() to be friendly
+%% It is defined as an alias to term() to be friendly
 %% for other tooling (as dialyzer).
-%% In strict mode dynamic() is treated by eqWAlizer as an alias to any().
+%% In strict mode dynamic() is treated by eqWAlizer as an alias to term().
 %% @end
--type dynamic() :: any().
+-type dynamic() :: term().
 
 %% @doc
 %% "Cast" function to convert values to eqwalizer:dynamic() type.

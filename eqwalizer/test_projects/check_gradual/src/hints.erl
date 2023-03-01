@@ -8,7 +8,7 @@
 -compile([export_all, nowarn_export_all]).
 
 -spec reveal_type1
-    (atom() | binary()) -> any().
+    (atom() | binary()) -> term().
 reveal_type1(A) when is_atom(A) ->
     eqwalizer:reveal_type(A),
     A;
@@ -25,7 +25,7 @@ reveal_type1a({tag1, _A}) ->
     tag1.
 
 -spec reveal_type2
-    (atom() | binary()) -> any().
+    (atom() | binary()) -> term().
 reveal_type2(A) when is_atom(A) ->
     A;
 reveal_type2(B) ->
@@ -34,7 +34,7 @@ reveal_type2(B) ->
 
 -spec reveal_type3
     (atom() | binary() | tuple())
-        -> any().
+        -> term().
 reveal_type3(A) when is_atom(A) ->
     A;
 reveal_type3(BT) ->

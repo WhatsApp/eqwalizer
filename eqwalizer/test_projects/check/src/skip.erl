@@ -8,6 +8,6 @@
 -compile([export_all, nowarn_export_all]).
 
 -spec bad_mixed_update
-    (any()) -> any().
+    (term()) -> term().
 bad_mixed_update(M)
     when is_map(M#{b => b, a := a}) -> M.

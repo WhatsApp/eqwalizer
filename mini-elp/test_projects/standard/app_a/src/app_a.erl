@@ -62,16 +62,16 @@ test6() ->
 
 -spec misc_mismatch_1_neg(
    #{
-       k_ok => any(),
+       k_ok => term(),
        k_wrong1 => pid(),
        k_wrong2 => pid(),
-       k_req1 => any(),
-       k_req2 => any(),
-       k_extra => any()
+       k_req1 => term(),
+       k_req2 => term(),
+       k_extra => term()
    }
 ) ->
     #{
-        k_ok => any(),
+        k_ok => term(),
         k_wrong1 => atom(),
         k_wrong2 => atom(),
         k_req1 := atom(),

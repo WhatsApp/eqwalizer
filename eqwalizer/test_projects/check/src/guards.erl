@@ -41,11 +41,11 @@ test02_if(X, Y) ->
 test03(X) when is_boolean(X) -> X;
 test03(_) -> undef.
 
--spec test04(any()) -> number() | undef.
+-spec test04(term()) -> number() | undef.
 test04(X) when is_number(X) -> X;
 test04(_) -> undef.
 
--spec test05(any()) ->
+-spec test05(term()) ->
     #{number() => number()}.
 test05(X) when X =:= #{1 => b} ->
     X.

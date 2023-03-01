@@ -108,20 +108,20 @@ select2_neg(Foo) ->
     Id = Foo#foo.name,
     Id.
 
--spec rec_index_pat_pos(any())
+-spec rec_index_pat_pos(term())
     -> integer().
 rec_index_pat_pos(#foo.id = I) -> I.
 
--spec rec_index_pat_neg(any())
+-spec rec_index_pat_neg(term())
         -> atom().
 rec_index_pat_neg(#foo.id = I) -> I.
 
--spec rec_pat_pos(any())
+-spec rec_pat_pos(term())
         -> {integer(), atom()}.
 rec_pat_pos(#foo{id = I, name = N}) ->
     {I, N}.
 
--spec rec_pat_neg(any())
+-spec rec_pat_neg(term())
         -> {integer(), atom()}.
 rec_pat_neg(#foo{id = I, name = N}) ->
     {N, I}.
@@ -135,20 +135,20 @@ pat_fields(
     }
 ) -> {I, N}.
 
--spec rec_guard1(any()) -> #foo{}.
+-spec rec_guard1(term()) -> #foo{}.
 rec_guard1(Foo)
     when Foo#foo.id > 0 -> Foo.
 
--spec rec_guard2_neg(any()) -> ok.
+-spec rec_guard2_neg(term()) -> ok.
 rec_guard2_neg(Foo)
     when Foo == #foo{} -> ok.
 
--spec rec_guard3_pos(any(), any())
+-spec rec_guard3_pos(term(), term())
     -> number().
 rec_guard3_pos(Foo, X)
     when Foo == #foo_def{id = X} -> X.
 
--spec rec_guard4_neg(any(), any())
+-spec rec_guard4_neg(term(), term())
         -> atom().
 rec_guard4_neg(Foo, X)
     when Foo == #foo_def{id = X} -> X.
@@ -169,7 +169,7 @@ record_in_record_neg(X) ->
 % iodata() type is WIP
 -record(iodata_box, {iod :: iodata()}).
 
--spec use_iodata_box() -> any().
+-spec use_iodata_box() -> term().
 use_iodata_box() ->
     #iodata_box{iod = 's'}.
 
@@ -188,14 +188,14 @@ field_gen_mk() ->
 field_gen_mk_neg() ->
     #mrec{id1 = 1, name1 = n, _ = ok}.
 
--spec field_gen_pat(any())
+-spec field_gen_pat(term())
         -> atom().
 field_gen_pat(
     #mrec{id1 = 1, id2 = 2, _ = A}
 ) ->
     A.
 
--spec field_gen_pat_neg(any())
+-spec field_gen_pat_neg(term())
         -> none().
 field_gen_pat_neg(
     #mrec{id1 = 1, name1 = n, _ = A}
@@ -205,7 +205,7 @@ field_gen_pat_neg(
     A.
 
 -record(any_box, {
-    inner :: eqwalizer:refinable(any())
+    inner :: eqwalizer:refinable(term())
 }).
 
 %% "Refined" record type
@@ -372,7 +372,7 @@ test_tuple_select_neg(R) ->
     R#bad_default.inner.
     
 -record(refined_two_fields, {
-    inner :: eqwalizer:refinable(any()),
+    inner :: eqwalizer:refinable(term()),
     other :: integer()
 }).
 
@@ -393,7 +393,7 @@ test_subtype_refine_neg(R) -> R.
      | #refined_two_fields{inner :: boolean()}).
 test_subtype_union_refine(T) -> T.
 
--spec test_unrec_neg() -> any().
+-spec test_unrec_neg() -> term().
 test_unrec_neg() ->
     L = case #foo{ id = 1, name = name} of
         {foo, 1, Name} ->
@@ -420,11 +420,11 @@ test_recurd2_neg(X) ->
 -type loop() :: loop().
 -record(invalid, {field :: loop()}).
 
--spec unbound_select_neg(any()) -> nok.
+-spec unbound_select_neg(term()) -> nok.
 unbound_select_neg(X) ->
     X#invalid.field.
 
--spec unbound_select_neg2(any()) -> ok.
+-spec unbound_select_neg2(term()) -> ok.
 unbound_select_neg2(X) ->
     _ = X#invalid.field,
     ok.
@@ -493,8 +493,8 @@ fields_equal(_) ->
   false.
 
 -record(two_ref, {
-    a :: eqwalizer:refinable(any()),
-    b :: eqwalizer:refinable(any())
+    a :: eqwalizer:refinable(term()),
+    b :: eqwalizer:refinable(term())
 }).
 
 -type two_ref1() :: #two_ref{a :: atom(), b :: atom()}.

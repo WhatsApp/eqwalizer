@@ -22,7 +22,7 @@ aa(_, _) -> ok.
 -spec a(atom()) -> ok.
 a(_) -> ok.
 
--spec is_registered(any()) -> boolean().
+-spec is_registered(term()) -> boolean().
 is_registered(X) ->
   case is_atom(X) of
     true -> undefined =/= whereis(X);

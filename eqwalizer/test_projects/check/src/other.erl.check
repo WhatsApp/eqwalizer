@@ -8,7 +8,7 @@
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
 % occurrence typing                        |         |
--spec clauses(any()) ->                    |         |
+-spec clauses(term()) ->                   |         |
     atom() | number().                     |         |
 clauses(X) ->                              | OK      |
     case X of                              |         |
@@ -30,20 +30,20 @@ slice_inter2(ok) ->                        | OK      |
     other:inter(ok).                       |         |
                                            |         |
 -spec get_inter1() ->                      |         |
-    any().                                 |         |
+    term().                                |         |
 get_inter1() ->                            | ERROR   |
     fun inter/1.                           |         | Unbound var: inter/1
 
                                            |         |
 -spec get_inter2() ->                      |         |
-    any().                                 |         |
+    term().                                |         |
 get_inter2() ->                            | ERROR   |
     fun other:inter/1.                     |         | Unbound var: other:inter/1
 
                                            |         |
 % logger:metadata() is automatically       |         |
 % approximated                             |         |
--spec any_as_metadata_neg(any()) ->        |         |
+-spec any_as_metadata_neg(term()) ->       |         |
     logger:metadata().                     |         |
 any_as_metadata_neg(M) -> M.               | ERROR   | M.
                                            |         | Expected: logger:metadata()
@@ -53,7 +53,7 @@ any_as_metadata_neg(M) -> M.               | ERROR   | M.
                                            |         |   because
                                            |         |   term() is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
                                            |         |
--spec elab_var_scope(any()) -> any().      |         |
+-spec elab_var_scope(term()) -> term().    |         |
 elab_var_scope(_) ->                       | OK      |
     (begin X = 3, X, fun () -> ok end end)……         |
     X.                                     |         |

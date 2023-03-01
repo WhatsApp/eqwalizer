@@ -28,19 +28,19 @@ refine_as_list(IoList)
     when is_binary(IoList) ->
     binary_to_list(IoList).
 
--spec refine1([any()], iolist()) ->
+-spec refine1([term()], iolist()) ->
 [byte() | binary() | iolist()].
 refine1(X, X) -> X.
 
--spec refine2(iolist(), [any()]) ->
+-spec refine2(iolist(), [term()]) ->
     [byte() | binary() | iolist()].
 refine2(X, X) -> X.
 
--spec refine3(any(), iolist()) ->
+-spec refine3(term(), iolist()) ->
     [byte() | binary() | iolist()].
 refine3(X, X) -> X.
 
--spec refine4(iolist(), any()) ->
+-spec refine4(iolist(), term()) ->
     [byte() | binary() | iolist()].
 refine4(X, X) -> X.
 

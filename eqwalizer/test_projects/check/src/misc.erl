@@ -35,22 +35,22 @@
 atomize(#my_record{atom = A}) ->
     A.
 
--spec test01(any()) -> number().
+-spec test01(term()) -> number().
 test01(-4 = X) -> X.
 
--spec test02(any()) -> number().
+-spec test02(term()) -> number().
 test02(6 / 3 = Y) -> Y.
 
--spec test03_neg(any()) -> atom().
+-spec test03_neg(term()) -> atom().
 test03_neg(-4 = X) -> X.
 
--spec test04_neg(any()) -> atom().
+-spec test04_neg(term()) -> atom().
 test04_neg(6 / 3 = Y) -> Y.
 
--spec test05_neg(any()) -> any().
+-spec test05_neg(term()) -> term().
 test05_neg(X) -> + X.
 
--spec test06_neg(any()) -> atom().
+-spec test06_neg(term()) -> atom().
 test06_neg(X) when is_number(X) -> + X.
 
 -spec test07(boolean()) -> atom().
@@ -61,12 +61,12 @@ test07(X) ->
 test08_neg(X) ->
     not X.
 
--spec test09(any(), any()) -> number().
+-spec test09(term(), term()) -> number().
 test09(X, Y) when
     is_number(X),
     is_number(Y) -> X + Y.
 
--spec test10_neg (any(), any())
+-spec test10_neg (term(), term())
                -> number().
 test10_neg(X, Y) when
     is_number(X) -> X + Y.
@@ -79,7 +79,7 @@ test11_neg(X, Y) -> X + Y.
         -> number().
 test12_neg(X) -> -X.
 
--spec test13_neg (any(), any())
+-spec test13_neg (term(), term())
         -> boolean().
 test13_neg(X, Y) -> X or Y.
 
@@ -172,11 +172,11 @@ test35_pos(AB, BC) ->
 test36_pos(F1, F2) ->
     case F1 of F2 -> F2 end.
 
--spec test37_pos (any(), any())
+-spec test37_pos (term(), term())
               -> {number(), number()}.
 test37_pos(X, Y) when X + Y > 0 -> {X, Y}.
 
--spec test38_pos (any())
+-spec test38_pos (term())
         -> {number()}.
 test38_pos(X) when bnot X > 0 -> {X}.
 
@@ -195,21 +195,21 @@ test40_pos({X, Y}) -> {X, Y}.
 test41_pos([X | Y]) -> {X, Y}.
 
 -spec test42_pos
-    (any()) -> {any(), [any()]}.
+    (term()) -> {term(), [term()]}.
 test42_pos([X | Y]) -> {X, Y}.
 
 -spec test43_pos
-    (any()) -> none().
+    (term()) -> none().
 test43_pos([_ | Y]) when Y + 1 > 0 -> Y.
 
--spec test44_pos(any()) -> any().
+-spec test44_pos(term()) -> term().
 test44_pos(X) ->
     case X of
         Z -> ok
     end,
     Z.
 
--spec test45_pos(any()) -> atom().
+-spec test45_pos(term()) -> atom().
 test45_pos(X) ->
     case X of
         _ -> Z = ok
@@ -304,7 +304,7 @@ test64_pos() ->
     Fun = fun test47_neg/0,
     Fun.
 
--spec test65_pos() -> [any()].
+-spec test65_pos() -> [term()].
 test65_pos() ->
     L = [],
     L.
@@ -351,17 +351,17 @@ test71_neg() ->
     catch test69_pos(atom).
 
 -spec test72_neg() ->
-    any().
+    term().
 test72_neg() ->
     catch test69_pos(atom).
 
 -spec test73_pos() ->
-    any().
+    term().
 test73_pos() ->
     catch test69_pos([atom]).
 
 -spec test74_pos() ->
-    any().
+    term().
 test74_pos() ->
     X = (catch test69_pos([atom])),
     X.
@@ -376,15 +376,15 @@ test75_pos() ->
         nook
     end.
 
--spec test76_pos(any()) -> atom().
+-spec test76_pos(term()) -> atom().
 test76_pos(A) when is_atom(A) -> A;
 test76_pos(_) ->
     erlang:throw({error, not_an_atom}).
 
--spec test77_neg(any()) -> atom().
+-spec test77_neg(term()) -> atom().
 test77_neg(A) -> catch(test76_pos(A)).
 
--spec test78_pos() -> any().
+-spec test78_pos() -> term().
 test78_pos() ->
     receive
         X -> X
@@ -396,7 +396,7 @@ test79_neg() ->
         X -> X
     end.
 
--spec test80_neg(any()) -> atom().
+-spec test80_neg(term()) -> atom().
 test80_neg(Timeout) ->
     receive
         X -> X
@@ -404,7 +404,7 @@ test80_neg(Timeout) ->
         default
     end.
 
--spec test81_neg(any()) -> atom().
+-spec test81_neg(term()) -> atom().
 test81_neg(Timeout) ->
     receive
         X when is_atom(X) -> X
@@ -459,38 +459,38 @@ unzip2_neg([{H1, H2}|T]) ->
     {T1, T2} = unzip2_neg(T),
     {[H1|T1], [H2|T2]}.
 
--spec wrong_list_neg() -> any().
+-spec wrong_list_neg() -> term().
 wrong_list_neg() ->
     X = [1 | 2],
     X.
 
--spec comp01(any(), any()) -> boolean().
+-spec comp01(term(), term()) -> boolean().
 comp01(X, Y) -> X < Y.
 
--spec comp01_neg(any(), any()) -> pid().
+-spec comp01_neg(term(), term()) -> pid().
 comp01_neg(X, Y) -> X < Y.
 
--spec comp02(any(), any()) -> boolean().
+-spec comp02(term(), term()) -> boolean().
 comp02(X, Y) ->
     Res = X < Y,
     Res.
 
--spec comp02_neg(any(), any()) -> pid().
+-spec comp02_neg(term(), term()) -> pid().
 comp02_neg(X, Y) ->
     Res = X < Y,
     Res.
 
--spec send01(pid() | port(), any()) ->
-    any().
+-spec send01(pid() | port(), term()) ->
+    term().
 send01(Where, What) ->
     Where ! What.
 %% - erlang:dst() is OTP specific. - OTP23 and OTP24 are different.
-%%-spec send02_neg(any(), any()) ->
-%%    any().
+%%-spec send02_neg(term(), term()) ->
+%%    term().
 %%send02_neg(Where, What) ->
 %%    Where ! What.
 
--spec send03_neg(pid(), any()) ->
+-spec send03_neg(pid(), term()) ->
     pid().
 send03_neg(Where, What) ->
     Where ! What.
@@ -561,19 +561,19 @@ ans_neg(Atoms, Numbers) ->
 ans2(Atoms, Numbers) ->
     Atoms -- Numbers.
 
--spec ans3(Atoms, [any()]) -> Atoms
+-spec ans3(Atoms, [term()]) -> Atoms
     when
     Atoms :: [atom()].
 ans3(Atoms, Anys) ->
     Atoms -- Anys.
 
--spec ans3_neg(Atoms, any()) -> Atoms
+-spec ans3_neg(Atoms, term()) -> Atoms
     when
     Atoms :: [atom()].
 ans3_neg(Atoms, Anys) ->
     Atoms -- Anys.
 
--spec ans4_neg(any(), Atoms) -> Atoms
+-spec ans4_neg(term(), Atoms) -> Atoms
     when
     Atoms :: [atom()].
 ans4_neg(Anys, Atoms) ->
@@ -616,21 +616,21 @@ ss3("b" ++ S) -> S.
 -spec ss4
     ([atom()] | string()
     , [pid()] | string()
-    , any()) ->
+    , term()) ->
     string().
 ss4(Same, Same, Test) ->
     case Test of
         "prefix" ++ Same -> Same
     end.
 
--spec catch_env_neg_1(any()) -> number().
+-spec catch_env_neg_1(term()) -> number().
 catch_env_neg_1(X) ->
     _ = (catch case X of
             X when is_number(X) -> X
         end),
     X.
 
--spec catch_env_neg_2(any()) -> number().
+-spec catch_env_neg_2(term()) -> number().
 catch_env_neg_2(X) ->
     catch case X of
             X when is_number(X) -> X
@@ -642,25 +642,25 @@ catch_env_neg_2(X) ->
 }.
 badspec(_) -> ok.
 
--spec test86_neg() -> any().
+-spec test86_neg() -> term().
 test86_neg() ->
     catch lists:map({}, {}).
 
--spec test87_neg() -> any().
+-spec test87_neg() -> term().
 test87_neg() ->
     X = (catch lists:map({}, {})),
     X.
 
--spec test88_neg() -> any().
+-spec test88_neg() -> term().
 test88_neg() -> fun badspec/1.
 
 % *can* reference skipped specs from other modules
--spec test89_neg() -> any().
+-spec test89_neg() -> term().
 test89_neg() ->
     fun skip:bad_mixed_update/1.
 
 % cannot reference invalid specs from other modules
--spec test90_neg() -> any().
+-spec test90_neg() -> term().
 test90_neg() ->
 fun generics_with_unions:test_03_neg/3.
 
@@ -693,7 +693,7 @@ not_list2_neg
 not_list3_neg
     (A, "atom" ++ A) -> A.
 
--spec catch_me(any()) -> any().
+-spec catch_me(term()) -> term().
 catch_me(X) -> catch X.
 
 -spec receive_timeout1(

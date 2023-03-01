@@ -8,12 +8,12 @@
 -compile([export_all, nowarn_export_all]).
 
 % fun() is like f0() | f1() | f3() ...
--type f0() :: fun(() -> any()).
--type f1() :: fun((any()) -> any()).
+-type f0() :: fun(() -> term()).
+-type f1() :: fun((term()) -> term()).
 -type f2() ::
-    fun((any(), any()) -> any()).
+    fun((term(), term()) -> term()).
 -type f3() ::
-    fun((any(), any(), any()) -> any()).
+    fun((term(), term(), term()) -> term()).
 
 -spec f0_to_f_any_pos(f0()) -> fun().
 f0_to_f_any_pos(F) -> F.
@@ -27,7 +27,7 @@ f1_to_f_any_pos(F) -> F.
 fs_to_f_any_pos(F) -> F.
 
 -spec to_f_any_pos(
-    fun((any(), any()) -> pid())
+    fun((term(), term()) -> pid())
 ) -> fun().
 to_f_any_pos(F) -> F.
 
@@ -44,22 +44,22 @@ to_f_any_neg2(F) -> F.
 -spec f_any_to_f0_neg(fun()) -> f0.
 f_any_to_f0_neg(F) -> F.
 
--spec guard01_pos(any()) -> fun().
+-spec guard01_pos(term()) -> fun().
 guard01_pos(F)
     when is_function(F, 1) -> F.
 
--spec guard02_pos(any()) -> f1().
+-spec guard02_pos(term()) -> f1().
 guard02_pos(F)
     when is_function(F, 1) -> F.
 
--spec guard03_neg(any()) -> f2().
+-spec guard03_neg(term()) -> f2().
 guard03_neg(F)
     when is_function(F, 1) -> F.
 
 -spec a_to_a(none()) -> a.
 a_to_a(a) -> a.
 
--spec unsound() -> any().
+-spec unsound() -> term().
 unsound() ->
     F = fun a_to_a/1,
     if

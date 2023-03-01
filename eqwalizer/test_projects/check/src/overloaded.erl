@@ -25,8 +25,8 @@ swap_neg(B) when is_binary(B) ->
 
 -spec fancy_gen_first
     ({A}) -> A;
-    ({A, any()}) -> A;
-    ({A, any(), any()}) -> A.
+    ({A, term()}) -> A;
+    ({A, term(), term()}) -> A.
 fancy_gen_first({A}) -> A;
 fancy_gen_first({A, _}) -> A;
 fancy_gen_first({A, _, _}) -> A.
@@ -208,9 +208,9 @@ get_list_atoms(_, _, _) ->
 
 -spec get_list_any
     ([prop(K, V)], props(K, V), [V]) ->
-    [V] when K :: any(), V :: any();
+    [V] when K :: term(), V :: term();
     ([K], props(K, V), [V]) ->
-    [V] when K :: any(), V :: any().
+    [V] when K :: term(), V :: term().
 get_list_any(_, _, _) ->
     throw(not_implemented).
 
@@ -236,12 +236,12 @@ non_overlap_any2() ->
     % reports an error
     get_list_any([b], [{a, b}], [b]).
 
--spec take_ok_or_any(any()) -> error;
+-spec take_ok_or_any(term()) -> error;
     (ok) -> ok.
 take_ok_or_any(ok) -> ok;
 take_ok_or_any(_) -> error.
 
--spec overlap_any_neg(any()) -> error.
+-spec overlap_any_neg(term()) -> error.
 overlap_any_neg(Any) ->
     take_ok_or_any(Any).
 

@@ -6,7 +6,7 @@
 -module(test).
 -compile([export_all, nowarn_export_all]).
 
--spec clauses(any()) ->
+-spec clauses(term()) ->
     atom() | number().
 clauses(X) ->
     case X of

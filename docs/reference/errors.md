@@ -90,7 +90,7 @@ given by the spec. Type errors can appear in other places, too, such as
 when a function is called with the wrong argument type:
 
 ```Erlang
--spec test_neg() -> any().
+-spec test_neg() -> term().
     test_neg() ->
     list_to_atom(bad). % Error
 
@@ -130,7 +130,7 @@ of an overloaded function should be used to type-check an application.
     (b) -> error.
 overloaded(_) -> throw(not_implemented).
 
--spec test_neg() -> any().
+-spec test_neg() -> term().
 test_neg() ->
     overloaded(b).
 
@@ -504,7 +504,7 @@ Sometimes this error can happen when a fixme is misplaced: make sure the fixme
 is on the line directly above the line with the type error:
 
 ```Erlang
--spec redundant() -> any().
+-spec redundant() -> term().
 redundant() ->
     % eqwalizer:fixme  -- this fixme is on the wrong line: move it one line down
     % another line

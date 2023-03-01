@@ -298,8 +298,8 @@ lambda1() ->
   end.
 
 -record(eqwater, {f1, f2}).
--spec occ10(#eqwater{} | {err, any()}) ->
-  {ok, any()} | {err, any()}.
+-spec occ10(#eqwater{} | {err, term()}) ->
+  {ok, term()} | {err, term()}.
 occ10(In) ->
   case In of
     #eqwater{} -> {ok, In};
@@ -643,14 +643,14 @@ occ25(A) when is_atom(A) -> A;
 occ25(F) -> F().
 
 -spec occ26_neg
-  (fun() | {any()}) ->
-  {any()}.
+  (fun() | {term()}) ->
+  {term()}.
 occ26_neg(F) when is_function(F, 1) -> {F(1)};
 occ26_neg(T) -> T.
 
 -spec occ27_neg
-  (fun() | {any()}) ->
-  {any()}.
+  (fun() | {term()}) ->
+  {term()}.
 occ27_neg(T) when is_tuple(T) -> T;
 occ27_neg(F) -> F().
 
@@ -824,14 +824,14 @@ occ_andalso(_) ->
   0.
 
 -spec multi_param1(
-    any(),
+    term(),
     number() | atom()
 ) -> number().
 multi_param1(_, A) when is_atom(A) -> 1;
 multi_param1(_, Y) -> Y.
 
 -spec multi_param2_neg(
-    any(),
+    term(),
     number() | atom()
 ) -> number().
 multi_param2_neg(X, Y) when is_atom(X),
@@ -849,7 +849,7 @@ multi_param3(_, Y) -> Y.
 -spec multi_param4(
     atom(),
     number() | atom()
-) -> {any(), number()}.
+) -> {term(), number()}.
 multi_param4(X, Y) when is_atom(Y) ->
   {X, 1};
 multi_param4(_, Y) ->

@@ -8,19 +8,19 @@
 -compile([export_all, nowarn_export_all]).
 
 -spec to_string_neg
-    (any()) -> string().
+    (term()) -> string().
 to_string_neg(X) ->
   io_lib:format("~p", [X]).
 
 -spec to_string
-    (any()) -> string().
+    (term()) -> string().
 to_string(X) ->
   lists:flatten(
     io_lib:format("~p", [X])
   ).
 
 -spec to_binary
-    (any()) -> binary().
+    (term()) -> binary().
 to_binary(X) ->
   erlang:iolist_to_binary(
     io_lib:format("~p", [X])

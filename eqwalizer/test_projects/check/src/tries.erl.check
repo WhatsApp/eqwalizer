@@ -7,7 +7,7 @@
                                            |         |
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
--spec foo() -> {atom(), any()}.            |         |
+-spec foo() -> {atom(), term()}.           |         |
 foo() -> {foo, bar}.                       | OK      |
                                            |         |
 -spec ok() -> ok.                          |         |
@@ -49,7 +49,7 @@ test03_neg() ->                            | ERROR   |
                                            |         |   because
                                            |         |   [] is not a subtype of atom()
                                            |         |
--spec test04_pos(any()) ->                 |         |
+-spec test04_pos(term()) ->                |         |
     {ok | error, atom()}.                  |         |
 test04_pos(X) ->                           | OK      |
     Res = try foo() of                     |         |
@@ -63,7 +63,7 @@ test04_pos(X) ->                           | OK      |
           end,                             |         |
     {Res, X}.                              |         |
                                            |         |
--spec test05_pos(any()) ->                 |         |
+-spec test05_pos(term()) ->                |         |
     {ok | error, atom()}.                  |         |
 test05_pos(X) ->                           | OK      |
     A =                                    |         |
@@ -118,7 +118,7 @@ test10_pos() ->                            | OK      |
     end.                                   |         |
                                            |         |
                                            |         |
--spec test11_pos(any(), boolean())         |         |
+-spec test11_pos(term(), boolean())        |         |
     -> atom().                             |         |
 test11_pos(Y, Cond) ->                     | OK      |
     Res =                                  |         |
@@ -131,7 +131,7 @@ test11_pos(Y, Cond) ->                     | OK      |
         true -> Y                          |         |
     end.                                   |         |
                                            |         |
--spec test12_neg(any(), boolean())         |         |
+-spec test12_neg(term(), boolean())        |         |
     -> atom().                             |         |
 test12_neg(Y, Cond) ->                     | ERROR   |
     Res =                                  |         |
@@ -146,7 +146,7 @@ test12_neg(Y, Cond) ->                     | ERROR   |
                                            |         | Got     : number()
     end.                                   |         |
                                            |         |
--spec repeated_vars(any()) -> ok.          |         |
+-spec repeated_vars(term()) -> ok.         |         |
 repeated_vars(X) ->                        | ERROR   |
     try X of                               |         |
         {X, X} -> X                        |         | X.
@@ -156,7 +156,7 @@ repeated_vars(X) ->                        | ERROR   |
         ok                                 |         |
     end.                                   |         |
                                            |         |
--spec test_repeated_vars2(any()) -> ok.    |         |
+-spec test_repeated_vars2(term()) -> ok.   |         |
 test_repeated_vars2(X) ->                  | ERROR   |
     Res = try X of                         |         |
         {X, X} -> X                        |         |

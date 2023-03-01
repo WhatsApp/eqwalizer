@@ -31,7 +31,7 @@ test06(X, Y) when X andalso Y -> Y.
 -spec test07_neg(atom(), atom()) -> false.
 test07_neg(X, Y) when X andalso Y -> Y.
 
--spec test08_neg(any()) -> number().
+-spec test08_neg(term()) -> number().
 test08_neg(X) when not is_number(X) -> X.
 
 % We don't try to process
@@ -39,40 +39,40 @@ test08_neg(X) when not is_number(X) -> X.
 % in guards so far.
 % Recommendation for users:
 % rewrite it via true syntax of guards
--spec test09_neg (any())
+-spec test09_neg (term())
               -> number() | atom().
 test09_neg(X)
   when is_number(X) or is_atom(X) -> X.
 
--spec test10 (any())
+-spec test10 (term())
       -> number() | atom().
 test10(X)
   when is_number(X); is_atom(X) -> X.
 
--spec test11_neg (any())
+-spec test11_neg (term())
       -> number() | atom().
 test11_neg(X)
   when is_number(X);
        is_atom(X);
        is_pid(X)-> X.
 
--spec test12(any(), any()) -> number().
+-spec test12(term(), term()) -> number().
 test12(X, _) when X + 1 > 0 -> X;
 test12(_, Y) when Y / 3 > 1 -> Y.
 
--spec test13 (any(), any())
+-spec test13 (term(), term())
           -> {number(), number()}.
 test13(X, Y)
     when X + 1 > 0, Y / 3 > 1 ->
     {X, Y}.
 
--spec test14_neg (any(), any())
+-spec test14_neg (term(), term())
         -> {number(), number()}.
 test14_neg(X, Y)
     when X + 1 > 0; Y / 3 > 1 ->
     {X, Y}.
 
--spec test15 (any(), any())
+-spec test15 (term(), term())
          -> {number(), number()}
           | {boolean(), boolean()}.
 test15(X, Y) when X + Y > 0 -> {X, Y};

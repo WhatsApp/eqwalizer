@@ -115,7 +115,7 @@ same(X, X) -> X.                           | OK      |
 -spec id(A) -> A.                          |         |
 id(X) -> X.                                | OK      |
                                            |         |
--spec convert(any(), any()) -> none().     |         |
+-spec convert(term(), term()) -> none().   |         |
 convert(#rec1{l = L1}, #rec2{l = L2}) ->   | ERROR   | Unbound rec: rec1
 
     same(id(L1), L2),                      |         |

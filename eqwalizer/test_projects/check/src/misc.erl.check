@@ -35,28 +35,28 @@
 atomize(#my_record{atom = A}) ->           | OK      |
     A.                                     |         |
                                            |         |
--spec test01(any()) -> number().           |         |
+-spec test01(term()) -> number().          |         |
 test01(-4 = X) -> X.                       | OK      |
                                            |         |
--spec test02(any()) -> number().           |         |
+-spec test02(term()) -> number().          |         |
 test02(6 / 3 = Y) -> Y.                    | OK      |
                                            |         |
--spec test03_neg(any()) -> atom().         |         |
+-spec test03_neg(term()) -> atom().        |         |
 test03_neg(-4 = X) -> X.                   | ERROR   | X.
                                            |         | Expected: atom()
                                            |         | Got     : number()
                                            |         |
--spec test04_neg(any()) -> atom().         |         |
+-spec test04_neg(term()) -> atom().        |         |
 test04_neg(6 / 3 = Y) -> Y.                | ERROR   | Y.
                                            |         | Expected: atom()
                                            |         | Got     : number()
                                            |         |
--spec test05_neg(any()) -> any().          |         |
+-spec test05_neg(term()) -> term().        |         |
 test05_neg(X) -> + X.                      | ERROR   | X.
                                            |         | Expected: number()
                                            |         | Got     : term()
                                            |         |
--spec test06_neg(any()) -> atom().         |         |
+-spec test06_neg(term()) -> atom().        |         |
 test06_neg(X) when is_number(X) -> + X.    | ERROR   | + _.
                                            |         | Expected: atom()
                                            |         | Got     : number()
@@ -71,12 +71,12 @@ test08_neg(X) ->                           | ERROR   |
                                            |         | Expected: number()
                                            |         | Got     : boolean()
                                            |         |
--spec test09(any(), any()) -> number().    |         |
+-spec test09(term(), term()) -> number().  |         |
 test09(X, Y) when                          | OK      |
     is_number(X),                          |         |
     is_number(Y) -> X + Y.                 |         |
                                            |         |
--spec test10_neg (any(), any())            |         |
+-spec test10_neg (term(), term())          |         |
                -> number().                |         |
 test10_neg(X, Y) when                      | ERROR   |
     is_number(X) -> X + Y.                 |         | Y.
@@ -95,7 +95,7 @@ test12_neg(X) -> -X.                       | ERROR   | X.
                                            |         | Expected: number()
                                            |         | Got     : atom()
                                            |         |
--spec test13_neg (any(), any())            |         |
+-spec test13_neg (term(), term())          |         |
         -> boolean().                      |         |
 test13_neg(X, Y) -> X or Y.                | ERROR   | X.
                                            |         | Expected: boolean()
@@ -238,11 +238,11 @@ test35_pos(AB, BC) ->                      | OK      |
 test36_pos(F1, F2) ->                      | OK      |
     case F1 of F2 -> F2 end.               |         |
                                            |         |
--spec test37_pos (any(), any())            |         |
+-spec test37_pos (term(), term())          |         |
               -> {number(), number()}.     |         |
 test37_pos(X, Y) when X + Y > 0 -> {X, Y}. | OK      |
                                            |         |
--spec test38_pos (any())                   |         |
+-spec test38_pos (term())                  |         |
         -> {number()}.                     |         |
 test38_pos(X) when bnot X > 0 -> {X}.      | OK      |
                                            |         |
@@ -261,21 +261,21 @@ test40_pos({X, Y}) -> {X, Y}.              | OK      |
 test41_pos([X | Y]) -> {X, Y}.             | OK      |
                                            |         |
 -spec test42_pos                           |         |
-    (any()) -> {any(), [any()]}.           |         |
+    (term()) -> {term(), [term()]}.        |         |
 test42_pos([X | Y]) -> {X, Y}.             | OK      |
                                            |         |
 -spec test43_pos                           |         |
-    (any()) -> none().                     |         |
+    (term()) -> none().                    |         |
 test43_pos([_ | Y]) when Y + 1 > 0 -> Y.   | OK      |
                                            |         |
--spec test44_pos(any()) -> any().          |         |
+-spec test44_pos(term()) -> term().        |         |
 test44_pos(X) ->                           | OK      |
     case X of                              |         |
         Z -> ok                            |         |
     end,                                   |         |
     Z.                                     |         |
                                            |         |
--spec test45_pos(any()) -> atom().         |         |
+-spec test45_pos(term()) -> atom().        |         |
 test45_pos(X) ->                           | OK      |
     case X of                              |         |
         _ -> Z = ok                        |         |
@@ -382,7 +382,7 @@ test64_pos() ->                            | OK      |
     Fun = fun test47_neg/0,                |         |
     Fun.                                   |         |
                                            |         |
--spec test65_pos() -> [any()].             |         |
+-spec test65_pos() -> [term()].            |         |
 test65_pos() ->                            | OK      |
     L = [],                                |         |
     L.                                     |         |
@@ -437,7 +437,7 @@ test71_neg() ->                            | ERROR   |
                                            |         |   'atom' is not a subtype of [atom()]
                                            |         |
 -spec test72_neg() ->                      |         |
-    any().                                 |         |
+    term().                                |         |
 test72_neg() ->                            | ERROR   |
     catch test69_pos(atom).                |         | 'atom'.
                                            |         | Expected: [atom()] | [number()]
@@ -448,12 +448,12 @@ test72_neg() ->                            | ERROR   |
                                            |         |   'atom' is not a subtype of [atom()]
                                            |         |
 -spec test73_pos() ->                      |         |
-    any().                                 |         |
+    term().                                |         |
 test73_pos() ->                            | OK      |
     catch test69_pos([atom]).              |         |
                                            |         |
 -spec test74_pos() ->                      |         |
-    any().                                 |         |
+    term().                                |         |
 test74_pos() ->                            | OK      |
     X = (catch test69_pos([atom])),        |         |
     X.                                     |         |
@@ -468,17 +468,17 @@ test75_pos() ->                            | OK      |
         nook                               |         |
     end.                                   |         |
                                            |         |
--spec test76_pos(any()) -> atom().         |         |
+-spec test76_pos(term()) -> atom().        |         |
 test76_pos(A) when is_atom(A) -> A;        | OK      |
 test76_pos(_) ->                           |         |
     erlang:throw({error, not_an_atom}).    |         |
                                            |         |
--spec test77_neg(any()) -> atom().         |         |
+-spec test77_neg(term()) -> atom().        |         |
 test77_neg(A) -> catch(test76_pos(A)).     | ERROR   | catch.
                                            |         | Expected: atom()
                                            |         | Got     : term()
                                            |         |
--spec test78_pos() -> any().               |         |
+-spec test78_pos() -> term().              |         |
 test78_pos() ->                            | OK      |
     receive                                |         |
         X -> X                             |         |
@@ -492,7 +492,7 @@ test79_neg() ->                            | ERROR   |
                                            |         | Got     : term()
     end.                                   |         |
                                            |         |
--spec test80_neg(any()) -> atom().         |         |
+-spec test80_neg(term()) -> atom().        |         |
 test80_neg(Timeout) ->                     | ERROR   |
     receive                                |         |
         X -> X                             |         | X.
@@ -502,7 +502,7 @@ test80_neg(Timeout) ->                     | ERROR   |
         default                            |         |
     end.                                   |         |
                                            |         |
--spec test81_neg(any()) -> atom().         |         |
+-spec test81_neg(term()) -> atom().        |         |
 test81_neg(Timeout) ->                     | ERROR   |
     receive                                |         |
         X when is_atom(X) -> X             |         |
@@ -583,44 +583,44 @@ unzip2_neg([{H1, H2}|T]) ->                |         |
                                            |         |   because
                                            |         |   atom() | number() is not a subtype of atom()
                                            |         |
--spec wrong_list_neg() -> any().           |         |
+-spec wrong_list_neg() -> term().          |         |
 wrong_list_neg() ->                        | ERROR   |
     X = [1 | 2],                           |         | 2.
                                            |         | Expected: [term()]
                                            |         | Got     : number()
     X.                                     |         |
                                            |         |
--spec comp01(any(), any()) -> boolean().   |         |
+-spec comp01(term(), term()) -> boolean(). |         |
 comp01(X, Y) -> X < Y.                     | OK      |
                                            |         |
--spec comp01_neg(any(), any()) -> pid().   |         |
+-spec comp01_neg(term(), term()) -> pid(). |         |
 comp01_neg(X, Y) -> X < Y.                 | ERROR   | _ < _.
                                            |         | Expected: pid()
                                            |         | Got     : boolean()
                                            |         |
--spec comp02(any(), any()) -> boolean().   |         |
+-spec comp02(term(), term()) -> boolean(). |         |
 comp02(X, Y) ->                            | OK      |
     Res = X < Y,                           |         |
     Res.                                   |         |
                                            |         |
--spec comp02_neg(any(), any()) -> pid().   |         |
+-spec comp02_neg(term(), term()) -> pid(). |         |
 comp02_neg(X, Y) ->                        | ERROR   |
     Res = X < Y,                           |         |
     Res.                                   |         | Res.
                                            |         | Expected: pid()
                                            |         | Got     : boolean()
                                            |         |
--spec send01(pid() | port(), any()) ->     |         |
-    any().                                 |         |
+-spec send01(pid() | port(), term()) ->    |         |
+    term().                                |         |
 send01(Where, What) ->                     | OK      |
     Where ! What.                          |         |
 %% - erlang:dst() is OTP specific. - OTP23……         |
-%%-spec send02_neg(any(), any()) ->        |         |
-%%    any().                               |         |
+%%-spec send02_neg(term(), term()) ->      |         |
+%%    term().                              |         |
 %%send02_neg(Where, What) ->               |         |
 %%    Where ! What.                        |         |
                                            |         |
--spec send03_neg(pid(), any()) ->          |         |
+-spec send03_neg(pid(), term()) ->         |         |
     pid().                                 |         |
 send03_neg(Where, What) ->                 | ERROR   |
     Where ! What.                          |         | _ ! _.
@@ -709,13 +709,13 @@ ans_neg(Atoms, Numbers) ->                 | ERROR   |
 ans2(Atoms, Numbers) ->                    | OK      |
     Atoms -- Numbers.                      |         |
                                            |         |
--spec ans3(Atoms, [any()]) -> Atoms        |         |
+-spec ans3(Atoms, [term()]) -> Atoms       |         |
     when                                   |         |
     Atoms :: [atom()].                     |         |
 ans3(Atoms, Anys) ->                       | OK      |
     Atoms -- Anys.                         |         |
                                            |         |
--spec ans3_neg(Atoms, any()) -> Atoms      |         |
+-spec ans3_neg(Atoms, term()) -> Atoms     |         |
     when                                   |         |
     Atoms :: [atom()].                     |         |
 ans3_neg(Atoms, Anys) ->                   | ERROR   |
@@ -723,7 +723,7 @@ ans3_neg(Atoms, Anys) ->                   | ERROR   |
                                            |         | Expected: [term()]
                                            |         | Got     : term()
                                            |         |
--spec ans4_neg(any(), Atoms) -> Atoms      |         |
+-spec ans4_neg(term(), Atoms) -> Atoms     |         |
     when                                   |         |
     Atoms :: [atom()].                     |         |
 ans4_neg(Anys, Atoms) ->                   | ERROR   |
@@ -778,14 +778,14 @@ ss3("b" ++ S) -> S.                        | OK      |
 -spec ss4                                  |         |
     ([atom()] | string()                   |         |
     , [pid()] | string()                   |         |
-    , any()) ->                            |         |
+    , term()) ->                           |         |
     string().                              |         |
 ss4(Same, Same, Test) ->                   | OK      |
     case Test of                           |         |
         "prefix" ++ Same -> Same           |         |
     end.                                   |         |
                                            |         |
--spec catch_env_neg_1(any()) -> number().  |         |
+-spec catch_env_neg_1(term()) -> number(). |         |
 catch_env_neg_1(X) ->                      | ERROR   |
     _ = (catch case X of                   |         |
             X when is_number(X) -> X       |         |
@@ -794,7 +794,7 @@ catch_env_neg_1(X) ->                      | ERROR   |
                                            |         | Expected: number()
                                            |         | Got     : term()
                                            |         |
--spec catch_env_neg_2(any()) -> number().  |         |
+-spec catch_env_neg_2(term()) -> number(). |         |
 catch_env_neg_2(X) ->                      | ERROR   |
     catch case X of                        |         | catch.
                                            |         | Expected: number()
@@ -810,29 +810,29 @@ badspec(_) -> ok.                          | ERROR   | 'ok'.
                                            |         | Expected: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
                                            |         | Got     : 'ok'
                                            |         |
--spec test86_neg() -> any().               |         |
+-spec test86_neg() -> term().              |         |
 test86_neg() ->                            | ERROR   |
     catch lists:map({}, {}).               |         | {}.
                                            |         | Expected: fun((A) -> B)
                                            |         | Got     : {}
                                            |         |
--spec test87_neg() -> any().               |         |
+-spec test87_neg() -> term().              |         |
 test87_neg() ->                            | ERROR   |
     X = (catch lists:map({}, {})),         |         | {}.
                                            |         | Expected: fun((A) -> B)
                                            |         | Got     : {}
     X.                                     |         |
                                            |         |
--spec test88_neg() -> any().               |         |
+-spec test88_neg() -> term().              |         |
 test88_neg() -> fun badspec/1.             | OK      |
                                            |         |
 % *can* reference skipped specs from other……         |
--spec test89_neg() -> any().               |         |
+-spec test89_neg() -> term().              |         |
 test89_neg() ->                            | OK      |
     fun skip:bad_mixed_update/1.           |         |
                                            |         |
 % cannot reference invalid specs from othe……         |
--spec test90_neg() -> any().               |         |
+-spec test90_neg() -> term().              |         |
 test90_neg() ->                            | ERROR   |
 fun generics_with_unions:test_03_neg/3.    |         | Unbound var: generics_with_unions:test_03_neg/3
 
@@ -872,7 +872,7 @@ not_list2_neg                              | OK      |
 not_list3_neg                              | OK      |
     (A, "atom" ++ A) -> A.                 |         |
                                            |         |
--spec catch_me(any()) -> any().            |         |
+-spec catch_me(term()) -> term().          |         |
 catch_me(X) -> catch X.                    | OK      |
                                            |         |
 -spec receive_timeout1(                    |         |

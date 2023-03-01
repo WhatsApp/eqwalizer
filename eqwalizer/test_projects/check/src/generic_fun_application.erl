@@ -171,19 +171,19 @@ test23_neg() ->
 test24_neg() ->
     ttt(a, b).
 
--spec test25_pos() -> any().
+-spec test25_pos() -> term().
 test25_pos() ->
     l_item([2, a], b).
 
--spec test25b_pos() -> any().
+-spec test25b_pos() -> term().
 test25b_pos() ->
     item_l(b, [2, a]).
 
--spec test26_pos() -> any().
+-spec test26_pos() -> term().
 test26_pos() ->
     l_item([2, a], a).
 
--spec test26b_pos() -> any().
+-spec test26b_pos() -> term().
 test26b_pos() ->
     item_l(a, [2, a]).
 
@@ -220,17 +220,17 @@ test30_neg(ShapeTup, DictTup) ->
     X.
 
 -spec test31_pos(
-    any(),
+    term(),
     none()
-) -> any().
+) -> term().
 test31_pos(Any, None) ->
     X = ttt(Any, None),
     X.
 
 -spec test32_pos(
-    any(),
+    term(),
     pid()
-) -> any().
+) -> term().
 test32_pos(Any, Pid) ->
     X = ttt(Any, Pid),
     X.
@@ -238,7 +238,7 @@ test32_pos(Any, Pid) ->
 -spec test33_pos(
     none(),
     pid()
-) -> any().
+) -> term().
 test33_pos(None, Pid) ->
     X = ttt(None, Pid),
     X.
@@ -489,7 +489,7 @@ test_to_from_pos() ->
     to_from(a).
 
 -spec test_to_from_neg() ->
-    fun((any()) -> b).
+    fun((term()) -> b).
 test_to_from_neg() ->
     to_from(a).
 
@@ -527,7 +527,7 @@ contravariant(_) ->
 invariant(_) -> throw(not_implemented).
 
 -spec test_contravariant_1() ->
-    fun((any()) -> ok).
+    fun((term()) -> ok).
 test_contravariant_1() ->
     X = contravariant(3),
     X.
@@ -568,8 +568,8 @@ test_invariant_neg_2() ->
     X = invariant(a),
     X.
 
--spec test_invariant_pos_1(any()) ->
-    fun((any()) -> any()).
+-spec test_invariant_pos_1(term()) ->
+    fun((term()) -> term()).
 test_invariant_pos_1(Any) ->
     X = invariant(Any),
     X.
@@ -593,7 +593,7 @@ arg_eqv(_, _) -> throw(not_implemented).
 -spec num_to_pid(number()) -> pid().
 num_to_pid(_) -> erlang:self().
 
--spec any_to_pid(any()) -> pid().
+-spec any_to_pid(term()) -> pid().
 any_to_pid(_) -> erlang:self().
 
 -spec meets_1() -> anything.
@@ -603,14 +603,14 @@ meets_1() ->
         fun atom_to_pid/1),
     X.
 
--spec meets_2() -> any().
+-spec meets_2() -> term().
 meets_2() ->
     X = arg_eqv(
         fun any_to_pid/1,
         fun num_to_pid/1),
     X.
 
--spec meets_3() -> any().
+-spec meets_3() -> term().
 meets_3() ->
     arg_eqv(
         fun num_to_pid/1,
@@ -655,7 +655,7 @@ funify(_) -> erlang:error(no_lambdas).
 
 -spec test_funify(
     fun((number()) -> number()))
-    -> any().
+    -> term().
 test_funify(F) ->
     Res = funify(F),
     Res.

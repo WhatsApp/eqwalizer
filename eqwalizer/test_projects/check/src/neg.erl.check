@@ -20,12 +20,12 @@ atom_id_e(X) ->                            | ERROR   |
                                            |         | Expected: number()
                                            |         | Got     : atom()
                                            |         |
--spec foo(any(), A) -> A.                  |         |
+-spec foo(term(), A) -> A.                 |         |
 foo(X, _) -> X.                            | ERROR   | X.
                                            |         | Expected: A
                                            |         | Got     : term()
                                            |         |
--spec match(any()) -> {atom(), atom()}.    |         |
+-spec match(term()) -> {atom(), atom()}.   |         |
 match(X) ->                                | ERROR   |
     {ok, _} = X.                           |         | match_expr.
                                            |         | Expected: {atom(), atom()}

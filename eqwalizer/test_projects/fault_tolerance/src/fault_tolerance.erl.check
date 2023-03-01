@@ -170,7 +170,7 @@ lists_append(M1, M2) ->                    | ERROR   |
                                            |         | Got     : [dynamic()]
                                            |         |
 -spec maps_update1                         |         |
-    (any(), atom(), atom()) -> atom().     |         |
+    (term(), atom(), atom()) -> atom().    |         |
 maps_update1(M, K, V) ->                   | ERROR   |
   M1 = M#{                                 |         | M.
                                            |         | Expected: #D{term() => term()}
@@ -186,7 +186,7 @@ maps_update1(M, K, V) ->                   | ERROR   |
                                            |         |
 % Similar                                  |         |
 -spec maps_update2                         |         |
-    (any(), atom(), atom()) -> atom().     |         |
+    (term(), atom(), atom()) -> atom().    |         |
 maps_update2(M, K, V) ->                   | ERROR   |
   M1 = M#{                                 |         | M.
                                            |         | Expected: #D{term() => term()}
@@ -202,7 +202,7 @@ maps_update2(M, K, V) ->                   | ERROR   |
                                            |         |
 % Similar                                  |         |
 -spec lists_flatten                        |         |
-    (any(), any()) -> atom().              |         |
+    (term(), any()) -> atom().             |         |
 lists_flatten(L1, L2) ->                   | ERROR   |
   Res =                                    |         |
     lists:flatten(                         |         |
@@ -220,7 +220,7 @@ lists_flatten(L1, L2) ->                   | ERROR   |
 %% Code coverage                           |         |
                                            |         |
 -spec block                                |         |
-    (any(), any()) -> atom().              |         |
+    (term(), any()) -> atom().             |         |
 block(X, Y) ->                             | ERROR   |
   begin                                    |         |
     Z =                                    |         |
@@ -236,7 +236,7 @@ block(X, Y) ->                             | ERROR   |
   end.                                     |         |
                                            |         |
 -spec cons                                 |         |
-    (any(), any()) -> [atom()].            |         |
+    (term(), any()) -> [atom()].           |         |
 cons(H, T) ->                              | ERROR   |
   Res = lists:append(                      |         |
     [H |                                   |         | T.
@@ -313,7 +313,7 @@ comprehensions1() ->                       | ERROR   |
                                            |         | Got     : {dynamic()}
     )].                                    |         |
                                            |         |
--spec comprehensions2([any()]) -> ok.      |         |
+-spec comprehensions2([term()]) -> ok.     |         |
 comprehensions2(L) ->                      | ERROR   |
   Res = [                                  |         |
     atom_to_binary(Y) ||                   |         | Y.

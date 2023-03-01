@@ -31,7 +31,7 @@ test2_neg(X=#{a := b}) -> X.
 -spec test3_neg(misc:o()) -> tuple().
 test3_neg(X) -> X.
 
--spec to_any(misc:o()) -> any().
+-spec to_any(misc:o()) -> term().
 to_any(X) -> X.
 
 -spec use_to_any(misc:o()) ->
@@ -170,27 +170,27 @@ test23_wip(X)
     =:= element(1, {{ok}}) ->
   X.
 
--spec test24_neg(misc:o()) -> any().
+-spec test24_neg(misc:o()) -> term().
 test24_neg(X)
   when X =:= self() ->
     X.
 
--spec test25(misc:o()) -> any().
+-spec test25(misc:o()) -> term().
 test25(X)
   when {{X}} =:= {self()} ->
   X.
 
--spec test26_neg(misc:o()) -> any().
+-spec test26_neg(misc:o()) -> term().
 test26_neg(X)
   when X < ok ->
   X.
 
--spec test27_wip(misc:o()) -> any().
+-spec test27_wip(misc:o()) -> term().
 test27_wip(X)
   when {} < hd([X]) ->
   X.
 
--spec test28(misc:o()) -> any().
+-spec test28(misc:o()) -> term().
 test28(X)
   when {} < hd([[X]]) ->
   X.
@@ -232,33 +232,33 @@ get_stacktrace2() ->
   end.
 
 
--spec test29_neg(misc:o()) -> any().
+-spec test29_neg(misc:o()) -> term().
 test29_neg(X) when X =:= {1.0} ->
   ok.
 
--spec test30_neg(misc:o()) -> any().
+-spec test30_neg(misc:o()) -> term().
 test30_neg(X) when X =:= "" ->
   ok.
 
--spec test31_neg(misc:o()) -> any().
+-spec test31_neg(misc:o()) -> term().
 test31_neg(X) when X =:= [a|improper] ->
   ok.
 
--spec test32_neg(misc:o()) -> any().
+-spec test32_neg(misc:o()) -> term().
 test32_neg(X) when X =:= #{1 => 1} ->
   ok.
 
--spec test33_neg(misc:o()) -> any().
+-spec test33_neg(misc:o()) -> term().
 test33_neg(X) when X =:= #{1 => 1} ->
   ok.
 
--spec test34_neg(misc:o()) -> any().
+-spec test34_neg(misc:o()) -> term().
 test34_neg(X) when X =:= <<>> ->
   ok.
 
 -record(rec, {field :: string()}).
 
--spec test35_neg(misc:o()) -> any().
+-spec test35_neg(misc:o()) -> term().
 test35_neg(X) when X =:= #rec.field ->
   ok.
 

@@ -50,8 +50,8 @@
     },
     {
       "range": {
-        "start": 1194,
-        "end": 1196
+        "start": 1195,
+        "end": 1197
       },
       "lineAndCol": null,
       "message": "Expected: none()\nGot     : misc:o()",
@@ -62,8 +62,8 @@
     },
     {
       "range": {
-        "start": 1272,
-        "end": 1275
+        "start": 1273,
+        "end": 1276
       },
       "lineAndCol": null,
       "message": "Expected: tuple()\nGot     : misc:o()",
@@ -74,8 +74,8 @@
     },
     {
       "range": {
-        "start": 1770,
-        "end": 1771
+        "start": 1771,
+        "end": 1772
       },
       "lineAndCol": null,
       "message": "Expected: {'ok'}\nGot     : term()",
@@ -86,8 +86,8 @@
     },
     {
       "range": {
-        "start": 2009,
-        "end": 2019
+        "start": 2010,
+        "end": 2020
       },
       "lineAndCol": null,
       "message": "Expected: 'true'\nGot     : boolean()",
@@ -98,8 +98,8 @@
     },
     {
       "range": {
-        "start": 2217,
-        "end": 2218
+        "start": 2218,
+        "end": 2219
       },
       "lineAndCol": null,
       "message": "Expected: {'ok'} | 'a'\nGot     : misc:o() | 'a'",
@@ -110,8 +110,8 @@
     },
     {
       "range": {
-        "start": 2288,
-        "end": 2289
+        "start": 2289,
+        "end": 2290
       },
       "lineAndCol": null,
       "message": "Expected: misc:o()\nGot     : misc:o() | 'a'",
@@ -122,8 +122,8 @@
     },
     {
       "range": {
-        "start": 2430,
-        "end": 2431
+        "start": 2431,
+        "end": 2432
       },
       "lineAndCol": null,
       "message": "Expected: misc:o()\nGot     : misc:o() | 'a'",
@@ -134,8 +134,8 @@
     },
     {
       "range": {
-        "start": 2806,
-        "end": 2863
+        "start": 2807,
+        "end": 2864
       },
       "lineAndCol": null,
       "message": "Opaque contravariant expands to a type in which T appears in function parameter position\n\tcontravariant expands to fun((T) -> 'ok')",
@@ -146,8 +146,8 @@
     },
     {
       "range": {
-        "start": 2867,
-        "end": 2927
+        "start": 2868,
+        "end": 2928
       },
       "lineAndCol": null,
       "message": "use_contra_neg/1 references type with invalid definition: contravariant/1",
@@ -158,8 +158,8 @@
     },
     {
       "range": {
-        "start": 3063,
-        "end": 3064
+        "start": 3064,
+        "end": 3065
       },
       "lineAndCol": null,
       "message": "Expected: {'ok'}\nGot     : misc:o()",
@@ -170,8 +170,8 @@
     },
     {
       "range": {
-        "start": 4713,
-        "end": 4714
+        "start": 4726,
+        "end": 4727
       },
       "lineAndCol": null,
       "message": "Expected fun type with arity 0\nGot: misc:int_result_o()",
@@ -182,8 +182,8 @@
     },
     {
       "range": {
-        "start": 4984,
-        "end": 4985
+        "start": 4997,
+        "end": 4998
       },
       "lineAndCol": null,
       "message": "Expected fun type with arity 0\nGot: misc:int_result_o()",
@@ -194,8 +194,8 @@
     },
     {
       "range": {
-        "start": 5066,
-        "end": 5087
+        "start": 5079,
+        "end": 5100
       },
       "lineAndCol": null,
       "message": "_T: Type variable is unbound.",
@@ -206,8 +206,8 @@
     },
     {
       "range": {
-        "start": 5090,
-        "end": 5126
+        "start": 5103,
+        "end": 5139
       },
       "lineAndCol": null,
       "message": "o_trans_invalid/0 references type with invalid definition: invalid/0",

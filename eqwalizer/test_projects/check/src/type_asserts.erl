@@ -7,12 +7,12 @@
 
 -compile([export_all, nowarn_export_all]).
 
--spec assert1(any()) -> binary().
+-spec assert1(term()) -> binary().
 assert1(Arg) ->
   is_binary(Arg) orelse throw(bad_arg),
   Arg.
 
--spec assert2(any()) -> binary().
+-spec assert2(term()) -> binary().
 assert2(Arg) ->
   is_binary(Arg) orelse error(bad_arg),
   Arg.
@@ -61,14 +61,14 @@ any_to_atom2(A) ->
     andalso list_to_atom(A).
 
 -spec any_to_atom3_neg(
-    any()
+    term()
 ) -> false | atom().
 any_to_atom3_neg(A) ->
   is_binary(A)
     andalso list_to_atom(A).
 
 -spec double_andalso(
-    any(), any()
+    term(), term()
 ) -> false | {number(), atom()}.
 double_andalso(N, A) ->
   is_number(N)
@@ -76,14 +76,14 @@ double_andalso(N, A) ->
       andalso {N, A}.
 
 -spec double_andalso_neg(
-    any(), any()
+    term(), term()
 ) -> false |  {atom(), number()}.
 double_andalso_neg(N, A) ->
   is_number(N)
     andalso is_atom(A)
     andalso {N, A}.
 
--spec scope_neg(any())
+-spec scope_neg(term())
       -> {false | number(), number()}.
 scope_neg(A) ->
   X = is_number(A) andalso A,

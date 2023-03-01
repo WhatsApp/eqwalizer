@@ -26,8 +26,8 @@
     },
     {
       "range": {
-        "start": 490,
-        "end": 491
+        "start": 491,
+        "end": 492
       },
       "lineAndCol": null,
       "message": "Expected: none()\nGot     : #D{atom() => atom()}",
@@ -38,8 +38,8 @@
     },
     {
       "range": {
-        "start": 588,
-        "end": 589
+        "start": 589,
+        "end": 590
       },
       "lineAndCol": null,
       "message": "Expected: fun((A | B) -> none())\nGot     : fun((B | A) -> A)",
@@ -50,8 +50,8 @@
     },
     {
       "range": {
-        "start": 701,
-        "end": 702
+        "start": 702,
+        "end": 703
       },
       "lineAndCol": null,
       "message": "Expected: fun((A | atom()) -> none())\nGot     : fun((atom() | A) -> A)",
@@ -62,8 +62,8 @@
     },
     {
       "range": {
-        "start": 1514,
-        "end": 1515
+        "start": 1515,
+        "end": 1516
       },
       "lineAndCol": null,
       "message": "Expected: U\nGot     : term()",
@@ -74,8 +74,8 @@
     },
     {
       "range": {
-        "start": 1682,
-        "end": 1683
+        "start": 1683,
+        "end": 1684
       },
       "lineAndCol": null,
       "message": "Expected: U\nGot     : term()",
@@ -86,8 +86,8 @@
     },
     {
       "range": {
-        "start": 1874,
-        "end": 1875
+        "start": 1875,
+        "end": 1876
       },
       "lineAndCol": null,
       "message": "Expected: U\nGot     : _T",
@@ -98,8 +98,8 @@
     },
     {
       "range": {
-        "start": 2081,
-        "end": 2084
+        "start": 2082,
+        "end": 2085
       },
       "lineAndCol": null,
       "message": "Expected: none()\nGot     : term()",
@@ -110,8 +110,8 @@
     },
     {
       "range": {
-        "start": 2194,
-        "end": 2200
+        "start": 2195,
+        "end": 2201
       },
       "lineAndCol": null,
       "message": "Expected: {none(), none()}\nGot     : {number(), binary()}",
@@ -122,8 +122,8 @@
     },
     {
       "range": {
-        "start": 2374,
-        "end": 2380
+        "start": 2375,
+        "end": 2381
       },
       "lineAndCol": null,
       "message": "Expected: {none(), none()}\nGot     : {number(), atom()}",
@@ -134,8 +134,8 @@
     },
     {
       "range": {
-        "start": 2616,
-        "end": 2617
+        "start": 2619,
+        "end": 2620
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : ['a' | 'b']",
@@ -146,8 +146,8 @@
     },
     {
       "range": {
-        "start": 2695,
-        "end": 2696
+        "start": 2698,
+        "end": 2699
       },
       "lineAndCol": null,
       "message": "Expected: ['a']\nGot     : ['a' | 'b']",
@@ -158,8 +158,8 @@
     },
     {
       "range": {
-        "start": 2820,
-        "end": 2821
+        "start": 2823,
+        "end": 2824
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : ['a' | 'b']",
@@ -170,8 +170,8 @@
     },
     {
       "range": {
-        "start": 2900,
-        "end": 2901
+        "start": 2903,
+        "end": 2904
       },
       "lineAndCol": null,
       "message": "Expected: ['a']\nGot     : ['a' | 'b']",
@@ -182,8 +182,8 @@
     },
     {
       "range": {
-        "start": 3074,
-        "end": 3077
+        "start": 3077,
+        "end": 3080
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : {'cons', 'nil' | my_list()}",
@@ -194,8 +194,8 @@
     },
     {
       "range": {
-        "start": 3288,
-        "end": 3289
+        "start": 3291,
+        "end": 3292
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : term()",
@@ -206,8 +206,8 @@
     },
     {
       "range": {
-        "start": 3392,
-        "end": 3393
+        "start": 3395,
+        "end": 3396
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : term()",
@@ -218,8 +218,8 @@
     },
     {
       "range": {
-        "start": 3518,
-        "end": 3519
+        "start": 3521,
+        "end": 3522
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : term()",
@@ -230,8 +230,8 @@
     },
     {
       "range": {
-        "start": 3642,
-        "end": 3643
+        "start": 3645,
+        "end": 3646
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : {term(), term()}",
@@ -242,8 +242,8 @@
     },
     {
       "range": {
-        "start": 3735,
-        "end": 3736
+        "start": 3738,
+        "end": 3739
       },
       "lineAndCol": null,
       "message": "Expected: none()\nGot     : #my_rec{}",
@@ -254,8 +254,8 @@
     },
     {
       "range": {
-        "start": 3828,
-        "end": 3829
+        "start": 3831,
+        "end": 3832
       },
       "lineAndCol": null,
       "message": "Expected: none()\nGot     : #my_rec{}",
@@ -266,8 +266,8 @@
     },
     {
       "range": {
-        "start": 4074,
-        "end": 4075
+        "start": 4079,
+        "end": 4080
       },
       "lineAndCol": null,
       "message": "Expected: #my_rec{}\nGot     : tuple()",
@@ -278,8 +278,8 @@
     },
     {
       "range": {
-        "start": 4175,
-        "end": 4176
+        "start": 4182,
+        "end": 4183
       },
       "lineAndCol": null,
       "message": "Expected: {'not_my_rec', term(), term()}\nGot     : #my_rec{}",
@@ -290,8 +290,8 @@
     },
     {
       "range": {
-        "start": 4232,
-        "end": 4249
+        "start": 4239,
+        "end": 4256
       },
       "lineAndCol": null,
       "message": "Unknown id: unknown:unknown/0",
@@ -302,8 +302,8 @@
     },
     {
       "range": {
-        "start": 4254,
-        "end": 4314
+        "start": 4261,
+        "end": 4321
       },
       "lineAndCol": null,
       "message": "record_as_tuple7_neg/1 references type with invalid definition: #bad_rec{}",
@@ -314,8 +314,8 @@
     },
     {
       "range": {
-        "start": 4545,
-        "end": 4546
+        "start": 4552,
+        "end": 4553
       },
       "lineAndCol": null,
       "message": "Expected: #my_rec{}\nGot     : {'my_rec', atom(), number()}",
@@ -326,8 +326,8 @@
     },
     {
       "range": {
-        "start": 4817,
-        "end": 4818
+        "start": 4824,
+        "end": 4825
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : #my_rec{}",
@@ -338,8 +338,8 @@
     },
     {
       "range": {
-        "start": 4927,
-        "end": 4928
+        "start": 4934,
+        "end": 4935
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : #my_rec{}",
@@ -350,8 +350,8 @@
     },
     {
       "range": {
-        "start": 4983,
-        "end": 4984
+        "start": 4990,
+        "end": 4991
       },
       "lineAndCol": null,
       "message": "Expected: T\nGot     : fun((T) -> 'ok')",
@@ -362,8 +362,8 @@
     },
     {
       "range": {
-        "start": 5043,
-        "end": 5044
+        "start": 5050,
+        "end": 5051
       },
       "lineAndCol": null,
       "message": "Expected: 'ok'\nGot     : #my_rec{}",
@@ -374,8 +374,8 @@
     },
     {
       "range": {
-        "start": 5254,
-        "end": 5255
+        "start": 5261,
+        "end": 5262
       },
       "lineAndCol": null,
       "message": "Expected: #my_rec{}\nGot     : {'my_rec', atom(), number()}",
@@ -386,8 +386,8 @@
     },
     {
       "range": {
-        "start": 5466,
-        "end": 5467
+        "start": 5473,
+        "end": 5474
       },
       "lineAndCol": null,
       "message": "Expected: {'my_rec', atom(), number()}\nGot     : #my_rec{}",
@@ -398,8 +398,8 @@
     },
     {
       "range": {
-        "start": 5710,
-        "end": 5711
+        "start": 5717,
+        "end": 5718
       },
       "lineAndCol": null,
       "message": "Expected: {'my_rec', atom(), atom()}\nGot     : #my_rec{}",
@@ -410,8 +410,8 @@
     },
     {
       "range": {
-        "start": 5774,
-        "end": 5784
+        "start": 5781,
+        "end": 5791
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom() | number()",
@@ -422,8 +422,8 @@
     },
     {
       "range": {
-        "start": 5845,
-        "end": 5846
+        "start": 5852,
+        "end": 5853
       },
       "lineAndCol": null,
       "message": "Expected: {'my_rec', term(), term()}\nGot     : #my_rec{} | 'a'",
@@ -434,8 +434,8 @@
     },
     {
       "range": {
-        "start": 6036,
-        "end": 6037
+        "start": 6043,
+        "end": 6044
       },
       "lineAndCol": null,
       "message": "Expected: binary()\nGot     : 'undefined' | binary()",
@@ -446,8 +446,8 @@
     },
     {
       "range": {
-        "start": 7258,
-        "end": 7270
+        "start": 7265,
+        "end": 7277
       },
       "lineAndCol": null,
       "message": "Undef key `id`. Type: shape()",
@@ -458,8 +458,8 @@
     },
     {
       "range": {
-        "start": 7683,
-        "end": 7687
+        "start": 7691,
+        "end": 7695
       },
       "lineAndCol": null,
       "message": "atom()",

@@ -31,7 +31,7 @@ test2(N1, N2) ->
 
 -type tup(T) :: {T}.
 
--spec test3(any()) -> map().
+-spec test3(term()) -> map().
 test3(M) ->
     try
         % eqwalizer:ignore - we do want this behaviour

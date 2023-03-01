@@ -7,11 +7,11 @@
 -compile([nowarn_export_all, export_all]).
 
 
--spec test_01(atom()) -> any().
+-spec test_01(atom()) -> term().
 test_01(F) ->
     lists:F(fun(X) -> X end, [3]).
 
--spec test_02(atom()) -> any().
+-spec test_02(atom()) -> term().
 test_02(F) ->
     Res = lists:F(
         fun(X) -> X end,
@@ -19,11 +19,11 @@ test_02(F) ->
     ),
     Res.
 
--spec test_03(atom()) -> any().
+-spec test_03(atom()) -> term().
 test_03(L) ->
     L:map(fun(X) -> X end, [3]).
 
--spec test_04(atom()) -> any().
+-spec test_04(atom()) -> term().
 test_04(L) ->
     Res = L:map(
         fun(X) -> X end,
@@ -31,7 +31,7 @@ test_04(L) ->
     ),
     Res.
 
--spec test_04(atom(), atom()) -> any().
+-spec test_04(atom(), atom()) -> term().
 test_04(L, F) ->
     Res = L:F(
         fun(X) -> X end,
@@ -55,13 +55,13 @@ test_07(M, F, N) ->
     Res.
 
 -spec test_08(atom(), atom(), number())
-        -> fun((none()) -> any()).
+        -> fun((none()) -> term()).
 test_08(M, F, N) ->
     Res = fun M:F/N,
     Res.
 
 -spec test_09(atom(), atom(), number())
-        -> fun((none()) -> any()).
+        -> fun((none()) -> term()).
 test_09(M, F, N) ->
     Res = fun M:F/N,
   case true of

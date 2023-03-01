@@ -7,7 +7,7 @@
 
 -compile([export_all, nowarn_export_all]).
 
--spec foo() -> {atom(), any()}.
+-spec foo() -> {atom(), term()}.
 foo() -> {foo, bar}.
 
 -spec test01_pos() -> atom().

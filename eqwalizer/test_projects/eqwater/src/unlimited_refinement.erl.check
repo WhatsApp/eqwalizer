@@ -65,15 +65,15 @@ bar(X) ->                                  |         |
                                            |         |   because
                                            |         |   binary() is not a subtype of number()
                                            |         |
--type map1() :: #{k11 := any(), k12 := any……         |
--type map2() :: #{k21 := any(), k22 := any……         |
--type map3() :: #{k31 := any(), k32 := any……         |
--type map4() :: #{k41 := any(), k42 := any……         |
--type map5() :: #{k51 := any(), k52 := any……         |
--type map6() :: #{k61 := any(), k62 := any……         |
--type map7() :: #{k71 := any(), k72 := any……         |
--type map8() :: #{k81 := any(), k82 := any……         |
--type map9() :: #{k91 := any(), k92 := any……         |
+-type map1() :: #{k11 := term(), k12 := te……         |
+-type map2() :: #{k21 := term(), k22 := te……         |
+-type map3() :: #{k31 := term(), k32 := te……         |
+-type map4() :: #{k41 := term(), k42 := te……         |
+-type map5() :: #{k51 := term(), k52 := te……         |
+-type map6() :: #{k61 := term(), k62 := te……         |
+-type map7() :: #{k71 := term(), k72 := te……         |
+-type map8() :: #{k81 := term(), k82 := te……         |
+-type map9() :: #{k91 := term(), k92 := te……         |
 -type or_map() ::                          |         |
     #{ty := ok1, data := map1()} |         |         |
     #{ty := ok2, data := map2()} |         |         |

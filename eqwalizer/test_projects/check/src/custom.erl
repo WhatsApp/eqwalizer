@@ -61,27 +61,27 @@ map_get_2_6_2(M) ->
     Res.
 
 -spec map_get_2_7_neg(
-    any()
-) -> any().
+    term()
+) -> term().
 map_get_2_7_neg(M) ->
     get(a, M).
 
 -spec map_get_2_8_neg(
-    any()
-) -> any().
+    term()
+) -> term().
 map_get_2_8_neg(M) ->
     Res = maps:get(a, M),
     Res.
 
 -spec map_get_2_9_neg(
-    any()
-) -> any().
+    term()
+) -> term().
 map_get_2_9_neg(M) ->
     maps:get(a, M, false).
 
 -spec map_get_2_10_neg(
-    any()
-) -> any().
+    term()
+) -> term().
 map_get_2_10_neg(M) ->
     Res = maps:get(a, M, false),
     Res.
@@ -590,7 +590,7 @@ maps_fold_3_8() ->
         #{1 => a}
     ).
 
--spec maps_fold_3_9_neg() -> any().
+-spec maps_fold_3_9_neg() -> term().
 maps_fold_3_9_neg() ->
     maps:fold(
         fun folder_bad/3,
@@ -938,7 +938,7 @@ keystore_8(None) ->
 
 -type my_tup() :: {k1, v1} | {k2, v2}.
 
--spec keytake_3_1(any()) ->
+-spec keytake_3_1(term()) ->
     {value, my_tup(),[my_tup()]} | false.
 keytake_3_1(X) ->
     lists:keytake(
@@ -1660,7 +1660,7 @@ ets_lookup_4_neg(Any) ->
     ets:lookup(tab, Any).
 
 -spec ets_lookup_5(term()) ->
-    [any()].
+    [term()].
 ets_lookup_5(Any) ->
     ets:lookup(tab, Any).
 
@@ -1679,7 +1679,7 @@ ets_tab2list_3_neg() ->
     ets:tab2list("not atom").
 
 -spec ets_tab2list_4(atom()) ->
-    [any()].
+    [term()].
 ets_tab2list_4(Atom) ->
     ets:tab2list(Atom).
 
@@ -1713,7 +1713,7 @@ flatten2_strict3(L) ->
 flatten2_strict4(L) ->
     lists:flatten(L, L).
 
--spec flatten2_strict5_neg() -> any().
+-spec flatten2_strict5_neg() -> term().
 flatten2_strict5_neg() ->
     lists:flatten([], 1).
 
@@ -1722,7 +1722,7 @@ flatten2_strict5_neg() ->
     -> [A].
 flatten1_strict4(L) -> lists:flatten(L).
 
--spec flatten1_strict5_neg() -> any().
+-spec flatten1_strict5_neg() -> term().
 flatten1_strict5_neg() ->
     lists:flatten(3).
 
@@ -1780,15 +1780,15 @@ maps_without_5_neg(Atom, DOrE) ->
         }
     ).
 
--spec maps_without_6_neg() -> any().
+-spec maps_without_6_neg() -> term().
 maps_without_6_neg() ->
     maps:without(non_list, #{}).
 
--spec maps_without_7_neg() -> any().
+-spec maps_without_7_neg() -> term().
 maps_without_7_neg() ->
     maps:without([], non_map).
 
--spec maps_without_8(any()) ->
+-spec maps_without_8(term()) ->
     #{atom() => ka | pid()}.
 maps_without_8(Any) ->
     maps:without([Any],
@@ -1897,7 +1897,7 @@ maps_without_opacity_opaque() ->
     nok.
 
 -spec custom_overloaded
-    (any()) -> any().
+    (term()) -> term().
 custom_overloaded(A) when is_atom(A) ->
     atom_to_binary(A);
 custom_overloaded(B) when is_binary(B) ->
@@ -1914,7 +1914,7 @@ use_custom_overloaded2(B) ->
     custom_overloaded(B).
 
 -spec used_custom_overloaded3_neg
-    (any()) -> any().
+    (term()) -> term().
 used_custom_overloaded3_neg(X) ->
     custom_overloaded(X).
 
@@ -1942,7 +1942,7 @@ maps_find_3_neg(M) ->
     {A, N}.
 
 -spec maps_find_4(
-    any(), #{a => atom(), n => number()}
+    term(), #{a => atom(), n => number()}
 ) -> atom() | number().
 maps_find_4(K, M) ->
     {ok, A} = maps:find(K, M),

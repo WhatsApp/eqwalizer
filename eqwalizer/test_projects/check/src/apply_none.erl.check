@@ -7,22 +7,22 @@
                                            |         |
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
--spec mk_fun() -> fun((any()) -> any()).   |         |
+-spec mk_fun() -> fun((term()) -> term()). |         |
 mk_fun() ->                                | OK      |
     Fun = erlang:error(not_implemented),   |         |
     Fun.                                   |         |
                                            |         |
--spec apply_my_fun(any()) -> any().        |         |
+-spec apply_my_fun(term()) -> term().      |         |
 apply_my_fun(Arg) ->                       | OK      |
     Fun = mk_fun(),                        |         |
     Fun(Arg).                              |         |
                                            |         |
--spec apply_my_fun_inline(any()) -> any(). |         |
+-spec apply_my_fun_inline(term()) -> term(……         |
 apply_my_fun_inline(Arg) ->                | OK      |
     Fun = erlang:error(not_implemented),   |         |
     Fun(Arg).                              |         |
                                            |         |
--spec apply_none1(any()) -> nok.           |         |
+-spec apply_none1(term()) -> nok.          |         |
 apply_none1(F)                             | OK      |
     when is_function(F, 1),                |         |
     is_function(F, 2) ->                   |         |

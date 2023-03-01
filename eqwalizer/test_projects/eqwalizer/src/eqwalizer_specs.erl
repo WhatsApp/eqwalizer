@@ -95,7 +95,7 @@
 -spec 'lists:flatmap'(fun((A) -> [B]), [A]) -> [B].
 'lists:flatmap'(_, _) -> error(eqwalizer_specs).
 
--spec 'lists:flatlength'([any()]) -> non_neg_integer().
+-spec 'lists:flatlength'([term()]) -> non_neg_integer().
 'lists:flatlength'(_) -> error(eqwalizer_specs).
 
 -spec 'lists:foldl'(fun((T, Acc) -> Acc), Acc, [T]) -> Acc.
@@ -283,12 +283,12 @@
 -spec 'maps:update_with'(Key, fun((Value1) -> Value2), Value2, #{Key => Value1}) -> #{Key => Value1 | Value2}.
 'maps:update_with'(_, _, _, _) -> error(eqwalizer_specs).
 
--spec 'maps:with'([any()], #{Key => Value}) -> #{Key => Value}.
+-spec 'maps:with'([term()], #{Key => Value}) -> #{Key => Value}.
 'maps:with'(_, _) -> error(eqwalizer_specs).
 
 %% -------- proplists --------
 
--spec 'proplists:delete'(any(), [A]) -> [A].
+-spec 'proplists:delete'(term(), [A]) -> [A].
 'proplists:delete'(_, _) -> error(eqwalizer_specs).
 
 -spec 'proplists:from_map'(#{K => V}) -> [{K, V}].

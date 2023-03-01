@@ -43,7 +43,7 @@ test_05_pos(Rec) ->
     Res = Meth(atom),
     Res.
 
--spec test_06_neg(fun((a) -> b)) -> any().
+-spec test_06_neg(fun((a) -> b)) -> term().
 test_06_neg(F) -> F(1, 2).
 
 -spec test_07_pos() -> ok.
@@ -56,12 +56,12 @@ test_07_neg() ->
     F = fun ret_ok/0,
     F().
 
--spec test_08_neg() -> any().
+-spec test_08_neg() -> term().
 test_08_neg() ->
     F = fun ret_ok/0,
     F(1).
 
--spec test_09_neg() -> any().
+-spec test_09_neg() -> term().
 test_09_neg() ->
     F = fun unspecced/0,
     F().

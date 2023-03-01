@@ -7,11 +7,11 @@
 
 -compile([export_all, nowarn_export_all]).
 
--spec gen_atom(any()) -> atom().
+-spec gen_atom(term()) -> atom().
 gen_atom(A) when is_atom(A) -> A;
 gen_atom(_) -> not_atom.
 
--spec gen_number(any()) -> number().
+-spec gen_number(term()) -> number().
 gen_number(N) when is_number(N) -> N;
 gen_number(_) -> 0.
 
@@ -35,7 +35,7 @@ test03(L) ->
     X = x,
     {Atoms, X}.
 
--spec test04_neg(any()) -> [any()].
+-spec test04_neg(term()) -> [term()].
 test04_neg(L) ->
     [X || X <- L].
 
@@ -43,7 +43,7 @@ test04_neg(L) ->
 test05(B) ->
     [Y || <<Y>> <= B ].
 
--spec test06_neg(binary()) -> list(any()).
+-spec test06_neg(binary()) -> list(term()).
 test06_neg(B) ->
     << Y || <<Y>> <= B >>.
 
@@ -85,7 +85,7 @@ test15_neg(LB) ->
         <<Y>> <= LB,
         gen_atom(Y) >>.
 
--spec test16_neg(any()) -> [any()].
+-spec test16_neg(term()) -> [term()].
 test16_neg(L) ->
     Res = [X || X <- L],
     Res.
@@ -173,12 +173,12 @@ test31(X) ->
         <<Y>> <= X >>,
     Res.
 
--spec test32([any()]) -> [atom()].
+-spec test32([term()]) -> [atom()].
 test32(L) ->
     Res = [X || X <- L, is_atom(X)],
     Res.
 
--spec test33_neg([any()]) -> [binary()].
+-spec test33_neg([term()]) -> [binary()].
 test33_neg(L) ->
     Res = [X || X <- L, is_atom(X)],
     Res.
@@ -212,20 +212,20 @@ convert_data2(Bin) ->
     ],
     Res.
 
--spec test34([any()]) -> [true].
+-spec test34([term()]) -> [true].
 test34(L) ->
     [X || X <- L, X].
 
--spec test35([any()]) -> [true].
+-spec test35([term()]) -> [true].
 test35(L) ->
     Res = [X || X <- L, X],
     Res.
 
--spec test36_neg([any()]) -> [false].
+-spec test36_neg([term()]) -> [false].
 test36_neg(L) ->
     [X || X <- L, X].
 
--spec test37_neg([any()]) -> [false].
+-spec test37_neg([term()]) -> [false].
 test37_neg(L) ->
     Res = [X || X <- L, X],
     Res.

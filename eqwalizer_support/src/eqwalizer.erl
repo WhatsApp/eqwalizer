@@ -15,23 +15,23 @@
 %% Values of dynamic types slip through
 %% the fingers of eqWAlizer in GRADUAL mode.
 %% dynamic() is a special type which is a subtype and a supertype of all types.
-%% It is defined as an alias to any() to be friendly
+%% It is defined as an alias to term() to be friendly
 %% for other tooling (as dialyzer).
-%% In strict mode dynamic() is treated by eqWAlizer as an alias to any().
--type dynamic() :: any().
+%% In strict mode dynamic() is treated by eqWAlizer as an alias to term().
+-type dynamic() :: term().
 
 %% @doc
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
 %% It communicates the intent: "I know that the value would be of the right type".
 %% @end
--spec dynamic_cast(any()) -> dynamic().
+-spec dynamic_cast(term()) -> dynamic().
 dynamic_cast(X) -> X.
 
 %% @doc
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
 %% It communicates the intent: "This code should be fixed" (later).
 %% @end
--spec fix_me(any()) -> dynamic().
+-spec fix_me(term()) -> dynamic().
 fix_me(X) -> X.
 
 %% @doc
@@ -41,7 +41,7 @@ fix_me(X) -> X.
 %% This can be useful when you don't quite understand how
 %% eqWAlizer handles a particular piece of code.
 %% @end
--spec reveal_type(any()) -> none().
+-spec reveal_type(term()) -> none().
 reveal_type(_Expr) -> error(eqwalizer_reveal_type).
 
 %% This type can be used in a record type declaration to specify

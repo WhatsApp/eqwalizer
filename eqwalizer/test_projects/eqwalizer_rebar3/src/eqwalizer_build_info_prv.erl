@@ -14,8 +14,8 @@
     src_dirs := [binary()],
     extra_src_dirs := [binary()],
     include_dirs := [binary()],
-    macros := [atom() | {atom(), any()}],
-    parse_transforms := [any()]
+    macros := [atom() | {atom(), term()}],
+    parse_transforms := [term()]
 }.
 
 init(State) ->

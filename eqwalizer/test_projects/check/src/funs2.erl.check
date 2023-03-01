@@ -27,7 +27,7 @@ test_foldl1_pos() -> lists:foldl(          | OK      |
     fun(X, Sum) -> X + Sum end,            |         |
     0, [1, 2, 3]).                         |         |
                                            |         |
--spec test_foldl2_neg() -> any().          |         |
+-spec test_foldl2_neg() -> term().         |         |
 test_foldl2_neg() -> lists:foldl(          | ERROR   |
     fun(_, Acc) -> [Acc] end,              |         | [Acc].
                                            |         | Expected: [[[]]]
@@ -94,7 +94,7 @@ test_mapboth1() ->                         | OK      |
 ) -> V.                                    |         |
 trans(F1, F2, X) -> F2(F1(X)).             | OK      |
                                            |         |
--spec test_trans1_wip() -> any().          |         |
+-spec test_trans1_wip() -> term().         |         |
 test_trans1_wip() -> trans(                | OK      |
     fun(X) -> X end,                       |         |
     fun(X) -> X end,                       |         |

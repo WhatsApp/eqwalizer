@@ -183,7 +183,7 @@ refine01(X, X) -> X.                       | ERROR   | X.
 refine02(X, X) -> X.                       | OK      |
                                            |         |
 -spec refine03(A, B, {A, B}) ->            |         |
-    any().                                 |         |
+    term().                                |         |
 refine03(X, X, _) ->                       | ERROR   |
     [Elem || Elem <- X].                   |         | X.
                                            |         | Expected: [term()]

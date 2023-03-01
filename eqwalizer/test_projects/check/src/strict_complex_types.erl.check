@@ -10,7 +10,7 @@
 -type complex_map() :: #{                  |         |
   id := integer(),                         |         |
   {secret, id} => integer(),               |         |
-  atom() => any()                          |         |
+  atom() => term()                         |         |
 }.                                         |         |
                                            |         |
 -spec mk_complex_map()                     |         |

@@ -111,7 +111,7 @@ lists_append(M1, M2) ->
   Res.
 
 -spec maps_update1
-    (any(), atom(), atom()) -> atom().
+    (term(), atom(), atom()) -> atom().
 maps_update1(M, K, V) ->
   M1 = M#{
     K :=
@@ -121,7 +121,7 @@ maps_update1(M, K, V) ->
 
 % Similar
 -spec maps_update2
-    (any(), atom(), atom()) -> atom().
+    (term(), atom(), atom()) -> atom().
 maps_update2(M, K, V) ->
   M1 = M#{
     K =>
@@ -131,7 +131,7 @@ maps_update2(M, K, V) ->
 
 % Similar
 -spec lists_flatten
-    (any(), any()) -> atom().
+    (term(), any()) -> atom().
 lists_flatten(L1, L2) ->
   Res =
     lists:flatten(
@@ -143,7 +143,7 @@ lists_flatten(L1, L2) ->
 %% Code coverage
 
 -spec block
-    (any(), any()) -> atom().
+    (term(), any()) -> atom().
 block(X, Y) ->
   begin
     Z =
@@ -153,7 +153,7 @@ block(X, Y) ->
   end.
 
 -spec cons
-    (any(), any()) -> [atom()].
+    (term(), any()) -> [atom()].
 cons(H, T) ->
   Res = lists:append(
     [H |
@@ -198,7 +198,7 @@ comprehensions1() ->
       {X}
     )].
 
--spec comprehensions2([any()]) -> ok.
+-spec comprehensions2([term()]) -> ok.
 comprehensions2(L) ->
   Res = [
     atom_to_binary(Y) ||

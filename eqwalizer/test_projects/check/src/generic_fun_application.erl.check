@@ -248,19 +248,19 @@ test24_neg() ->                            | ERROR   |
                                            |         |   because
                                            |         |   'a' is not a subtype of 'b'
                                            |         |
--spec test25_pos() -> any().               |         |
+-spec test25_pos() -> term().              |         |
 test25_pos() ->                            | OK      |
     l_item([2, a], b).                     |         |
                                            |         |
--spec test25b_pos() -> any().              |         |
+-spec test25b_pos() -> term().             |         |
 test25b_pos() ->                           | OK      |
     item_l(b, [2, a]).                     |         |
                                            |         |
--spec test26_pos() -> any().               |         |
+-spec test26_pos() -> term().              |         |
 test26_pos() ->                            | OK      |
     l_item([2, a], a).                     |         |
                                            |         |
--spec test26b_pos() -> any().              |         |
+-spec test26b_pos() -> term().             |         |
 test26b_pos() ->                           | OK      |
     item_l(a, [2, a]).                     |         |
                                            |         |
@@ -297,17 +297,17 @@ test30_neg(ShapeTup, DictTup) ->           | OK      |
     X.                                     |         |
                                            |         |
 -spec test31_pos(                          |         |
-    any(),                                 |         |
+    term(),                                |         |
     none()                                 |         |
-) -> any().                                |         |
+) -> term().                               |         |
 test31_pos(Any, None) ->                   | OK      |
     X = ttt(Any, None),                    |         |
     X.                                     |         |
                                            |         |
 -spec test32_pos(                          |         |
-    any(),                                 |         |
+    term(),                                |         |
     pid()                                  |         |
-) -> any().                                |         |
+) -> term().                               |         |
 test32_pos(Any, Pid) ->                    | OK      |
     X = ttt(Any, Pid),                     |         |
     X.                                     |         |
@@ -315,7 +315,7 @@ test32_pos(Any, Pid) ->                    | OK      |
 -spec test33_pos(                          |         |
     none(),                                |         |
     pid()                                  |         |
-) -> any().                                |         |
+) -> term().                               |         |
 test33_pos(None, Pid) ->                   | OK      |
     X = ttt(None, Pid),                    |         |
     X.                                     |         |
@@ -625,7 +625,7 @@ test_to_from_pos() ->                      | OK      |
     to_from(a).                            |         |
                                            |         |
 -spec test_to_from_neg() ->                |         |
-    fun((any()) -> b).                     |         |
+    fun((term()) -> b).                    |         |
 test_to_from_neg() ->                      | OK      |
     to_from(a).                            |         |
                                            |         |
@@ -665,7 +665,7 @@ contravariant(_) ->                        | OK      |
 invariant(_) -> throw(not_implemented).    | OK      |
                                            |         |
 -spec test_contravariant_1() ->            |         |
-    fun((any()) -> ok).                    |         |
+    fun((term()) -> ok).                   |         |
 test_contravariant_1() ->                  | OK      |
     X = contravariant(3),                  |         |
     X.                                     |         |
@@ -734,8 +734,8 @@ test_invariant_neg_2() ->                  | ERROR   |
                                            |         |   because
                                            |         |   atom() is not a subtype of 'a'
                                            |         |
--spec test_invariant_pos_1(any()) ->       |         |
-    fun((any()) -> any()).                 |         |
+-spec test_invariant_pos_1(term()) ->      |         |
+    fun((term()) -> term()).               |         |
 test_invariant_pos_1(Any) ->               | OK      |
     X = invariant(Any),                    |         |
     X.                                     |         |
@@ -765,7 +765,7 @@ arg_eqv(_, _) -> throw(not_implemented).   | OK      |
 -spec num_to_pid(number()) -> pid().       |         |
 num_to_pid(_) -> erlang:self().            | OK      |
                                            |         |
--spec any_to_pid(any()) -> pid().          |         |
+-spec any_to_pid(term()) -> pid().         |         |
 any_to_pid(_) -> erlang:self().            | OK      |
                                            |         |
 -spec meets_1() -> anything.               |         |
@@ -775,14 +775,14 @@ meets_1() ->                               | OK      |
         fun atom_to_pid/1),                |         |
     X.                                     |         |
                                            |         |
--spec meets_2() -> any().                  |         |
+-spec meets_2() -> term().                 |         |
 meets_2() ->                               | OK      |
     X = arg_eqv(                           |         |
         fun any_to_pid/1,                  |         |
         fun num_to_pid/1),                 |         |
     X.                                     |         |
                                            |         |
--spec meets_3() -> any().                  |         |
+-spec meets_3() -> term().                 |         |
 meets_3() ->                               | OK      |
     arg_eqv(                               |         |
         fun num_to_pid/1,                  |         |
@@ -831,7 +831,7 @@ funify(_) -> erlang:error(no_lambdas).     | OK      |
                                            |         |
 -spec test_funify(                         |         |
     fun((number()) -> number()))           |         |
-    -> any().                              |         |
+    -> term().                             |         |
 test_funify(F) ->                          | OK      |
     Res = funify(F),                       |         |
     Res.                                   |         |

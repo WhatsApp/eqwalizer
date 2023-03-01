@@ -13,14 +13,14 @@
 -type pair_ab() ::
     {ab(), ab()}.
 
--spec f01({A, A}) -> any().
+-spec f01({A, A}) -> term().
 f01(X) -> X.
 
--spec f02(atom()) -> any().
+-spec f02(atom()) -> term().
 f02(X) -> X.
 
--spec f03 (fun((any()) -> atom())) ->
-    fun((atom()) -> any()).
+-spec f03 (fun((term()) -> atom())) ->
+    fun((atom()) -> term()).
 f03(F) -> F.
 
 -spec f04(a | b) -> (a | b | c).
@@ -64,21 +64,21 @@ map04(M) -> M.
 map05(M) -> M.
 
 -spec map06(#{atom() => integer()})
-    -> #{any() => integer()}.
+    -> #{term() => integer()}.
 map06(M) -> M.
 
 -spec map07(#{atom() => integer()})
-        -> #{atom() => any()}.
+        -> #{atom() => term()}.
 map07(M) -> M.
 
 -spec map08(#{})
-        -> #{atom() => any()}.
+        -> #{atom() => term()}.
 map08(M) -> M.
 
--spec ty_var_sub_any_1(T, T) -> any().
+-spec ty_var_sub_any_1(T, T) -> term().
 ty_var_sub_any_1(T, T) -> T.
 
--spec ty_var_sub_any_2(T, T) -> any().
+-spec ty_var_sub_any_2(T, T) -> term().
 ty_var_sub_any_2(T, T) ->
     X = T,
     X.

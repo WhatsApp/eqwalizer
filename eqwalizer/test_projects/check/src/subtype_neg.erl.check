@@ -13,18 +13,18 @@
 -type pair_ab() ::                         |         |
     {ab(), ab()}.                          |         |
                                            |         |
--spec f01(any()) -> {A, A}.                |         |
+-spec f01(term()) -> {A, A}.               |         |
 f01(X) -> X.                               | ERROR   | X.
                                            |         | Expected: {A, A}
                                            |         | Got     : term()
                                            |         |
--spec f02(any()) -> atom().                |         |
+-spec f02(term()) -> atom().               |         |
 f02(X) -> X.                               | ERROR   | X.
                                            |         | Expected: atom()
                                            |         | Got     : term()
                                            |         |
--spec f03 (fun((atom()) -> any())) ->      |         |
-           fun((any()) -> atom()).         |         |
+-spec f03 (fun((atom()) -> term())) ->     |         |
+           fun((term()) -> atom()).        |         |
 f03(F) -> F.                               | ERROR   | F.
                                            |         | Expected: fun((term()) -> atom())
                                            |         | Got     : fun((atom()) -> term())
@@ -125,7 +125,7 @@ map05(M) -> M.                             | ERROR   | M.
                                            |         | Expected: shape map #S{a := 'a' | 'b', b => 'a' | 'b'}
                                            |         | Got     : dict  map #D{'a' | 'b' => 'a' | 'b' | 'c'}
                                            |         |
--spec map06(#{any() => integer()})         |         |
+-spec map06(#{term() => integer()})        |         |
         -> #{atom() => integer()}.         |         |
 map06(M) -> M.                             | ERROR   | M.
                                            |         | Expected: #D{atom() => number()}
@@ -135,7 +135,7 @@ map06(M) -> M.                             | ERROR   | M.
                                            |         |   because
                                            |         |   term() is not a subtype of atom()
                                            |         |
--spec map07(#{atom() => any()})            |         |
+-spec map07(#{atom() => term()})           |         |
         -> #{atom() => integer()}.         |         |
 map07(M) -> M.                             | ERROR   | M.
                                            |         | Expected: #D{atom() => number()}
@@ -145,19 +145,19 @@ map07(M) -> M.                             | ERROR   | M.
                                            |         |   because
                                            |         |   term() is not a subtype of number()
                                            |         |
--spec map08(#{atom() => any()})            |         |
+-spec map08(#{atom() => term()})           |         |
         -> #{}.                            |         |
 map08(M) -> M.                             | ERROR   | M.
                                            |         | Expected: shape map #S{}
                                            |         | Got     : dict  map #D{atom() => term()}
                                            |         |
 -spec tuple1                               |         |
-    (tuple()) -> {any()}.                  |         |
+    (tuple()) -> {term()}.                 |         |
 tuple1(X) -> X.                            | ERROR   | X.
                                            |         | Expected: {term()}
                                            |         | Got     : tuple()
                                            |         |
--spec any_fun(any()) -> fun().             |         |
+-spec any_fun(term()) -> fun().            |         |
 any_fun(F) -> F.                           | ERROR   | F.
                                            |         | Expected: fun()
                                            |         | Got     : term()

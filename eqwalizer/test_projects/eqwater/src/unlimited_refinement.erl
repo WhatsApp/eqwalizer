@@ -59,15 +59,15 @@ bar(X) when 1500 =< X, X =< 1600 ->
 bar(X) ->
   is_special(X).
 
--type map1() :: #{k11 := any(), k12 := any(), k13 := any()}.
--type map2() :: #{k21 := any(), k22 := any(), k23 := any()}.
--type map3() :: #{k31 := any(), k32 := any(), k33 := any()}.
--type map4() :: #{k41 := any(), k42 := any(), k43 := any()}.
--type map5() :: #{k51 := any(), k52 := any(), k53 := any()}.
--type map6() :: #{k61 := any(), k62 := any(), k63 := any()}.
--type map7() :: #{k71 := any(), k72 := any(), k73 := any()}.
--type map8() :: #{k81 := any(), k82 := any(), k83 := any()}.
--type map9() :: #{k91 := any(), k92 := any(), k93 := any()}.
+-type map1() :: #{k11 := term(), k12 := term(), k13 := term()}.
+-type map2() :: #{k21 := term(), k22 := term(), k23 := term()}.
+-type map3() :: #{k31 := term(), k32 := term(), k33 := term()}.
+-type map4() :: #{k41 := term(), k42 := term(), k43 := term()}.
+-type map5() :: #{k51 := term(), k52 := term(), k53 := term()}.
+-type map6() :: #{k61 := term(), k62 := term(), k63 := term()}.
+-type map7() :: #{k71 := term(), k72 := term(), k73 := term()}.
+-type map8() :: #{k81 := term(), k82 := term(), k83 := term()}.
+-type map9() :: #{k91 := term(), k92 := term(), k93 := term()}.
 -type or_map() ::
     #{ty := ok1, data := map1()} |
     #{ty := ok2, data := map2()} |

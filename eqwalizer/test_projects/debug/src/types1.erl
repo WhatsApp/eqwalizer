@@ -94,7 +94,7 @@
     {A, B}.
 
 -type my_any() ::
-    any().
+    term().
 
 -type my_none() ::
     none().

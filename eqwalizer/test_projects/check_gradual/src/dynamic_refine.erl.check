@@ -82,7 +82,7 @@ occ04_if1() ->                             | OK      |
 -spec refine_any1_neg(any()) -> ok.        |         |
 refine_any1_neg(Arg) ->                    | ERROR   |
   if                                       |         |
-    % Arg is refined as [any()] here       |         |
+    % Arg is refined as [term()] here      |         |
     is_list(Arg) -> {Arg}                  |         | {Arg}.
                                            |         | Expected: 'ok'
                                            |         | Got     : {[term()]}
@@ -121,7 +121,7 @@ refine_todo2_neg() ->                      | ERROR   |
   end.                                     |         |
                                            |         |
 -spec mixed1                               |         |
-(any(), boolean()) -> ok.                  |         |
+(term(), boolean()) -> ok.                 |         |
 mixed1(Arg, UseOrig) ->                    | ERROR   |
   Mixed =                                  |         |
     if                                     |         |
@@ -133,7 +133,7 @@ mixed1(Arg, UseOrig) ->                    | ERROR   |
                                            |         | Got     : {term()}
                                            |         |
 -spec mixed2                               |         |
-  (any(), boolean()) -> ok.                |         |
+  (term(), boolean()) -> ok.               |         |
 mixed2(Arg, UseDyn) ->                     | ERROR   |
   Mixed =                                  |         |
     if                                     |         |

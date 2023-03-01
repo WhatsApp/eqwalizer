@@ -8,7 +8,7 @@
 -compile([export_all, nowarn_export_all]).
 
 % occurrence typing
--spec clauses(any()) ->
+-spec clauses(term()) ->
     atom() | number().
 clauses(X) ->
     case X of
@@ -30,22 +30,22 @@ slice_inter2(ok) ->
     other:inter(ok).
 
 -spec get_inter1() ->
-    any().
+    term().
 get_inter1() ->
     fun inter/1.
 
 -spec get_inter2() ->
-    any().
+    term().
 get_inter2() ->
     fun other:inter/1.
 
 % logger:metadata() is automatically
 % approximated
--spec any_as_metadata_neg(any()) ->
+-spec any_as_metadata_neg(term()) ->
     logger:metadata().
 any_as_metadata_neg(M) -> M.
 
--spec elab_var_scope(any()) -> any().
+-spec elab_var_scope(term()) -> term().
 elab_var_scope(_) ->
     (begin X = 3, X, fun () -> ok end end)(),
     X.

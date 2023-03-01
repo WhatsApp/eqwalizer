@@ -314,8 +314,8 @@
     },
     {
       "range": {
-        "start": 1855,
-        "end": 1856
+        "start": 1856,
+        "end": 1857
       },
       "lineAndCol": null,
       "message": "Expected: #D{term() => term()}\nGot     : term()",
@@ -326,8 +326,8 @@
     },
     {
       "range": {
-        "start": 1874,
-        "end": 1875
+        "start": 1875,
+        "end": 1876
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -338,8 +338,8 @@
     },
     {
       "range": {
-        "start": 1886,
-        "end": 1887
+        "start": 1887,
+        "end": 1888
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -350,8 +350,8 @@
     },
     {
       "range": {
-        "start": 1997,
-        "end": 1998
+        "start": 1999,
+        "end": 2000
       },
       "lineAndCol": null,
       "message": "Expected: #D{term() => term()}\nGot     : term()",
@@ -362,8 +362,8 @@
     },
     {
       "range": {
-        "start": 2014,
-        "end": 2015
+        "start": 2016,
+        "end": 2017
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -374,8 +374,8 @@
     },
     {
       "range": {
-        "start": 2024,
-        "end": 2025
+        "start": 2026,
+        "end": 2027
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -386,8 +386,8 @@
     },
     {
       "range": {
-        "start": 2153,
-        "end": 2155
+        "start": 2156,
+        "end": 2158
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : term()",
@@ -398,8 +398,8 @@
     },
     {
       "range": {
-        "start": 2163,
-        "end": 2165
+        "start": 2166,
+        "end": 2168
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : term()",
@@ -410,8 +410,8 @@
     },
     {
       "range": {
-        "start": 2175,
-        "end": 2178
+        "start": 2178,
+        "end": 2181
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : [dynamic()]",
@@ -422,8 +422,8 @@
     },
     {
       "range": {
-        "start": 2278,
-        "end": 2279
+        "start": 2282,
+        "end": 2283
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : term()",
@@ -434,8 +434,8 @@
     },
     {
       "range": {
-        "start": 2290,
-        "end": 2291
+        "start": 2294,
+        "end": 2295
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : term()",
@@ -446,8 +446,8 @@
     },
     {
       "range": {
-        "start": 2297,
-        "end": 2298
+        "start": 2301,
+        "end": 2302
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : number()",
@@ -458,8 +458,8 @@
     },
     {
       "range": {
-        "start": 2393,
-        "end": 2403
+        "start": 2398,
+        "end": 2408
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : term()",
@@ -470,8 +470,8 @@
     },
     {
       "range": {
-        "start": 2412,
-        "end": 2422
+        "start": 2417,
+        "end": 2427
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : term()",
@@ -482,8 +482,8 @@
     },
     {
       "range": {
-        "start": 2430,
-        "end": 2433
+        "start": 2435,
+        "end": 2438
       },
       "lineAndCol": null,
       "message": "Expected: [atom()]\nGot     : [term()]",
@@ -494,8 +494,8 @@
     },
     {
       "range": {
-        "start": 2509,
-        "end": 2510
+        "start": 2514,
+        "end": 2515
       },
       "lineAndCol": null,
       "message": "Expected fun type with arity 0\nGot: boolean()",
@@ -506,8 +506,8 @@
     },
     {
       "range": {
-        "start": 2528,
-        "end": 2529
+        "start": 2533,
+        "end": 2534
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -518,8 +518,8 @@
     },
     {
       "range": {
-        "start": 2548,
-        "end": 2549
+        "start": 2553,
+        "end": 2554
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -530,8 +530,8 @@
     },
     {
       "range": {
-        "start": 2638,
-        "end": 2639
+        "start": 2643,
+        "end": 2644
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -542,8 +542,8 @@
     },
     {
       "range": {
-        "start": 2657,
-        "end": 2658
+        "start": 2662,
+        "end": 2663
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -554,8 +554,8 @@
     },
     {
       "range": {
-        "start": 2745,
-        "end": 2746
+        "start": 2750,
+        "end": 2751
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -566,8 +566,8 @@
     },
     {
       "range": {
-        "start": 2757,
-        "end": 2758
+        "start": 2762,
+        "end": 2763
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -578,8 +578,8 @@
     },
     {
       "range": {
-        "start": 2819,
-        "end": 2911
+        "start": 2824,
+        "end": 2916
       },
       "lineAndCol": null,
       "message": "Expected: 'ok'\nGot     : [dynamic()]",
@@ -590,8 +590,8 @@
     },
     {
       "range": {
-        "start": 2834,
-        "end": 2873
+        "start": 2839,
+        "end": 2878
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : #S{a := 'b', c := number()}",
@@ -602,8 +602,8 @@
     },
     {
       "range": {
-        "start": 2862,
-        "end": 2863
+        "start": 2867,
+        "end": 2868
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : 'd'",
@@ -614,8 +614,8 @@
     },
     {
       "range": {
-        "start": 2901,
-        "end": 2904
+        "start": 2906,
+        "end": 2909
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : {dynamic()}",
@@ -626,8 +626,8 @@
     },
     {
       "range": {
-        "start": 3003,
-        "end": 3004
+        "start": 3009,
+        "end": 3010
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : number()",
@@ -638,8 +638,8 @@
     },
     {
       "range": {
-        "start": 3022,
-        "end": 3023
+        "start": 3028,
+        "end": 3029
       },
       "lineAndCol": null,
       "message": "Expected: binary()\nGot     : [term()]",
@@ -650,8 +650,8 @@
     },
     {
       "range": {
-        "start": 3031,
-        "end": 3034
+        "start": 3037,
+        "end": 3040
       },
       "lineAndCol": null,
       "message": "Expected: 'ok'\nGot     : [binary()]",
@@ -662,8 +662,8 @@
     },
     {
       "range": {
-        "start": 3128,
-        "end": 3129
+        "start": 3134,
+        "end": 3135
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : binary()",
@@ -674,8 +674,8 @@
     },
     {
       "range": {
-        "start": 3140,
-        "end": 3143
+        "start": 3146,
+        "end": 3149
       },
       "lineAndCol": null,
       "message": "Expected: 'ok'\nGot     : binary()",
@@ -686,8 +686,8 @@
     },
     {
       "range": {
-        "start": 3205,
-        "end": 3206
+        "start": 3211,
+        "end": 3212
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : 'a'",
@@ -698,8 +698,8 @@
     },
     {
       "range": {
-        "start": 3234,
-        "end": 3235
+        "start": 3240,
+        "end": 3241
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : 'b'",
@@ -710,8 +710,8 @@
     },
     {
       "range": {
-        "start": 3244,
-        "end": 3246
+        "start": 3250,
+        "end": 3252
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : #D{dynamic() | 'id' => dynamic() | number()}",
@@ -722,8 +722,8 @@
     },
     {
       "range": {
-        "start": 3244,
-        "end": 3251
+        "start": 3250,
+        "end": 3257
       },
       "lineAndCol": null,
       "message": "Expected: 'ok'\nGot     : number()",
@@ -734,8 +734,8 @@
     },
     {
       "range": {
-        "start": 3249,
-        "end": 3251
+        "start": 3255,
+        "end": 3257
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : #D{dynamic() | 'id' => dynamic() | number()}",
@@ -746,8 +746,8 @@
     },
     {
       "range": {
-        "start": 3325,
-        "end": 3326
+        "start": 3331,
+        "end": 3332
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -758,8 +758,8 @@
     },
     {
       "range": {
-        "start": 3332,
-        "end": 3333
+        "start": 3338,
+        "end": 3339
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -770,8 +770,8 @@
     },
     {
       "range": {
-        "start": 3342,
-        "end": 3343
+        "start": 3348,
+        "end": 3349
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : binary()",
@@ -782,8 +782,8 @@
     },
     {
       "range": {
-        "start": 3342,
-        "end": 3347
+        "start": 3348,
+        "end": 3353
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : number()",
@@ -794,8 +794,8 @@
     },
     {
       "range": {
-        "start": 3415,
-        "end": 3416
+        "start": 3421,
+        "end": 3422
       },
       "lineAndCol": null,
       "message": "Expected fun type with arity 0\nGot: atom()",
@@ -806,8 +806,8 @@
     },
     {
       "range": {
-        "start": 3485,
-        "end": 3486
+        "start": 3491,
+        "end": 3492
       },
       "lineAndCol": null,
       "message": "Expected fun type with arity 0\nGot: atom()",
@@ -818,8 +818,8 @@
     },
     {
       "range": {
-        "start": 3525,
-        "end": 3526
+        "start": 3531,
+        "end": 3532
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : 'a'",
@@ -830,8 +830,8 @@
     },
     {
       "range": {
-        "start": 3536,
-        "end": 3539
+        "start": 3542,
+        "end": 3545
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : dynamic() | []",
@@ -842,8 +842,8 @@
     },
     {
       "range": {
-        "start": 3605,
-        "end": 3606
+        "start": 3611,
+        "end": 3612
       },
       "lineAndCol": null,
       "message": "Expected fun type with arity 0\nGot: atom()",
@@ -854,8 +854,8 @@
     },
     {
       "range": {
-        "start": 3649,
-        "end": 3650
+        "start": 3655,
+        "end": 3656
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : atom()",
@@ -866,8 +866,8 @@
     },
     {
       "range": {
-        "start": 3715,
-        "end": 3716
+        "start": 3721,
+        "end": 3722
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : 'a'",
@@ -878,8 +878,8 @@
     },
     {
       "range": {
-        "start": 3732,
-        "end": 3735
+        "start": 3738,
+        "end": 3741
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : number() | []",
@@ -890,8 +890,8 @@
     },
     {
       "range": {
-        "start": 3872,
-        "end": 3875
+        "start": 3878,
+        "end": 3881
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : pid()",
@@ -902,8 +902,8 @@
     },
     {
       "range": {
-        "start": 3887,
-        "end": 3889
+        "start": 3893,
+        "end": 3895
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : number()",
@@ -914,8 +914,8 @@
     },
     {
       "range": {
-        "start": 3897,
-        "end": 3900
+        "start": 3903,
+        "end": 3906
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : #rec{}",
@@ -926,8 +926,8 @@
     },
     {
       "range": {
-        "start": 3987,
-        "end": 3989
+        "start": 3993,
+        "end": 3995
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : number()",
@@ -938,8 +938,8 @@
     },
     {
       "range": {
-        "start": 3997,
-        "end": 4007
+        "start": 4003,
+        "end": 4013
       },
       "lineAndCol": null,
       "message": "Expected: pid()\nGot     : number()",
@@ -950,8 +950,8 @@
     },
     {
       "range": {
-        "start": 4066,
-        "end": 4070
+        "start": 4072,
+        "end": 4076
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : binary()",
@@ -962,8 +962,8 @@
     },
     {
       "range": {
-        "start": 4078,
-        "end": 4081
+        "start": 4084,
+        "end": 4087
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : #rec{}",
@@ -974,8 +974,8 @@
     },
     {
       "range": {
-        "start": 4161,
-        "end": 4211
+        "start": 4167,
+        "end": 4217
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : binary()",
@@ -986,8 +986,8 @@
     },
     {
       "range": {
-        "start": 4185,
-        "end": 4203
+        "start": 4191,
+        "end": 4209
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : [dynamic()]",
@@ -998,8 +998,8 @@
     },
     {
       "range": {
-        "start": 4202,
-        "end": 4203
+        "start": 4208,
+        "end": 4209
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : 'a'",
@@ -1010,8 +1010,8 @@
     },
     {
       "range": {
-        "start": 4252,
-        "end": 4257
+        "start": 4258,
+        "end": 4263
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : binary()",
@@ -1022,8 +1022,8 @@
     },
     {
       "range": {
-        "start": 4271,
-        "end": 4272
+        "start": 4277,
+        "end": 4278
       },
       "lineAndCol": null,
       "message": "Expected: [term()]\nGot     : 'b'",
@@ -1034,8 +1034,8 @@
     },
     {
       "range": {
-        "start": 4366,
-        "end": 4401
+        "start": 4372,
+        "end": 4407
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : binary()",
@@ -1046,8 +1046,8 @@
     },
     {
       "range": {
-        "start": 4390,
-        "end": 4393
+        "start": 4396,
+        "end": 4399
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : [dynamic()]",
@@ -1058,8 +1058,8 @@
     },
     {
       "range": {
-        "start": 4418,
-        "end": 4455
+        "start": 4424,
+        "end": 4461
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : binary()",
@@ -1070,8 +1070,8 @@
     },
     {
       "range": {
-        "start": 4442,
-        "end": 4447
+        "start": 4448,
+        "end": 4453
       },
       "lineAndCol": null,
       "message": "Expected: atom()\nGot     : binary()",
@@ -1082,8 +1082,8 @@
     },
     {
       "range": {
-        "start": 4474,
-        "end": 4476
+        "start": 4480,
+        "end": 4482
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : []",
@@ -1094,8 +1094,8 @@
     },
     {
       "range": {
-        "start": 4533,
-        "end": 4534
+        "start": 4539,
+        "end": 4540
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : 'a'",
@@ -1106,8 +1106,8 @@
     },
     {
       "range": {
-        "start": 4537,
-        "end": 4538
+        "start": 4543,
+        "end": 4544
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : 'b'",
@@ -1118,8 +1118,8 @@
     },
     {
       "range": {
-        "start": 4585,
-        "end": 4618
+        "start": 4591,
+        "end": 4624
       },
       "lineAndCol": null,
       "message": "use_invalid/1 references type with invalid definition: loop/0",
@@ -1130,8 +1130,8 @@
     },
     {
       "range": {
-        "start": 4901,
-        "end": 4906
+        "start": 4907,
+        "end": 4912
       },
       "lineAndCol": null,
       "message": "Expected: 'ok'\nGot     : 'error'",
@@ -1142,8 +1142,8 @@
     },
     {
       "range": {
-        "start": 4963,
-        "end": 4980
+        "start": 4969,
+        "end": 4986
       },
       "lineAndCol": null,
       "message": "redundant fixme",
@@ -1154,8 +1154,8 @@
     },
     {
       "range": {
-        "start": 5291,
-        "end": 5306
+        "start": 5297,
+        "end": 5312
       },
       "lineAndCol": null,
       "message": "Expected: number()\nGot     : term()",

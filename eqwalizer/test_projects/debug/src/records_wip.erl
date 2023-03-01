@@ -24,7 +24,7 @@
 -spec fun_call(#func_rec{}) -> number().
 fun_call(X) -> (X#func_rec.func)().
 
--record(any_box, {inner :: any()}).
+-record(any_box, {inner :: term()}).
 
 %% "Refined" record type
 -type int_box() ::

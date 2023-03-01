@@ -7,7 +7,7 @@
 
 -compile([export_all, nowarn_export_all]).
 
--spec foo() -> {atom(), any()}.
+-spec foo() -> {atom(), term()}.
 foo() -> {foo, bar}.
 
 -spec ok() -> ok.
@@ -41,7 +41,7 @@ test03_neg() ->
     end,
     Res.
 
--spec test04_pos(any()) ->
+-spec test04_pos(term()) ->
     {ok | error, atom()}.
 test04_pos(X) ->
     Res = try foo() of
@@ -55,7 +55,7 @@ test04_pos(X) ->
           end,
     {Res, X}.
 
--spec test05_pos(any()) ->
+-spec test05_pos(term()) ->
     {ok | error, atom()}.
 test05_pos(X) ->
     A =
@@ -104,7 +104,7 @@ test10_pos() ->
     end.
 
 
--spec test11_pos(any(), boolean())
+-spec test11_pos(term(), boolean())
     -> atom().
 test11_pos(Y, Cond) ->
     Res =
@@ -117,7 +117,7 @@ test11_pos(Y, Cond) ->
         true -> Y
     end.
 
--spec test12_neg(any(), boolean())
+-spec test12_neg(term(), boolean())
     -> atom().
 test12_neg(Y, Cond) ->
     Res =
@@ -130,7 +130,7 @@ test12_neg(Y, Cond) ->
         true -> Y
     end.
 
--spec repeated_vars(any()) -> ok.
+-spec repeated_vars(term()) -> ok.
 repeated_vars(X) ->
     try X of
         {X, X} -> X
@@ -138,7 +138,7 @@ repeated_vars(X) ->
         ok
     end.
 
--spec test_repeated_vars2(any()) -> ok.
+-spec test_repeated_vars2(term()) -> ok.
 test_repeated_vars2(X) ->
     Res = try X of
         {X, X} -> X

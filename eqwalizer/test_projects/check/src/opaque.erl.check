@@ -46,7 +46,7 @@ test3_neg(X) -> X.                         | ERROR   | X.
                                            |         | Expected: tuple()
                                            |         | Got     : misc:o()
                                            |         |
--spec to_any(misc:o()) -> any().           |         |
+-spec to_any(misc:o()) -> term().          |         |
 to_any(X) -> X.                            | OK      |
                                            |         |
 -spec use_to_any(misc:o()) ->              |         |
@@ -217,27 +217,27 @@ test23_wip(X)                              | ERROR   |
                                            |         | Expected: {'ok'}
                                            |         | Got     : misc:o()
                                            |         |
--spec test24_neg(misc:o()) -> any().       |         |
+-spec test24_neg(misc:o()) -> term().      |         |
 test24_neg(X)                              | OK      |
   when X =:= self() ->                     |         |
     X.                                     |         |
                                            |         |
--spec test25(misc:o()) -> any().           |         |
+-spec test25(misc:o()) -> term().          |         |
 test25(X)                                  | OK      |
   when {{X}} =:= {self()} ->               |         |
   X.                                       |         |
                                            |         |
--spec test26_neg(misc:o()) -> any().       |         |
+-spec test26_neg(misc:o()) -> term().      |         |
 test26_neg(X)                              | OK      |
   when X < ok ->                           |         |
   X.                                       |         |
                                            |         |
--spec test27_wip(misc:o()) -> any().       |         |
+-spec test27_wip(misc:o()) -> term().      |         |
 test27_wip(X)                              | OK      |
   when {} < hd([X]) ->                     |         |
   X.                                       |         |
                                            |         |
--spec test28(misc:o()) -> any().           |         |
+-spec test28(misc:o()) -> term().          |         |
 test28(X)                                  | OK      |
   when {} < hd([[X]]) ->                   |         |
   X.                                       |         |
@@ -279,33 +279,33 @@ get_stacktrace2() ->                       | OK      |
   end.                                     |         |
                                            |         |
                                            |         |
--spec test29_neg(misc:o()) -> any().       |         |
+-spec test29_neg(misc:o()) -> term().      |         |
 test29_neg(X) when X =:= {1.0} ->          | OK      |
   ok.                                      |         |
                                            |         |
--spec test30_neg(misc:o()) -> any().       |         |
+-spec test30_neg(misc:o()) -> term().      |         |
 test30_neg(X) when X =:= "" ->             | OK      |
   ok.                                      |         |
                                            |         |
--spec test31_neg(misc:o()) -> any().       |         |
+-spec test31_neg(misc:o()) -> term().      |         |
 test31_neg(X) when X =:= [a|improper] ->   | OK      |
   ok.                                      |         |
                                            |         |
--spec test32_neg(misc:o()) -> any().       |         |
+-spec test32_neg(misc:o()) -> term().      |         |
 test32_neg(X) when X =:= #{1 => 1} ->      | OK      |
   ok.                                      |         |
                                            |         |
--spec test33_neg(misc:o()) -> any().       |         |
+-spec test33_neg(misc:o()) -> term().      |         |
 test33_neg(X) when X =:= #{1 => 1} ->      | OK      |
   ok.                                      |         |
                                            |         |
--spec test34_neg(misc:o()) -> any().       |         |
+-spec test34_neg(misc:o()) -> term().      |         |
 test34_neg(X) when X =:= <<>> ->           | OK      |
   ok.                                      |         |
                                            |         |
 -record(rec, {field :: string()}).         |         |
                                            |         |
--spec test35_neg(misc:o()) -> any().       |         |
+-spec test35_neg(misc:o()) -> term().      |         |
 test35_neg(X) when X =:= #rec.field ->     | OK      |
   ok.                                      |         |
                                            |         |

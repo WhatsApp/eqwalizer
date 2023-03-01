@@ -16,10 +16,10 @@ foo(X) -> {X, X}.
 atom_id_e(X) ->
     X.
 
--spec foo(any(), A) -> A.
+-spec foo(term(), A) -> A.
 foo(X, _) -> X.
 
--spec match(any()) -> {atom(), atom()}.
+-spec match(term()) -> {atom(), atom()}.
 match(X) ->
     {ok, _} = X.
 

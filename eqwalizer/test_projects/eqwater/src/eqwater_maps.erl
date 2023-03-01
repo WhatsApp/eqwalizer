@@ -11,17 +11,17 @@
 map_occ_01(#{a := I}) when is_integer(I) -> ok;
 map_occ_01(V) -> V.
 
--spec map_occ_02(#{a := any(), b := integer()})
+-spec map_occ_02(#{a := term(), b := integer()})
     -> #{a := integer(), b := integer()}.
 map_occ_02(M = #{a := I}) when is_integer(I) -> M;
 map_occ_02(M) -> M#{a => 0}.
 
--spec map_occ_03(#{a => any(), b => integer()})
+-spec map_occ_03(#{a => term(), b => integer()})
     -> #{a := integer(), b => integer()}.
 map_occ_03(M = #{a := I}) when is_integer(I) -> M;
 map_occ_03(M) -> M#{a => 0}.
 
--spec map_occ_04_neg(#{a => any(), b => integer()})
+-spec map_occ_04_neg(#{a => term(), b => integer()})
     -> #{a := integer(), b := integer()}.
 map_occ_04_neg(M = #{a := I}) when is_integer(I) -> M;
 map_occ_04_neg(M) -> M#{a => 0}.

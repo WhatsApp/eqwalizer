@@ -13,14 +13,14 @@
 -type pair_ab() ::
     {ab(), ab()}.
 
--spec f01(any()) -> {A, A}.
+-spec f01(term()) -> {A, A}.
 f01(X) -> X.
 
--spec f02(any()) -> atom().
+-spec f02(term()) -> atom().
 f02(X) -> X.
 
--spec f03 (fun((atom()) -> any())) ->
-           fun((any()) -> atom()).
+-spec f03 (fun((atom()) -> term())) ->
+           fun((term()) -> atom()).
 f03(F) -> F.
 
 -spec f04(a | b | c) -> (a | b).
@@ -59,23 +59,23 @@ map03(M) -> M.
 }.
 map05(M) -> M.
 
--spec map06(#{any() => integer()})
+-spec map06(#{term() => integer()})
         -> #{atom() => integer()}.
 map06(M) -> M.
 
--spec map07(#{atom() => any()})
+-spec map07(#{atom() => term()})
         -> #{atom() => integer()}.
 map07(M) -> M.
 
--spec map08(#{atom() => any()})
+-spec map08(#{atom() => term()})
         -> #{}.
 map08(M) -> M.
 
 -spec tuple1
-    (tuple()) -> {any()}.
+    (tuple()) -> {term()}.
 tuple1(X) -> X.
 
--spec any_fun(any()) -> fun().
+-spec any_fun(term()) -> fun().
 any_fun(F) -> F.
 
 -spec f10() -> {tuple(), ok}.

@@ -17,21 +17,21 @@ update_req_non_atom_neg(M) ->
 % "mixed" updates are not supported
 % (they are not used in WA codebase)
 -spec bad_mixed_update1
-    (#{a := any()}) -> #{a := a, b := b}.
+    (#{a := term()}) -> #{a := a, b := b}.
 bad_mixed_update1(M) ->
     M#{a := a, b => b}.
 
 -spec bad_mixed_update2
-    (#{a := any()}) -> #{a := a, b := b}.
+    (#{a := term()}) -> #{a := a, b := b}.
 bad_mixed_update2(M) ->
     M#{b => b, a := a}.
 
 -spec bad_mixed_update3
-    (any()) -> any().
+    (any()) -> term().
 bad_mixed_update3(M)
     when is_map(M#{a := a, b => b}) -> M.
 
 -spec bad_mixed_update4
-    (any()) -> any().
+    (any()) -> term().
 bad_mixed_update4(M)
     when is_map(M#{b => b, a := a}) -> M.

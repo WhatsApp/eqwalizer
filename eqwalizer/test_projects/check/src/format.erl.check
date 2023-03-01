@@ -8,7 +8,7 @@
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
 -spec to_string_neg                        |         |
-    (any()) -> string().                   |         |
+    (term()) -> string().                  |         |
 to_string_neg(X) ->                        | ERROR   |
   io_lib:format("~p", [X]).                |         | io_lib:format(string_lit, [X]).
                                            |         | Expected: string()
@@ -19,14 +19,14 @@ to_string_neg(X) ->                        | ERROR   |
                                            |         |   [number() | io_lib:chars()] is not a subtype of string()
                                            |         |
 -spec to_string                            |         |
-    (any()) -> string().                   |         |
+    (term()) -> string().                  |         |
 to_string(X) ->                            | OK      |
   lists:flatten(                           |         |
     io_lib:format("~p", [X])               |         |
   ).                                       |         |
                                            |         |
 -spec to_binary                            |         |
-    (any()) -> binary().                   |         |
+    (term()) -> binary().                  |         |
 to_binary(X) ->                            | OK      |
   erlang:iolist_to_binary(                 |         |
     io_lib:format("~p", [X])               |         |

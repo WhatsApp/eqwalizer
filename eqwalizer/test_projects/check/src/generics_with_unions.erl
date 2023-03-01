@@ -43,7 +43,7 @@ test06(#{} = M) -> M.
 
 
 -spec k_union1(
-    any(), #{K1 => any()} | #{K2 => any()}
+    term(), #{K1 => term()} | #{K2 => term()}
 ) -> K1 | K2 | undefined.
 k_union1(K, Dict) ->
     case Dict of
@@ -191,8 +191,8 @@ use_extract_2() ->
 % inspired by % smc_observer_thrift_utils:
 % rpc_with_backoff/4
 -spec handle_res(
-    fun((any()) -> {ok, Response}
-        | {error, any()})
+    fun((term()) -> {ok, Response}
+        | {error, term()})
 ) -> Response.
 handle_res(F) ->
     case F(2) of
@@ -232,7 +232,7 @@ use_overlap_2() ->
 -spec trick(A, A | {B}) -> B.
 trick(_, {B}) -> B.
 
--spec use_trick(any(), any()) -> none().
+-spec use_trick(term(), term()) -> none().
 use_trick(A, B) -> trick(A, B).
 
 -spec evidence() -> none().
@@ -327,7 +327,7 @@ convert(undefined, D) -> D.
 ) -> [K].
 overlapping_union_neg(X) -> X.
 
--spec use_bad_union_neg() -> any().
+-spec use_bad_union_neg() -> term().
 use_bad_union_neg() ->
     _ = overlapping_union_neg([]),
     ok.

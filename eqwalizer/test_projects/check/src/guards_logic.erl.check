@@ -35,7 +35,7 @@ test07_neg(X, Y) when X andalso Y -> Y.    | ERROR   | Y.
                                            |         | Expected: 'false'
                                            |         | Got     : 'true'
                                            |         |
--spec test08_neg(any()) -> number().       |         |
+-spec test08_neg(term()) -> number().      |         |
 test08_neg(X) when not is_number(X) -> X.  | ERROR   | X.
                                            |         | Expected: number()
                                            |         | Got     : term()
@@ -45,17 +45,17 @@ test08_neg(X) when not is_number(X) -> X.  | ERROR   | X.
 % in guards so far.                        |         |
 % Recommendation for users:                |         |
 % rewrite it via true syntax of guards     |         |
--spec test09_neg (any())                   |         |
+-spec test09_neg (term())                  |         |
               -> number() | atom().        |         |
 test09_neg(X)                              | OK      |
   when is_number(X) or is_atom(X) -> X.    |         |
                                            |         |
--spec test10 (any())                       |         |
+-spec test10 (term())                      |         |
       -> number() | atom().                |         |
 test10(X)                                  | OK      |
   when is_number(X); is_atom(X) -> X.      |         |
                                            |         |
--spec test11_neg (any())                   |         |
+-spec test11_neg (term())                  |         |
       -> number() | atom().                |         |
 test11_neg(X)                              | ERROR   |
   when is_number(X);                       |         |
@@ -70,17 +70,17 @@ test11_neg(X)                              | ERROR   |
                                            |         |   because
                                            |         |   pid() is not a subtype of number()
                                            |         |
--spec test12(any(), any()) -> number().    |         |
+-spec test12(term(), term()) -> number().  |         |
 test12(X, _) when X + 1 > 0 -> X;          | OK      |
 test12(_, Y) when Y / 3 > 1 -> Y.          |         |
                                            |         |
--spec test13 (any(), any())                |         |
+-spec test13 (term(), term())              |         |
           -> {number(), number()}.         |         |
 test13(X, Y)                               | OK      |
     when X + 1 > 0, Y / 3 > 1 ->           |         |
     {X, Y}.                                |         |
                                            |         |
--spec test14_neg (any(), any())            |         |
+-spec test14_neg (term(), term())          |         |
         -> {number(), number()}.           |         |
 test14_neg(X, Y)                           | ERROR   |
     when X + 1 > 0; Y / 3 > 1 ->           |         |
@@ -93,7 +93,7 @@ test14_neg(X, Y)                           | ERROR   |
                                            |         |   because
                                            |         |   term() is not a subtype of number()
                                            |         |
--spec test15 (any(), any())                |         |
+-spec test15 (term(), term())              |         |
          -> {number(), number()}           |         |
           | {boolean(), boolean()}.        |         |
 test15(X, Y) when X + Y > 0 -> {X, Y};     | OK      |

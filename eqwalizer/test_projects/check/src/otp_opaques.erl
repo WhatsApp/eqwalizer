@@ -66,7 +66,7 @@ uniques4(Elems1, Elems2) ->
     UnionList = gb_sets:to_list(UnionSet),
     UnionList.
 
--spec empty() -> gb_sets:set(any()).
+-spec empty() -> gb_sets:set(term()).
 %% gb_set:empty() is unbound
 %% because it have an unbound type var
 empty() -> gb_set:empty().
@@ -79,7 +79,7 @@ is_member(A, Bs) ->
     gb_sets:is_member(A, Set).
 
 % Dialyzer errors here
--spec test1() -> any().
+-spec test1() -> term().
 test1() ->
     case sets:new() of
         {X} -> X

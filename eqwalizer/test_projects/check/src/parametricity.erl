@@ -181,7 +181,7 @@ refine01(X, X) -> X.
 refine02(X, X) -> X.
 
 -spec refine03(A, B, {A, B}) ->
-    any().
+    term().
 refine03(X, X, _) ->
     [Elem || Elem <- X].
 

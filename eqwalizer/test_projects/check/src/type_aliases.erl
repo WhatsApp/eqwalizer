@@ -95,7 +95,7 @@ same(X, X) -> X.
 -spec id(A) -> A.
 id(X) -> X.
 
--spec convert(any(), any()) -> none().
+-spec convert(term(), term()) -> none().
 convert(#rec1{l = L1}, #rec2{l = L2}) ->
     same(id(L1), L2),
     L2.

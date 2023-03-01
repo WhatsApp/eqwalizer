@@ -11,17 +11,17 @@
 map_occ_01(#{a := I}) when is_integer(I) -…… OK      |
 map_occ_01(V) -> V.                        |         |
                                            |         |
--spec map_occ_02(#{a := any(), b := intege……         |
+-spec map_occ_02(#{a := term(), b := integ……         |
     -> #{a := integer(), b := integer()}.  |         |
 map_occ_02(M = #{a := I}) when is_integer(…… OK      |
 map_occ_02(M) -> M#{a => 0}.               |         |
                                            |         |
--spec map_occ_03(#{a => any(), b => intege……         |
+-spec map_occ_03(#{a => term(), b => integ……         |
     -> #{a := integer(), b => integer()}.  |         |
 map_occ_03(M = #{a := I}) when is_integer(…… OK      |
 map_occ_03(M) -> M#{a => 0}.               |         |
                                            |         |
--spec map_occ_04_neg(#{a => any(), b => in……         |
+-spec map_occ_04_neg(#{a => term(), b => i……         |
     -> #{a := integer(), b := integer()}.  |         |
 map_occ_04_neg(M = #{a := I}) when is_inte…… ERROR   | M.
                                            |         | Expected: #S{a := number(), b := number()}

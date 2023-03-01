@@ -121,7 +121,7 @@ fan_flatten(nil) ->
 fan_flatten(M) when is_map(M) ->
     maps:values(M).
 
--spec fan_x(fan(), any()) ->
+-spec fan_x(fan(), term()) ->
     {pid(), fan()}.
 fan_x(Fan, Pid) ->
     case Fan of

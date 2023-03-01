@@ -27,7 +27,7 @@ test_foldl1_pos() -> lists:foldl(
     fun(X, Sum) -> X + Sum end,
     0, [1, 2, 3]).
 
--spec test_foldl2_neg() -> any().
+-spec test_foldl2_neg() -> term().
 test_foldl2_neg() -> lists:foldl(
     fun(_, Acc) -> [Acc] end,
     [], [1]).
@@ -80,7 +80,7 @@ test_mapboth1() ->
 ) -> V.
 trans(F1, F2, X) -> F2(F1(X)).
 
--spec test_trans1_wip() -> any().
+-spec test_trans1_wip() -> term().
 test_trans1_wip() -> trans(
     fun(X) -> X end,
     fun(X) -> X end,

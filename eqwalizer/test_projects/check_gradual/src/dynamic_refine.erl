@@ -82,7 +82,7 @@ occ04_if1() ->
 -spec refine_any1_neg(any()) -> ok.
 refine_any1_neg(Arg) ->
   if
-    % Arg is refined as [any()] here
+    % Arg is refined as [term()] here
     is_list(Arg) -> {Arg}
   end.
 
@@ -113,7 +113,7 @@ refine_todo2_neg() ->
   end.
 
 -spec mixed1
-(any(), boolean()) -> ok.
+(term(), boolean()) -> ok.
 mixed1(Arg, UseOrig) ->
   Mixed =
     if
@@ -123,7 +123,7 @@ mixed1(Arg, UseOrig) ->
   {Mixed}.
 
 -spec mixed2
-  (any(), boolean()) -> ok.
+  (term(), boolean()) -> ok.
 mixed2(Arg, UseDyn) ->
   Mixed =
     if

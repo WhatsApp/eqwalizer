@@ -7,12 +7,12 @@
 -compile([nowarn_export_all, export_all]). |         |
                                            |         |
                                            |         |
--spec test_01(atom()) -> any().            |         |
+-spec test_01(atom()) -> term().           |         |
 test_01(F) ->                              | ERROR   |
     lists:F(fun(X) -> X end, [3]).         |         | 'lists':F.
                                            |         | Dynamic calls of unknown functions are not supported.
                                            |         |
--spec test_02(atom()) -> any().            |         |
+-spec test_02(atom()) -> term().           |         |
 test_02(F) ->                              | ERROR   |
     Res = lists:F(                         |         | 'lists':F.
                                            |         | Dynamic calls of unknown functions are not supported.
@@ -21,12 +21,12 @@ test_02(F) ->                              | ERROR   |
     ),                                     |         |
     Res.                                   |         |
                                            |         |
--spec test_03(atom()) -> any().            |         |
+-spec test_03(atom()) -> term().           |         |
 test_03(L) ->                              | ERROR   |
     L:map(fun(X) -> X end, [3]).           |         | L:'map'.
                                            |         | Dynamic calls of unknown functions are not supported.
                                            |         |
--spec test_04(atom()) -> any().            |         |
+-spec test_04(atom()) -> term().           |         |
 test_04(L) ->                              | ERROR   |
     Res = L:map(                           |         | L:'map'.
                                            |         | Dynamic calls of unknown functions are not supported.
@@ -35,7 +35,7 @@ test_04(L) ->                              | ERROR   |
     ),                                     |         |
     Res.                                   |         |
                                            |         |
--spec test_04(atom(), atom()) -> any().    |         |
+-spec test_04(atom(), atom()) -> term().   |         |
 test_04(L, F) ->                           | ERROR   |
     Res = L:F(                             |         | L:F.
                                            |         | Dynamic calls of unknown functions are not supported.
@@ -63,14 +63,14 @@ test_07(M, F, N) ->                        | ERROR   |
     Res.                                   |         |
                                            |         |
 -spec test_08(atom(), atom(), number())    |         |
-        -> fun((none()) -> any()).         |         |
+        -> fun((none()) -> term()).        |         |
 test_08(M, F, N) ->                        | ERROR   |
     Res = fun M:F/N,                       |         | M:F/N.
                                            |         | Dynamic calls of unknown functions are not supported.
     Res.                                   |         |
                                            |         |
 -spec test_09(atom(), atom(), number())    |         |
-        -> fun((none()) -> any()).         |         |
+        -> fun((none()) -> term()).        |         |
 test_09(M, F, N) ->                        | ERROR   |
     Res = fun M:F/N,                       |         | M:F/N.
                                            |         | Dynamic calls of unknown functions are not supported.
