@@ -645,9 +645,7 @@ server(Pid, Name, Options) ->
             init_server(Pid, Name, Options, St#epp{file = Fd, pre_opened = true})
     end.
 
-init_server(Pid, FileName, Options0, St0) ->
-    {ScanOpts0, Options} = proplists:split(Options0, [structured_comments]),
-    ScanOpts = lists:append(ScanOpts0),
+init_server(Pid, FileName, Options, St0) ->
     SourceName = proplists:get_value(source_name, Options, FileName),
     Pdm = proplists:get_value(macros, Options, []),
     Ms0 = predef_macros(FileName),
@@ -672,8 +670,7 @@ init_server(Pid, FileName, Options0, St0) ->
                 path = Path,
                 offset = 0,
                 macs = Ms1,
-                default_encoding = DefEncoding,
-                scan_opts = ScanOpts
+                default_encoding = DefEncoding
             },
             From = wait_request(St),
             enter_file_reply(
