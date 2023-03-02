@@ -1,5 +1,6 @@
 check/src/callbacks7_overload_pos.erl:16 callbacks7_overload_pos:handle_call/3
 check/src/generics_with_unions.erl:252 generics_with_unions:unwrap_override/2
+check/src/guards.erl:64 guards:overloaded_guard/2
 check/src/other.erl:19 other:inter/1
 check/src/overloaded.erl:10 overloaded:swap/1
 check/src/overloaded.erl:18 overloaded:swap_neg/1
@@ -39,4 +40,4 @@ dbg_trace/src/base_trace_tests.erl:48 base_trace_tests:case09_overload_bad_arg/1
 dbg_trace/src/base_trace_tests.erl:53 base_trace_tests:case10_overload_bad_res/1
 debug/src/types1.erl:303 types1:inter/1
 eqwalizer/src/eqwalizer_specs.erl:304 eqwalizer_specs:custom:custom_overloaded/1
-Total: 41
+Total: 42

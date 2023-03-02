@@ -60,3 +60,9 @@ test06_neg() when #invalid{} =/= 2 -> ok.
 redundant_guard(X) ->
     (is_atom(X) orelse error(fail)),
     X.
+
+-spec overloaded_guard
+    (ok, ok | err) -> ok;
+    (err, term()) -> ok.
+overloaded_guard(ok, V) when V =/= err -> V;
+overloaded_guard(_, _) -> ok.

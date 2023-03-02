@@ -1046,7 +1046,8 @@
           "test04/1",
           "test05/1",
           "test06_neg/0",
-          "redundant_guard/1"
+          "redundant_guard/1",
+          "overloaded_guard/2"
         ]
       },
       {
