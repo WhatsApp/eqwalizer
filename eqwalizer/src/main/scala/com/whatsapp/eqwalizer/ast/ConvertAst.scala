@@ -94,9 +94,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
               val suppression = TextRange(suppressionStart.toInt, suppressionEnd.toInt)
               Fixme(comment, suppression)
             case _ =>
-              // $COVERAGE-OFF$
               throw new IllegalStateException()
-            // $COVERAGE-ON$
           }
           ElpMetadata(fixmes)(pos)
         }
@@ -147,9 +145,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(List(EAtom("function"), EPos(pos), EAtom(name), EArity(arity), EList(clauseSeq, None))) =>
         val funId = Id(name, arity)
         Some(FunDecl(funId, clauseSeq.map(convertClause))(pos))
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException(term.toString)
-      // $COVERAGE-ON$
     }
 
   private def recField(term: EObject): ExternalRecField =
@@ -167,15 +163,11 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
             case ETuple(List(EAtom("record_field"), EPos(p), fieldNameLit, expr)) =>
               val defaultValue = convertExp(expr)
               (atomLit(fieldNameLit), Some(defaultValue), p)
-            // $COVERAGE-OFF$
             case _ => throw new IllegalStateException()
-            // $COVERAGE-ON$
           }
         val tp = convertType(eType)
         ExternalRecField(name, Some(tp), defaultValue)
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def varString(term: EObject): String = {
@@ -190,9 +182,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(List(EAtom(module), EAtom(name), EArity(arity))) =>
         // it should be the same module by construction, -> localizing
         Id(name, arity)
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def atomLit(term: EObject): String = {
@@ -205,9 +195,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       Some(atomVal)
     case ETuple(List(EAtom("var"), EPos(p), EAtom("_"))) =>
       None
-    // $COVERAGE-OFF$
     case _ => throw new IllegalStateException()
-    // $COVERAGE-ON$
   }
 
   private def convertType(term: EObject): ExtType =
@@ -308,12 +296,10 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(List(EAtom("type"), EPos(pos), EAtom("binary"), EList(params, None))) =>
         assert(params.size == 1 || params.size == 2)
         BuiltinExtType("binary")(pos)
-      // $COVERAGE-OFF$
       case ETuple(List(EAtom("type"), EPos(pos), EAtom(name), EList(params, None))) =>
         val arity = params.size
         throw new IllegalStateException(s"unknown builtin type $name/$arity")
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertPropType(t: EObject): ExtProp =
@@ -336,9 +322,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
           case _ =>
             ReqBadExtProp(keyType, valType)(p)
         }
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertFunSpecType(term: EObject): ConstrainedFunType =
@@ -359,9 +343,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
             List(EAtom("type"), EPos(pos), EAtom("bounded_fun"), EList(List(ft, EList(constraints, None)), None))
           ) =>
         ConstrainedFunType(convertType(ft).asInstanceOf[FunExtType], constraints.map(convertConstraint))(pos)
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertConstraint(term: EObject): Constraint = {
@@ -499,9 +481,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
             RemoteFun(RemoteId(module, name, arity))(p)
           case ETuple(List(EAtom("function"), mod, name, arity)) =>
             DynRemoteFunArity(convertExp(mod), convertExp(name), convertExp(arity))(p)
-          // $COVERAGE-OFF$
           case _ => throw new IllegalStateException()
-          // $COVERAGE-ON$
         }
       case ETuple(List(EAtom("named_fun"), EPos(p), EAtom(name), EList(eClauses, None))) =>
         Lambda(eClauses.map(convertClause))(p, Some(name))
@@ -519,9 +499,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         StringLit(emptyString)(p)
       case ETuple(List(EAtom("remote"), EPos(p), mod, name)) =>
         DynRemoteFun(convertExp(mod), convertExp(name))(p)
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertCreateKV(term: EObject): (Expr, Expr) = {
@@ -563,18 +541,14 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
           case None       => RecordFieldGen(convertExp(exp))
         }
 
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertRefinedField(term: EObject): RefinedField =
     term match {
       case ETuple(List(EAtom("type"), _anno, EAtom("field_type"), EList(List(nameLit, eType), None))) =>
         RefinedField(atomLit(nameLit), convertType(eType))
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertBinaryElem(e: EObject): BinaryElem = {
@@ -626,9 +600,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         PatRecordIndex(name, atomLit(eFieldName))(p)
       case ETuple(List(EAtom("map"), EPos(p), EList(kvs, None))) =>
         PatMap(kvs.map(convertPatKV))(p)
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertPatKV(term: EObject): (Test, Pat) = {
@@ -718,9 +690,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
             TestCall(Id(fname, eArgs.size), eArgs.map(convertTest))(p)
           case ETuple(List(EAtom("atom"), EPos(_), EAtom(fname))) =>
             TestCall(Id(fname, eArgs.size), eArgs.map(convertTest))(p)
-          // $COVERAGE-OFF$
           case _ => throw new IllegalStateException()
-          // $COVERAGE-ON$
         }
       case ETuple(List(EAtom("atom"), EPos(p), EAtom(value))) =>
         TestAtom(value)(p)
@@ -730,9 +700,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         TestNumber(Some(value))(p)
       case ETuple(List(EAtom("string"), EPos(p), _value)) =>
         TestString()(p)
-      // $COVERAGE-OFF$
       case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
   private def convertTestKV(term: EObject): (Test, Test) = {
@@ -804,10 +772,8 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
           Some(0 - value)
         case "+" =>
           Some(value)
-        // $COVERAGE-OFF$
         case _ =>
           throw new IllegalStateException(s"unexpected op $op")
-        // $COVERAGE-ON$
       }
     case _tooComplicated =>
       None

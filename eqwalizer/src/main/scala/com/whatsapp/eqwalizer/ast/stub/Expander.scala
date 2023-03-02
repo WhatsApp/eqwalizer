@@ -44,10 +44,8 @@ private object Expander {
             case invalid: InvalidForm =>
               if (currentFile == moduleFile)
                 invalidForms.addOne(invalid)
-            // $COVERAGE-OFF$
             case _ =>
               throw new IllegalStateException()
-            // $COVERAGE-ON$
           }
         case Left(invalid) =>
           if (currentFile == moduleFile)
@@ -64,10 +62,8 @@ private object Expander {
             case invalid: InvalidForm =>
               if (currentFile == moduleFile)
                 invalidForms.addOne(invalid)
-            // $COVERAGE-OFF$
             case _ =>
               throw new IllegalStateException()
-            // $COVERAGE-ON$
           }
         case Left(invalid) =>
           if (currentFile == moduleFile)
@@ -83,10 +79,8 @@ private object Expander {
             case invalid: InvalidForm =>
               if (currentFile == moduleFile)
                 invalidForms.addOne(invalid)
-            // $COVERAGE-OFF$
             case _ =>
               throw new IllegalStateException()
-            // $COVERAGE-ON$
           }
         case Left(invalid) =>
           if (currentFile == moduleFile)

@@ -44,7 +44,6 @@ object ELPDiagnostics {
     toJsonObj(Map(module -> getDiagnostics(module, astStorage, options))).render(indent = 2)
 
   def getDiagnosticsIpc(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit = {
-    // $COVERAGE-OFF$
     try {
       val diagnosticsByModule = modulesAndStorages.map { case (module, astStorage) =>
         Ipc.sendEqwalizingStart(module)
@@ -56,7 +55,6 @@ object ELPDiagnostics {
     } catch {
       case Ipc.Terminated => ()
     }
-    // $COVERAGE-ON$
   }
 
   private def getDiagnostics(module: String, astStorage: DbApi.AstStorage, options: Options): List[Error] = {

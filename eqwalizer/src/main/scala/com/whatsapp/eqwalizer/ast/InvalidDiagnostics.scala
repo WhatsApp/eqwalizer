@@ -50,9 +50,7 @@ object InvalidDiagnostics {
       case List(ref) =>
         s"$name references type with invalid definition: $ref"
       case Nil =>
-        // $COVERAGE-OFF$
         throw new IllegalStateException()
-      // $COVERAGE-ON$
       case refs =>
         s"$name references types with invalid definitions: ${refs.mkString(", ")}"
     }

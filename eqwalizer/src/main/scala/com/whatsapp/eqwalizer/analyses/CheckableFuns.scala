@@ -38,7 +38,6 @@ object CheckableFuns {
     val funMap = a.checkable.groupBy(_.module)
     val modules = funMap.keys.toList.sorted
     if (verbose)
-      // $COVERAGE-OFF$
       for (module <- modules) {
         Console.println(module)
         if (!DbApi.isGpbCompileGenerated(module)) {
@@ -49,7 +48,6 @@ object CheckableFuns {
         }
       }
     val allWellTyped = errorCounts.filter(_._2 == 0).keySet
-    // $COVERAGE-ON$
     print("all funs:")
     printCategorySummary(
       allWellTyped = allWellTyped,

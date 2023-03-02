@@ -45,9 +45,7 @@ object ElimTypeVars {
         }
         RemoteType(id, elimmedParams)
       case OpaqueType(id, params) =>
-        // $COVERAGE-OFF$
         OpaqueType(id, params.map(elim))
-      // $COVERAGE-ON$
       case VarType(v) if vars.contains(v) =>
         modeToType(mode)
       case vt: VarType =>

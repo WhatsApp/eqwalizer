@@ -7,7 +7,6 @@
 package com.whatsapp.eqwalizer.io
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
-// $COVERAGE-OFF$ covered by ELP tests
 object Ipc {
   case object Terminated extends Exception
   private case class GotNull() extends Exception

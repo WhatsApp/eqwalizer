@@ -24,7 +24,6 @@ import scala.util.Using
 // It analyses `call` and `return_from` elements of the trace.
 // See https://www.erlang.org/doc/man/dbg.html for more details.
 object DbgTraceCheck {
-  // $COVERAGE-OFF$
   def main(args: Array[String]): Unit = {
     if (args.length != 1) {
       Console.println("usage: com.whatsapp.eqwalizer.analyses.DbgTraceCheck <trace_file>|<trace_dir>")
@@ -69,7 +68,6 @@ object DbgTraceCheck {
 
     Files.write(errorsFile, bytes)
   }
-  // $COVERAGE-ON$
 
   sealed trait Error
   case class ResultError(module: String, id: Id, value: EObject) extends Error

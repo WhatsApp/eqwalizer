@@ -14,7 +14,6 @@ import com.whatsapp.eqwalizer.ast._
 import com.whatsapp.eqwalizer.io.Project
 import com.whatsapp.eqwalizer.tc.PipelineContext
 
-// $COVERAGE-OFF$
 class OverloadingUsesListener extends AstListener {
 
   case class FunctionInfo(

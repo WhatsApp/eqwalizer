@@ -23,9 +23,7 @@ object Main {
 
     val cmd = args1(0)
     require(
-      // $COVERAGE-OFF$
       !config.useIpc || cmd == "ipc",
-      // $COVERAGE-ON$
       s"env var EQWALIZER_IPC=true is only valid with the 'ipc' command but got command $cmd",
     )
 
@@ -63,14 +61,12 @@ object Main {
   }
 
   def ipc(ipcArgs: Array[String]): Unit = {
-    // $COVERAGE-OFF$ because covered by ELP tests
     if (!config.useIpc) {
       throw new IllegalArgumentException(s"expected env var USE_EQWALIZER_IPC=1 to be set")
     }
     val modules = ipcArgs.tail
     val modulesAndStorages = modules.distinct.flatMap(m => DbApi.getAstStorage(m).map(m -> _))
     ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
-    // $COVERAGE-ON$
   }
 
   private def smokeRun(): Unit = {

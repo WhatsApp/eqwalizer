@@ -61,7 +61,6 @@ object EData {
         EFun
     }
 
-  // $COVERAGE-OFF$
   def toJava(eObject: EObject): OtpErlangObject = eObject match {
     case EAtom(a) =>
       new OtpErlangAtom(a)
@@ -107,5 +106,4 @@ object EData {
     case _ =>
       ()
   }
-  // $COVERAGE-ON$
 }

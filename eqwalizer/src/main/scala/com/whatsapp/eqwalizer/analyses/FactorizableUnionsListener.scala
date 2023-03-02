@@ -13,7 +13,6 @@ import com.whatsapp.eqwalizer.io.Project
 import java.nio.file.{Files, Paths}
 import scala.collection.mutable.ListBuffer
 
-// $COVERAGE-OFF$
 class FactorizableUnionsListener extends AstListener {
 
   private var currentModule: String = null

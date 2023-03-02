@@ -155,10 +155,8 @@ final class Elab(pipelineContext: PipelineContext) {
           val resTys = funTys.map(elabApply.elabApply(_, args, argTys, env2))
           (subtype.join(resTys), env2)
         }
-      // $COVERAGE-OFF$
       case DynRemoteFun(mod, name) =>
         throw new IllegalStateException(s"unexpected $expr")
-      // $COVERAGE-ON$
       case DynRemoteFunArity(mod, name, arityExpr) =>
         if (pipelineContext.gradualTyping) {
           val env1 = check.checkExpr(mod, AtomType, env)
@@ -283,9 +281,8 @@ final class Elab(pipelineContext: PipelineContext) {
           case "bnot" | "-" | "+" =>
             val env1 = check.checkExpr(arg, NumberType, env)
             (NumberType, env1)
-          // $COVERAGE-OFF$
-          case _ => throw UnhandledOp(expr.pos, op)
-          // $COVERAGE-ON$
+          case _ =>
+            throw UnhandledOp(expr.pos, op)
         }
       case BinOp("orelse", testArg, RemoteCall(RemoteId("erlang", "throw" | "error" | "exit", _), _))
           if Filters.asTest(testArg).isDefined =>
@@ -360,9 +357,8 @@ final class Elab(pipelineContext: PipelineContext) {
                 ListType(subtype.join(elem1Ty, elem2Ty))
               }
             (resTy, env2)
-          // $COVERAGE-OFF$
-          case _ => throw UnhandledOp(expr.pos, op)
-          // $COVERAGE-ON$
+          case _ =>
+            throw UnhandledOp(expr.pos, op)
         }
       case Binary(elems) =>
         var envAcc = env

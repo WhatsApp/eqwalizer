@@ -10,7 +10,6 @@ import com.whatsapp.eqwalizer.Pipeline
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.ast.{App, Forms}
 
-// $COVERAGE-OFF$
 object OverloadingUses {
   private val listener = new OverloadingUsesListener()
 

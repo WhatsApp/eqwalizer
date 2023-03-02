@@ -13,7 +13,6 @@ import com.whatsapp.eqwalizer.ast.Guards.{Guard, Test}
 import com.whatsapp.eqwalizer.ast.Pats.Pat
 
 trait AstListener {
-  // $COVERAGE-OFF$
   def enterClause(clause: Clause): Unit = ()
   def exitClause(clause: Clause): Unit = ()
 

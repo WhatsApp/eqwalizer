@@ -32,26 +32,21 @@ object Project {
         val subPath = canonical.toString().split(thirdPartySuffix)(1)
         Some(s"$thirdPartySuffix$subPath")
       } else {
-        // $COVERAGE-OFF$
         None
-        // $COVERAGE-ON$
       }
     } else if (new File(config.sourceRoot, file).exists()) Some(file)
-    // $COVERAGE-OFF$
     else None
   }
-  // $COVERAGE-ON$
 
   def relativePath(file: String): String = {
     val path = Paths.get(file)
     relativePathOpt(file) match {
-      case Some(path) => path
-      case None       =>
-        // $COVERAGE-OFF$
+      case Some(path) =>
+        path
+      case None =>
         if (path.isAbsolute) throw new IllegalStateException(s"cannot relativize the path: $file")
         // The only case we know of when paths will be unknown is when .erls are compiled with +deterministic.
         else s"<unknown>/$file"
-      // $COVERAGE-ON$
     }
   }
 }

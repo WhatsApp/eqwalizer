@@ -4,7 +4,6 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
-// $COVERAGE-OFF$
 package com.whatsapp.eqwalizer.analyses
 
 import com.whatsapp.eqwalizer.ast.Forms.{File, TypingAttribute}

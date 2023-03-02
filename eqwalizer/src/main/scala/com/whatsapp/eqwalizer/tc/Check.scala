@@ -149,10 +149,8 @@ final class Check(pipelineContext: PipelineContext) {
               case None =>
                 throw UnboundVar(expr.pos, id.toString)
             }
-        // $COVERAGE-OFF$
         case DynRemoteFun(mod, name) =>
           throw new IllegalStateException(s"unexpected $expr")
-        // $COVERAGE-ON$
         case dFun: DynRemoteFunArity =>
           val (funTy, env1) = elab.elabExpr(dFun, env)
           if (!subtype.subType(funTy, resTy))

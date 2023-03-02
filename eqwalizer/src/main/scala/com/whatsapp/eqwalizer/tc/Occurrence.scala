@@ -613,13 +613,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
         overlap(body, t2)
       case (OpaqueType(_, _), _) =>
         None
-      // $COVERAGE-OFF$
       // t2 is generated from "predicates" - they are always without aliases
       case (_, RemoteType(_, _)) =>
         throw new IllegalStateException(t2.toString)
       case (_, OpaqueType(_, _)) =>
         throw new IllegalStateException(t2.toString)
-      // $COVERAGE-ON$
 
       // funs
       case (FunType(_, ins1, _), FunType(_, ins2, _)) =>
@@ -706,11 +704,9 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case (_, AnyTupleType) =>
         Some(false)
 
-      // $COVERAGE-OFF$
       case (_, RefinedRecordType(_, _)) =>
         // t2 comes from props
         throw new IllegalStateException(t2.toString)
-      // $COVERAGE-ON$
 
       case (ListType(_) | NilType, ListType(_) | NilType) =>
         Some(true)

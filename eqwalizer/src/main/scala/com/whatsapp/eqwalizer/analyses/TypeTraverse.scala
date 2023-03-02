@@ -10,7 +10,6 @@ import com.whatsapp.eqwalizer.ast.Types._
 
 class TypeTraverse(val listener: TypeListener) {
   def traverse(tp: Type): Unit = tp match {
-    // $COVERAGE-OFF$
     case at @ AtomLitType(_) =>
       listener.enterType(at)
       listener.exitType(at)

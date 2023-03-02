@@ -170,9 +170,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
       case "+" | "-" | "bnot" =>
         val (_, env1) = elabPat(arg, NumberType, env)
         (NumberType, env1)
-      // $COVERAGE-OFF$
       case _ => throw UnhandledOp(pat.pos, op)
-      // $COVERAGE-ON$
     }
   }
 
@@ -190,15 +188,11 @@ final class ElabPat(pipelineContext: PipelineContext) {
         (narrow.asListType(arg1Ty), narrow.asListType(arg2Ty)) match {
           case (Some(ListType(elem1Ty)), Some(ListType(elem2Ty))) =>
             (ListType(subtype.join(elem1Ty, elem2Ty)), env2)
-          // $COVERAGE-OFF$
           case _ => (NoneType, env2)
-          // $COVERAGE-ON$
         }
       case ">" | "<" | "/=" | ">=" | "=<" | "=/=" | "=:=" | "==" =>
         (booleanType, env)
-      // $COVERAGE-OFF$
       case _ => throw UnhandledOp(binOp.pos, op)
-      // $COVERAGE-ON$
     }
   }
 }

@@ -43,9 +43,7 @@ class Variance(pipelineContext: PipelineContext) {
       else Some(Contravariant)
     case FunType(forall, argTys, resTy) =>
       val variancesInArgTys = if (forall.contains(tv)) {
-        // $COVERAGE-OFF$
         Nil
-        // $COVERAGE-ON$
       } else {
         argTys.map(getVarianceOf(_, tv, !isPositivePosition))
       }

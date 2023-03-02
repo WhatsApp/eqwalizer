@@ -24,7 +24,6 @@ object Lambdas {
 
   private def printLambdaSummary(): Unit = {
     val a = listener.analysis
-    // $COVERAGE-OFF$
     val uncategorized =
       (a.lambdas -- a.fieldLambdas -- a.varLambdas -- a.callLambdas -- a.argLambdas -- a.tupleLambdas -- a.mapLambdas -- a.lastInCaseClauseLambdas -- a.lastInFunDeclLambdas).toList
     if (verbose) {
@@ -55,7 +54,6 @@ object Lambdas {
       printVerbose("lambdas last-in-fun-decl", a.lastInFunDeclLambdas)
       printVerbose("uncategorized", uncategorized)
     }
-    // $COVERAGE-ON$
     val lambdaCount = a.lambdas.size
     println(s"\n \nlambda count: $lambdaCount")
     println(s"\n \nnamed lambda count: ${a.lambdas.filter(_.isNamed).size}")

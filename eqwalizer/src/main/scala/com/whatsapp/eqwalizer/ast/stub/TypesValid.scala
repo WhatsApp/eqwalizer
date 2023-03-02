@@ -154,11 +154,9 @@ private class TypesValid {
     val stub = Db
       .getContractiveModuleStub(remoteId.module)
       .getOrElse(
-        // $COVERAGE-OFF$
         throw new IllegalStateException(
           s"Expand phase should validate that all remoteIds point to modules that exist, but found $remoteId"
         )
-        // $COVERAGE-ON$
       )
 
     def applyType(decl: TypeDecl): Type = {

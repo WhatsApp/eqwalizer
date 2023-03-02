@@ -180,9 +180,7 @@ private class TransValid {
       if (isValid(ref)) invalids
       else ref :: invalids
     case OpaqueType(_rid, _argTys) =>
-      // $COVERAGE-OFF$
       throw new IllegalStateException("unreachable because we lazily convert RemoteType to OpaqueType")
-    // $COVERAGE-ON$
     case RecordType(name) =>
       val ref = RecRef(module, name)
       if (isValid(ref)) Nil

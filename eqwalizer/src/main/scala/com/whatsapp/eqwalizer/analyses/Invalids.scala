@@ -23,7 +23,6 @@ object Invalids {
         val lineBreaks = getLinesBreaks(module)
         DbApi.getInvalidForms(module).get.map(f => (f, module, lineBreaks))
       }
-    // $COVERAGE-OFF$
     if (args.contains("-v")) {
       invalids.foreach { case (form, module, lineBreaks) =>
         val line = Lines.asLine(form.pos, lineBreaks)
@@ -32,7 +31,6 @@ object Invalids {
       }
       println(" ")
     }
-    // $COVERAGE-ON$
     val forms = invalids.map(_._1)
     val invalidAliases = forms.collect { case form: InvalidTypeDecl => form }
     val invalidRecs = forms.collect {
@@ -71,8 +69,6 @@ object Invalids {
         return Lines.toLineBreaks(Files.readAllBytes(Paths.get(erlFile)))
       case _ => ()
     }
-    // $COVERAGE-OFF$
     throw new IllegalStateException("no file attribute found")
-    // $COVERAGE-ON$
   }
 }

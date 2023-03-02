@@ -68,9 +68,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         // safe because we assume no unbound vars
         val ty = env.getOrElse(
           v,
-          // $COVERAGE-OFF$
           AnyType,
-          // $COVERAGE-ON$
         )
         (ty, env)
       case TestAtom(lit) =>
@@ -135,9 +133,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
           case Some(ft @ FunType(Nil, _argTys, resTy)) =>
             resTy
           case _ =>
-            // $COVERAGE-OFF$
             AnyType
-          // $COVERAGE-ON$
         }
         (resTy, env)
       case unOp: TestUnOp =>
@@ -259,9 +255,8 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         (booleanType, elabTestT(arg, booleanType, env))
       case "bnot" | "+" | "-" =>
         (NumberType, elabTestT(arg, NumberType, env))
-      // $COVERAGE-OFF$
-      case _ => throw UnhandledOp(unOp.pos, op)
-      // $COVERAGE-ON$
+      case _ =>
+        throw UnhandledOp(unOp.pos, op)
     }
   }
 
@@ -280,37 +275,29 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         env.get(v) match {
           case Some(ty) =>
             env + (v -> narrow.meet(ty, NumberType))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp("=:=" | "==", NumTest(n), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
             env + (v -> narrow.meet(ty, NumberType))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp("=:=" | "==", TestVar(v), TestString()) =>
         env.get(v) match {
           case Some(ty) =>
             env + (v -> narrow.meet(ty, stringType))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp("=:=" | "==", TestString(), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
             env + (v -> narrow.meet(ty, stringType))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp("=:=" | "==", TestVar(v), TestAtom(a)) =>
         env.get(v) match {
@@ -319,10 +306,8 @@ final class ElabGuard(pipelineContext: PipelineContext) {
               throw RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext)
             else
               env + (v -> narrow.meet(ty, AtomLitType(a)))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp("=:=" | "==", TestAtom(a), TestVar(v)) =>
         env.get(v) match {
@@ -331,28 +316,22 @@ final class ElabGuard(pipelineContext: PipelineContext) {
               throw RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext)
             else
               env + (v -> narrow.meet(ty, AtomLitType(a)))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp("=/=" | "/=", TestVar(v), TestAtom(a)) =>
         env.get(v) match {
           case Some(ty) =>
             env + (v -> occurrence.remove(ty, AtomLitType(a)))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp("=/=" | "/=", TestAtom(a), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
             env + (v -> occurrence.remove(ty, AtomLitType(a)))
-          // $COVERAGE-OFF$
           case None =>
             env
-          // $COVERAGE-ON$
         }
       case TestBinOp(op, arg1, arg2) =>
         val (arg1Ty, env1) = elabTest(arg1, env)
@@ -382,9 +361,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         val (t2, env2) = elabTest(arg2, env1)
         (subtype.join(List(t2, trueType)), env2)
       case _ =>
-        // $COVERAGE-OFF$
         throw new IllegalStateException(s"unexpected $op")
-      // $COVERAGE-ON$
     }
   }
 }

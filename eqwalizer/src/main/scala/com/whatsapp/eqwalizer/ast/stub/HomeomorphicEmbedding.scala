@@ -8,7 +8,6 @@ package com.whatsapp.eqwalizer.ast.stub
 
 import com.whatsapp.eqwalizer.ast.Types._
 
-// $COVERAGE-OFF$
 private object HomeomorphicEmbedding {
   private def isHe(s: Type, t: Type): Boolean = {
     heByDiving(s, t) || heByCoupling(s, t)

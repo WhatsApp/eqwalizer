@@ -43,9 +43,7 @@ object SubtypeDetail {
       case (_, Some(_)) =>
         hasMore = true
       case (None, None) =>
-        // $COVERAGE-OFF$
         throw new IllegalStateException()
-      // $COVERAGE-ON$
     }
 
     if (diff.isEmpty) None
@@ -66,9 +64,7 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
   def explain(got: Type, expected: Type): Option[String] =
     findSubtypeMismatch(got, expected) match {
       case Nil =>
-        // $COVERAGE-OFF$
         None // put debug assert here in T120664791, we expect to be able to produce an error explanation
-      // $COVERAGE-ON$
       case List(Detail(_, _, None, None)) =>
         None
       case List(Detail(_, _, _, Some(reason))) =>

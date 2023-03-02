@@ -140,9 +140,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case ty if subtype.subType(ty, booleanType) =>
             defaultTy
           case _ =>
-            // $COVERAGE-OFF$
             throw new IllegalArgumentException(s"unexpected $ty")
-          // $COVERAGE-ON$
         }
         val resItemTy = funResultsToItemTy(funResTys, elemTy, callPos)
         (ListType(resItemTy), env1)
@@ -371,9 +369,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case NoneType =>
             NoneType
           case unexpected =>
-            // $COVERAGE-OFF$
             throw new IllegalStateException(s"unexpected non-map $unexpected")
-          // $COVERAGE-ON$
         }
 
         val ty = remove(narrow.asMapType(mapTy))
@@ -432,10 +428,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case NoneType =>
             NoneType
           case unexpected =>
-            // $COVERAGE-OFF$
             throw new IllegalStateException(s"unexpected non-map $unexpected")
-          // $COVERAGE-ON$
-
         }
         val ty = `with`(narrow.asMapType(mapTy))
         (ty, env1)
@@ -493,10 +486,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case NoneType =>
             NoneType
           case unexpected =>
-            // $COVERAGE-OFF$
             throw new IllegalStateException(s"unexpected non-map $unexpected")
-          // $COVERAGE-ON$
-
         }
         val ty = without(narrow.asMapType(mapTy))
         (ty, env1)
@@ -514,10 +504,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             (ListType(UnionType(fields.toSet)), env1)
         }
 
-      // $COVERAGE-OFF$
       case rid =>
         throw new IllegalArgumentException(s"unexpected $rid")
-      // $COVERAGE-ON$
     }
   }
 
@@ -537,9 +525,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           val (keyTys, valTys) = kvs.unzip
           Some(subtype.join(keyTys), subtype.join(valTys))
         case OpaqueType(RemoteId("maps", "iterator", 2), List(kTy, valTy)) =>
-          // $COVERAGE-OFF$
           Some(kTy, valTy)
-        // $COVERAGE-ON$
         case RemoteType(RemoteId("maps", "iterator", 2), List(kTy, valTy)) =>
           Some(kTy, valTy)
         case _ =>

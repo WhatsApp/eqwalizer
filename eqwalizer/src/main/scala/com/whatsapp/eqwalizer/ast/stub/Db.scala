@@ -100,9 +100,7 @@ private object Db {
         val path = Paths.get(app.ebinDir, s"$module.beam")
         DbApi.AstBeam(path)
       } else if (config.useIpc) {
-        // $COVERAGE-OFF$
         DbApi.AstEtfIpc(module)
-        // $COVERAGE-ON$
       } else {
         val etf = Paths.get(config.astDir.get, s"$module.etf")
         DbApi.AstEtfFile(path = etf)
@@ -188,7 +186,6 @@ private object Db {
   def fromBeam(module: String): Boolean =
     ((otpModules(module) || depModules(module)) && !projectModules(module)) || !config.useElp
 
-  // $COVERAGE-OFF$
   private val generatedMark: String = "@" + "generated"
   def isGenerated(module: String): Boolean = {
     val astStorage = getAstStorage(module).get
@@ -222,7 +219,6 @@ private object Db {
     }
     false
   }
-  // $COVERAGE-ON$
 
   private def hasEqwalizerMarker(appInfo: AppInfo): Boolean =
     Files.exists(Paths.get(s"${appInfo.dir}/.eqwalizer"))

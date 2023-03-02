@@ -113,9 +113,7 @@ class ConvertTypes(module: String) {
             ctx match {
               case Some(_) =>
                 throw InvalidDiagnostics.TypeVarInRecordField(extTy.pos, name)
-              // $COVERAGE-OFF$
               case _ => throw new IllegalStateException(s"unexpected $extTy")
-              // $COVERAGE-ON$
             }
         }
       case RecordExtType(name) =>
@@ -140,10 +138,8 @@ class ConvertTypes(module: String) {
         NumberType
       case _: UnOpType | _: BinOpType =>
         NumberType
-      // $COVERAGE-OFF$
       case _: LocalExtType | _: AnyMapExtType | _: AnyListExtType =>
         throw new IllegalStateException(s"should have been removed in the expand phase $extTy")
-      // $COVERAGE-ON$
     }
   }
 
@@ -154,9 +150,7 @@ class ConvertTypes(module: String) {
     prop match {
       case ReqExtProp(_, ty) => ReqProp(key, convertType(s, ty))
       case OptExtProp(_, ty) => OptProp(key, convertType(s, ty))
-      // $COVERAGE-OFF$
-      case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
+      case _                 => throw new IllegalStateException()
     }
   }
 

@@ -31,10 +31,8 @@ object AstLoader {
       val bytes = Files.readAllBytes(path)
       loadEtfJ(bytes, path.toString)
     case AstEtfIpc(module) =>
-      // $COVERAGE-OFF$
       val bytes = Ipc.getAstBytes(module)
       loadEtfJ(bytes, originForDebugging = s"from IPC request for $module")
-    // $COVERAGE-ON$
   }
 
   private def loadBeamJ(bytes: Array[Byte]): OtpErlangList = {

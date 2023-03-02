@@ -140,9 +140,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case ShapeMap(_)    => AtomType
       case UnionType(ts)  => subtype.join(ts.map(getKeyType))
       case NoneType       => NoneType
-      // $COVERAGE-OFF$
-      case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
+      case _              => throw new IllegalStateException()
     }
 
   def getValType(t: Type): Type =
@@ -151,9 +149,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case ShapeMap(props) => subtype.join(props.map(_.tp))
       case UnionType(ts)   => subtype.join(ts.map(getValType))
       case NoneType        => NoneType
-      // $COVERAGE-OFF$
-      case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
+      case _               => throw new IllegalStateException()
     }
 
   def getValType(key: String, t: Type): Type =
@@ -162,9 +158,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case ShapeMap(props) => props.find(_.key == key).map(_.tp).getOrElse(NoneType)
       case UnionType(ts)   => subtype.join(ts.map(getValType(key, _)))
       case NoneType        => NoneType
-      // $COVERAGE-OFF$
-      case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
+      case _               => throw new IllegalStateException()
     }
 
   def withRequiredProp(k: String, t: Type): Type =
@@ -349,9 +343,8 @@ class Narrow(pipelineContext: PipelineContext) {
         adjustMapType(body, keyT, valT)
       case NoneType =>
         NoneType
-      // $COVERAGE-OFF$
-      case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
+      case _ =>
+        throw new IllegalStateException()
     }
 
   def isShapeWithKey(mapT: Type, key: String): Boolean =
@@ -393,9 +386,8 @@ class Narrow(pipelineContext: PipelineContext) {
         UnionType(fieldTys)
       case NoneType =>
         NoneType
-      // $COVERAGE-OFF$
-      case _ => throw new IllegalStateException()
-      // $COVERAGE-ON$
+      case _ =>
+        throw new IllegalStateException()
     }
   }
 }

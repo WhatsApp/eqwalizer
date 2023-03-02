@@ -26,9 +26,7 @@ object Subst {
       case RemoteType(id, params) =>
         RemoteType(id, params.map(sub))
       case OpaqueType(id, params) =>
-        // $COVERAGE-OFF$
         OpaqueType(id, params.map(sub))
-      // $COVERAGE-ON$
       case VarType(n) =>
         s.getOrElse(n, t)
       case ShapeMap(props)                    => ShapeMap(props.map(substInProp(s, _)))

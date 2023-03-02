@@ -231,9 +231,7 @@ object Pipeline {
     case TextRange(startByte, _) =>
       fixmes.find(fixme => startByte >= fixme.suppression.startByte && startByte <= fixme.suppression.endByte)
     case _ =>
-      // $COVERAGE-OFF$ we don't have tests for parsing without --offset-positions
       None
-    // $COVERAGE-ON$
   }
 
   private def applyNowarnToFun(

@@ -17,9 +17,7 @@ object DiscardedSpecs {
   }
 
   private def analyze(includeOtp: Boolean): Unit = {
-    // $COVERAGE-OFF$
     if (includeOtp) analyzeApps(DbApi.otpApps.values.toList, "OTP")
-    // $COVERAGE-ON$
     analyzeApps(DbApi.projectApps.values.toList, "Project")
   }
 

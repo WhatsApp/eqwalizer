@@ -14,9 +14,7 @@ object UnionsWithTypeVars {
   val listener = new UnionsWithTypeVarsListener
 
   def main(args: Array[String]): Unit = {
-    // $COVERAGE-OFF$
     if (args.contains("-otp")) DbApi.otpApps.values.foreach(analyzeApp)
-    // $COVERAGE-ON$
     DbApi.depApps.values.foreach(analyzeApp)
     DbApi.projectApps.values.foreach(analyzeApp)
     printSummary()

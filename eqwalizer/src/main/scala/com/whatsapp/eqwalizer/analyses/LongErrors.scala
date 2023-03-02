@@ -27,11 +27,9 @@ object LongErrors {
   private def printSummary(mismatches: List[Mismatch]): Unit = {
     val results = mismatches.sortBy(_.msg.size)
     if (verbose) {
-      // $COVERAGE-OFF$
       val topResults = results.take(results.size.max(maxVerboseResults))
       for (Mismatch(rid, msg) <- topResults)
         Console.println(s"\n\n$rid size ${msg.size}\n$msg")
-      // $COVERAGE-ON$
     }
     val sizes = results.map(_.msg.size)
     val avg = sizes.sum.toFloat / results.size

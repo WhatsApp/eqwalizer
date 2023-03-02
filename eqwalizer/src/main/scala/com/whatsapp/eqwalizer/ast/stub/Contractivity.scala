@@ -105,9 +105,7 @@ private class Contractivity(module: String) {
     case _: UnionType =>
       false
     case _ =>
-      // $COVERAGE-OFF$
       throw new IllegalStateException("unreachable: this is a leaf node of the graph and can't wind up in `history`")
-    // $COVERAGE-ON$
   }
 
   private def getTypeDeclBody(remoteId: RemoteId, args: List[Type]): Option[Type] = {
@@ -115,11 +113,9 @@ private class Contractivity(module: String) {
     val stub = Db
       .getExpandedModuleStub(remoteId.module)
       .getOrElse(
-        // $COVERAGE-OFF$
         throw new IllegalStateException(
           s"Expand phase should validate that all remoteIds point to modules that exist, but found $remoteId"
         )
-        // $COVERAGE-ON$
       )
 
     def applyType(decl: TypeDecl): Type = {
