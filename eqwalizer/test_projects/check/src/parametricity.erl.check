@@ -234,9 +234,9 @@ select_tagged_neg2(T) ->                   | ERROR   |
 -spec unwrap                               |         |
     (undefined, Default) -> Default;       |         |
     (Value, _) -> Value.                   |         |
-unwrap(undefined, Default) -> Default;     | ERROR   |
+unwrap(undefined, Default) -> Default;     | ERROR   | Default.
+                                           |         | Expected: Value
+                                           |         | Got     : term()
 unwrap(Value, _)                           |         |
   when Value =/= undefined ->              |         |
-  Value.                                   |         | Value.
-                                           |         | Expected: Default
-                                           |         | Got     : 'undefined'
+  Value.                                   |         |

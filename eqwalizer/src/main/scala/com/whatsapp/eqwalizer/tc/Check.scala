@@ -85,8 +85,11 @@ final class Check(pipelineContext: PipelineContext) {
     val env2 = elabGuard.elabGuards(clause.guards, env1)
     val (patTys, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val reachable = !patTys.exists(subtype.isNoneType)
-    if (reachable)
-      checkBody(clause.body, resTy, env3)
+    if (reachable) {
+      // elabGuard twice for the same reasons as above, see D43679406
+      val env4 = elabGuard.elabGuards(clause.guards, env3)
+      checkBody(clause.body, resTy, env4)
+    }
   }
 
   def checkExpr(expr: Expr, resTy: Type, env: Env): Env =

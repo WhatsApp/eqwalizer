@@ -69,11 +69,5 @@ redundant_guard(X) ->                      | OK      |
 -spec overloaded_guard                     |         |
     (ok, ok | err) -> ok;                  |         |
     (err, term()) -> ok.                   |         |
-overloaded_guard(ok, V) when V =/= err -> …… ERROR   | V.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : 'ok' | 'err'
-                                           |         | 
-                                           |         |   'ok' | 'err' is not a subtype of 'ok'
-                                           |         |   because
-                                           |         |   'err' is not a subtype of 'ok'
+overloaded_guard(ok, V) when V =/= err -> …… OK      |
 overloaded_guard(_, _) -> ok.              |         |
