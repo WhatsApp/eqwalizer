@@ -161,7 +161,8 @@ impl Eqwalizer {
         loop {
             db_api.unwind_if_cancelled();
             match handle.receive()? {
-                MsgFromEqWAlizer::GetAstBytes { module } => {
+                MsgFromEqWAlizer::GetAstBytes { module }
+                | MsgFromEqWAlizer::GetStubsBytes { module } => {
                     log::debug!("received from eqwalizer: GetAstBytes for module {}", module);
                     match db_api.get_ast(&module) {
                         Some(ast_bytes) => {

@@ -31,6 +31,9 @@ pub enum MsgFromEqWAlizer {
     GetAstBytes {
         module: String,
     },
+    GetStubsBytes {
+        module: String,
+    },
     EqwalizingStart {
         module: String,
     },
