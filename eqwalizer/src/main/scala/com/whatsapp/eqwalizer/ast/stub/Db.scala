@@ -64,7 +64,7 @@ private object Db {
 
   def loadStubForms(module: String): Option[List[ExternalForm]] = {
     getAstStorage(module).map { astStorage =>
-      val formsJ = AstLoader.loadAbstractFormsJ(astStorage)
+      val formsJ = AstLoader.loadAbstractFormsJ(astStorage)(stubsOnly = true)
       val formsDef = (for {
         i <- 0 until formsJ.arity()
         f = formsJ.elementAt(i)

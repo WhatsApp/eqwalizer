@@ -11,8 +11,11 @@ object Ipc {
   case object Terminated extends Exception
   private case class GotNull() extends Exception
 
-  def getAstBytes(module: String): Array[Byte] = {
-    send(GetAstBytes(module))
+  def getAstBytes(module: String, stubsOnly: Boolean): Array[Byte] = {
+    if (stubsOnly)
+      send(GetStubsBytes(module))
+    else
+      send(GetAstBytes(module))
     receive() match {
       case Right(GetAstBytesReply(astBytesLen)) =>
         println()
@@ -20,6 +23,13 @@ object Ipc {
         val buf = new Array[Byte](astBytesLen)
         val read = readNBytes(System.in, buf, 0, astBytesLen)
         assert(read == astBytesLen, s"expected $astBytesLen for $module but got $read")
+        buf
+      case Right(GetStubsBytesReply(stubsBytesLen)) =>
+        println()
+        Console.out.flush()
+        val buf = new Array[Byte](stubsBytesLen)
+        val read = readNBytes(System.in, buf, 0, stubsBytesLen)
+        assert(read == stubsBytesLen, s"expected $stubsBytesLen for $module stubs but got $read")
         buf
       case Right(CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
@@ -66,6 +76,13 @@ object Ipc {
           "module" -> module
         ),
       )
+    case GetStubsBytes(module) =>
+      ujson.Obj(
+        "tag" -> "GetStubsBytes",
+        "content" -> ujson.Obj(
+          "module" -> module
+        ),
+      )
     case EqwalizingStart(module) =>
       ujson.Obj(
         "tag" -> "EqwalizingStart",
@@ -96,6 +113,10 @@ object Ipc {
         val content = value.obj("content").obj
         val astBytesLen = content("ast_bytes_len").num.toInt
         GetAstBytesReply(astBytesLen)
+      case ujson.Str("GetStubsBytesReply") =>
+        val content = value.obj("content").obj
+        val stubsBytesLen = content("stubs_bytes_len").num.toInt
+        GetStubsBytesReply(stubsBytesLen)
       case ujson.Str("CannotCompleteRequest") =>
         CannotCompleteRequest
       case _ =>
@@ -118,6 +139,7 @@ object Ipc {
 
   private sealed trait Request
   private case class GetAstBytes(module: String) extends Request
+  private case class GetStubsBytes(module: String) extends Request
   private case class EqwalizingStart(module: String) extends Request
   private case class EqwalizingDone(module: String) extends Request
   private case class Done(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]) extends Request
@@ -130,5 +152,6 @@ object Ipc {
     * and then reads `astBytesLen` bytes from stdin
     */
   private case class GetAstBytesReply(astBytesLen: Int) extends Reply
+  private case class GetStubsBytesReply(stubsBytesLen: Int) extends Reply
   private case object CannotCompleteRequest extends Reply
 }
