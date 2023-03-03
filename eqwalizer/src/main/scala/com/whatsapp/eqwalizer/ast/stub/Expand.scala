@@ -111,9 +111,8 @@ private class Expand(module: String) {
         val expandedParams = params.map(expand)
         RemoteExtType(id, expandedParams)(t.pos)
       case RemoteExtType(id, params) =>
-        val stub = Db.getRawModuleStub(id.module).getOrElse(throw InvalidDiagnostics.UnknownId(t.pos, id))
         val localId = Id(id.name, id.arity)
-        val isDefined = stub.types(localId)
+        val isDefined = Db.getTypeIds(id.module)(localId)
         if (!isDefined)
           throw InvalidDiagnostics.UnknownId(t.pos, id)
         val expandedParams = params.map(expand)

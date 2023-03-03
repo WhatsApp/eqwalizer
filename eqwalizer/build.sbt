@@ -45,6 +45,7 @@ run / javaOptions += "-Xss15M"
 run / fork := true
 run / connectInput := true
 
+Test / parallelExecution := false
 Test / testOptions += Tests.Argument("-oD")
 
 assembly / mainClass  := Some("com.whatsapp.eqwalizer.Main")

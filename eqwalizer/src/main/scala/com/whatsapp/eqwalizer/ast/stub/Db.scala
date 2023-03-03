@@ -6,10 +6,11 @@
 
 package com.whatsapp.eqwalizer.ast.stub
 
-import com.whatsapp.eqwalizer.ast.{App, ConvertAst, ExtModuleStub, Id}
-
 import java.nio.file.{Files, Paths}
+import scala.collection.mutable
 import scala.jdk.CollectionConverters._
+
+import com.whatsapp.eqwalizer.ast.{App, ConvertAst, ExtModuleStub, Id}
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.config
 import com.whatsapp.eqwalizer.io.BuildInfo.AppInfo
@@ -54,13 +55,8 @@ private object Db {
     result
   }
 
-  private def loadExtModuleStub(forms: List[ExternalForm], module: String): ExtModuleStub = {
-    ExtModuleStub(
-      module,
-      forms,
-      Set.empty,
-    )
-  }
+  private def loadExtModuleStub(forms: List[ExternalForm], module: String): ExtModuleStub =
+    ExtModuleStub(module, forms)
 
   def loadStubForms(module: String): Option[List[ExternalForm]] = {
     getAstStorage(module).map { astStorage =>
@@ -75,16 +71,18 @@ private object Db {
     }
   }
 
-  private var rawModuleStubs: Map[String, ExtModuleStub] =
-    Map.empty
-  private var expandedModuleStubs: Map[String, ModuleStub] =
-    Map.empty
-  private var contractiveModuleStubs: Map[String, ModuleStub] =
-    Map.empty
-  private var validatedModuleStubs: Map[String, ModuleStub] =
-    Map.empty
-  private var transValidStubs: Map[String, ModuleStub] =
-    Map.empty
+  private val rawModuleStubs: mutable.Map[String, ExtModuleStub] =
+    mutable.Map.empty
+  private val typeIds: mutable.Map[String, Set[Id]] =
+    mutable.Map.empty
+  private val expandedModuleStubs: mutable.Map[String, Option[ModuleStub]] =
+    mutable.Map.empty
+  private val contractiveModuleStubs: mutable.Map[String, Option[ModuleStub]] =
+    mutable.Map.empty
+  private val validatedModuleStubs: mutable.Map[String, Option[ModuleStub]] =
+    mutable.Map.empty
+  private val transValidStubs: mutable.Map[String, Option[ModuleStub]] =
+    mutable.Map.empty
 
   def getModuleApp(module: String): Option[App] = {
     val appNames = module2App(module)
@@ -116,72 +114,78 @@ private object Db {
       else None
     }
 
-  def getRawModuleStub(module: String): Option[ExtModuleStub] = {
-    if (rawModuleStubs.contains(module))
-      Some(rawModuleStubs(module))
-    else
-      getExtModuleStub(module).map { s =>
-        var types: Set[Id] = Set.empty
-        s.forms.foreach {
-          case f: ExternalTypeDecl =>
-            types += f.id
-          case f: ExternalOpaqueDecl =>
-            types += f.id
-          case _ =>
-            ()
-        }
-        val stub = s.copy(types = types)
-        rawModuleStubs = rawModuleStubs.updated(module, stub)
-        stub
+  private def getRawModuleStub(module: String): Option[ExtModuleStub] =
+    if (typeIds.contains(module))
+      rawModuleStubs.get(module)
+    else {
+      val res = getExtModuleStub(module) match {
+        case Some(stub) =>
+          var mTypeIds: Set[Id] = Set.empty
+          stub.forms.foreach {
+            case f: ExternalTypeDecl =>
+              mTypeIds += f.id
+            case f: ExternalOpaqueDecl =>
+              mTypeIds += f.id
+            case _ =>
+              ()
+          }
+          typeIds.put(module, mTypeIds)
+          rawModuleStubs.put(module, stub)
+          Some(stub)
+        case None =>
+          typeIds.put(module, Set.empty)
+          None
       }
-  }
+      res
+    }
 
-  def getExpandedModuleStub(module: String): Option[ModuleStub] = {
+  def getTypeIds(module: String): Set[Id] =
+    typeIds.get(module) match {
+      case Some(ids) =>
+        ids
+      case None =>
+        getRawModuleStub(module)
+        typeIds(module)
+    }
+
+  def getExpandedModuleStub(module: String): Option[ModuleStub] =
     if (expandedModuleStubs.contains(module))
-      Some(expandedModuleStubs(module))
-    else
-      getRawModuleStub(module).map { s =>
-        val stub = Expander.expandStub(s)
-        expandedModuleStubs = expandedModuleStubs.updated(module, stub)
-        stub
-      }
-  }
+      expandedModuleStubs(module)
+    else {
+      val optStub = getRawModuleStub(module).map(Expander.expandStub)
+      expandedModuleStubs.put(module, optStub)
+      rawModuleStubs.remove(module)
+      optStub
+    }
 
-  def getContractiveModuleStub(module: String): Option[ModuleStub] = {
+  def getContractiveModuleStub(module: String): Option[ModuleStub] =
     if (contractiveModuleStubs.contains(module))
-      Some(contractiveModuleStubs(module))
-    else
-      getExpandedModuleStub(module).map { s =>
-        val contractivity = new Contractivity(module)
-        val stub = contractivity.checkStub(s)
-        contractiveModuleStubs = contractiveModuleStubs.updated(module, stub)
-        stub
-      }
-  }
+      contractiveModuleStubs(module)
+    else {
+      val optStub = getExpandedModuleStub(module).map { new Contractivity(module).checkStub }
+      contractiveModuleStubs.put(module, optStub)
+      optStub
+    }
 
-  def getValidatedModuleStub(module: String): Option[ModuleStub] = {
+  def getValidatedModuleStub(module: String): Option[ModuleStub] =
     if (validatedModuleStubs.contains(module))
-      Some(validatedModuleStubs(module))
-    else
-      getContractiveModuleStub(module).map { s =>
-        val typesValid = new TypesValid()
-        val stub = typesValid.checkStub(s)
-        validatedModuleStubs = validatedModuleStubs.updated(module, stub)
-        stub
-      }
-  }
+      validatedModuleStubs(module)
+    else {
+      val optStub = getContractiveModuleStub(module).map { new TypesValid().checkStub }
+      validatedModuleStubs.put(module, optStub)
+      optStub
+    }
 
   /** module stub suitable for type-checking
     */
   def getModuleStub(module: String): Option[ModuleStub] =
     if (transValidStubs.contains(module))
-      Some(transValidStubs(module))
-    else
-      getValidatedModuleStub(module).map { s =>
-        val stub = new TransValid().checkStub(s)
-        transValidStubs = transValidStubs.updated(module, stub)
-        stub
-      }
+      transValidStubs(module)
+    else {
+      val optStub = getValidatedModuleStub(module).map { new TransValid().checkStub }
+      transValidStubs.put(module, optStub)
+      optStub
+    }
 
   def fromBeam(module: String): Boolean =
     ((otpModules(module) || depModules(module)) && !projectModules(module)) || !config.useElp

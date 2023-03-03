@@ -36,6 +36,5 @@ package object ast {
   case class ExtModuleStub(
       module: String,
       forms: List[ExternalForm],
-      types: Set[Id],
   )
 }
