@@ -99,7 +99,7 @@ class ConvertTypes(module: String) {
         AnyArityFunType(c(resTy))
       case TupleExtType(argTys) => TupleType(argTys.map(c))
       case ListExtType(t)       => ListType(c(t))
-      case UnionExtType(tys)    => UnionType(tys.toSet.map(c))
+      case UnionExtType(tys)    => Types.join(tys.toSet.map(c))
       case RemoteExtType(id, argTys) if id == RemoteId("eqwalizer", "refinable", 1) && argTys.size == 1 =>
         c(argTys.head)
       case RemoteExtType(id, argTys) =>

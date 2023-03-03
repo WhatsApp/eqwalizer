@@ -80,6 +80,18 @@ object Types {
   val stringType = builtinTypeAliases("string")
   val booleanType = builtinTypeAliases("boolean")
 
+  def join(tys: Set[Type]): Type = {
+    def collect(ty: Type): Set[Type] = {
+      ty match {
+        case UnionType(tys) => tys.flatMap(collect)
+        case _              => Set(ty)
+      }
+    }
+    val allTys = tys.flatMap(collect)
+    if (allTys.contains(AnyType)) AnyType
+    else UnionType(allTys)
+  }
+
   def recordAsTuple(recDecl: RecDeclTyped): TupleType = {
     val elems = AtomLitType(recDecl.name) :: recDecl.fields.values.toList.map(_.tp)
     TupleType(elems)

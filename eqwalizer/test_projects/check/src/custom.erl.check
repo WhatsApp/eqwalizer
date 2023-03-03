@@ -1659,7 +1659,7 @@ test_plists_split3_neg() ->                | ERROR   |
     -> term().                             |         |
 test_plists_to_map1_neg() ->               | ERROR   |
     proplists:to_map(b).                   |         | 'b'.
-                                           |         | Expected: [atom() | {term(), term()} | term()]
+                                           |         | Expected: [term()]
                                            |         | Got     : 'b'
                                            |         |
 -spec test_plists_to_map2_neg()            |         |

@@ -52,6 +52,8 @@ Got     : [term()]
   [term()] is not a subtype of [T | X]
   because
   term() is not a subtype of T | X
+  because
+  term() is not a subtype of T
 
 error: expected_subtype
      ┌─ app_a/src/app_a_lists.erl:1310:15

@@ -50,22 +50,14 @@ no_cast() ->                               | ERROR   |
     Key = get(key),                        |         |
     Key.                                   |         | Key.
                                            |         | Expected: atom()
-                                           |         | Got     : term() | 'undefined'
-                                           |         | 
-                                           |         |   term() | 'undefined' is not a subtype of atom()
-                                           |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         | Got     : term()
                                            |         |
 -spec cast1() -> atom().                   |         |
 cast1() ->                                 | ERROR   |
     Key = get(key),                        |         |
     Key.                                   |         | Key.
                                            |         | Expected: atom()
-                                           |         | Got     : term() | 'undefined'
-                                           |         | 
-                                           |         |   term() | 'undefined' is not a subtype of atom()
-                                           |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         | Got     : term()
                                            |         |
 -spec reveal_none(none()) -> none().       |         |
 reveal_none(X) ->                          | ERROR   |
