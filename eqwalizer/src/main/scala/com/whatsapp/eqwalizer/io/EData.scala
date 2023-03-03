@@ -27,7 +27,7 @@ object EData {
   def fromJava(jObject: OtpErlangObject): EObject =
     jObject match {
       case otpAtom: OtpErlangAtom =>
-        EAtom(otpAtom.atomValue())
+        EAtom(otpAtom.atomValue().intern())
       case otpBitstr: OtpErlangBitstr =>
         EBitStr(otpBitstr.binaryValue(), otpBitstr.pad_bits())
       case otpDouble: OtpErlangDouble =>
