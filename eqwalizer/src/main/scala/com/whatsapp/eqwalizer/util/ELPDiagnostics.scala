@@ -7,6 +7,8 @@
 package com.whatsapp.eqwalizer.util
 
 import java.io.OutputStream
+import scala.collection.mutable
+
 import com.whatsapp.eqwalizer.{Pipeline, ast}
 import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, InvalidForm, MisBehaviour}
 import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
@@ -43,19 +45,21 @@ object ELPDiagnostics {
   def getDiagnosticsString(module: String, astStorage: DbApi.AstStorage, options: Options = noOptions): String =
     toJsonObj(Map(module -> getDiagnostics(module, astStorage, options))).render(indent = 2)
 
-  def getDiagnosticsIpc(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit = {
+  def getDiagnosticsIpc(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit =
     try {
-      val diagnosticsByModule = modulesAndStorages.map { case (module, astStorage) =>
+      val diagnosticsByModule = mutable.Map.empty[String, List[Error]]
+      for { (module, astStorage) <- modulesAndStorages } {
         Ipc.sendEqwalizingStart(module)
         val diagnostics = getDiagnostics(module, astStorage, noOptions)
         Ipc.sendEqwalizingDone(module)
-        module -> diagnostics
-      }.toMap
+        if (diagnostics.nonEmpty) {
+          diagnosticsByModule.put(module, diagnostics)
+        }
+      }
       Ipc.sendDone(diagnosticsByModule)
     } catch {
       case Ipc.Terminated => ()
     }
-  }
 
   private def getDiagnostics(module: String, astStorage: DbApi.AstStorage, options: Options): List[Error] = {
     val invalidForms = DbApi.getInvalidForms(module).get

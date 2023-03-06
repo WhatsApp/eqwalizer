@@ -1,28 +1,3 @@
-error: type_alias_is_non_productive
-   ┌─ app_a/src/app_a_mod2.erl:27:1
-   │
-27 │ -type invalid() :: invalid().
-   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ recursive type invalid/0 is not productive
-
-
-error: expected_subtype
-   ┌─ app_a/src/app_a_mod2.erl:36:9
-   │
-36 │     1 + an_atom,
-   │         ^^^^^^^ 'an_atom'.
-Expected: number()
-Got     : 'an_atom'
-
-
-error: expected_subtype
-   ┌─ app_a/src/app_a_errors_generated.erl:13:10
-   │
-13 │ foo() -> wrong_ret.
-   │          ^^^^^^^^^ 'wrong_ret'.
-Expected: 'foo'
-Got     : 'wrong_ret'
-
-
 error: expected_subtype
     ┌─ app_a/src/app_a_lists.erl:581:5
     │
@@ -95,6 +70,31 @@ Got     : fun((T) -> boolean() | {'true', X})
   fun((T) -> boolean() | {'true', X}) is not a subtype of fun((term()) -> boolean() | {'true', term()})
   because
   term() is not a subtype of T
+
+error: expected_subtype
+   ┌─ app_a/src/app_a_errors_generated.erl:13:10
+   │
+13 │ foo() -> wrong_ret.
+   │          ^^^^^^^^^ 'wrong_ret'.
+Expected: 'foo'
+Got     : 'wrong_ret'
+
+
+error: type_alias_is_non_productive
+   ┌─ app_a/src/app_a_mod2.erl:27:1
+   │
+27 │ -type invalid() :: invalid().
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ recursive type invalid/0 is not productive
+
+
+error: expected_subtype
+   ┌─ app_a/src/app_a_mod2.erl:36:9
+   │
+36 │     1 + an_atom,
+   │         ^^^^^^^ 'an_atom'.
+Expected: number()
+Got     : 'an_atom'
+
 
 error: expected_subtype
    ┌─ app_a/src/app_a.erl:14:5

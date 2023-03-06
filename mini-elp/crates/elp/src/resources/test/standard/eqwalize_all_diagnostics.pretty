@@ -1,10 +1,10 @@
 error: expected_subtype
-   ┌─ app_a/src/app_a_errors_generated.erl:13:10
+   ┌─ app_b/src/app_b.erl:21:5
    │
-13 │ foo() -> wrong_ret.
-   │          ^^^^^^^^^ 'wrong_ret'.
-Expected: 'foo'
-Got     : 'wrong_ret'
+21 │     L.
+   │     ^ L.
+Expected: T
+Got     : [T]
 
 
 error: expected_subtype
@@ -80,6 +80,15 @@ Got     : fun((T) -> boolean() | {'true', X})
   because
   term() is not a subtype of T
 
+error: expected_subtype
+   ┌─ app_a/src/app_a_errors_generated.erl:13:10
+   │
+13 │ foo() -> wrong_ret.
+   │          ^^^^^^^^^ 'wrong_ret'.
+Expected: 'foo'
+Got     : 'wrong_ret'
+
+
 error: type_alias_is_non_productive
    ┌─ app_a/src/app_a_mod2.erl:27:1
    │
@@ -94,15 +103,6 @@ error: expected_subtype
    │         ^^^^^^^ 'an_atom'.
 Expected: number()
 Got     : 'an_atom'
-
-
-error: expected_subtype
-   ┌─ app_b/src/app_b.erl:21:5
-   │
-21 │     L.
-   │     ^ L.
-Expected: T
-Got     : [T]
 
 
 error: expected_subtype
