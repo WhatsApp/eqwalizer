@@ -211,13 +211,15 @@ final class Check(pipelineContext: PipelineContext) {
             throw ExpectedFunType(f.pos, f, expArity, ty)
           }
           val funTys = narrow.asFunType(ty, args.size).get
-          if (funTys.isEmpty) {
-            val (_, env2) = elab.elabExprs(args, env1)
-            env2
-          } else {
-            val envs = funTys.map(checkApply(expr, _, args, resTy, env1))
-            subtype.joinEnvs(envs)
+          val (argTys, env2) = elab.elabExprs(args, env1)
+          if (funTys.nonEmpty) {
+            funTys.foreach { ft =>
+              val ftResTy = elabApply.elabApply(ft, args, argTys, env1)
+              if (!subtype.subType(ftResTy, resTy))
+                throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy)
+            }
           }
+          env2
         case LocalFun(id) =>
           util.getFunType(module, id) match {
             case Some(ft) =>
