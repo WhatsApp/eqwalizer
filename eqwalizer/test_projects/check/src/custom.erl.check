@@ -263,178 +263,114 @@ keystore_1() ->                            | OK      |
     ),                                     |         |
     Res.                                   |         |
                                            |         |
--spec maps_filter_2_1(boolean())           |         |
+-spec maps_filter_2_1()                    |         |
         -> #{number() => atom()}.          |         |
-maps_filter_2_1(B) ->                      | OK      |
+maps_filter_2_1() ->                       | OK      |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun erlang:'=:='/2,                |         |
-    case B of                              |         |
-        true -> maps:filter(F, M);         |         |
-        false -> maps:filter(F, It)        |         |
-    end.                                   |         |
+    maps:filter(F, M).                     |         |
                                            |         |
--spec maps_filter_2_2(boolean())           |         |
+-spec maps_filter_2_2()                    |         |
         -> #{number() => atom()}.          |         |
-maps_filter_2_2(B) ->                      | OK      |
+maps_filter_2_2() ->                       | OK      |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
-    case B of                              |         |
-        true -> maps:filter(               |         |
-            fun (K, V) -> K =:= V end,     |         |
-            M                              |         |
-        );                                 |         |
-        false -> maps:filter(              |         |
-            fun (K, V) -> K =:= V end,     |         |
-            It                             |         |
-        )                                  |         |
-    end.                                   |         |
+    maps:filter(                           |         |
+        fun (K, V) -> K =:= V end,         |         |
+        M                                  |         |
+    ).                                     |         |
                                            |         |
--spec maps_filter_2_3_neg(boolean())       |         |
+-spec maps_filter_2_3_neg()                |         |
         -> #{number() => atom()}.          |         |
-maps_filter_2_3_neg(B) ->                  | ERROR   |
+maps_filter_2_3_neg() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
-    case B of                              |         |
-        true ->                            |         |
-            maps:filter(                   |         |
-                fun (_, _) -> self() end,  |         | erlang:self().
+    maps:filter(                           |         |
+        fun (_, _) -> self() end,          |         | erlang:self().
                                            |         | Expected: boolean()
                                            |         | Got     : pid()
-                M                          |         |
-            );                             |         |
-        false ->                           |         |
-            maps:filter(                   |         |
-                fun (_, _) -> self() end,  |         |
-                It                         |         |
-            )                              |         |
-    end.                                   |         |
+        M                                  |         |
+    ).                                     |         |
                                            |         |
 % should pass if we fully support          |         |
 %  lambdas assigned to vars                |         |
--spec maps_filter_2_4_wip(boolean())       |         |
+-spec maps_filter_2_4_wip()                |         |
         -> #{number() => atom()}.          |         |
-maps_filter_2_4_wip(B) ->                  | ERROR   |
+maps_filter_2_4_wip() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun (K, V) -> K =:= V end,         |         |
-    case B of                              |         |
-        true -> maps:filter(F, M);         |         | F.
+    maps:filter(F, M).                     |         | F.
                                            |         | Expected: fun((number(), 'a' | 'b') -> boolean())
                                            |         | Got     : fun((none(), none()) -> term())
                                            |         | 
                                            |         |   fun((none(), none()) -> term()) is not a subtype of fun((number(), 'a' | 'b') -> boolean())
                                            |         |   because
                                            |         |   term() is not a subtype of boolean()
-        false -> maps:filter(F, It)        |         |
-    end.                                   |         |
                                            |         |
                                            |         |
--spec maps_filter_2_5_neg(boolean())       |         |
+-spec maps_filter_2_5_neg()                |         |
         -> #{number() => atom()}.          |         |
-maps_filter_2_5_neg(B) ->                  | ERROR   |
+maps_filter_2_5_neg() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun self/0,                        |         |
-    case B of                              |         |
-        true -> maps:filter(F, M);         |         | F.
+    maps:filter(F, M).                     |         | F.
                                            |         | Expected: fun((number(), 'a' | 'b') -> boolean())
                                            |         | Got     : fun(() -> pid())
-        false -> maps:filter(F, It)        |         |
-    end.                                   |         |
                                            |         |
--spec maps_filter_2_6_neg(boolean())       |         |
+-spec maps_filter_2_6_neg()                |         |
         -> #{number() => atom()}.          |         |
-maps_filter_2_6_neg(B) ->                  | ERROR   |
+maps_filter_2_6_neg() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun lists:filter/2,                |         |
-    case B of                              |         |
-        true -> maps:filter(F, M);         |         | F.
+    maps:filter(F, M).                     |         | F.
                                            |         | Expected: fun((number(), 'a' | 'b') -> boolean()) with 0 type parameters
                                            |         | Got     : fun((fun((T) -> boolean()), [T]) -> [T]) with 1 type parameter
-        false -> maps:filter(F, It)        |         |
-    end.                                   |         |
                                            |         |
 -spec maps_filter_2_7(                     |         |
-    boolean(),                             |         |
-    #{K => V},                             |         |
-    maps:iterator(K, V)                    |         |
-) -> #{K => V}.                            |         |
-maps_filter_2_7(B, M, It) ->               | OK      |
-    F = fun erlang:'=:='/2,                |         |
-    case B of                              |         |
-        true -> maps:filter(F, M);         |         |
-        false -> maps:filter(F, It)        |         |
-    end.                                   |         |
-                                           |         |
--spec maps_filter_2_8(                     |         |
-    boolean(),                             |         |
-    maps:iterator(K, V),                   |         |
     #{K => V}                              |         |
 ) -> #{K => V}.                            |         |
-maps_filter_2_8(B, M, It) ->               | OK      |
-    X = case B of                          |         |
-        true -> M;                         |         |
-        false -> It                        |         |
-    end,                                   |         |
-    maps:filter(fun erlang:'=:='/2, X).    |         |
+maps_filter_2_7(M) ->                      | OK      |
+    F = fun erlang:'=:='/2,                |         |
+    maps:filter(F, M).                     |         |
+                                           |         |
+-spec maps_filter_2_8(                     |         |
+    #{K => V}                              |         |
+) -> #{K => V}.                            |         |
+maps_filter_2_8(M) ->                      | OK      |
+    maps:filter(fun erlang:'=:='/2, M).    |         |
                                            |         |
 -spec maps_filter_2_9_neg(                 |         |
     boolean(),                             |         |
-    maps:iterator(K, V),                   |         |
     #{K => V}                              |         |
 ) -> #{K => V}.                            |         |
-maps_filter_2_9_neg(B, M, It) ->           | ERROR   |
+maps_filter_2_9_neg(B, M) ->               | ERROR   |
     X = case B of                          |         |
             true -> M;                     |         |
-            false -> It;                   |         |
-            _ -> a                         |         |
+            false -> a                     |         |
         end,                               |         |
     maps:filter(fun erlang:'=:='/2, X).    |         | X.
-                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
-                                           |         | Got     : maps:iterator(K, V) | #D{K => V} | 'a'
+                                           |         | Expected: #D{term() => term()}
+                                           |         | Got     : #D{K => V} | 'a'
                                            |         | 
-                                           |         |   maps:iterator(K, V) | #D{K => V} | 'a' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
+                                           |         |   #D{K => V} | 'a' is not a subtype of #D{term() => term()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
-                                           |         |   because
-                                           |         |   'a' is not a subtype of maps:iterator(term(), term())
+                                           |         |   'a' is not a subtype of #D{term() => term()}
                                            |         |
 % return ty of maps:filter/2               |         |
 % is always DictMap                        |         |
--spec maps_filter_2_8_neg(boolean())       |         |
+-spec maps_filter_2_8_neg()                |         |
         -> #{a => a, b => b}.              |         |
-maps_filter_2_8_neg(B) ->                  | ERROR   |
+maps_filter_2_8_neg() ->                   | ERROR   |
     M = #{a => a, b => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun erlang:'=:='/2,                |         |
-    case B of                              |         |
-        true -> maps:filter(F, M);         |         | maps:filter(F, M).
+    maps:filter(F, M).                     |         | maps:filter(F, M).
                                            |         | Expected: shape map #S{a => 'a', b => 'b'}
                                            |         | Got     : dict  map #D{atom() => 'a' | 'b'}
-        false -> maps:filter(F, It)        |         |
-    end.                                   |         |
-                                           |         |
--spec maps_filter_2_9_neg(                 |         |
-    maps:iterator(k, v)                    |         |
-) -> wrong_ret.                            |         |
-maps_filter_2_9_neg(It) ->                 | ERROR   |
-    F = fun erlang:'=:='/2,                |         |
-    maps:map(F, It).                       |         | maps:map(F, It).
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : #D{'k' => boolean()}
                                            |         |
 -spec maps_filter_2_10_neg() -> nok.       |         |
 maps_filter_2_10_neg() ->                  | ERROR   |
     F = fun erlang:'=:='/2,                |         |
     maps:filter(F, non_kv),                |         | 'non_kv'.
-                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
+                                           |         | Expected: #D{term() => term()}
                                            |         | Got     : 'non_kv'
-                                           |         | 
-                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
-                                           |         |   because
-                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term())
     nok.                                   |         |
                                            |         |
 -spec map_filter_empty(Pred) -> Map when   |         |
@@ -443,161 +379,103 @@ maps_filter_2_10_neg() ->                  | ERROR   |
 map_filter_empty(Pred) ->                  | OK      |
     maps:filter(Pred, #{}).                |         |
                                            |         |
--spec maps_map_2_1(boolean())              |         |
+-spec maps_map_2_1()                       |         |
         -> #{number() => boolean()}.       |         |
-maps_map_2_1(B) ->                         | OK      |
+maps_map_2_1() ->                          | OK      |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun erlang:'=:='/2,                |         |
-    case B of                              |         |
-        true -> maps:map(F, M);            |         |
-        false -> maps:map(F, It)           |         |
-    end.                                   |         |
+    maps:map(F, M).                        |         |
                                            |         |
--spec maps_map_2_2(boolean())              |         |
+-spec maps_map_2_2()                       |         |
         -> #{number() => boolean()}.       |         |
-maps_map_2_2(B) ->                         | OK      |
+maps_map_2_2() ->                          | OK      |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
-    case B of                              |         |
-        true -> maps:map(                  |         |
-            fun (K, V) -> K =:= V end,     |         |
-            M                              |         |
-        );                                 |         |
-        false -> maps:map(                 |         |
-            fun (K, V) -> K =:= V end,     |         |
-            It                             |         |
-        )                                  |         |
-    end.                                   |         |
+    maps:map(                              |         |
+        fun (K, V) -> K =:= V end,         |         |
+        M                                  |         |
+    ).                                     |         |
                                            |         |
--spec maps_map_2_3_neg(boolean())          |         |
+-spec maps_map_2_3_neg()                   |         |
         -> #{number() => boolean()}.       |         |
-maps_map_2_3_neg(B) ->                     | ERROR   |
+maps_map_2_3_neg() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
-    case B of                              |         |
-        true ->                            |         |
-            maps:map(                      |         | maps:map(fun, M).
+    maps:map(                              |         | maps:map(fun, M).
                                            |         | Expected: #D{number() => boolean()}
                                            |         | Got     : #D{number() => pid()}
                                            |         | 
                                            |         |   #D{number() => pid()} is not a subtype of #D{number() => boolean()}
                                            |         |   because
                                            |         |   pid() is not a subtype of boolean()
-                fun (_, _) -> self() end,  |         |
-                M                          |         |
-            );                             |         |
-        false ->                           |         |
-            maps:map(                      |         |
-                fun (_, _) -> self() end,  |         |
-                It                         |         |
-            )                              |         |
-    end.                                   |         |
+        fun (_, _) -> self() end,          |         |
+        M                                  |         |
+    ).                                     |         |
                                            |         |
 % should pass if we fully support          |         |
 %  lambdas assigned to vars                |         |
--spec maps_map_2_4_wip(boolean())          |         |
+-spec maps_map_2_4_wip()                   |         |
         -> #{number() => boolean()}.       |         |
-maps_map_2_4_wip(B) ->                     | ERROR   |
+maps_map_2_4_wip() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun (K, V) -> K =:= V end,         |         |
-    case B of                              |         |
-        true -> maps:map(F, M);            |         | F.
+    maps:map(F, M).                        |         | F.
                                            |         | Expected: fun((number(), 'a' | 'b') -> term())
                                            |         | Got     : fun((none(), none()) -> term())
                                            |         | 
                                            |         |   fun((none(), none()) -> term()) is not a subtype of fun((number(), 'a' | 'b') -> term())
                                            |         |   because
                                            |         |   number() is not a subtype of none()
-        false -> maps:map(F, It)           |         |
-    end.                                   |         |
                                            |         |
                                            |         |
--spec maps_map_2_5_neg(boolean())          |         |
+-spec maps_map_2_5_neg()                   |         |
         -> #{number() => boolean()}.       |         |
-maps_map_2_5_neg(B) ->                     | ERROR   |
+maps_map_2_5_neg() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun self/0,                        |         |
-    case B of                              |         |
-        true -> maps:map(F, M);            |         | F.
+    maps:map(F, M).                        |         | F.
                                            |         | Expected: fun((number(), 'a' | 'b') -> term())
                                            |         | Got     : fun(() -> pid())
-        false -> maps:map(F, It)           |         |
-    end.                                   |         |
                                            |         |
--spec maps_map_2_6_neg(boolean())          |         |
+-spec maps_map_2_6_neg()                   |         |
         -> #{number() => boolean()}.       |         |
-maps_map_2_6_neg(B) ->                     | ERROR   |
+maps_map_2_6_neg() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun lists:map/2,                   |         |
-    case B of                              |         |
-        true -> maps:map(F, M);            |         | F.
+    maps:map(F, M).                        |         | F.
                                            |         | Expected: fun((number(), 'a' | 'b') -> term()) with 0 type parameters
                                            |         | Got     : fun((fun((A) -> B), [A]) -> [B]) with 2 type parameters
-        false -> maps:map(F, It)           |         |
-    end.                                   |         |
                                            |         |
 -spec maps_map_2_7(                        |         |
-    boolean(),                             |         |
-    #{K => V},                             |         |
-    maps:iterator(K, V)                    |         |
+    #{K => term()}                         |         |
 ) -> #{K => boolean()}.                    |         |
-maps_map_2_7(B, M, It) ->                  | OK      |
+maps_map_2_7(M) ->                         | OK      |
     F = fun erlang:'=:='/2,                |         |
-    case B of                              |         |
-        true -> maps:map(F, M);            |         |
-        false -> maps:map(F, It)           |         |
-    end.                                   |         |
-                                           |         |
--spec maps_map_2_8_neg(                    |         |
-    maps:iterator(k, v)                    |         |
-) -> wrong_ret.                            |         |
-maps_map_2_8_neg(It) ->                    | ERROR   |
-    F = fun erlang:'=:='/2,                |         |
-    maps:map(F, It).                       |         | maps:map(F, It).
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : #D{'k' => boolean()}
+    maps:map(F, M).                        |         |
                                            |         |
 % return ty of maps:map/2                  |         |
 % is always DictMap                        |         |
--spec maps_map_2_9_neg(boolean())          |         |
+-spec maps_map_2_9_neg()                   |         |
         -> #{a => a, b => b}.              |         |
-maps_map_2_9_neg(B) ->                     | ERROR   |
+maps_map_2_9_neg() ->                      | ERROR   |
     M = #{a => a, b => b},                 |         |
-    It = maps:iterator(M),                 |         |
     F = fun erlang:'=:='/2,                |         |
-    case B of                              |         |
-        true -> maps:map(F, M);            |         | maps:map(F, M).
+    maps:map(F, M).                        |         | maps:map(F, M).
                                            |         | Expected: shape map #S{a => 'a', b => 'b'}
                                            |         | Got     : dict  map #D{atom() => boolean()}
-        false -> maps:map(F, It)           |         |
-    end.                                   |         |
                                            |         |
 -spec maps_map_2_10_neg()                  |         |
         -> nok.                            |         |
 maps_map_2_10_neg() ->                     | ERROR   |
     F = fun erlang:'=:='/2,                |         |
     maps:map(F, non_kv),                   |         | 'non_kv'.
-                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
+                                           |         | Expected: #D{term() => term()}
                                            |         | Got     : 'non_kv'
-                                           |         | 
-                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
-                                           |         |   because
-                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term())
     nok.                                   |         |
                                            |         |
--spec maps_fold_3_1(boolean())             |         |
+-spec maps_fold_3_1()                      |         |
         -> [number() | a | b].             |         |
-maps_fold_3_1(B) ->                        | OK      |
+maps_fold_3_1() ->                         | OK      |
     M = #{1 => a, 2 => b},                 |         |
-    It = maps:iterator(M),                 |         |
-    X = case B of                          |         |
-        true -> M;                         |         |
-        false -> It                        |         |
-    end,                                   |         |
+    X = M,                                 |         |
     Res = maps:fold(                       |         |
         fun (K, V, Acc) ->                 |         |
             [K, V] ++ Acc                  |         |
@@ -630,32 +508,14 @@ maps_fold_3_3_neg() ->                     | ERROR   |
         M                                  |         |
     ).                                     |         |
                                            |         |
--spec maps_fold_3_4_neg(                   |         |
-    maps:iterator(number(), k)             |         |
-) -> wrong_ret.                            |         |
-maps_fold_3_4_neg(It) ->                   | ERROR   |
-    maps:fold(                             |         | maps:fold(fun, [], It).
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : [number() | 'k']
-        fun (K, V, Acc) ->                 |         |
-            [K, V] ++ Acc                  |         |
-        end,                               |         |
-        [],                                |         |
-        It                                 |         |
-    ).                                     |         |
-                                           |         |
 -spec maps_fold_3_5_neg() -> nok.          |         |
 maps_fold_3_5_neg() ->                     | ERROR   |
     maps:fold(                             |         |
         fun (_, _, Acc) -> Acc end,        |         |
         [],                                |         |
         non_kv                             |         | 'non_kv'.
-                                           |         | Expected: maps:iterator(term(), term()) | #D{term() => term()}
+                                           |         | Expected: #D{term() => term()}
                                            |         | Got     : 'non_kv'
-                                           |         | 
-                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term()) | #D{term() => term()}
-                                           |         |   because
-                                           |         |   'non_kv' is not a subtype of maps:iterator(term(), term())
     ).                                     |         |
                                            |         |
 -spec maps_fold_3_6(none()) ->             |         |

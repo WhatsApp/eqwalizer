@@ -214,9 +214,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "filter", 2) =>
         val List(funArg, collection) = args
         val List(funArgTy, collectionTy) = argTys
-        val (keyTy, valTy) = unpackMapOrIterTy(collectionTy, collection.pos)
+        val (keyTy, valTy) = unpackMapTy(collectionTy)
           .getOrElse(
-            throw ExpectedSubtype(collection.pos, collection, expected = mapOrIter, got = collectionTy)
+            throw ExpectedSubtype(collection.pos, collection, expected = anyMapTy, got = collectionTy)
           )
         val expFunTy = FunType(Nil, List(keyTy, valTy), booleanType)
         funArg match {
@@ -247,9 +247,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "fold", 3) =>
         val List(funArg, _acc, collection) = args
         val List(funArgTy, accTy1, collectionTy) = argTys
-        val (keyTy, valTy) = unpackMapOrIterTy(collectionTy, collection.pos)
+        val (keyTy, valTy) = unpackMapTy(collectionTy)
           .getOrElse(
-            throw ExpectedSubtype(collection.pos, collection, expected = mapOrIter, got = collectionTy)
+            throw ExpectedSubtype(collection.pos, collection, expected = anyMapTy, got = collectionTy)
           )
         def getAccumulatorTy(accTy: Type): Type = funArg match {
           case lambda: Lambda =>
@@ -328,9 +328,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "map", 2) =>
         val List(funArg, collection) = args
         val List(funArgTy, collectionTy) = argTys
-        val (keyTy, valTy) = unpackMapOrIterTy(collectionTy, collection.pos)
+        val (keyTy, valTy) = unpackMapTy(collectionTy)
           .getOrElse(
-            throw ExpectedSubtype(collection.pos, collection, expected = mapOrIter, got = collectionTy)
+            throw ExpectedSubtype(collection.pos, collection, expected = anyMapTy, got = collectionTy)
           )
         val resValTy = funArg match {
           case lambda: Lambda =>
@@ -509,31 +509,14 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
     }
   }
 
-  private lazy val anyItTy = RemoteType(RemoteId("maps", "iterator", 2), List(AnyType, AnyType))
   private lazy val anyMapTy = DictMap(AnyType, AnyType)
-  private lazy val mapOrIter = subtype.join(anyItTy, anyMapTy)
 
-  private def unpackMapOrIterTy(ty: Type, pos: Pos): Option[(Type, Type)] =
-    if (!subtype.subType(ty, mapOrIter)) None
+  private def unpackMapTy(ty: Type): Option[(Type, Type)] =
+    if (!subtype.subType(ty, anyMapTy)) None
     else {
-      ty match {
-        case UnionType(tys) =>
-          val kvs = for {
-            kvOpts <- tys.map(unpackMapOrIterTy(_, pos))
-            (k, v) <- kvOpts
-          } yield (k, v)
-          val (keyTys, valTys) = kvs.unzip
-          Some(subtype.join(keyTys), subtype.join(valTys))
-        case OpaqueType(RemoteId("maps", "iterator", 2), List(kTy, valTy)) =>
-          Some(kTy, valTy)
-        case RemoteType(RemoteId("maps", "iterator", 2), List(kTy, valTy)) =>
-          Some(kTy, valTy)
-        case _ =>
-          val mapTy = narrow.asMapType(ty)
-          val k = narrow.getKeyType(mapTy)
-          val v = narrow.getValType(mapTy)
-          Some(k, v)
-      }
+      val mapTy = narrow.asMapType(ty)
+      val k = narrow.getKeyType(mapTy)
+      val v = narrow.getValType(mapTy)
+      Some(k, v)
     }
-
 }

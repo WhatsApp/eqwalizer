@@ -228,143 +228,87 @@ keystore_1() ->
     ),
     Res.
 
--spec maps_filter_2_1(boolean())
+-spec maps_filter_2_1()
         -> #{number() => atom()}.
-maps_filter_2_1(B) ->
+maps_filter_2_1() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun erlang:'=:='/2,
-    case B of
-        true -> maps:filter(F, M);
-        false -> maps:filter(F, It)
-    end.
+    maps:filter(F, M).
 
--spec maps_filter_2_2(boolean())
+-spec maps_filter_2_2()
         -> #{number() => atom()}.
-maps_filter_2_2(B) ->
+maps_filter_2_2() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
-    case B of
-        true -> maps:filter(
-            fun (K, V) -> K =:= V end,
-            M
-        );
-        false -> maps:filter(
-            fun (K, V) -> K =:= V end,
-            It
-        )
-    end.
+    maps:filter(
+        fun (K, V) -> K =:= V end,
+        M
+    ).
 
--spec maps_filter_2_3_neg(boolean())
+-spec maps_filter_2_3_neg()
         -> #{number() => atom()}.
-maps_filter_2_3_neg(B) ->
+maps_filter_2_3_neg() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
-    case B of
-        true ->
-            maps:filter(
-                fun (_, _) -> self() end,
-                M
-            );
-        false ->
-            maps:filter(
-                fun (_, _) -> self() end,
-                It
-            )
-    end.
+    maps:filter(
+        fun (_, _) -> self() end,
+        M
+    ).
 
 % should pass if we fully support
 %  lambdas assigned to vars
--spec maps_filter_2_4_wip(boolean())
+-spec maps_filter_2_4_wip()
         -> #{number() => atom()}.
-maps_filter_2_4_wip(B) ->
+maps_filter_2_4_wip() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun (K, V) -> K =:= V end,
-    case B of
-        true -> maps:filter(F, M);
-        false -> maps:filter(F, It)
-    end.
+    maps:filter(F, M).
 
 
--spec maps_filter_2_5_neg(boolean())
+-spec maps_filter_2_5_neg()
         -> #{number() => atom()}.
-maps_filter_2_5_neg(B) ->
+maps_filter_2_5_neg() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun self/0,
-    case B of
-        true -> maps:filter(F, M);
-        false -> maps:filter(F, It)
-    end.
+    maps:filter(F, M).
 
--spec maps_filter_2_6_neg(boolean())
+-spec maps_filter_2_6_neg()
         -> #{number() => atom()}.
-maps_filter_2_6_neg(B) ->
+maps_filter_2_6_neg() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun lists:filter/2,
-    case B of
-        true -> maps:filter(F, M);
-        false -> maps:filter(F, It)
-    end.
+    maps:filter(F, M).
 
 -spec maps_filter_2_7(
-    boolean(),
-    #{K => V},
-    maps:iterator(K, V)
-) -> #{K => V}.
-maps_filter_2_7(B, M, It) ->
-    F = fun erlang:'=:='/2,
-    case B of
-        true -> maps:filter(F, M);
-        false -> maps:filter(F, It)
-    end.
-
--spec maps_filter_2_8(
-    boolean(),
-    maps:iterator(K, V),
     #{K => V}
 ) -> #{K => V}.
-maps_filter_2_8(B, M, It) ->
-    X = case B of
-        true -> M;
-        false -> It
-    end,
-    maps:filter(fun erlang:'=:='/2, X).
+maps_filter_2_7(M) ->
+    F = fun erlang:'=:='/2,
+    maps:filter(F, M).
+
+-spec maps_filter_2_8(
+    #{K => V}
+) -> #{K => V}.
+maps_filter_2_8(M) ->
+    maps:filter(fun erlang:'=:='/2, M).
 
 -spec maps_filter_2_9_neg(
     boolean(),
-    maps:iterator(K, V),
     #{K => V}
 ) -> #{K => V}.
-maps_filter_2_9_neg(B, M, It) ->
+maps_filter_2_9_neg(B, M) ->
     X = case B of
             true -> M;
-            false -> It;
-            _ -> a
+            false -> a
         end,
     maps:filter(fun erlang:'=:='/2, X).
 
 % return ty of maps:filter/2
 % is always DictMap
--spec maps_filter_2_8_neg(boolean())
+-spec maps_filter_2_8_neg()
         -> #{a => a, b => b}.
-maps_filter_2_8_neg(B) ->
+maps_filter_2_8_neg() ->
     M = #{a => a, b => b},
-    It = maps:iterator(M),
     F = fun erlang:'=:='/2,
-    case B of
-        true -> maps:filter(F, M);
-        false -> maps:filter(F, It)
-    end.
-
--spec maps_filter_2_9_neg(
-    maps:iterator(k, v)
-) -> wrong_ret.
-maps_filter_2_9_neg(It) ->
-    F = fun erlang:'=:='/2,
-    maps:map(F, It).
+    maps:filter(F, M).
 
 -spec maps_filter_2_10_neg() -> nok.
 maps_filter_2_10_neg() ->
@@ -378,118 +322,70 @@ maps_filter_2_10_neg() ->
 map_filter_empty(Pred) ->
     maps:filter(Pred, #{}).
 
--spec maps_map_2_1(boolean())
+-spec maps_map_2_1()
         -> #{number() => boolean()}.
-maps_map_2_1(B) ->
+maps_map_2_1() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun erlang:'=:='/2,
-    case B of
-        true -> maps:map(F, M);
-        false -> maps:map(F, It)
-    end.
+    maps:map(F, M).
 
--spec maps_map_2_2(boolean())
+-spec maps_map_2_2()
         -> #{number() => boolean()}.
-maps_map_2_2(B) ->
+maps_map_2_2() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
-    case B of
-        true -> maps:map(
-            fun (K, V) -> K =:= V end,
-            M
-        );
-        false -> maps:map(
-            fun (K, V) -> K =:= V end,
-            It
-        )
-    end.
+    maps:map(
+        fun (K, V) -> K =:= V end,
+        M
+    ).
 
--spec maps_map_2_3_neg(boolean())
+-spec maps_map_2_3_neg()
         -> #{number() => boolean()}.
-maps_map_2_3_neg(B) ->
+maps_map_2_3_neg() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
-    case B of
-        true ->
-            maps:map(
-                fun (_, _) -> self() end,
-                M
-            );
-        false ->
-            maps:map(
-                fun (_, _) -> self() end,
-                It
-            )
-    end.
+    maps:map(
+        fun (_, _) -> self() end,
+        M
+    ).
 
 % should pass if we fully support
 %  lambdas assigned to vars
--spec maps_map_2_4_wip(boolean())
+-spec maps_map_2_4_wip()
         -> #{number() => boolean()}.
-maps_map_2_4_wip(B) ->
+maps_map_2_4_wip() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun (K, V) -> K =:= V end,
-    case B of
-        true -> maps:map(F, M);
-        false -> maps:map(F, It)
-    end.
+    maps:map(F, M).
 
 
--spec maps_map_2_5_neg(boolean())
+-spec maps_map_2_5_neg()
         -> #{number() => boolean()}.
-maps_map_2_5_neg(B) ->
+maps_map_2_5_neg() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun self/0,
-    case B of
-        true -> maps:map(F, M);
-        false -> maps:map(F, It)
-    end.
+    maps:map(F, M).
 
--spec maps_map_2_6_neg(boolean())
+-spec maps_map_2_6_neg()
         -> #{number() => boolean()}.
-maps_map_2_6_neg(B) ->
+maps_map_2_6_neg() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
     F = fun lists:map/2,
-    case B of
-        true -> maps:map(F, M);
-        false -> maps:map(F, It)
-    end.
+    maps:map(F, M).
 
 -spec maps_map_2_7(
-    boolean(),
-    #{K => V},
-    maps:iterator(K, V)
+    #{K => term()}
 ) -> #{K => boolean()}.
-maps_map_2_7(B, M, It) ->
+maps_map_2_7(M) ->
     F = fun erlang:'=:='/2,
-    case B of
-        true -> maps:map(F, M);
-        false -> maps:map(F, It)
-    end.
-
--spec maps_map_2_8_neg(
-    maps:iterator(k, v)
-) -> wrong_ret.
-maps_map_2_8_neg(It) ->
-    F = fun erlang:'=:='/2,
-    maps:map(F, It).
+    maps:map(F, M).
 
 % return ty of maps:map/2
 % is always DictMap
--spec maps_map_2_9_neg(boolean())
+-spec maps_map_2_9_neg()
         -> #{a => a, b => b}.
-maps_map_2_9_neg(B) ->
+maps_map_2_9_neg() ->
     M = #{a => a, b => b},
-    It = maps:iterator(M),
     F = fun erlang:'=:='/2,
-    case B of
-        true -> maps:map(F, M);
-        false -> maps:map(F, It)
-    end.
+    maps:map(F, M).
 
 -spec maps_map_2_10_neg()
         -> nok.
@@ -498,15 +394,11 @@ maps_map_2_10_neg() ->
     maps:map(F, non_kv),
     nok.
 
--spec maps_fold_3_1(boolean())
+-spec maps_fold_3_1()
         -> [number() | a | b].
-maps_fold_3_1(B) ->
+maps_fold_3_1() ->
     M = #{1 => a, 2 => b},
-    It = maps:iterator(M),
-    X = case B of
-        true -> M;
-        false -> It
-    end,
+    X = M,
     Res = maps:fold(
         fun (K, V, Acc) ->
             [K, V] ++ Acc
@@ -528,18 +420,6 @@ maps_fold_3_3_neg() ->
         fun (_, _, Acc) -> [Acc] end,
         [],
         M
-    ).
-
--spec maps_fold_3_4_neg(
-    maps:iterator(number(), k)
-) -> wrong_ret.
-maps_fold_3_4_neg(It) ->
-    maps:fold(
-        fun (K, V, Acc) ->
-            [K, V] ++ Acc
-        end,
-        [],
-        It
     ).
 
 -spec maps_fold_3_5_neg() -> nok.
