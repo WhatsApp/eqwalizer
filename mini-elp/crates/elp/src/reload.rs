@@ -14,6 +14,7 @@ use elp_ide_db::elp_base_db::ProjectId;
 use elp_ide_db::elp_base_db::SourceRootId;
 use elp_ide_db::elp_base_db::VfsPath;
 use fxhash::FxHashMap;
+use lsp_types::GlobPattern;
 
 #[derive(Debug)]
 pub struct ProjectFolders {
@@ -64,7 +65,7 @@ impl ProjectFolders {
             .iter()
             .flat_map(|(project_id, app)| iter::repeat(project_id).zip(app.all_source_dirs()))
             .map(|(_project_id, root)| lsp_types::FileSystemWatcher {
-                glob_pattern: format!("{}/**/*.{{e,h}}rl", root.display()),
+                glob_pattern: GlobPattern::String(format!("{}/**/*.{{e,h}}rl", root.display())),
                 kind: None,
             })
             .collect();
