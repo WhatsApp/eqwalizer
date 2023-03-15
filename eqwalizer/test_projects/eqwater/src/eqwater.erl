@@ -480,12 +480,12 @@ record_occ03(#union_field2{field = A})
 record_occ03(#union_field2{field = B}) ->
   B.
   
--spec record_occ04_neg
+-spec record_occ04
   (#union_field{}) -> binary().
-record_occ04_neg(R)
+record_occ04(R)
   when is_binary(R#union_field.field) ->
   R#union_field.field;
-record_occ04_neg(R) ->
+record_occ04(R) ->
   atom_to_binary(R#union_field.field).
     
 -spec record_occ05_neg
@@ -495,11 +495,11 @@ record_occ05_neg(#union_field{field = B})
 record_occ05_neg(#union_field{field = A}) ->
   A.
 
--spec record_occ06_neg
+-spec record_occ06
   (#union_field{}) -> binary().
-record_occ06_neg(#union_field{field = B})
+record_occ06(#union_field{field = B})
   when is_binary(B) -> B;
-record_occ06_neg(R) ->
+record_occ06(R) ->
   atom_to_binary(R#union_field.field).
   
 -spec record_occ07_tuple

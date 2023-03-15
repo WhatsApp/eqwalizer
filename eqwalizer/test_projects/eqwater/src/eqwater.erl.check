@@ -530,18 +530,12 @@ record_occ03(#union_field2{field = A})     | OK      |
 record_occ03(#union_field2{field = B}) ->  |         |
   B.                                       |         |
                                            |         |
--spec record_occ04_neg                     |         |
+-spec record_occ04                         |         |
   (#union_field{}) -> binary().            |         |
-record_occ04_neg(R)                        | ERROR   |
+record_occ04(R)                            | OK      |
   when is_binary(R#union_field.field) ->   |         |
-  R#union_field.field;                     |         | ...#union_field.field.
-                                           |         | Expected: binary()
-                                           |         | Got     : atom() | binary()
-                                           |         | 
-                                           |         |   atom() | binary() is not a subtype of binary()
-                                           |         |   because
-                                           |         |   atom() is not a subtype of binary()
-record_occ04_neg(R) ->                     |         |
+  R#union_field.field;                     |         |
+record_occ04(R) ->                         |         |
   atom_to_binary(R#union_field.field).     |         |
                                            |         |
 -spec record_occ05_neg                     |         |
@@ -557,18 +551,12 @@ record_occ05_neg(#union_field{field = A}) ……         |
                                            |         |   because
                                            |         |   atom() is not a subtype of binary()
                                            |         |
--spec record_occ06_neg                     |         |
+-spec record_occ06                         |         |
   (#union_field{}) -> binary().            |         |
-record_occ06_neg(#union_field{field = B})  | ERROR   |
+record_occ06(#union_field{field = B})      | OK      |
   when is_binary(B) -> B;                  |         |
-record_occ06_neg(R) ->                     |         |
-  atom_to_binary(R#union_field.field).     |         | ...#union_field.field.
-                                           |         | Expected: atom()
-                                           |         | Got     : atom() | binary()
-                                           |         | 
-                                           |         |   atom() | binary() is not a subtype of atom()
-                                           |         |   because
-                                           |         |   binary() is not a subtype of atom()
+record_occ06(R) ->                         |         |
+  atom_to_binary(R#union_field.field).     |         |
                                            |         |
 -spec record_occ07_tuple                   |         |
   ({union_field, atom()}) -> binary().     |         |
@@ -1134,12 +1122,10 @@ occ43_neg({F, S} = {_, _}) -> F.           |         | F.
 }).                                        |         |
                                            |         |
 -spec occ44(#string_or_def{}) -> string(). |         |
-occ44(R = #string_or_def{value = undefined…… ERROR   |
+occ44(R = #string_or_def{value = undefined…… OK      |
     D;                                     |         |
 occ44(R = #string_or_def{}) ->             |         |
-    R#string_or_def.value.                 |         | ...#string_or_def.value.
-                                           |         | Expected: string()
-                                           |         | Got     : string() | 'undefined'
+    R#string_or_def.value.                 |         |
                                            |         |
 -spec occ45(binary() | atom(), atom())     |         |
       -> {atom(), atom()}.                 |         |

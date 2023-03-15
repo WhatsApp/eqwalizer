@@ -421,22 +421,13 @@ final class Check(pipelineContext: PipelineContext) {
           val recDecl = util
             .getRecord(module, recName)
             .getOrElse(throw UnboundRecord(expr.pos, recName))
-          val field = recDecl.fields(fieldName)
-          if (field.refinable) {
-            val (elabTy, elabEnv) = elab.elabExpr(recExpr, env)
-            if (!subtype.subType(elabTy, RecordType(recName)(module)))
-              throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
-            val fieldTy = narrow.getRecordField(recDecl, elabTy, fieldName)
-            if (!subtype.subType(fieldTy, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldTy)
-            elabEnv
-          } else {
-            val fieldT = field.tp
-            if (!subtype.subType(fieldT, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldT)
-            else
-              checkExpr(recExpr, RecordType(recName)(module), env)
-          }
+          val (elabTy, elabEnv) = elab.elabExpr(recExpr, env)
+          if (!subtype.subType(elabTy, RecordType(recName)(module)))
+            throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
+          val fieldTy = narrow.getRecordField(recDecl, elabTy, fieldName)
+          if (!subtype.subType(fieldTy, resTy))
+            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldTy)
+          elabEnv
         case RecordIndex(_, _) =>
           val indT = NumberType
           if (!subtype.subType(indT, resTy))

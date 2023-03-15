@@ -470,18 +470,11 @@ final class Elab(pipelineContext: PipelineContext) {
         elabRecordUpdate(rUpdate, env)
       case RecordSelect(recExpr, recName, fieldName) =>
         val recDecl = util.getRecord(module, recName).getOrElse(throw UnboundRecord(expr.pos, recName))
-        val field = recDecl.fields(fieldName)
-        if (field.refinable) {
-          val (elabTy, elabEnv) = elabExpr(recExpr, env)
-          if (subtype.subType(elabTy, RecordType(recName)(module)))
-            (narrow.getRecordField(recDecl, elabTy, fieldName), elabEnv)
-          else
-            throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
-        } else {
-          val fieldT = field.tp
-          val env1 = check.checkExpr(recExpr, RecordType(recName)(module), env)
-          (fieldT, env1)
-        }
+        val (elabTy, elabEnv) = elabExpr(recExpr, env)
+        if (subtype.subType(elabTy, RecordType(recName)(module)))
+          (narrow.getRecordField(recDecl, elabTy, fieldName), elabEnv)
+        else
+          throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
       case RecordIndex(_, _) =>
         (NumberType, env)
       case MapCreate(kvs) =>
