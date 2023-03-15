@@ -37,8 +37,11 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     case "is_tuple"     => AnyTupleType
   }
 
-  private val elabPredicateType21: PartialFunction[(String, Test), Type] = { case ("is_map_key", _) =>
-    DictMap(AnyType, AnyType)
+  private val elabPredicateType21: PartialFunction[(String, Test), Type] = {
+    case ("is_map_key", _) =>
+      DictMap(AnyType, AnyType)
+    case ("element", _) =>
+      AnyTupleType
   }
 
   private val elabPredicateType22: PartialFunction[(String, Test), Type] = {

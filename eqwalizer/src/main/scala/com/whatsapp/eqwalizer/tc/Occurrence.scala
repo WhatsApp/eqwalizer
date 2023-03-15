@@ -69,7 +69,7 @@ object Occurrence {
   case class FieldObj(field: Field, obj: Obj) extends Obj
 
   sealed trait Field
-  case class TupleField(index: Int, arity: Int) extends Field
+  case class TupleField(index: Int, arity: Option[Int]) extends Field
   case class RecordField(field: String, recName: String) extends Field
   case class ShapeField(field: String) extends Field
   case object ListHead extends Field
@@ -225,7 +225,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
     }
     val eMap = c.expr match {
       case Tuple(elems) =>
-        elems.zipWithIndex.collect { case (Var(n), i) => n -> mkObj(x, List(TupleField(i, elems.size))) }.toMap
+        elems.zipWithIndex.collect { case (Var(n), i) => n -> mkObj(x, List(TupleField(i, Some(elems.size)))) }.toMap
       case _ =>
         Map.empty[Name, Obj]
     }
@@ -338,7 +338,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case PatTuple(elems) =>
         val arity = elems.size
         elems.zipWithIndex.flatMap { case (elem, i) =>
-          val pathI = path ++ List(TupleField(i, arity))
+          val pathI = path ++ List(TupleField(i, Some(arity)))
           aliases(x, pathI, elem, env)
         }
       case PatRecord(recName, fields, gen) =>
@@ -395,6 +395,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
         testObj(rec, aMap).map(FieldObj(RecordField(fieldName, recName), _))
       case TestCall(Id("hd", 1), List(arg)) =>
         testObj(arg, aMap).map(FieldObj(ListHead, _))
+      case TestCall(Id("element", 2), List(TestNumber(Some(index)), arg)) =>
+        testObj(arg, aMap).map(FieldObj(TupleField(index.toInt, None), _))
       case _ =>
         None
     }
@@ -494,7 +496,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val posThis = Pos(obj, TupleType(List.fill(arity)(AnyType)))
         val negThis = Neg(obj, TupleType(List.fill(arity)(AnyType)))
         val (posThat, negThat) = elems.zipWithIndex.flatMap { case (elem, i) =>
-          patProps(x, path :+ TupleField(i, arity), elem, env)
+          patProps(x, path :+ TupleField(i, Some(arity)), elem, env)
         }.unzip
         val pos = and(posThis :: posThat)
         val neg =
@@ -837,7 +839,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
         update(body, path, pol, s)
       case (UnionType(ts), _) =>
         UnionType(ts.map(update(_, path, pol, s)))
-      case (TupleType(ts), TupleField(pos, arity) :: path) if ts.size == arity =>
+      case (TupleType(ts), TupleField(pos, Some(arity)) :: path) if ts.size == arity =>
         val t = ts(pos)
         val t1 = update(t, path, pol, s)
         TupleType_*(ts.updated(pos, t1))
@@ -883,6 +885,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
           NoneType
         else
           ListType(lt)
+      case (_, TupleField(_, None) :: _) =>
+        AnyTupleType
       case (_, _) =>
         t
     }
@@ -993,7 +997,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
           .getOrElse(DynamicType)
       case (UnionType(ts), _) =>
         UnionType(ts.map(typePathRef(_, path)))
-      case (TupleType(ts), TupleField(index, arity) :: path1) if ts.size == arity =>
+      case (TupleType(ts), TupleField(index, Some(arity)) :: path1) if ts.size == arity =>
         typePathRef(ts(index), path1)
       case (rTy: RecordType, RecordField(fieldName, recName) :: path1) if rTy.name == recName =>
         util
