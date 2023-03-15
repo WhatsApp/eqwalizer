@@ -66,3 +66,24 @@ redundant_guard(X) ->
     (err, term()) -> ok.
 overloaded_guard(ok, V) when V =/= err -> V;
 overloaded_guard(_, _) -> ok.
+
+-spec guard_element_1
+    (term()) -> tuple().
+guard_element_1(T)
+    when element(1, T) ->
+    T;
+guard_element_1(T) -> {T}.
+
+-spec guard_element_2
+    (term()) -> tuple().
+guard_element_2(T)
+    when element(1, T) =:= a ->
+    T;
+guard_element_2(T) -> {T}.
+
+-spec guard_element_neg
+    (tuple()) -> tuple().
+guard_element_neg(T)
+    when element(1, T) =:= a ->
+    T;
+guard_element_neg(T) -> T + 1.
