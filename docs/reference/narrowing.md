@@ -128,41 +128,41 @@ some caveats, detailed below.
 #### Repetition of the same variable in a pattern
 
 For technical reasons and to keep a consistent signal, occurrence typing is
-automatically disabled whenever the same variable occurs twice in the same
+automatically disabled for a clause whenever the same variable occurs twice in the same
 pattern. Consider for example the following function which sets an entry in
 a map but is optimised to not perform any change if it is passed a value
 that is equal to the default value:
 ```Erlang
--spec set_value(#{value := binary()}, binary() | undefined, binary()) -> #{value := binary()}.
+-spec set_value(#{value := binary()} | undefined, binary(), binary()) -> #{value := binary()}.
+set_value(undefined, Value, _) -> #{value => Value};
 set_value(Map, Default, Default) -> Map;
-set_value(Map, undefined, Default) -> Map#{value := Default};
 set_value(Map, Value, _) -> Map#{value := Value}.
 ```
 As-is, this function requires occurrence typing to type-check, since otherwise
-eqWAlizer is unable to deduce that `Value = undefined` has been covered by
-the second clause and therefore that `Value` has type `binary()` only in the
-third clause.
+eqWAlizer is unable to deduce that `Map = undefined` has been covered by
+the first clause and therefore that `Map` is indeed a map in the second and
+third clauses.
 
-Unfortunately, the same variable `Default` appears twice in the first clause,
-occurrence typing is disabled and this function cannot be type-checked. There
+Unfortunately, since the same variable `Default` appears twice in the second clause,
+occurrence typing is disabled for this clause and this function cannot be type-checked. There
 are two solutions to overcome this particular problem.
 
 First, as is often the case with occurrence typing, one can add guards so that
 this only requires narrowing instead of occurrence typing:
 ```Erlang
--spec set_value(#{value := binary()}, binary() | undefined, binary()) -> #{value := binary()}.
-set_value(Map, Default, Default) -> Map;
-set_value(Map, undefined, Default) -> Map#{value := Default};
-set_value(Map, Value, _) when is_binary(Value) -> Map#{value := Value}.
+-spec set_value(#{value := binary()} | undefined, binary(), binary()) -> #{value := binary()}.
+set_value(undefined, Value, _) -> #{value => Value};
+set_value(Map, Default, Default) when is_map(Map) -> Map;
+set_value(Map, Value, _) -> Map#{value := Value}.
 ```
 
 If adding a guard is not possible for some reason, it is also possible to
-rewrite the first clause to separate the variables and introduce a guard
+rewrite the second clause to separate the variables and introduce a guard
 instead:
 ```Erlang
--spec set_value(#{value := binary()}, binary() | undefined, binary()) -> #{value := binary()}.
-set_value(Map, Value, Default) when Value == Default -> Map;
-set_value(Map, undefined, Default) -> Map#{value := Default};
+-spec set_value(#{value := binary()} | undefined, binary(), binary()) -> #{value := binary()}.
+set_value(undefined, Value, _) -> #{value => Value};
+set_value(Map, Value, Default) when Value =:= Default -> Map;
 set_value(Map, Value, _) -> Map#{value := Value}.
 ```
 
