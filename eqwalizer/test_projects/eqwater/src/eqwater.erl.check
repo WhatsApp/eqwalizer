@@ -1414,40 +1414,22 @@ any_tuple_neg(T) ->                        | ERROR   |
                                            |         |
 -spec non_linear_1                         |         |
     ({atom(), a | b}) -> b.                |         |
-non_linear_1({A, A}) -> b;                 | ERROR   |
+non_linear_1({A, A}) -> b;                 | OK      |
 non_linear_1({_, a}) -> b;                 |         |
-non_linear_1({_, B}) -> B.                 |         | B.
-                                           |         | Expected: 'b'
-                                           |         | Got     : 'a' | 'b'
-                                           |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'b'
-                                           |         |   because
-                                           |         |   'a' is not a subtype of 'b'
+non_linear_1({_, B}) -> B.                 |         |
                                            |         |
 -spec non_linear_2                         |         |
     (map(), integer() | undefined)         |         |
     -> integer().                          |         |
-non_linear_2(#{a := I}, I) -> 0;           | ERROR   |
+non_linear_2(#{a := I}, I) -> 0;           | OK      |
 non_linear_2(#{}, undefined) -> 0;         |         |
-non_linear_2(#{}, I) -> I.                 |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'undefined'
-                                           |         | 
-                                           |         |   number() | 'undefined' is not a subtype of number()
-                                           |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+non_linear_2(#{}, I) -> I.                 |         |
                                            |         |
 -spec non_linear_3                         |         |
     ({atom(), a | b}) -> b.                |         |
-non_linear_3({_, a}) -> b;                 | ERROR   |
+non_linear_3({_, a}) -> b;                 | OK      |
 non_linear_3({A, A}) -> b;                 |         |
-non_linear_3({_, B}) -> B.                 |         | B.
-                                           |         | Expected: 'b'
-                                           |         | Got     : 'a' | 'b'
-                                           |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'b'
-                                           |         |   because
-                                           |         |   'a' is not a subtype of 'b'
+non_linear_3({_, B}) -> B.                 |         |
                                            |         |
 -spec non_linear_neg_1                     |         |
     ({atom(), a | b}) -> b.                |         |
