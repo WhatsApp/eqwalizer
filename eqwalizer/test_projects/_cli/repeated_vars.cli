@@ -68,6 +68,11 @@ check/src/vars1.erl:25
 check/src/vars2.erl:20
 check/src/vars2.erl:21
 check_gradual/src/gradual_untyped.erl:84
+eqwater/src/eqwater.erl:1236
+eqwater/src/eqwater.erl:1243
+eqwater/src/eqwater.erl:1250
+eqwater/src/eqwater.erl:1255
+eqwater/src/eqwater.erl:1257
 eqwater/src/eqwater.erl:354
 eqwater/src/eqwater.erl:408
 eqwater/src/eqwater.erl:419
@@ -76,4 +81,4 @@ eqwater/src/eqwater.erl:554
 eqwater/src/eqwater_records.erl:104
 eqwater/src/eqwater_records.erl:112
 eqwater/src/eqwater_sound.erl:49
-Total: 78
+Total: 83

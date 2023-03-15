@@ -1230,3 +1230,28 @@ any_tuple_neg(T) ->
     case T of
         _ when is_tuple(T) -> T
     end.
+
+-spec non_linear_1
+    ({atom(), a | b}) -> b.
+non_linear_1({A, A}) -> b;
+non_linear_1({_, a}) -> b;
+non_linear_1({_, B}) -> B.
+
+-spec non_linear_2
+    (map(), integer() | undefined)
+    -> integer().
+non_linear_2(#{a := I}, I) -> 0;
+non_linear_2(#{}, undefined) -> 0;
+non_linear_2(#{}, I) -> I.
+
+-spec non_linear_3
+    ({atom(), a | b}) -> b.
+non_linear_3({_, a}) -> b;
+non_linear_3({A, A}) -> b;
+non_linear_3({_, B}) -> B.
+
+-spec non_linear_neg_1
+    ({atom(), a | b}) -> b.
+non_linear_neg_1({A, A}) -> b;
+non_linear_neg_1({_, a}) -> b;
+non_linear_neg_1({B, B}) -> B.
