@@ -130,36 +130,19 @@ occ_list_14_neg(L) -> L.                   |         | L.
                                            |         | Expected: binary()
                                            |         | Got     : []
                                            |         |
-% Could be supported later                 |         |
 -spec occ_list_15                          |         |
     ([atom()] | [binary()]) ->             |         |
     [binary()].                            |         |
-occ_list_15(L) when is_binary(hd(L))       | ERROR   |
-    -> L;                                  |         | L.
-                                           |         | Expected: [binary()]
-                                           |         | Got     : [atom()] | [binary()]
-                                           |         | 
-                                           |         |   [atom()] | [binary()] is not a subtype of [binary()]
-                                           |         |   because
-                                           |         |   [atom()] is not a subtype of [binary()]
-                                           |         |   because
-                                           |         |   atom() is not a subtype of binary()
+occ_list_15(L) when is_binary(hd(L))       | OK      |
+    -> L;                                  |         |
 occ_list_15(_) -> [].                      |         |
                                            |         |
 -spec occ_list_16                          |         |
     ([atom()] | [binary()]) ->             |         |
     [atom()].                              |         |
-occ_list_16(L) when is_binary(hd(L))       | ERROR   |
+occ_list_16(L) when is_binary(hd(L))       | OK      |
     -> [];                                 |         |
-occ_list_16(L) -> L.                       |         | L.
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [atom()] | [binary()]
-                                           |         | 
-                                           |         |   [atom()] | [binary()] is not a subtype of [atom()]
-                                           |         |   because
-                                           |         |   [binary()] is not a subtype of [atom()]
-                                           |         |   because
-                                           |         |   binary() is not a subtype of atom()
+occ_list_16(L) -> L.                       |         |
                                            |         |
 -spec occ_list_17                          |         |
     ([atom()] | [binary()]) ->             |         |

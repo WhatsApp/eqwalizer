@@ -96,7 +96,6 @@ occ_list_14_neg([H | _]) when is_binary(H) -> H;
 occ_list_14_neg([H | _]) -> atom_to_binary(H);
 occ_list_14_neg(L) -> L.
 
-% Could be supported later
 -spec occ_list_15
     ([atom()] | [binary()]) ->
     [binary()].

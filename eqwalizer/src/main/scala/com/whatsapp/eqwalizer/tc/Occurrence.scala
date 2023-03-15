@@ -387,6 +387,19 @@ final class Occurrence(pipelineContext: PipelineContext) {
     (and(pos), or(neg))
   }
 
+  private def testObj(test: Test, aMap: Map[Name, Obj]): Option[Obj] = {
+    test match {
+      case TestVar(v) =>
+        Some(aMap.getOrElse(v, VarObj(v)))
+      case TestRecordSelect(rec, recName, fieldName) =>
+        testObj(rec, aMap).map(FieldObj(RecordField(fieldName, recName), _))
+      case TestCall(Id("hd", 1), List(arg)) =>
+        testObj(arg, aMap).map(FieldObj(ListHead, _))
+      case _ =>
+        None
+    }
+  }
+
   private def cmpProps(obj: Obj, test: Test): (Prop, Prop) = {
     test match {
       case TestAtom(s)     => (Pos(obj, AtomLitType(s)), Neg(obj, AtomLitType(s)))
@@ -398,18 +411,21 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   private def testProps(test: Test, aMap: Map[Name, Obj]): (Prop, Prop) = {
     test match {
-      case TestCall(Id(pred, 1), List(TestVar(v))) if unary_predicates.isDefinedAt(pred) =>
-        val obj = aMap.getOrElse(v, VarObj(v))
+      case TestCall(Id(pred, 1), List(arg)) if unary_predicates.isDefinedAt(pred) =>
         val tp = unary_predicates(pred)
-        (Pos(obj, tp), Neg(obj, tp))
-      case TestCall(Id("is_function", 2), List(TestVar(v), TestNumber(Some(arity)))) =>
-        val obj = aMap.getOrElse(v, VarObj(v))
+        testObj(arg, aMap)
+          .map(obj => (Pos(obj, tp), Neg(obj, tp)))
+          .getOrElse(Unknown, Unknown)
+      case TestCall(Id("is_function", 2), List(arg, TestNumber(Some(arity)))) =>
         val tp = FunType(Nil, List.fill(arity.intValue)(AnyType), AnyType)
-        (Pos(obj, tp), Neg(obj, tp))
-      case TestCall(Id("is_record", 2 | 3), TestVar(v) :: TestAtom(recName) :: _) =>
-        val obj = aMap.getOrElse(v, VarObj(v))
+        testObj(arg, aMap)
+          .map(obj => (Pos(obj, tp), Neg(obj, tp)))
+          .getOrElse(Unknown, Unknown)
+      case TestCall(Id("is_record", 2 | 3), arg :: TestAtom(recName) :: _) =>
         val tp = RecordType(recName)(module)
-        (Pos(obj, tp), Neg(obj, tp))
+        testObj(arg, aMap)
+          .map(obj => (Pos(obj, tp), Neg(obj, tp)))
+          .getOrElse(Unknown, Unknown)
       case TestUnOp("not", test) =>
         val (p1, p2) = testProps(test, aMap)
         (negateGuardProp(p1), negateGuardProp(p2))
@@ -421,13 +437,15 @@ final class Occurrence(pipelineContext: PipelineContext) {
         val (pos1, neg1) = testProps(test1, aMap)
         val (pos2, neg2) = testProps(test2, aMap)
         (or(List(pos1, pos2)), and(List(neg1, neg2)))
-      case TestBinOp("==" | "=:=", TestVar(v), cmp) =>
-        val obj = aMap.getOrElse(v, VarObj(v))
-        cmpProps(obj, cmp)
-      case TestBinOp("=/=" | "/=", TestVar(v), cmp) =>
-        val obj = aMap.getOrElse(v, VarObj(v))
-        val (pos, neg) = cmpProps(obj, cmp)
-        (neg, pos)
+      case TestBinOp("==" | "=:=", lhs, cmp) =>
+        testObj(lhs, aMap)
+          .map(cmpProps(_, cmp))
+          .getOrElse((Unknown, Unknown))
+      case TestBinOp("=/=" | "/=", lhs, cmp) =>
+        testObj(lhs, aMap)
+          .map(cmpProps(_, cmp))
+          .getOrElse((Unknown, Unknown))
+          .swap
       case _ =>
         (Unknown, Unknown)
     }
