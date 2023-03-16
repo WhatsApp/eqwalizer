@@ -143,4 +143,11 @@ object TcDiagnostics {
     def errorName = "redundant_guard"
     override def erroneousExpr: Option[Expr] = None
   }
+  case class AmbiguousUnion(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit pipelineContext: PipelineContext)
+      extends TypeError {
+    override lazy val msg: String =
+      s"Expression has type ${show(got)} which matches multiple generic types in ${show(expected)}"
+    def errorName = "ambiguous_union"
+    override def erroneousExpr: Option[Expr] = Some(expr)
+  }
 }

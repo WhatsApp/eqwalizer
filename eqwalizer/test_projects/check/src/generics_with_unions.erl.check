@@ -371,8 +371,7 @@ overlapping_union_neg(X) -> X.             | ERROR   | X.
 -spec use_bad_union_neg() -> term().       |         |
 use_bad_union_neg() ->                     | ERROR   |
     _ = overlapping_union_neg([]),         |         | [].
-                                           |         | Expected: [K] | [[K]]
-                                           |         | Got     : []
+                                           |         | Expression has type [] which matches multiple generic types in [K] | [[K]]
     ok.                                    |         |
                                            |         |
 -type perform_opts(Config, R) :: {ok, R} |……         |
@@ -381,14 +380,7 @@ use_bad_union_neg() ->                     | ERROR   |
     perform_opts(ok, R).                   |         |
 perform(Opts) ->                           | ERROR   |
     perform_impl(ok, Opts).                |         | Opts.
-                                           |         | Expected: perform_opts('ok', R)
-                                           |         | Got     : perform_opts('ok', R)
-                                           |         | 
-                                           |         |   perform_opts('ok', R) is not a subtype of perform_opts('ok', R)
-                                           |         |   because
-                                           |         |   {'ok', R} is not a subtype of perform_opts('ok', R)
-                                           |         |   because
-                                           |         |   {'ok', R} is not a subtype of {'ok', R}
+                                           |         | Expression has type perform_opts('ok', R) which matches multiple generic types in perform_opts(Config, R)
                                            |         |
 -spec perform_impl(Config, perform_opts(Co……         |
     perform_opts(Config, R).               |         |

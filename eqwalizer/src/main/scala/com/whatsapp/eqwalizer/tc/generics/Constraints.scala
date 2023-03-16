@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.tc.generics
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.ExpectedSubtype
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousUnion, ExpectedSubtype}
 import com.whatsapp.eqwalizer.tc.generics.Variance._
 import com.whatsapp.eqwalizer.tc.{PipelineContext, Subst}
 
@@ -79,9 +79,12 @@ class Constraints(pipelineContext: PipelineContext) {
   private def constrain(state: State, lowerBound: Type, upperBound: Type): State = {
     val State(toSolve, varsToElim, constraints, variances, seen, constraintLoc) = state
 
-    def fail(): Nothing = {
+    def failSubtype(): Nothing = {
       val cs = meetAllConstraints(constraints, variances)
-      failure(cs, constraintLoc, variances)
+      subtypeFailure(cs, constraintLoc, variances)
+    }
+    def failUnion(): Nothing = {
+      unionFailure(constraintLoc)
     }
     if (toSolve.isEmpty) state
     else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) state
@@ -127,7 +130,7 @@ class Constraints(pipelineContext: PipelineContext) {
               val lowersAndUppers = ft2.argTys.zip(ft1.argTys) ++ List((ft1.resTy, ft2.resTy))
               constrainSeq(st, lowersAndUppers)
             case None =>
-              fail()
+              failSubtype()
           }
 
         case (ft1: AnyArityFunType, ft2: FunType) =>
@@ -159,36 +162,38 @@ class Constraints(pipelineContext: PipelineContext) {
               constrain(state, lowerBound, upperBound)
             case (List(upperBound), _) =>
               constrain(state, lowerBound, upperBound)
+            case (List(), List()) =>
+              failSubtype()
             case (_, _) =>
-              fail()
+              failUnion()
           }
         case (r: RecordType, t: TupleType) =>
           util.getRecord(r.module, r.name) match {
             case Some(recDecl) =>
               constrain(state, recordAsTuple(recDecl), t)
             case None =>
-              fail()
+              failSubtype()
           }
         case (t: TupleType, r: RecordType) =>
           util.getRecord(r.module, r.name) match {
             case Some(recDecl) =>
               constrain(state, t, recordAsTuple(recDecl))
             case None =>
-              fail()
+              failSubtype()
           }
         case (r: RefinedRecordType, t: TupleType) =>
           util.getRecord(r.recType.module, r.recType.name) match {
             case Some(recDecl) =>
               constrain(state, refinedRecordAsTuple(recDecl, r), t)
             case None =>
-              fail()
+              failSubtype()
           }
         case (t: TupleType, r: RefinedRecordType) =>
           util.getRecord(r.recType.module, r.recType.name) match {
             case Some(recDecl) =>
               constrain(state, t, refinedRecordAsTuple(recDecl, r))
             case None =>
-              fail()
+              failSubtype()
           }
         case (r1: RefinedRecordType, r2: RefinedRecordType) =>
           if (r1.recType == r2.recType)
@@ -196,10 +201,10 @@ class Constraints(pipelineContext: PipelineContext) {
               case Some(recDecl) =>
                 constrain(state, refinedRecordAsTuple(recDecl, r1), refinedRecordAsTuple(recDecl, r2))
               case None =>
-                fail()
+                failSubtype()
             }
           else
-            fail()
+            failSubtype()
         case (TupleType(leftTys), TupleType(rightTys)) if leftTys.size == rightTys.size =>
           constrainSeq(state, leftTys.zip(rightTys))
         case (OpaqueType(id1, leftTys), OpaqueType(id2, rightTys)) if id1 == id2 =>
@@ -217,10 +222,10 @@ class Constraints(pipelineContext: PipelineContext) {
           // adapted from subtype.subtype
           val keys1 = props1.map(_.key).toSet
           val keys2 = props2.map(_.key).toSet
-          if (!keys1.subsetOf(keys2)) fail()
+          if (!keys1.subsetOf(keys2)) failSubtype()
           val reqKeys1 = props1.collect { case ReqProp(k, _) => k }.toSet
           val reqKeys2 = props2.collect { case ReqProp(k, _) => k }.toSet
-          if (!reqKeys2.subsetOf(reqKeys1)) fail()
+          if (!reqKeys2.subsetOf(reqKeys1)) failSubtype()
           val kvs2 = props2.map(prop => prop.key -> prop.tp).toMap
           val uppersAndLowers = for {
             prop1 <- props1
@@ -229,12 +234,12 @@ class Constraints(pipelineContext: PipelineContext) {
           } yield (t1, t2)
           constrainSeq(state, uppersAndLowers)
         case _ =>
-          if (!subtype.subType(lowerBound, upperBound)) fail()
+          if (!subtype.subType(lowerBound, upperBound)) failSubtype()
           else state
       }
   }
 
-  private def failure(
+  private def subtypeFailure(
       cs: Map[Var, Constraint],
       cLoc: ConstraintLoc,
       variances: Map[Var, Variance],
@@ -242,6 +247,12 @@ class Constraints(pipelineContext: PipelineContext) {
     val subst = constraintsToSubst(cs, variances)
     val expected = Subst.subst(subst, cLoc.paramTy)
     throw ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy)
+  }
+
+  private def unionFailure(
+      cLoc: ConstraintLoc
+  ): Nothing = {
+    throw AmbiguousUnion(cLoc.arg.pos, cLoc.arg, cLoc.paramTy, got = cLoc.argTy)
   }
 
   private def constrainSeq(state0: State, lowersAndUppers: Iterable[(Type, Type)]): State =
