@@ -374,3 +374,22 @@ use_bad_union_neg() ->                     | ERROR   |
                                            |         | Expected: [K] | [[K]]
                                            |         | Got     : []
     ok.                                    |         |
+                                           |         |
+-type perform_opts(Config, R) :: {ok, R} |……         |
+                                           |         |
+-spec perform(perform_opts(ok, R)) ->      |         |
+    perform_opts(ok, R).                   |         |
+perform(Opts) ->                           | ERROR   |
+    perform_impl(ok, Opts).                |         | Opts.
+                                           |         | Expected: perform_opts('ok', R)
+                                           |         | Got     : perform_opts('ok', R)
+                                           |         | 
+                                           |         |   perform_opts('ok', R) is not a subtype of perform_opts('ok', R)
+                                           |         |   because
+                                           |         |   {'ok', R} is not a subtype of perform_opts('ok', R)
+                                           |         |   because
+                                           |         |   {'ok', R} is not a subtype of {'ok', R}
+                                           |         |
+-spec perform_impl(Config, perform_opts(Co……         |
+    perform_opts(Config, R).               |         |
+perform_impl(_, F) -> F.                   | OK      |

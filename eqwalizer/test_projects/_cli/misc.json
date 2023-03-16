@@ -1019,7 +1019,9 @@
           "convert1/2",
           "convert/2",
           "overlapping_union_neg/1",
-          "use_bad_union_neg/0"
+          "use_bad_union_neg/0",
+          "perform/1",
+          "perform_impl/2"
         ]
       },
       {

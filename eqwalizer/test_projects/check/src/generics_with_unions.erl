@@ -331,3 +331,14 @@ overlapping_union_neg(X) -> X.
 use_bad_union_neg() ->
     _ = overlapping_union_neg([]),
     ok.
+
+-type perform_opts(Config, R) :: {ok, R} | {Config, R}.
+
+-spec perform(perform_opts(ok, R)) ->
+    perform_opts(ok, R).
+perform(Opts) ->
+    perform_impl(ok, Opts).
+
+-spec perform_impl(Config, perform_opts(Config, R)) ->
+    perform_opts(Config, R).
+perform_impl(_, F) -> F.
