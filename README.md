@@ -2,6 +2,11 @@
 
 A type-checker for Erlang.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./logo/eqWAlizer_final_Full_Logo_White_Text.png">
+  <img alt="eqWAlizer logo" src="./logo/eqWAlizer_final_Full__Logo_Black_Text.png" width="100%">
+</picture>
+
 ## Using it with rebar3 projects
 
 1. Use OTP 25
