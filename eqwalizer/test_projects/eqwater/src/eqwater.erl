@@ -1255,3 +1255,28 @@ non_linear_3({_, B}) -> B.
 non_linear_neg_1({A, A}) -> b;
 non_linear_neg_1({_, a}) -> b;
 non_linear_neg_1({B, B}) -> B.
+
+-spec andalso_throw_1
+    (a | b) -> b.
+andalso_throw_1(V) ->
+    V =:= a andalso throw(error),
+    V.
+
+-spec andalso_throw_1_neg
+    (a | b) -> b.
+andalso_throw_1_neg(V) ->
+    V =:= b andalso throw(error),
+    V.
+
+-spec andalso_throw_2
+    ({a, ok} | {b, error}) -> ok.
+andalso_throw_2(V) ->
+    V =:= {b, error} andalso throw(error),
+    {_, Res} = V,
+    Res.
+
+-spec andalso_throw_3
+    (binary() | err) -> binary().
+andalso_throw_3(V) ->
+    is_atom(V) andalso throw(error),
+    V.

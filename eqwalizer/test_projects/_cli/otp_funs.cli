@@ -17,9 +17,9 @@ gb_sets  26
 proplists  51
 maps  130
 lists  168
-erlang  366
+erlang  371
 Per app stats:
 runtime_tools  12
 kernel  21
-erts  366
+erts  371
 stdlib  455

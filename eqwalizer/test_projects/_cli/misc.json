@@ -3423,7 +3423,11 @@
           "non_linear_1/1",
           "non_linear_2/2",
           "non_linear_3/1",
-          "non_linear_neg_1/1"
+          "non_linear_neg_1/1",
+          "andalso_throw_1/1",
+          "andalso_throw_1_neg/1",
+          "andalso_throw_2/1",
+          "andalso_throw_3/1"
         ]
       },
       {
