@@ -289,6 +289,11 @@ final class Elab(pipelineContext: PipelineContext) {
         val test = Filters.asTest(testArg).get
         val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)(checkRedundancy = true)
         (AtomLitType("true"), env1)
+      case BinOp("andalso", testArg, RemoteCall(RemoteId("erlang", "throw" | "error" | "exit", _), _))
+          if Filters.asTest(testArg).isDefined =>
+        val test = Filters.asTest(testArg).get
+        val env1 = occurrence.testEnv(test, env, result = false)
+        (AtomLitType("false"), env1)
       case BinOp(op, arg1, arg2) =>
         op match {
           case "+" | "-" | "*" | "/" | "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>

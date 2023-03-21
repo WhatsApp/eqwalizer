@@ -94,6 +94,10 @@ object Filters {
           arg1T <- asTest(arg1)
           arg2T <- asTest(arg2)
         } yield TestBinOp(op, arg1T, arg2T)(expr.pos)
+      case Tuple(exprs) =>
+        for {
+          exprsT <- asTests(exprs)
+        } yield TestTuple(exprsT)(expr.pos)
       case _ =>
         None
     }

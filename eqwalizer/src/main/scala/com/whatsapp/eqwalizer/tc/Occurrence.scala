@@ -304,6 +304,12 @@ final class Occurrence(pipelineContext: PipelineContext) {
     clauseEnvs.toList
   }
 
+  def testEnv(test: Test, env: Env, result: Boolean): Env = {
+    val (testPos, testNeg) = testProps(test, Map.empty)
+    val relevantProp = if (result) testPos else testNeg
+    batchSelect(env, List(relevantProp), Map.empty)
+  }
+
   /** Combines the propositions from `posProps` and `props` into a single list,
     * taking the positive statements from `posProps` to filter out redundant
     * negative statements from `props`.
@@ -402,13 +408,31 @@ final class Occurrence(pipelineContext: PipelineContext) {
     }
   }
 
-  private def cmpProps(obj: Obj, test: Test): (Prop, Prop) = {
-    test match {
-      case TestAtom(s)     => (Pos(obj, AtomLitType(s)), Neg(obj, AtomLitType(s)))
-      case TestBinaryLit() => (Pos(obj, BinaryType), Unknown)
-      case TestNumber(_)   => (Pos(obj, NumberType), Unknown)
-      case _               => (Unknown, Unknown)
+  private def cmpTypes(test: Test): (Option[Type], Option[Type]) = {
+    def unzipOpt(tys: List[Option[Type]]): Option[List[Type]] = {
+      tys
+        .foldLeft(Option(List.empty[Type])) {
+          case (None, _) | (_, None) => None
+          case (Some(l), Some(ty))   => Some(ty :: l)
+        }
+        .map(_.reverse)
     }
+    test match {
+      case TestAtom(s)     => (Some(AtomLitType(s)), Some(AtomLitType(s)))
+      case TestBinaryLit() => (Some(BinaryType), None)
+      case TestNumber(_)   => (Some(NumberType), None)
+      case TestTuple(tests) =>
+        val (pos, neg) = tests.map(cmpTypes).unzip
+        (unzipOpt(pos).map(TupleType), unzipOpt(neg).map(TupleType))
+      case _ => (None, None)
+    }
+  }
+
+  private def cmpProps(obj: Obj, test: Test): (Prop, Prop) = {
+    val (posTy, negTy) = cmpTypes(test)
+    val pos = posTy.map(Pos(obj, _)).getOrElse(Unknown)
+    val neg = negTy.map(Neg(obj, _)).getOrElse(Unknown)
+    (pos, neg)
   }
 
   private def testProps(test: Test, aMap: Map[Name, Obj]): (Prop, Prop) = {

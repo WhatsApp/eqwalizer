@@ -1431,15 +1431,9 @@ non_linear_neg_1({B, B}) -> B.             |         | B.
                                            |         |
 -spec andalso_throw_1                      |         |
     (a | b) -> b.                          |         |
-andalso_throw_1(V) ->                      | ERROR   |
+andalso_throw_1(V) ->                      | OK      |
     V =:= a andalso throw(error),          |         |
-    V.                                     |         | V.
-                                           |         | Expected: 'b'
-                                           |         | Got     : 'a' | 'b'
-                                           |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'b'
-                                           |         |   because
-                                           |         |   'a' is not a subtype of 'b'
+    V.                                     |         |
                                            |         |
 -spec andalso_throw_1_neg                  |         |
     (a | b) -> b.                          |         |
@@ -1447,33 +1441,21 @@ andalso_throw_1_neg(V) ->                  | ERROR   |
     V =:= b andalso throw(error),          |         |
     V.                                     |         | V.
                                            |         | Expected: 'b'
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Got     : 'a' | none()
                                            |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'b'
+                                           |         |   'a' | none() is not a subtype of 'b'
                                            |         |   because
                                            |         |   'a' is not a subtype of 'b'
                                            |         |
 -spec andalso_throw_2                      |         |
     ({a, ok} | {b, error}) -> ok.          |         |
-andalso_throw_2(V) ->                      | ERROR   |
+andalso_throw_2(V) ->                      | OK      |
     V =:= {b, error} andalso throw(error), |         |
     {_, Res} = V,                          |         |
-    Res.                                   |         | Res.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : 'ok' | 'error'
-                                           |         | 
-                                           |         |   'ok' | 'error' is not a subtype of 'ok'
-                                           |         |   because
-                                           |         |   'error' is not a subtype of 'ok'
+    Res.                                   |         |
                                            |         |
 -spec andalso_throw_3                      |         |
     (binary() | err) -> binary().          |         |
-andalso_throw_3(V) ->                      | ERROR   |
+andalso_throw_3(V) ->                      | OK      |
     is_atom(V) andalso throw(error),       |         |
-    V.                                     |         | V.
-                                           |         | Expected: binary()
-                                           |         | Got     : binary() | 'err'
-                                           |         | 
-                                           |         |   binary() | 'err' is not a subtype of binary()
-                                           |         |   because
-                                           |         |   'err' is not a subtype of binary()
+    V.                                     |         |
