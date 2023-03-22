@@ -706,14 +706,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
         if (ts1.size != ts2.size)
           Some(false)
         else {
-          ts2 match {
-            case hd :: tl =>
-              // t2 comes from propositions
-              assert(tl.forall(subtype.subType(AnyType, _)))
-              overlap(ts1.head, hd)
-            case Nil =>
-              Some(true)
-          }
+          val overlaps = ts1.lazyZip(ts2).map(overlap)
+          if (overlaps.exists(_.isFalse))
+            Some(false)
+          else if (overlaps.forall(_.isTrue))
+            Some(true)
+          else
+            None
         }
       case (TupleType(_), AnyTupleType) =>
         Some(true)
