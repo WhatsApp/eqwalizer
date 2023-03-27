@@ -101,10 +101,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(RepeatedVars.main(Array()), "repeated_vars.cli")
     }
 
-    it("reports unspecced callback implementations") {
-      checkAction(UnspeccedCallbackImpls.main(Array()), "unspecced_callback_impls.cli")
-    }
-
     it("reports OTP function calls") {
       checkAction(OTPFuns.main(Array()), "otp_funs.cli")
     }
