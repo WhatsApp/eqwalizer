@@ -6,7 +6,6 @@
 
 package com.whatsapp.eqwalizer.util
 
-import java.io.OutputStream
 import scala.collection.mutable
 
 import com.whatsapp.eqwalizer.{Pipeline, ast}
@@ -25,22 +24,6 @@ object ELPDiagnostics {
       explanation: Option[String],
       shownExpression: Option[String],
   )
-
-  def checkAll(out: OutputStream, showProgress: Boolean): Unit = {
-    val errorsByModule = collection.mutable.Map[String, List[Error]]()
-    val apps = DbApi.projectApps.values.toList.sortBy(_.name)
-    for (app <- apps.sortBy(_.name)) {
-      if (showProgress) Console.println(s"${app.name}\n")
-      for (module <- app.modules.sorted) {
-        val astStorage = DbApi.getAstStorage(module).get
-        val invalidForms = DbApi.getInvalidForms(module).get
-        val forms = Pipeline.checkForms(astStorage) ++ invalidForms
-        errorsByModule += module -> formsToErrors(module, forms)
-      }
-    }
-    val jsonObj = toJsonObj(errorsByModule)
-    jsonObj.writeBytesTo(out, indent = 2)
-  }
 
   def getDiagnosticsString(module: String, astStorage: DbApi.AstStorage, options: Options = noOptions): String =
     toJsonObj(Map(module -> getDiagnostics(module, astStorage, options))).render(indent = 2)

@@ -41,10 +41,6 @@ class CliSpec extends SnapshotSpec {
       }
     }
 
-    it("runs smoke checking") {
-      checkAction(Main.main(Array("smoke", "--no-progress")), "smoke.cli")
-    }
-
     it("reports pinned vars") {
       checkAction(PinnedVars.main(Array()), "pinned.cli")
     }

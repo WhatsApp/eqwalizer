@@ -10,8 +10,6 @@ import com.whatsapp.eqwalizer.analyses.DbgTraceCheck
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.util.{ELPDiagnostics, TcDiagnosticsText}
 
-import java.io.OutputStream
-
 object Main {
   def main(args: Array[String]): Unit = {
     val json = args.contains("--json")
@@ -30,7 +28,6 @@ object Main {
     cmd match {
       case "check"       => check(args1, json)
       case "ipc"         => ipc(args1)
-      case "smoke"       => smokeRun()
       case "index"       => gleanIndex(args)
       case "custom-lint" => custom_lint(args1)
       case "check-trace" => DbgTraceCheck.main(args1.tail)
@@ -66,13 +63,6 @@ object Main {
     val modules = ipcArgs.tail
     val modulesAndStorages = modules.distinct.flatMap(m => DbApi.getAstStorage(m).map(m -> _))
     ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
-  }
-
-  private def smokeRun(): Unit = {
-    // Writing to devNull is useful because it exercises error-message generation, can catch bugs like D32017880
-    val devNull = new OutputStream() { override def write(b: Int): Unit = () }
-    ELPDiagnostics.checkAll(devNull, showProgress = true)
-    Console.flush()
   }
 
   private def custom_lint(customLintArgs: Array[String]): Unit = {
