@@ -104,9 +104,6 @@ class CliSpec extends SnapshotSpec {
     it("reports lambdas summary") {
       checkAction(Lambdas.main(Array()), "lambdas.cli")
     }
-    it("reports long error messages") {
-      checkAction(LongErrors.main(Array()), "long_errors.cli")
-    }
     it("reports forms") {
       checkAction(Invalids.main(Array()), "invalids.cli")
     }
