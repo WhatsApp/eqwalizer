@@ -53,10 +53,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(OpTypes.main(Array()), "op_types.cli")
     }
 
-    it("reports any arity fun types") {
-      checkAction(AnyArityFunTypes.main(Array()), "any_arity_fun_types.cli")
-    }
-
     it("report bad prop types") {
       checkAction(BadPropTypes.main(Array()), "bad_prop_types.cli")
     }

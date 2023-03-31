@@ -1,8 +1,0 @@
-check/src/any_fun_type.erl:72
-check/src/any_fun_type.erl:120
-check/src/any_fun_type.erl:123
-check_gradual/src/dynamic_fun.erl:130
-check_gradual/src/dynamic_fun.erl:184
-check_gradual/src/dynamic_fun.erl:187
-debug/src/types1.erl:138
-Total: 7
