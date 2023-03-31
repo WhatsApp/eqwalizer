@@ -27,15 +27,6 @@ object Pipeline {
 
     val forms = Forms.load(astStorage).collect { case f: InternalForm => f }
     val module = forms.collectFirst { case Module(m) => m }.get
-    if (DbApi.isGpbCompileGenerated(module)) {
-      val minForms = forms.filter {
-        case _: Module => true
-        case _: File   => true
-        case _         => false
-      }
-      return minForms
-    }
-
     val erlFile = forms.collectFirst { case File(f, _) => f }.get
     val noCheckFuns = forms.collect { case f: EqwalizerNowarnFunction => (f.id, f.pos) }.toMap
     val unlimitedRefinementFuns = forms.collect { case EqwalizerUnlimitedRefinement(id) => id }.toSet

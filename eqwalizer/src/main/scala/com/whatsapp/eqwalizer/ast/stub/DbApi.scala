@@ -102,9 +102,6 @@ object DbApi {
   def isGenerated(module: String): Boolean =
     Db.isGenerated(module)
 
-  def isGpbCompileGenerated(module: String): Boolean =
-    Db.isGpbCompileGenerated(module)
-
   def getModuleApp(module: String): Option[App] =
     Db.getModuleApp(module)
 

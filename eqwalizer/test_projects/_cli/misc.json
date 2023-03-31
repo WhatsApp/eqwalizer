@@ -1997,12 +1997,6 @@
         ]
       },
       {
-        "module": "skip_me_pb",
-        "exported_funs": [
-          "skipped/0"
-        ]
-      },
-      {
         "module": "strict_complex_types",
         "exported_funs": [
           "mk_complex_map/0",
