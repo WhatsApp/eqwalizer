@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.analyses.DbgTraceCheck
 import com.whatsapp.eqwalizer.ast.stub.DbApi
-import com.whatsapp.eqwalizer.util.{ELPDiagnostics, StatDiagnostics, TcDiagnosticsText}
+import com.whatsapp.eqwalizer.util.{ELPDiagnostics, TcDiagnosticsText}
 
 import java.io.OutputStream
 
@@ -30,7 +30,6 @@ object Main {
     cmd match {
       case "check"       => check(args1, json)
       case "ipc"         => ipc(args1)
-      case "stats"       => StatDiagnostics.printStats()
       case "smoke"       => smokeRun()
       case "index"       => gleanIndex(args)
       case "custom-lint" => custom_lint(args1)

@@ -131,17 +131,5 @@ class CliSpec extends SnapshotSpec {
       checkAction(Main.main(Array("check", "refine", "--json")), "refine.elp.json")
       checkAction(Main.main(Array("check", "opaque", "--json")), "opaque.elp.json")
     }
-
-    it("prints stats") {
-      val modules = Set("fun_stats", "fun_stats2", "check_SUITE", "fault_tolerance")
-
-      def transform(value: ujson.Value): ujson.Value = {
-        val map = value.asInstanceOf[ujson.Obj].value.toMap
-        val transformedMap = map.view.filterKeys(modules)
-        ujson.Obj.from(transformedMap)
-      }
-
-      checkJsonAction(Main.main(Array("stats")), "stats.json", transform)
-    }
   }
 }
