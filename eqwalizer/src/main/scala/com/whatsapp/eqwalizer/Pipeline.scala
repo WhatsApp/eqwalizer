@@ -87,42 +87,6 @@ object Pipeline {
     result.toList
   }
 
-  def checkFunsAndApplyFixmes(astStorage: DbApi.AstStorage, ids: Set[Id], options: Options): Map[RemoteId, Int] = {
-    val forms = Forms.load(astStorage).collect { case f: InternalForm => f }
-    val elpMetadata = forms.collectFirst { case md: ElpMetadata => md }
-    val module = forms.collectFirst { case Module(m) => m }.get
-    val unlimitedRefinementFuns = forms.collect { case EqwalizerUnlimitedRefinement(id) => id }.toSet
-    if (DbApi.isGpbCompileGenerated(module)) {
-      return Map.empty
-    }
-    var result: Map[RemoteId, Int] = Map.empty
-    def countErrors(decl: FuncDecl): Int =
-      applyFixmes(List(decl), elpMetadata)._1.head.asInstanceOf[FuncDecl].errors.size
-    for (form <- forms)
-      form match {
-        case f: FunDecl if ids(f.id) =>
-          val options1 =
-            if (unlimitedRefinementFuns(f.id)) options.copy(unlimitedRefinement = Some(true)) else options
-          val ctx = PipelineContext(module, options1)
-          val errCnt = (DbApi.getSpec(module, f.id), DbApi.getOverloadedSpec(module, f.id)) match {
-            case (Some(spec), _) =>
-              countErrors(checkFun(ctx, f, spec))
-            case (_, Some(overloadedSpec)) =>
-              countErrors(checkOverloadedFun(ctx, f, overloadedSpec))
-            case _ =>
-              if (ctx.gradualTyping) {
-                countErrors(checkFun(ctx, f, getDynamicFunSpecType(f)))
-              } else
-                0
-          }
-          val remoteId = RemoteId(module, f.id.name, f.id.arity)
-          result += remoteId -> errCnt
-        case _ =>
-        // not interested
-      }
-    result
-  }
-
   def traverseForms(forms: List[ExternalForm], listener: AstListener): Unit = {
     val traverse = new Traverse(listener)
     traverse.traverseForms(forms)
