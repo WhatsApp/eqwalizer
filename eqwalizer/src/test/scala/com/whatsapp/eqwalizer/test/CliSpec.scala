@@ -81,10 +81,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(DiscardedSpecs.main(Array()), "discarded_specs.cli")
     }
 
-    it("reports tryOf expressions") {
-      checkAction(TryOf.main(Array()), "try_of.cli")
-    }
-
     it("reports clauses with repeated variable names") {
       checkAction(RepeatedVars.main(Array()), "repeated_vars.cli")
     }
