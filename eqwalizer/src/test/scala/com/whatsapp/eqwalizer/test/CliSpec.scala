@@ -89,12 +89,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(OTPFuns.main(Array()), "otp_funs.cli")
     }
 
-    it("runs MiscInfo utility") {
-      val tmpdir = Files.createTempDirectory("tmpDirPrefix").toFile.getAbsolutePath
-      val tmpFile = s"$tmpdir/misc.json"
-      checkActionFile(MiscInfo.main(Array(tmpFile)), actualFile = tmpFile, expFile = "misc.json")
-    }
-
     it("dumps resolved includes") {
       val tmpdir = Files.createTempDirectory("tmpDirPrefix").toFile.getAbsolutePath
       val tmpFile = s"$tmpdir/includes.json"
