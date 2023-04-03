@@ -669,10 +669,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         TestMapCreate(kvs.map(convertTestKV))(p)
       case ETuple(List(EAtom("map"), EPos(p), t, EList(kvs, None))) =>
         val map = convertTest(t)
-        if (kvs.forall(isMandatoryAtomicField))
-          TestReqMapUpdate(map, kvs.map(convertTestAV))(p)
-        else
-          TestGenMapUpdate(map, kvs.map(convertTestKV))(p)
+        TestMapUpdate(map, kvs.map(convertTestKV))(p)
       case ETuple(List(EAtom("call"), EPos(p), eExp, EList(eArgs, None))) =>
         eExp match {
           case ETuple(
@@ -700,13 +697,8 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
     }
 
   private def convertTestKV(term: EObject): (Test, Test) = {
-    val ETuple(List(_, _, t1, t2)) = term
+    val ETuple(List(_assocType, _pos, t1, t2)) = term
     (convertTest(t1), convertTest(t2))
-  }
-
-  private def convertTestAV(term: EObject): (String, Test) = {
-    val ETuple(List(EAtom("map_field_exact"), EPos(p), ETuple(List(EAtom("atom"), _, EAtom(key))), eExp2)) = term
-    (key, convertTest(eExp2))
   }
 
   private def convertTestRecordField(term: EObject): TestRecordField = {

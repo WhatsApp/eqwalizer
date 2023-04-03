@@ -180,10 +180,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
           case None => ()
         }
         (RecordType(recName)(module), envAcc)
-      case TestReqMapUpdate(map, _) =>
-        val ty = DictMap(AnyType, AnyType)
-        (ty, elabTestT(map, ty, env))
-      case TestGenMapUpdate(map, _) =>
+      case TestMapUpdate(map, _) =>
         val ty = DictMap(AnyType, AnyType)
         (ty, elabTestT(map, ty, env))
     }

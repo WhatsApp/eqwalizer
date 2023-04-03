@@ -357,14 +357,7 @@ class Traverse(val listener: AstListener) {
         traverseTest(kv._2)
       }
       listener.exitTest(tm)
-    case tm @ TestReqMapUpdate(map, kvs) =>
-      listener.enterTest(tm)
-      traverseTest(map)
-      kvs.foreach { kv =>
-        traverseTest(kv._2)
-      }
-      listener.exitTest(tm)
-    case tm @ TestGenMapUpdate(map, kvs) =>
+    case tm @ TestMapUpdate(map, kvs) =>
       listener.enterTest(tm)
       traverseTest(map)
       kvs.foreach { kv =>
