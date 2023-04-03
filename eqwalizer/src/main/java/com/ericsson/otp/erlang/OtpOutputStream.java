@@ -24,7 +24,6 @@
  */
 package com.ericsson.otp.erlang;
 
-// import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -640,139 +639,6 @@ public class OtpOutputStream extends ByteArrayOutputStream {
   }
 
   /**
-   * Write an Erlang PID to the stream.
-   *
-   * @param node the nodename.
-   * @param id an arbitrary number.
-   * @param serial another arbitrary number.
-   * @param creation node incarnation number.
-   */
-  public void write_pid(final String node, final int id, final int serial, final int creation) {
-    write1(OtpExternal.newPidTag);
-    write_atom(node);
-    write4BE(id);
-    write4BE(serial);
-    write4BE(creation);
-  }
-
-  /**
-   * Write an Erlang PID to the stream.
-   *
-   * @param pid the pid
-   */
-  public void write_pid(OtpErlangPid pid) {
-    write1(OtpExternal.newPidTag);
-    write_atom(pid.node());
-    write4BE(pid.id());
-    write4BE(pid.serial());
-    write4BE(pid.creation());
-  }
-
-  /**
-   * Write an Erlang port to the stream.
-   *
-   * @param node the nodename.
-   * @param id an arbitrary number. Only the low order 28 bits will be used.
-   * @param creation another arbitrary number. Only the low order 2 bits will be used.
-   */
-  public void write_port(final String node, final long id, final int creation) {
-    if ((id & ~0xfffffffL) != 0) {
-      /* > 28 bits */
-      write1(OtpExternal.v4PortTag);
-      write_atom(node);
-      write8BE(id);
-      write4BE(creation);
-    } else {
-      write1(OtpExternal.newPortTag);
-      write_atom(node);
-      write4BE(id);
-      write4BE(creation);
-    }
-  }
-
-  /**
-   * Write an Erlang port to the stream.
-   *
-   * @param port the port.
-   */
-  public void write_port(OtpErlangPort port) {
-    if ((port.id() & ~0xfffffffL) != 0) {
-      /* > 28 bits */
-      write1(OtpExternal.v4PortTag);
-      write_atom(port.node());
-      write8BE(port.id());
-      write4BE(port.creation());
-    } else {
-      write1(OtpExternal.newPortTag);
-      write_atom(port.node());
-      write4BE((int) port.id());
-      write4BE(port.creation());
-    }
-  }
-
-  /**
-   * Write an old style Erlang ref to the stream.
-   *
-   * @param node the nodename.
-   * @param id an arbitrary number. Only the low order 18 bits will be used.
-   * @param creation another arbitrary number.
-   */
-  public void write_ref(final String node, final int id, final int creation) {
-    /* Always encode as an extended reference; all
-    participating parties are now expected to be
-    able to decode extended references. */
-    int ids[] = new int[1];
-    ids[0] = id;
-    write_ref(node, ids, creation);
-  }
-
-  /**
-   * Write an Erlang ref to the stream.
-   *
-   * @param node the nodename.
-   * @param ids an array of arbitrary numbers. At most three numbers will be read from the array.
-   * @param creation another arbitrary number.
-   */
-  public void write_ref(final String node, final int[] ids, final int creation) {
-    int arity = ids.length;
-    if (arity > 5) {
-      arity = 5; // max 5 words in ref
-    }
-
-    write1(OtpExternal.newerRefTag);
-
-    // how many id values
-    write2BE(arity);
-
-    write_atom(node);
-
-    write4BE(creation);
-
-    for (int i = 0; i < arity; i++) {
-      write4BE(ids[i]);
-    }
-  }
-
-  /**
-   * Write an Erlang ref to the stream.
-   *
-   * @param ref the reference
-   */
-  public void write_ref(OtpErlangRef ref) {
-    int[] ids = ref.ids();
-    int arity = ids.length;
-
-    write1(OtpExternal.newerRefTag);
-    write2BE(arity);
-    write_atom(ref.node());
-    write4BE(ref.creation());
-
-    for (int i = 0; i < arity; i++) {
-      write4BE(ids[i]);
-    }
-  }
-
-  /**
    * Write a string to the stream.
    *
    * @param s the string to write.
@@ -911,51 +777,6 @@ public class OtpOutputStream extends ByteArrayOutputStream {
   public void write_any(final OtpErlangObject o) {
     // calls one of the above functions, depending on o
     o.encode(this);
-  }
-
-  public void write_fun(
-      final OtpErlangPid pid,
-      final String module,
-      final long old_index,
-      final int arity,
-      final byte[] md5,
-      final long index,
-      final long uniq,
-      final OtpErlangObject[] freeVars) {
-    if (arity == -1) {
-      write1(OtpExternal.funTag);
-      write4BE(freeVars.length);
-      pid.encode(this);
-      write_atom(module);
-      write_long(index);
-      write_long(uniq);
-      for (final OtpErlangObject fv : freeVars) {
-        fv.encode(this);
-      }
-    } else {
-      write1(OtpExternal.newFunTag);
-      final int saveSizePos = getPos();
-      write4BE(0); // this is where we patch in the size
-      write1(arity);
-      writeN(md5);
-      write4BE(index);
-      write4BE(freeVars.length);
-      write_atom(module);
-      write_long(old_index);
-      write_long(uniq);
-      pid.encode(this);
-      for (final OtpErlangObject fv : freeVars) {
-        fv.encode(this);
-      }
-      poke4BE(saveSizePos, getPos() - saveSizePos);
-    }
-  }
-
-  public void write_external_fun(final String module, final String function, final int arity) {
-    write1(OtpExternal.externalFunTag);
-    write_atom(module);
-    write_atom(function);
-    write_long(arity);
   }
 
   public void write_map_head(final int arity) {

@@ -868,171 +868,6 @@ public class OtpInputStream extends ByteArrayInputStream {
   }
 
   /**
-   * Read an Erlang PID from the stream.
-   *
-   * @return the value of the PID.
-   * @exception OtpErlangDecodeException if the next term in the stream is not an Erlang PID.
-   */
-  public OtpErlangPid read_pid() throws OtpErlangDecodeException {
-    String node;
-    int id;
-    int serial;
-    int creation;
-    int tag;
-
-    tag = read1skip_version();
-
-    if (tag != OtpExternal.pidTag && tag != OtpExternal.newPidTag) {
-      throw new OtpErlangDecodeException(
-          "Wrong tag encountered, expected "
-              + OtpExternal.pidTag
-              + " or "
-              + OtpExternal.newPidTag
-              + ", got "
-              + tag);
-    }
-
-    node = read_atom();
-    id = read4BE();
-    serial = read4BE();
-    if (tag == OtpExternal.pidTag) creation = read1();
-    else creation = read4BE();
-
-    return new OtpErlangPid(tag, node, id, serial, creation);
-  }
-
-  /**
-   * Read an Erlang port from the stream.
-   *
-   * @return the value of the port.
-   * @exception OtpErlangDecodeException if the next term in the stream is not an Erlang port.
-   */
-  public OtpErlangPort read_port() throws OtpErlangDecodeException {
-    String node;
-    long id;
-    int creation;
-    int tag;
-
-    tag = read1skip_version();
-
-    if (tag != OtpExternal.portTag
-        && tag != OtpExternal.newPortTag
-        && tag != OtpExternal.v4PortTag) {
-      throw new OtpErlangDecodeException(
-          "Wrong tag encountered, expected "
-              + OtpExternal.portTag
-              + ", "
-              + OtpExternal.newPortTag
-              + ", or "
-              + OtpExternal.v4PortTag
-              + ", got "
-              + tag);
-    }
-
-    node = read_atom();
-    if (tag == OtpExternal.v4PortTag) {
-      id = read8BE();
-      creation = read4BE();
-    } else if (tag == OtpExternal.newPortTag) {
-      id = (long) read4BE();
-      creation = read4BE();
-    } else {
-      id = read4BE();
-      creation = read1();
-    }
-
-    return new OtpErlangPort(tag, node, id, creation);
-  }
-
-  /**
-   * Read an Erlang reference from the stream.
-   *
-   * @return the value of the reference
-   * @exception OtpErlangDecodeException if the next term in the stream is not an Erlang reference.
-   */
-  public OtpErlangRef read_ref() throws OtpErlangDecodeException {
-    String node;
-    int id;
-    int creation;
-    int tag;
-
-    tag = read1skip_version();
-
-    switch (tag) {
-      case OtpExternal.refTag:
-        node = read_atom();
-        id = read4BE() & 0x3ffff; // 18 bits
-        creation = read1() & 0x03; // 2 bits
-        return new OtpErlangRef(node, id, creation);
-
-      case OtpExternal.newRefTag:
-      case OtpExternal.newerRefTag:
-        final int arity = read2BE();
-        if (arity > 5) {
-          throw new OtpErlangDecodeException("Ref arity " + arity + " too large ");
-        }
-        node = read_atom();
-        if (tag == OtpExternal.newRefTag) creation = read1();
-        else creation = read4BE();
-
-        final int[] ids = new int[arity];
-        for (int i = 0; i < arity; i++) {
-          ids[i] = read4BE();
-        }
-        return new OtpErlangRef(tag, node, ids, creation);
-
-      default:
-        throw new OtpErlangDecodeException("Wrong tag encountered, expected ref, got " + tag);
-    }
-  }
-
-  public OtpErlangFun read_fun() throws OtpErlangDecodeException {
-    final int tag = read1skip_version();
-    if (tag == OtpExternal.funTag) {
-      final int nFreeVars = read4BE();
-      final OtpErlangPid pid = read_pid();
-      final String module = read_atom();
-      final long index = read_long();
-      final long uniq = read_long();
-      final OtpErlangObject[] freeVars = new OtpErlangObject[nFreeVars];
-      for (int i = 0; i < nFreeVars; ++i) {
-        freeVars[i] = read_any();
-      }
-      return new OtpErlangFun(pid, module, index, uniq, freeVars);
-    } else if (tag == OtpExternal.newFunTag) {
-      read4BE();
-      final int arity = read1();
-      final byte[] md5 = new byte[16];
-      readN(md5);
-      final int index = read4BE();
-      final int nFreeVars = read4BE();
-      final String module = read_atom();
-      final long oldIndex = read_long();
-      final long uniq = read_long();
-      final OtpErlangPid pid = read_pid();
-      final OtpErlangObject[] freeVars = new OtpErlangObject[nFreeVars];
-      for (int i = 0; i < nFreeVars; ++i) {
-        freeVars[i] = read_any();
-      }
-      return new OtpErlangFun(pid, module, arity, md5, index, oldIndex, uniq, freeVars);
-    } else {
-      throw new OtpErlangDecodeException("Wrong tag encountered, expected fun, got " + tag);
-    }
-  }
-
-  public OtpErlangExternalFun read_external_fun() throws OtpErlangDecodeException {
-    final int tag = read1skip_version();
-    if (tag != OtpExternal.externalFunTag) {
-      throw new OtpErlangDecodeException(
-          "Wrong tag encountered, expected external fun, got " + tag);
-    }
-    final String module = read_atom();
-    final String function = read_atom();
-    final int arity = (int) read_long();
-    return new OtpErlangExternalFun(module, function, arity);
-  }
-
-  /**
    * Read a string from the stream.
    *
    * @return the value of the string.
@@ -1137,22 +972,8 @@ public class OtpInputStream extends ByteArrayInputStream {
       case OtpExternal.newFloatTag:
         return new OtpErlangDouble(this);
 
-      case OtpExternal.refTag:
-      case OtpExternal.newRefTag:
-      case OtpExternal.newerRefTag:
-        return new OtpErlangRef(this);
-
       case OtpExternal.mapTag:
         return new OtpErlangMap(this);
-
-      case OtpExternal.portTag:
-      case OtpExternal.newPortTag:
-      case OtpExternal.v4PortTag:
-        return new OtpErlangPort(this);
-
-      case OtpExternal.pidTag:
-      case OtpExternal.newPidTag:
-        return new OtpErlangPid(this);
 
       case OtpExternal.stringTag:
         return new OtpErlangString(this);
@@ -1181,13 +1002,6 @@ public class OtpInputStream extends ByteArrayInputStream {
 
       case OtpExternal.compressedTag:
         return read_compressed();
-
-      case OtpExternal.newFunTag:
-      case OtpExternal.funTag:
-        return new OtpErlangFun(this);
-
-      case OtpExternal.externalFunTag:
-        return new OtpErlangExternalFun(this);
 
       default:
         throw new OtpErlangDecodeException("Unknown data type: " + tag);

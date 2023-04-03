@@ -19,10 +19,6 @@ object EData {
   case class EMap(entries: List[(EObject, EObject)]) extends EObject
   case class EString(str: String) extends EObject
   case class ETuple(elems: List[EObject]) extends EObject
-  case object EPid extends EObject
-  case object EPort extends EObject
-  case object ERef extends EObject
-  case object EFun extends EObject
 
   def fromJava(jObject: OtpErlangObject): EObject =
     jObject match {
@@ -49,16 +45,6 @@ object EData {
       case otpTuple: OtpErlangTuple =>
         val elems = otpTuple.elements().toList.map(fromJava)
         ETuple(elems)
-      case _: OtpErlangPid =>
-        EPid
-      case _: OtpErlangPort =>
-        EPort
-      case _: OtpErlangRef =>
-        ERef
-      case _: OtpErlangFun =>
-        EFun
-      case _: OtpErlangExternalFun =>
-        EFun
     }
 
   def toJava(eObject: EObject): OtpErlangObject = eObject match {
@@ -103,7 +89,5 @@ object EData {
     case etuple @ ETuple(elems) =>
       visitor.visit(etuple)
       elems.foreach(traverse(_, visitor))
-    case _ =>
-      ()
   }
 }

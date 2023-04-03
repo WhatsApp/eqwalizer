@@ -43,20 +43,6 @@ public class OtpExternal {
   /** The tag used for atoms */
   public static final int atomTag = 100;
 
-  /** The tag used for old stype references */
-  public static final int refTag = 101;
-
-  /** The tag used for ports */
-  public static final int portTag = 102;
-
-  public static final int newPortTag = 89;
-  public static final int v4PortTag = 120;
-
-  /** The tag used for PIDs */
-  public static final int pidTag = 103;
-
-  public static final int newPidTag = 88;
-
   /** The tag used for small tuples */
   public static final int smallTupleTag = 104;
 
@@ -84,22 +70,8 @@ public class OtpExternal {
   /** The tag used for large bignums */
   public static final int largeBigTag = 111;
 
-  /** The tag used for old new Funs */
-  public static final int newFunTag = 112;
-
-  /** The tag used for external Funs (M:F/A) */
-  public static final int externalFunTag = 113;
-
-  /** The tag used for new style references */
-  public static final int newRefTag = 114;
-
-  public static final int newerRefTag = 90;
-
   /** The tag used for maps */
   public static final int mapTag = 116;
-
-  /** The tag used for old Funs */
-  public static final int funTag = 117;
 
   /** The tag used for unicode atoms */
   public static final int atomUtf8Tag = 118;
