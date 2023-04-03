@@ -2,14 +2,12 @@ Per module stats:
 io  1
 sets  2
 code  2
-filelib  2
 io_lib  3
 rand  3
 string  6
 file  8
 timer  10
 application  11
-dbg  12
 queue  16
 ets  16
 filename  21
@@ -17,9 +15,8 @@ gb_sets  26
 proplists  51
 maps  130
 lists  168
-erlang  371
+erlang  366
 Per app stats:
-runtime_tools  12
 kernel  21
-erts  371
-stdlib  455
+erts  366
+stdlib  453

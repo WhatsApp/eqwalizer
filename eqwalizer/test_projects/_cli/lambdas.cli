@@ -1,6 +1,6 @@
 
  
-lambda count: 230
+lambda count: 228
 
  
 named lambda count: 22
@@ -8,41 +8,41 @@ lambdas directly as record fields: 1 (0% of of lambdas)
 lambdas assigned directly to variables: 15 (6% of of lambdas)
 lambdas assigned directly to variables used once: 13 (5% of of lambdas)
 lambdas called directly: 22 (9% of of lambdas)
-lambdas directly as arguments: 89 (38% of of lambdas)
+lambdas directly as arguments: 89 (39% of of lambdas)
 lambdas directly as tuple elements: 9 (3% of of lambdas)
 lambdas directly as map values: 2 (0% of of lambdas)
 lambdas last-in-case-clause: 2 (0% of of lambdas)
-lambdas last-in-fun-decl: 78 (33% of of lambdas)
+lambdas last-in-fun-decl: 76 (33% of of lambdas)
 
  
  
 
 
-non-generated lambda count: 230
+non-generated lambda count: 228
 non-generated lambdas directly as record fields: 1 (0% of of non-generated lambdas)
 non-generated lambdas assigned directly to variables: 15 (6% of of non-generated lambdas)
 non-generated lambdas assigned directly to variables used once: 13 (5% of of non-generated lambdas)
 non-generated lambdas called directly: 22 (9% of of non-generated lambdas)
-non-generated lambdas directly as arguments: 89 (38% of of non-generated lambdas)
+non-generated lambdas directly as arguments: 89 (39% of of non-generated lambdas)
 non-generated lambdas directly as tuple elements: 9 (3% of of non-generated lambdas)
 non-generated lambdas directly as map values: 2 (0% of of non-generated lambdas)
 non-generated last-in-case-clause lambdas: 2 (0% of of non-generated lambdas)
-non-generated last-in-fun-decl lambdas: 78 (33% of of non-generated lambdas)
+non-generated last-in-fun-decl lambdas: 76 (33% of of non-generated lambdas)
 
  
  
 
 
-non-generated lambdas not appearing on lines with macros count: 230
+non-generated lambdas not appearing on lines with macros count: 228
 non-generated non-macro-line lambdas directly as record fields: 1 (0% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line lambdas assigned directly to variables: 15 (6% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line lambdas assigned directly to variables used once: 13 (5% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line lambdas called directly: 22 (9% of of non-generated non-macro-line lambdas)
-non-generated non-macro-line lambdas directly as arguments: 89 (38% of of non-generated non-macro-line lambdas)
+non-generated non-macro-line lambdas directly as arguments: 89 (39% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line lambdas directly as tuple elements: 9 (3% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line lambdas directly as map values: 2 (0% of of non-generated non-macro-line lambdas)
 non-generated non-macro-line last-in-case-clause lambdas: 2 (0% of of non-generated non-macro-line lambdas)
-non-generated non-macro-line last-in-fun-decl lambdas: 78 (33% of of non-generated non-macro-line lambdas)
+non-generated non-macro-line last-in-fun-decl lambdas: 76 (33% of of non-generated non-macro-line lambdas)
 
  
  All uncategorized lambdas: 12 (5% of all lambdas)

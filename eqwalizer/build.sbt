@@ -62,8 +62,6 @@ testProjects := {
   run("rebar3 as test compile")
   run("rebar3 as test build_info --to ../test_projects.build_info")
   run("elp parse-all --project . --to .ast")
-  run(s"erl -pz _build/test/lib/dbg_trace/ebin -s trace_tests_runner base_trace_tests")
-  run(s"erl -pz _build/test/lib/dbg_trace/ebin -s trace_tests_runner type_trace_tests")
   val output = baseDirectory.value / "test_projects.build_info"
   Seq(output)
 }

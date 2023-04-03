@@ -101,19 +101,4 @@ object DbApi {
 
   def isGenerated(module: String): Boolean =
     Db.isGenerated(module)
-
-  def getRawSpec(module: String, id: Id): Option[FunSpec] =
-    Db.getExpandedModuleStub(module).flatMap(_.specs.get(id))
-
-  def getRawOverloadedSpec(module: String, id: Id): Option[OverloadedFunSpec] =
-    Db.getExpandedModuleStub(module).flatMap(_.overloadedSpecs.get(id))
-
-  def getRawType(module: String, id: Id): Option[TypeDecl] =
-    Db.getExpandedModuleStub(module).flatMap(_.types.get(id))
-
-  def getRawOpaque(module: String, id: Id): Option[TypeDecl] =
-    Db.getExpandedModuleStub(module).flatMap(_.privateOpaques.get(id))
-
-  def getRawRecord(module: String, record: String): Option[RecDecl] =
-    Db.getExpandedModuleStub(module).flatMap(_.records.get(record))
 }
