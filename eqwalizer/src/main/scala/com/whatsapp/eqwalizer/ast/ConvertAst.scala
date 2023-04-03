@@ -392,13 +392,11 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(List(EAtom("map"), EPos(p), eExp, EList(eAssocs, None))) =>
         val map = convertExp(eExp)
         if (eAssocs.isEmpty)
-          GenMapUpdate(map, List())(p, false)
+          GenMapUpdate(map, List())(p)
         else if (eAssocs.forall(isMandatoryAtomicField))
           ReqMapUpdate(map, eAssocs.map(convertAV))(p)
-        else {
-          val approximated = eAssocs.exists(isMandatoryField)
-          GenMapUpdate(map, eAssocs.map(convertKV))(p, approximated)
-        }
+        else
+          GenMapUpdate(map, eAssocs.map(convertKV))(p)
       case ETuple(List(EAtom("catch"), EPos(p), eExp)) =>
         Catch(convertExp(eExp))(p)
       case ETuple(List(EAtom("call"), EPos(p), eExp, EList(eArgs, None))) =>
@@ -516,14 +514,6 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
     val ETuple(List(EAtom("map_field_exact"), EPos(p), ETuple(List(EAtom("atom"), _, EAtom(key))), eExp2)) = term
     (key, convertExp(eExp2))
   }
-
-  private def isMandatoryField(term: EObject): Boolean =
-    term match {
-      case ETuple(List(EAtom("map_field_exact"), _, _, _)) =>
-        true
-      case _ =>
-        false
-    }
 
   private def isMandatoryAtomicField(term: EObject): Boolean =
     term match {

@@ -69,7 +69,7 @@ object Exprs {
 
   case class MapCreate(kvs: List[(Expr, Expr)])(val pos: Pos) extends Expr
   case class ReqMapUpdate(map: Expr, kvs: List[(String, Expr)])(val pos: Pos) extends Expr
-  case class GenMapUpdate(map: Expr, kvs: List[(Expr, Expr)])(val pos: Pos, val approximated: Boolean) extends Expr
+  case class GenMapUpdate(map: Expr, kvs: List[(Expr, Expr)])(val pos: Pos) extends Expr
 
   case class Clause(pats: List[Pat], guards: List[Guard], body: Body)(val pos: Pos)
   case class BinaryElem(expr: Expr, size: Option[Expr], specifier: Specifier)(val pos: Pos)
