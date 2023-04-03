@@ -57,10 +57,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(BadPropTypes.main(Array()), "bad_prop_types.cli")
     }
 
-    it("reports approximated maps") {
-      checkAction(ApproximatedMaps.main(Array()), "approximated_maps.cli")
-    }
-
     it("reports overloaded fun specs") {
       checkAction(OverloadedFunSpecs.main(Array()), "overloaded_fun_specs.cli")
     }

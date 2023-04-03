@@ -1,9 +1,0 @@
-check/src/skip.erl:13
-check/src/t_maps.erl:58
-debug/src/wip_maps.erl:15
-debug/src/wip_maps.erl:22
-debug/src/wip_maps.erl:27
-debug/src/wip_maps.erl:32
-debug/src/wip_maps.erl:37
-fault_tolerance/src/fault_tolerance.erl:116
-Total: 8
