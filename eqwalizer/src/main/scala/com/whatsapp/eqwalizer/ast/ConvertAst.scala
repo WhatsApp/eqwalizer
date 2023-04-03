@@ -669,14 +669,10 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         TestMapCreate(kvs.map(convertTestKV))(p)
       case ETuple(List(EAtom("map"), EPos(p), t, EList(kvs, None))) =>
         val map = convertTest(t)
-        if (kvs.isEmpty)
-          TestGenMapUpdate(map, List())(p, false)
-        else if (kvs.forall(isMandatoryAtomicField))
+        if (kvs.forall(isMandatoryAtomicField))
           TestReqMapUpdate(map, kvs.map(convertTestAV))(p)
-        else {
-          val approximated = kvs.exists(isMandatoryField)
-          TestGenMapUpdate(map, kvs.map(convertTestKV))(p, approximated)
-        }
+        else
+          TestGenMapUpdate(map, kvs.map(convertTestKV))(p)
       case ETuple(List(EAtom("call"), EPos(p), eExp, EList(eArgs, None))) =>
         eExp match {
           case ETuple(

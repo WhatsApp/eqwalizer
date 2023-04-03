@@ -23,7 +23,7 @@ object Guards {
   case class TestRecordIndex(recName: String, fieldName: String)(val pos: Pos) extends Test
   case class TestMapCreate(kvs: List[(Test, Test)])(val pos: Pos) extends Test
   case class TestReqMapUpdate(map: Test, kvs: List[(String, Test)])(val pos: Pos) extends Test
-  case class TestGenMapUpdate(map: Test, kvs: List[(Test, Test)])(val pos: Pos, val approximated: Boolean) extends Test
+  case class TestGenMapUpdate(map: Test, kvs: List[(Test, Test)])(val pos: Pos) extends Test
 
   case class TestUnOp(op: String, arg: Test)(val pos: Pos) extends Test
   case class TestBinOp(op: String, arg1: Test, arg2: Test)(val pos: Pos) extends Test
