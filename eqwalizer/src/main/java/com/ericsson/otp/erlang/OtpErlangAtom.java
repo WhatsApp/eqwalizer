@@ -131,16 +131,6 @@ public class OtpErlangAtom extends OtpErlangObject {
     return atom.hashCode();
   }
 
-  /**
-   * Convert this atom to the equivalent Erlang external representation.
-   *
-   * @param buf an output stream to which the encoded atom should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    buf.write_atom(atom);
-  }
-
   /* the following four predicates are helpers for the toString() method */
   private boolean isErlangDigit(final char c) {
     return c >= '0' && c <= '9';

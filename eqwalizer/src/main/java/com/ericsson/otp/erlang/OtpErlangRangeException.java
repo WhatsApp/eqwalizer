@@ -27,14 +27,6 @@ package com.ericsson.otp.erlang;
 /**
  * Exception raised when an attempt is made to create an Erlang term with data that is out of range
  * for the term in question.
- *
- * @see OtpErlangByte
- * @see OtpErlangChar
- * @see OtpErlangInt
- * @see OtpErlangUInt
- * @see OtpErlangShort
- * @see OtpErlangUShort
- * @see OtpErlangLong
  */
 public class OtpErlangRangeException extends OtpErlangException {
   private static final long serialVersionUID = 1L;

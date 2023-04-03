@@ -64,16 +64,6 @@ public class OtpErlangBinary extends OtpErlangBitstr {
     super(o);
   }
 
-  /**
-   * Convert this binary to the equivalent Erlang external representation.
-   *
-   * @param buf an output stream to which the encoded binary should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    buf.write_binary(bin);
-  }
-
   @Override
   public Object clone() {
     final OtpErlangBinary that = (OtpErlangBinary) super.clone();

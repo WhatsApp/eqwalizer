@@ -171,22 +171,6 @@ public class OtpErlangTuple extends OtpErlangObject {
   }
 
   /**
-   * Convert this tuple to the equivalent Erlang external representation.
-   *
-   * @param buf an output stream to which the encoded tuple should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    final int arity = elems.length;
-
-    buf.write_tuple_head(arity);
-
-    for (int i = 0; i < arity; i++) {
-      buf.write_any(elems[i]);
-    }
-  }
-
-  /**
    * Determine if two tuples are equal. Tuples are equal if they have the same arity and all of the
    * elements are equal.
    *

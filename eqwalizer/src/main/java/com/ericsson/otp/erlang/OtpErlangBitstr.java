@@ -207,16 +207,6 @@ public class OtpErlangBitstr extends OtpErlangObject {
   }
 
   /**
-   * Convert this bitstr to the equivalent Erlang external representation.
-   *
-   * @param buf an output stream to which the encoded bitstr should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    buf.write_bitstr(bin, pad_bits);
-  }
-
-  /**
    * Determine if two bitstrs are equal. Bitstrs are equal if they have the same byte length and
    * tail length, and the array of bytes is identical.
    *

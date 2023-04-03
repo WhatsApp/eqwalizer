@@ -44,14 +44,6 @@ public abstract class OtpErlangObject implements Serializable, Cloneable {
   public abstract String toString();
 
   /**
-   * Convert the object according to the rules of the Erlang external format. This is mainly used
-   * for sending Erlang terms in messages, however it can also be used for storing terms to disk.
-   *
-   * @param buf an output stream to which the encoded term should be written.
-   */
-  public abstract void encode(OtpOutputStream buf);
-
-  /**
    * Read binary data in the Erlang external format, and produce a corresponding Erlang data type
    * object. This method is normally used when Erlang terms are received in messages, however it can
    * also be used for reading terms from disk.

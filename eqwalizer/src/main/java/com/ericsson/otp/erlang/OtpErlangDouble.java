@@ -24,11 +24,7 @@
  */
 package com.ericsson.otp.erlang;
 
-/**
- * Provides a Java representation of Erlang floats and doubles. Erlang defines only one floating
- * point numeric type, however this class and its subclass {@link OtpErlangFloat} are used to
- * provide representations corresponding to the Java types Double and Float.
- */
+/** Provides a Java representation of Erlang floats. */
 public class OtpErlangDouble extends OtpErlangObject {
   // don't change this!
   private static final long serialVersionUID = 132947104811974021L;
@@ -84,16 +80,6 @@ public class OtpErlangDouble extends OtpErlangObject {
   @Override
   public String toString() {
     return "" + d;
-  }
-
-  /**
-   * Convert this double to the equivalent Erlang external representation.
-   *
-   * @param buf an output stream to which the encoded value should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    buf.write_double(d);
   }
 
   /**

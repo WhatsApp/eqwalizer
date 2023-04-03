@@ -26,14 +26,7 @@ package com.ericsson.otp.erlang;
 
 import java.math.BigInteger;
 
-/**
- * Provides a Java representation of Erlang integral types. Erlang does not distinguish between
- * different integral types, however this class and its subclasses {@link OtpErlangByte}, {@link
- * OtpErlangChar}, {@link OtpErlangInt} , and {@link OtpErlangShort} attempt to map the Erlang types
- * onto the various Java integral types. Two additional classes, {@link OtpErlangUInt} and {@link
- * OtpErlangUShort} are provided for Corba compatibility. See the documentation for IC for more
- * information.
- */
+/** Provides a Java representation of Erlang integral types. */
 public class OtpErlangLong extends OtpErlangObject {
   // don't change this!
   private static final long serialVersionUID = 1610466859236755096L;
@@ -316,20 +309,6 @@ public class OtpErlangLong extends OtpErlangObject {
       return "" + bigVal;
     }
     return "" + val;
-  }
-
-  /**
-   * Convert this number to the equivalent Erlang external representation.
-   *
-   * @param buf an output stream to which the encoded number should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    if (bigVal != null) {
-      buf.write_big_integer(bigVal);
-    } else {
-      buf.write_long(val);
-    }
   }
 
   /**

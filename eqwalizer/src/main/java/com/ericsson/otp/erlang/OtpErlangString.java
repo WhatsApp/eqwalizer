@@ -90,16 +90,6 @@ public class OtpErlangString extends OtpErlangObject {
   }
 
   /**
-   * Convert this string to the equivalent Erlang external representation.
-   *
-   * @param buf an output stream to which the encoded string should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    buf.write_string(str);
-  }
-
-  /**
    * Determine if two strings are equal. They are equal if they represent the same sequence of
    * characters. This method can be used to compare OtpErlangStrings with each other and with
    * Strings.

@@ -208,34 +208,6 @@ public class OtpErlangList extends OtpErlangObject implements Iterable<OtpErlang
   }
 
   /**
-   * Convert this list to the equivalent Erlang external representation. Note that this method never
-   * encodes lists as strings, even when it is possible to do so.
-   *
-   * @param buf An output stream to which the encoded list should be written.
-   */
-  @Override
-  public void encode(final OtpOutputStream buf) {
-    encode(buf, 0);
-  }
-
-  protected void encode(final OtpOutputStream buf, final int start) {
-    final int arity = arity() - start;
-
-    if (arity > 0) {
-      buf.write_list_head(arity);
-
-      for (int i = start; i < arity + start; i++) {
-        buf.write_any(elems[i]);
-      }
-    }
-    if (lastTail == null) {
-      buf.write_nil();
-    } else {
-      buf.write_any(lastTail);
-    }
-  }
-
-  /**
    * Determine if two lists are equal. Lists are equal if they have the same arity and all of the
    * elements are equal.
    *
@@ -467,11 +439,6 @@ public class OtpErlangList extends OtpErlangObject implements Iterable<OtpErlang
     @Override
     public String toString() {
       return parent.toString(start);
-    }
-
-    @Override
-    public void encode(final OtpOutputStream stream) {
-      parent.encode(stream, start);
     }
 
     @Override
