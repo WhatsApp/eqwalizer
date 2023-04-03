@@ -95,9 +95,6 @@ class CliSpec extends SnapshotSpec {
       checkActionFile(Includes.main(Array(tmpFile)), actualFile = tmpFile, expFile = "includes.json")
     }
 
-    it("reports lambdas summary") {
-      checkAction(Lambdas.main(Array()), "lambdas.cli")
-    }
     it("reports forms") {
       checkAction(Invalids.main(Array()), "invalids.cli")
     }
