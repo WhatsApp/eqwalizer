@@ -102,9 +102,6 @@ object DbApi {
   def isGenerated(module: String): Boolean =
     Db.isGenerated(module)
 
-  def getModuleApp(module: String): Option[App] =
-    Db.getModuleApp(module)
-
   def getRawSpec(module: String, id: Id): Option[FunSpec] =
     Db.getExpandedModuleStub(module).flatMap(_.specs.get(id))
 

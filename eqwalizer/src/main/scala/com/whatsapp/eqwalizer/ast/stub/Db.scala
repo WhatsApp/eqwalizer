@@ -32,15 +32,15 @@ private object Db {
   }
 
   lazy val otpApps: Map[String, App] =
-    otpEbinDirs.map { case (n, dir) => n -> App(n, dir, beamModules(dir), hasEqwalizerMarker = false) }
+    otpEbinDirs.map { case (n, dir) => n -> App(n, dir, beamModules(dir)) }
   lazy val otpModules: Set[String] =
     otpApps.values.flatMap(_.modules).toSet
   lazy val projectApps: Map[String, App] =
-    config.apps.map { case (n, ai) => n -> App(n, ai.ebin, erlModules(ai), hasEqwalizerMarker(ai)) }
+    config.apps.map { case (n, ai) => n -> App(n, ai.ebin, erlModules(ai)) }
   lazy val projectModules: Set[String] =
     projectApps.values.flatMap(_.modules).toSet
   lazy val depApps: Map[String, App] =
-    config.deps.map { case (n, ai) => n -> App(n, ai.ebin, erlModules(ai), hasEqwalizerMarker = false) }
+    config.deps.map { case (n, ai) => n -> App(n, ai.ebin, erlModules(ai)) }
   lazy val depModules: Set[String] =
     depApps.values.flatMap(_.modules).toSet
   lazy val apps: Map[String, App] =
@@ -49,7 +49,7 @@ private object Db {
   private lazy val module2App: Map[String, Set[String]] = {
     var result = Map.empty[String, Set[String]].withDefaultValue(Set.empty)
     for {
-      (_, App(appName, _, modules, _)) <- apps
+      (_, App(appName, _, modules)) <- apps
       module <- modules
     } result = result.updated(module, result(module) + appName)
     result
@@ -84,7 +84,7 @@ private object Db {
   private val transValidStubs: mutable.Map[String, Option[ModuleStub]] =
     mutable.Map.empty
 
-  def getModuleApp(module: String): Option[App] = {
+  private def getModuleApp(module: String): Option[App] = {
     val appNames = module2App(module)
     appNames.headOption.flatMap(apps.get)
   }
@@ -206,9 +206,6 @@ private object Db {
     }
     false
   }
-
-  private def hasEqwalizerMarker(appInfo: AppInfo): Boolean =
-    Files.exists(Paths.get(s"${appInfo.dir}/.eqwalizer"))
 
   private def dirsToModules(root: String, dirs: List[String], maxDepth: Int): List[String] =
     dirs

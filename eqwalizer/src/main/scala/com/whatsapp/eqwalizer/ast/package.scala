@@ -29,8 +29,6 @@ package object ast {
        */
       ebinDir: String,
       modules: List[String],
-      // whether an app has a `.eqwalizer` file in its root
-      hasEqwalizerMarker: Boolean,
   )
 
   case class ExtModuleStub(
