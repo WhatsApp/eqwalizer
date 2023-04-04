@@ -80,10 +80,8 @@ class Patch(erroneousExpr: Expr) {
           RecordSelect(patchExpr(expr), recName, fieldName)(e.pos)
         case MapCreate(kvs) =>
           MapCreate(kvs.map(patchKV))(e.pos)
-        case ReqMapUpdate(map, kvs) =>
-          ReqMapUpdate(patchExpr(map), kvs.map(patchAtomicKV))(e.pos)
-        case u @ GenMapUpdate(map, kvs) =>
-          GenMapUpdate(patchExpr(map), kvs.map(patchKV))(e.pos)
+        case MapUpdate(map, kvs) =>
+          MapUpdate(patchExpr(map), kvs.map(patchKV))(e.pos)
         // The erroneous expr may be a variable introduced by eta-expansion of a functional argument,
         // in which case e == erroneousExpr will never match and the expr will not be patched.
         // The case below is a good enough heuristic to detect such cases.
@@ -125,10 +123,5 @@ class Patch(erroneousExpr: Expr) {
   private def patchKV(kv: (Expr, Expr)): (Expr, Expr) = {
     val (k, v) = kv
     (patchExpr(k), patchExpr(v))
-  }
-
-  private def patchAtomicKV(kv: (String, Expr)): (String, Expr) = {
-    val (k, v) = kv
-    (k, patchExpr(v))
   }
 }

@@ -210,14 +210,7 @@ class Traverse(val listener: AstListener) {
         traverseExpr(kv._2)
       }
       listener.exitExpr(mc)
-    case mu @ ReqMapUpdate(map, kvs) =>
-      listener.enterExpr(mu)
-      traverseExpr(map)
-      kvs.foreach { kv =>
-        traverseExpr(kv._2)
-      }
-      listener.exitExpr(mu)
-    case gmu @ GenMapUpdate(map, kvs) =>
+    case gmu @ MapUpdate(map, kvs) =>
       listener.enterExpr(gmu)
       traverseExpr(map)
       kvs.foreach { kv =>

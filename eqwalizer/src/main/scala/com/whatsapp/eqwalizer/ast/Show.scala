@@ -222,7 +222,7 @@ object Show {
       s"#$recName.$fieldName"
     case MapCreate(_) =>
       "#{..}"
-    case ReqMapUpdate(_, _) | GenMapUpdate(_, _) =>
+    case MapUpdate(_, _) =>
       "..#{..}"
   }
 }

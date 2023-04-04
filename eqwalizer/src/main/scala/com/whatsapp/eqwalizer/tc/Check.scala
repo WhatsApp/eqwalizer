@@ -434,7 +434,7 @@ final class Check(pipelineContext: PipelineContext) {
             throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = indT)
           else
             env
-        case _: MapCreate | _: GenMapUpdate | _: ReqMapUpdate | _: Cons =>
+        case _: MapCreate | _: MapUpdate | _: Cons =>
           // delegating this stuff to elaborate for now
           val (t1, env1) = elab.elabExpr(expr, env)
           if (!subtype.subType(t1, resTy))

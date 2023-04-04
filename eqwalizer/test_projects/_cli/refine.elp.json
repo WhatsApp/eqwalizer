@@ -446,18 +446,6 @@
     },
     {
       "range": {
-        "start": 7265,
-        "end": 7277
-      },
-      "lineAndCol": null,
-      "message": "Undef key `id`. Type: shape()",
-      "uri": "https://fb.me/eqwalizer_errors#undefined_key",
-      "code": "undefined_key",
-      "expressionOrNull": "S",
-      "explanationOrNull": null
-    },
-    {
-      "range": {
         "start": 7691,
         "end": 7695
       },

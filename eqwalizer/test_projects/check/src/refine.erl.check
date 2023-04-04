@@ -526,9 +526,8 @@ rec_field_b_10(#union_rec{b = B})          | OK      |
 }.                                         |         |
                                            |         |
 -spec double_id_neg(shape()) -> shape().   |         |
-double_id_neg(S) ->                        | ERROR   |
-    S#{id := 42}.                          |         | S.
-                                           |         | Undef key `id`. Type: shape()
+double_id_neg(S) ->                        | OK      |
+    S#{id := 42}.                          |         |
                                            |         |
 -spec double_id(shape()) -> shape().       |         |
 double_id(#{id := Id} = S) ->              | OK      |

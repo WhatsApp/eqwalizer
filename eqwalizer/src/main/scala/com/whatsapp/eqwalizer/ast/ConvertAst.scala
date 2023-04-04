@@ -391,12 +391,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         MapCreate(eAssocs.map(convertCreateKV))(p)
       case ETuple(List(EAtom("map"), EPos(p), eExp, EList(eAssocs, None))) =>
         val map = convertExp(eExp)
-        if (eAssocs.isEmpty)
-          GenMapUpdate(map, List())(p)
-        else if (eAssocs.forall(isMandatoryAtomicField))
-          ReqMapUpdate(map, eAssocs.map(convertAV))(p)
-        else
-          GenMapUpdate(map, eAssocs.map(convertKV))(p)
+        MapUpdate(map, eAssocs.map(convertKV))(p)
       case ETuple(List(EAtom("catch"), EPos(p), eExp)) =>
         Catch(convertExp(eExp))(p)
       case ETuple(List(EAtom("call"), EPos(p), eExp, EList(eArgs, None))) =>
@@ -509,19 +504,6 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
     val ETuple(List(_, _, eExp1, eExp2)) = term
     (convertExp(eExp1), convertExp(eExp2))
   }
-
-  private def convertAV(term: EObject): (String, Expr) = {
-    val ETuple(List(EAtom("map_field_exact"), EPos(p), ETuple(List(EAtom("atom"), _, EAtom(key))), eExp2)) = term
-    (key, convertExp(eExp2))
-  }
-
-  private def isMandatoryAtomicField(term: EObject): Boolean =
-    term match {
-      case ETuple(List(EAtom("map_field_exact"), _, ETuple(List(EAtom("atom"), _, _)), _)) =>
-        true
-      case _ =>
-        false
-    }
 
   private def convertRecordField(term: EObject): RecordField =
     term match {

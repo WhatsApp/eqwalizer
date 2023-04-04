@@ -82,9 +82,8 @@ update_req_non_atom_neg(M) ->              | OK      |
 % a dict for unconditional update          |         |
 -spec dict_update_req_neg                  |         |
     (map()) -> map().                      |         |
-dict_update_req_neg(M) ->                  | ERROR   |
-    M#{one := 1}.                          |         | M.
-                                           |         | Undef key `one`. Type: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+dict_update_req_neg(M) ->                  | OK      |
+    M#{one := 1}.                          |         |
                                            |         |
 -spec empty_update1                        |         |
     (map()) -> map().                      |         |
@@ -130,9 +129,8 @@ shape_update2(S) ->                        | OK      |
 -spec shape_update3_neg                    |         |
     (#{foo => b(), bar => n()})            |         |
         -> #{foo => b(), bar := b()}.      |         |
-shape_update3_neg(S) ->                    | ERROR   |
-    S#{bar := true}.                       |         | S.
-                                           |         | Undef key `bar`. Type: #S{bar => n(), foo => b()}
+shape_update3_neg(S) ->                    | OK      |
+    S#{bar := true}.                       |         |
                                            |         |
 -spec shape_update4_neg                    |         |
     (term()) -> #{bar := b()}.             |         |
@@ -231,9 +229,8 @@ u_shape1(S) ->                             | OK      |
 -spec u_shape2_neg                         |         |
     (#{a := a()}) ->                       |         |
     (#{a := a(), b := a()}).               |         |
-u_shape2_neg(S) ->                         | ERROR   |
-    S#{b := foo}.                          |         | S.
-                                           |         | Undef key `b`. Type: #S{a := a()}
+u_shape2_neg(S) ->                         | OK      |
+    S#{b := foo}.                          |         |
                                            |         |
 -spec u_shape3                             |         |
     (#{a := a()}) ->                       |         |

@@ -60,12 +60,6 @@ object TcDiagnostics {
     def errorName = "fun_in_overload_arg"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
-  case class UndefinedKey(pos: Pos, expr: Expr, key: String, got: Type)(implicit pipelineContext: PipelineContext)
-      extends TypeError {
-    override val msg: String = s"Undef key `$key`. Type: ${show(got)}"
-    def errorName = "undefined_key"
-    override def erroneousExpr: Option[Expr] = Some(expr)
-  }
   case class UndefinedField(pos: Pos, recName: String, fieldName: String) extends TypeError {
     override val msg: String = s"#$recName{...}: $fieldName is 'undefined'"
     def errorName = "undefined_field"

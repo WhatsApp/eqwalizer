@@ -226,9 +226,8 @@ z_foo_1(C) ->                              | OK      |
                                            |         |
 -spec z_foo_2_neg(xChainAB()) ->           |         |
     #{a := xChainAB(), b := atom()}.       |         |
-z_foo_2_neg(C) ->                          | ERROR   |
-    C#{b := ok}.                           |         | C.
-                                           |         | Undef key `b`. Type: xChainAB()
+z_foo_2_neg(C) ->                          | OK      |
+    C#{b := ok}.                           |         |
                                            |         |
 %%                                         |         |
                                            |         |

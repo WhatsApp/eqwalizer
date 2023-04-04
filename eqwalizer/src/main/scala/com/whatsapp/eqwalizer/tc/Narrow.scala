@@ -347,24 +347,6 @@ class Narrow(pipelineContext: PipelineContext) {
         throw new IllegalStateException()
     }
 
-  def isShapeWithKey(mapT: Type, key: String): Boolean =
-    mapT match {
-      case shapeMap: ShapeMap =>
-        shapeMap.props.exists {
-          case ReqProp(k, _) => k == key
-          case OptProp(_, _) => false
-        }
-      case UnionType(elems) =>
-        elems.forall(isShapeWithKey(_, key))
-      case NoneType =>
-        true
-      case RemoteType(rid, args) =>
-        val body = util.getTypeDeclBody(rid, args)
-        isShapeWithKey(body, key)
-      case _ =>
-        false
-    }
-
   def getRecordField(recDecl: RecDeclTyped, recTy: Type, fieldName: String): Type = {
     val field = recDecl.fields(fieldName)
     recTy match {

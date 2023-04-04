@@ -503,7 +503,7 @@ final class Elab(pipelineContext: PipelineContext) {
           val codomain = valTs.reduce(subtype.join)
           (DictMap(domain, codomain), envAcc)
         }
-      case GenMapUpdate(map, kvs) =>
+      case MapUpdate(map, kvs) =>
         val (mapT, env1) = elabExpr(map, env)
         val anyMap = DictMap(AnyType, AnyType)
         if (!subtype.subType(mapT, anyMap)) {
@@ -516,23 +516,6 @@ final class Elab(pipelineContext: PipelineContext) {
           val (valT, env3) = elabExpr(value, env2)
           envAcc = env3
           resT = narrow.adjustMapType(resT, keyT, valT)
-        }
-        (resT, envAcc)
-      case ReqMapUpdate(map, kvs) =>
-        val (mapT, env1) = elabExpr(map, env)
-        val anyMap = DictMap(AnyType, AnyType)
-        if (!subtype.subType(mapT, anyMap))
-          // it would be more understandable error first
-          throw ExpectedSubtype(map.pos, map, expected = anyMap, got = mapT)
-
-        var envAcc = env1
-        var resT = mapT
-        for ((key, value) <- kvs) {
-          if (!pipelineCtx.gradualTyping && !narrow.isShapeWithKey(mapT, key))
-            throw UndefinedKey(expr.pos, map, key, mapT)
-          val (valT, env2) = elabExpr(value, envAcc)
-          envAcc = env2
-          resT = narrow.adjustMapType(resT, AtomLitType(key), valT)
         }
         (resT, envAcc)
     }
