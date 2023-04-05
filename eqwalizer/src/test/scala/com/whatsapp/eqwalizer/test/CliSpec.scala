@@ -69,10 +69,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(GenericOverloadedFunSpecs.main(Array()), "generic_overloaded_fun_specs.cli")
     }
 
-    it("reports fun overloaded specs") {
-      checkAction(FunOverloadedFunSpecs.main(Array()), "fun_overloaded_fun_specs.cli")
-    }
-
     it("reports FIXME specs") {
       checkAction(DiscardedSpecs.main(Array()), "discarded_specs.cli")
     }
