@@ -105,15 +105,6 @@ private object Db {
       }
     }
 
-  // Internal API for Includes analysis - T111602174
-  def getBeamAstStorage(module: String): Option[DbApi.AstBeam] =
-    getModuleApp(module).flatMap { app =>
-      val path = Paths.get(app.ebinDir, s"$module.beam")
-      // We don't know where beams for test modules are, so skip them
-      if (Files.exists(path)) Some(DbApi.AstBeam(path))
-      else None
-    }
-
   private def getRawModuleStub(module: String): Option[ExtModuleStub] =
     if (typeIds.contains(module))
       rawModuleStubs.get(module)

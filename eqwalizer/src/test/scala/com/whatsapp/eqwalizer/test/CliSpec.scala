@@ -9,8 +9,6 @@ package com.whatsapp.eqwalizer.test
 import com.whatsapp.eqwalizer.Main
 import com.whatsapp.eqwalizer.analyses._
 
-import java.nio.file.Files
-
 class CliSpec extends SnapshotSpec {
   describe("eqwalizer") {
     it("prints help by default") {
@@ -71,12 +69,6 @@ class CliSpec extends SnapshotSpec {
 
     it("reports OTP function calls") {
       checkAction(OTPFuns.main(Array()), "otp_funs.cli")
-    }
-
-    it("dumps resolved includes") {
-      val tmpdir = Files.createTempDirectory("tmpDirPrefix").toFile.getAbsolutePath
-      val tmpFile = s"$tmpdir/includes.json"
-      checkActionFile(Includes.main(Array(tmpFile)), actualFile = tmpFile, expFile = "includes.json")
     }
 
     it("reports forms") {

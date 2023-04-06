@@ -90,9 +90,6 @@ object DbApi {
   def getAstStorage(module: String): Option[AstStorage] =
     Db.getAstStorage(module)
 
-  def getBeamAstStorage(module: String): Option[DbApi.AstBeam] =
-    Db.getBeamAstStorage(module)
-
   def isKnownModule(module: String): Boolean =
     Db.getModuleStub(module).isDefined
 
