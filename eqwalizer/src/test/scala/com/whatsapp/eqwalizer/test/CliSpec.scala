@@ -49,10 +49,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(RefinedRecordTypes.main(Array()), "refined_record_types.cli")
     }
 
-    it("reports op types") {
-      checkAction(OpTypes.main(Array()), "op_types.cli")
-    }
-
     it("report bad prop types") {
       checkAction(BadPropTypes.main(Array()), "bad_prop_types.cli")
     }
