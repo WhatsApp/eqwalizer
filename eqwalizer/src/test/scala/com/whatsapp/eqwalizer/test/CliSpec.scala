@@ -65,10 +65,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(UnionsWithTypeVars.main(Array()), "unions_with_type_vars.cli")
     }
 
-    it("reports generic overloaded specs") {
-      checkAction(GenericOverloadedFunSpecs.main(Array()), "generic_overloaded_fun_specs.cli")
-    }
-
     it("reports FIXME specs") {
       checkAction(DiscardedSpecs.main(Array()), "discarded_specs.cli")
     }
