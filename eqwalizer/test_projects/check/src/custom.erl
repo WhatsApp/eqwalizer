@@ -301,11 +301,9 @@ maps_filter_2_9_neg(B, M) ->
         end,
     maps:filter(fun erlang:'=:='/2, X).
 
-% return ty of maps:filter/2
-% is always DictMap
--spec maps_filter_2_8_neg()
+-spec maps_filter_2_8()
         -> #{a => a, b => b}.
-maps_filter_2_8_neg() ->
+maps_filter_2_8() ->
     M = #{a => a, b => b},
     F = fun erlang:'=:='/2,
     maps:filter(F, M).
@@ -1749,6 +1747,19 @@ maps_without_16(M) ->
 maps_without_17_neg(M) ->
     maps:without([a, b], M).
 
+-spec maps_without_18
+    (#{a := av, b := bv})
+    -> #{a => av, b => bv}.
+maps_without_18(M) ->
+    L = [a, c, d],
+    maps:without(L, M).
+
+-spec maps_without_19
+    (#{a := av, b := bv})
+    -> #{a => av, b => bv}.
+maps_without_19(M) ->
+    maps:without([a, c, d], M).
+
 -spec none() -> none().
 none() -> error(none).
 
@@ -1848,6 +1859,19 @@ maps_with_2(M) ->
 }) -> #{n => number()}.
 maps_with_3(M) ->
     maps:with([n], M).
+
+-spec maps_with_4
+    (#{a := av, b := bv})
+    -> #{a => av, b => bv}.
+maps_with_4(M) ->
+    L = [a, c, d],
+    maps:with(L, M).
+
+-spec maps_with_5
+    (#{a := av, b := bv})
+    -> #{a => av, b => bv}.
+maps_with_5(M) ->
+    maps:with([a, c, d], M).
 
 -spec lists_flatten_nil_1(
     [[atom()]], [atom()]
@@ -2150,3 +2174,76 @@ maps_remove4(M) ->
 ) -> #{atom() => binary()}.
 maps_remove5(M) ->
     maps:remove(a, M).
+
+-spec maps_filtermap_1(
+    #{atom() => atom()}
+) -> #{atom() => binary()}.
+maps_filtermap_1(M) ->
+    maps:filtermap(
+        fun (_, V) ->
+            {true, atom_to_binary(V)}
+        end,
+        M
+    ).
+
+-spec maps_filtermap_2(
+    #{a := atom(), b => atom()}
+) -> #{a => binary(), b => binary()}.
+maps_filtermap_2(M) ->
+    maps:filtermap(
+        fun (_, V) ->
+            {true, atom_to_binary(V)}
+        end,
+        M
+    ).
+
+-spec maps_filtermap_3_neg(
+    #{a := atom(), b := atom(), c := atom()}
+) -> #{a := atom(), b := binary()}.
+maps_filtermap_3_neg(M) ->
+    maps:filtermap(
+        fun
+            (a, V) -> true;
+            (b, V) -> {true, atom_to_binary(V)};
+            (c, _) -> false
+        end,
+        M
+    ).
+
+-spec maps_filtermap_4(
+    #{atom() => atom()}
+) -> #{atom() => none()}.
+maps_filtermap_4(M) ->
+    maps:filtermap(
+        fun (_, V) -> false end,
+        M
+    ).
+
+-spec maps_filtermap_5_neg(
+    #{atom() => atom()}
+) -> #{atom() => atom()}.
+maps_filtermap_5_neg(M) ->
+    maps:filtermap(
+        fun (_, V) ->
+            {true, atom_to_binary(V)}
+        end,
+        M
+    ).
+
+-spec maps_filtermap_6_neg(
+    #{atom() => atom()}
+) -> #{atom() => binary()}.
+maps_filtermap_6_neg(M) ->
+    maps:filtermap(
+        fun (_, _) -> err end,
+        M
+    ).
+
+-spec maps_filtermap_7_neg(
+    #{atom() => binary()}
+) -> #{atom() => atom()}.
+maps_filtermap_7_neg(M) ->
+    maps:filtermap(
+        fun (_, V) -> {true, atom_to_binary(V)} end,
+        M
+    ).
