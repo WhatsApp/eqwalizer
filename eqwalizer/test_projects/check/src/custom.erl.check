@@ -2905,16 +2905,8 @@ maps_remove5(M) ->                         | OK      |
 -spec maps_filtermap_1(                    |         |
     #{atom() => atom()}                    |         |
 ) -> #{atom() => binary()}.                |         |
-maps_filtermap_1(M) ->                     | ERROR   |
-    maps:filtermap(                        |         | maps:filtermap(fun, M).
-                                           |         | Expected: #D{atom() => binary()}
-                                           |         | Got     : #D{atom() => atom() | binary()}
-                                           |         | 
-                                           |         |   #D{atom() => atom() | binary()} is not a subtype of #D{atom() => binary()}
-                                           |         |   because
-                                           |         |   atom() | binary() is not a subtype of binary()
-                                           |         |   because
-                                           |         |   atom() is not a subtype of binary()
+maps_filtermap_1(M) ->                     | OK      |
+    maps:filtermap(                        |         |
         fun (_, V) ->                      |         |
             {true, atom_to_binary(V)}      |         |
         end,                               |         |
@@ -2927,7 +2919,7 @@ maps_filtermap_1(M) ->                     | ERROR   |
 maps_filtermap_2(M) ->                     | ERROR   |
     maps:filtermap(                        |         | maps:filtermap(fun, M).
                                            |         | Expected: shape map #S{a => binary(), b => binary()}
-                                           |         | Got     : dict  map #D{'a' | 'b' => atom() | binary()}
+                                           |         | Got     : dict  map #D{atom() => binary()}
         fun (_, V) ->                      |         |
             {true, atom_to_binary(V)}      |         |
         end,                               |         |
@@ -2940,7 +2932,7 @@ maps_filtermap_2(M) ->                     | ERROR   |
 maps_filtermap_3_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         | maps:filtermap(fun, M).
                                            |         | Expected: shape map #S{a := atom(), b := binary()}
-                                           |         | Got     : dict  map #D{'a' | 'b' | 'c' => atom() | binary()}
+                                           |         | Got     : dict  map #D{atom() => atom() | binary()}
         fun                                |         |
             (a, V) -> true;                |         |
             (b, V) -> {true, atom_to_binar……         |
@@ -2952,16 +2944,8 @@ maps_filtermap_3_neg(M) ->                 | ERROR   |
 -spec maps_filtermap_4(                    |         |
     #{atom() => atom()}                    |         |
 ) -> #{atom() => none()}.                  |         |
-maps_filtermap_4(M) ->                     | ERROR   |
-    maps:filtermap(                        |         | maps:filtermap(fun, M).
-                                           |         | Expected: #D{atom() => none()}
-                                           |         | Got     : #D{atom() => atom() | none()}
-                                           |         | 
-                                           |         |   #D{atom() => atom() | none()} is not a subtype of #D{atom() => none()}
-                                           |         |   because
-                                           |         |   atom() | none() is not a subtype of none()
-                                           |         |   because
-                                           |         |   atom() is not a subtype of none()
+maps_filtermap_4(M) ->                     | OK      |
+    maps:filtermap(                        |         |
         fun (_, V) -> false end,           |         |
         M                                  |         |
     ).                                     |         |
@@ -2972,11 +2956,9 @@ maps_filtermap_4(M) ->                     | ERROR   |
 maps_filtermap_5_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         | maps:filtermap(fun, M).
                                            |         | Expected: #D{atom() => atom()}
-                                           |         | Got     : #D{atom() => atom() | binary()}
+                                           |         | Got     : #D{atom() => binary()}
                                            |         | 
-                                           |         |   #D{atom() => atom() | binary()} is not a subtype of #D{atom() => atom()}
-                                           |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   #D{atom() => binary()} is not a subtype of #D{atom() => atom()}
                                            |         |   because
                                            |         |   binary() is not a subtype of atom()
         fun (_, V) ->                      |         |
@@ -2990,13 +2972,11 @@ maps_filtermap_5_neg(M) ->                 | ERROR   |
 ) -> #{atom() => binary()}.                |         |
 maps_filtermap_6_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         |
-        fun (_, _) -> err end,             |         | fun.
-                                           |         | Expected: fun((atom(), atom()) -> boolean() | {'true', Value2})
-                                           |         | Got     : fun((atom(), atom()) -> 'err')
+        fun (_, _) -> err end,             |         | 'err'.
+                                           |         | Expected: boolean() | {'true', term()}
+                                           |         | Got     : 'err'
                                            |         | 
-                                           |         |   fun((atom(), atom()) -> 'err') is not a subtype of fun((atom(), atom()) -> boolean() | {'true', Value2})
-                                           |         |   because
-                                           |         |   'err' is not a subtype of boolean() | {'true', Value2}
+                                           |         |   'err' is not a subtype of boolean() | {'true', term()}
                                            |         |   because
                                            |         |   'err' is not a subtype of boolean()
         M                                  |         |

@@ -45,6 +45,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "put", 3),
       RemoteId("maps", "with", 2),
       RemoteId("maps", "without", 2),
+      RemoteId("maps", "filtermap", 2),
       RemoteId(CompilerMacro.fake_module, "record_info", 2),
     )
 
@@ -345,6 +346,49 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             subtype.join(vTys)
         }
         (DictMap(keyTy, resValTy), env1)
+
+      case RemoteId("maps", "filtermap", 2) =>
+        val List(funArg, map) = args
+        val List(funArgTy, mapTy) = argTys
+        if (!subtype.subType(mapTy, anyMapTy))
+          throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
+        val mapType = narrow.asMapType(mapTy)
+        val (keyTy, valTy) = (narrow.getKeyType(mapType), narrow.getValType(mapType))
+        val tupleTrueAnyTy = TupleType(List(trueType, AnyType))
+        val expRet = subtype.join(booleanType, tupleTrueAnyTy)
+        val expFunTy = FunType(Nil, List(keyTy, valTy), expRet)
+        val funResTys = funArg match {
+          case lambda: Lambda =>
+            check.checkLambda(lambda, expFunTy, env1)
+            if (occurrence.eqwater(lambda.clauses)) {
+              val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy), env1)
+              lambda.clauses
+                .lazyZip(clauseEnvs)
+                .map((clause, occEnv) => elab.elabClause(clause, List(keyTy, valTy), occEnv, Set.empty)._1)
+            } else {
+              lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), env, Set.empty)).map(_._1)
+            }
+          case _ =>
+            if (!subtype.subType(funArgTy, expFunTy))
+              throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
+            narrow.asFunType(funArgTy, 2).get.map(_.resTy)
+        }
+        def funResultsToValTy(tys: Iterable[Type], defaultTy: Type, pos: Pos): Type =
+          tys.foldLeft(NoneType: Type)((memo, ty) => subtype.join(memo, funResultToValTy(ty, defaultTy, pos)))
+        def funResultToValTy(ty: Type, defaultTy: Type, pos: Pos): Type = ty match {
+          case UnionType(tys) =>
+            funResultsToValTy(tys, defaultTy, pos)
+          case TupleType(List(t1, resElemTy)) if subtype.subType(t1, trueType) =>
+            resElemTy
+          case ty if subtype.subType(ty, falseType) =>
+            NoneType
+          case ty if subtype.subType(ty, booleanType) =>
+            defaultTy
+          case _ =>
+            throw new IllegalArgumentException(s"unexpected $ty")
+        }
+        val resItemTy = funResultsToValTy(funResTys, valTy, callPos)
+        (DictMap(valTy, resItemTy), env1)
 
       case RemoteId("maps", "remove", 2) =>
         val List(keyArg, mapArg) = args
