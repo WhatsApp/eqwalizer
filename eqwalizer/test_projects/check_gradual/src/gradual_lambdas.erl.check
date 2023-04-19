@@ -88,11 +88,10 @@ hd_invariant([F | _]) -> F.                | OK      |
 test_invariant() -> hd_invariant([]).      | OK      |
                                            |         |
 -spec recursive_fold(map()) -> [term()].   |         |
-recursive_fold(Map) ->                     | ERROR   |
+recursive_fold(Map) ->                     | OK      |
     maps:fold(                             |         |
         fun                                |         |
-            F(K, true, Acc) -> F(K, false,……         | Unbound var: F
-
+            F(K, true, Acc) -> F(K, false,……         |
             F(K, V, Acc) -> [{K, V} | Acc] |         |
         end,                               |         |
         [],                                |         |
@@ -101,11 +100,10 @@ recursive_fold(Map) ->                     | ERROR   |
                                            |         |
 -spec recursive_filtermap([boolean()]) ->  |         |
     [term()].                              |         |
-recursive_filtermap(L) ->                  | ERROR   |
+recursive_filtermap(L) ->                  | OK      |
     lists:filtermap(                       |         |
         fun                                |         |
-            F(true) -> F(false);           |         | Unbound var: F
-
+            F(true) -> F(false);           |         |
             F(B) -> B                      |         |
         end,                               |         |
         L                                  |         |
@@ -114,11 +112,10 @@ recursive_filtermap(L) ->                  | ERROR   |
 -spec recursive_filtermap_2                |         |
     (#{boolean() => atom()}) ->            |         |
     #{boolean() => term()}.                |         |
-recursive_filtermap_2(M) ->                | ERROR   |
+recursive_filtermap_2(M) ->                | OK      |
     maps:filtermap(                        |         |
         fun                                |         |
-            F(true, V) -> F(false, V);     |         | Unbound var: F
-
+            F(true, V) -> F(false, V);     |         |
             F(B, _) -> B                   |         |
         end,                               |         |
         M                                  |         |
@@ -127,11 +124,10 @@ recursive_filtermap_2(M) ->                | ERROR   |
 -spec recursive_map                        |         |
     (#{boolean() => atom()}) ->            |         |
     #{boolean() => term()}.                |         |
-recursive_map(M) ->                        | ERROR   |
+recursive_map(M) ->                        | OK      |
     maps:map(                              |         |
         fun                                |         |
-            F(true, V) -> F(false, V);     |         | Unbound var: F
-
+            F(true, V) -> F(false, V);     |         |
             F(false, V) -> atom_to_binary(……         |
         end,                               |         |
         M                                  |         |

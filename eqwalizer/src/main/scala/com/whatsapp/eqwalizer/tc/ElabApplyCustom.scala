@@ -115,14 +115,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val expFunTy = FunType(Nil, List(elemTy), expRet)
         val funResTys = funArg match {
           case lambda: Lambda =>
-            check.checkLambda(lambda, expFunTy, env1)
+            check.checkLambda(lambda, expFunTy, env)
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
             if (occurrence.eqwater(lambda.clauses)) {
-              val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(elemTy), env1)
+              val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(elemTy), lamEnv)
               lambda.clauses
                 .lazyZip(clauseEnvs)
                 .map((clause, occEnv) => elab.elabClause(clause, List(elemTy), occEnv, Set.empty)._1)
             } else {
-              lambda.clauses.map(elab.elabClause(_, List(elemTy), env, Set.empty)).map(_._1)
+              lambda.clauses.map(elab.elabClause(_, List(elemTy), lamEnv, Set.empty)).map(_._1)
             }
           case _ =>
             if (!subtype.subType(funArgTy, expFunTy))
@@ -254,7 +255,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           )
         def getAccumulatorTy(accTy: Type): Type = funArg match {
           case lambda: Lambda =>
-            val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy, accTy), env, Set.empty)).map(_._1)
+            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy, accTy), lamEnv, Set.empty)).map(_._1)
             subtype.join(accTy :: vTys)
           case _ =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), AnyType)
@@ -327,18 +330,19 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         }
 
       case RemoteId("maps", "map", 2) =>
-        val List(funArg, collection) = args
-        val List(funArgTy, collectionTy) = argTys
-        val (keyTy, valTy) = unpackMapTy(collectionTy)
-          .getOrElse(
-            throw ExpectedSubtype(collection.pos, collection, expected = anyMapTy, got = collectionTy)
-          )
+        val List(funArg, map) = args
+        val List(funArgTy, mapTy) = argTys
+        if (!subtype.subType(mapTy, anyMapTy))
+          throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
+        val mapType = narrow.asMapType(mapTy)
+        val (keyTy, valTy) = (narrow.getKeyType(mapType), narrow.getValType(mapType))
+        val expFunTy = FunType(Nil, List(keyTy, valTy), AnyType)
         val resValTy = funArg match {
           case lambda: Lambda =>
-            val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), env, Set.empty)).map(_._1)
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), lamEnv, Set.empty)).map(_._1)
             subtype.join(vTys)
           case _ =>
-            val expFunTy = FunType(Nil, List(keyTy, valTy), AnyType)
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
 
@@ -359,14 +363,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val expFunTy = FunType(Nil, List(keyTy, valTy), expRet)
         val funResTys = funArg match {
           case lambda: Lambda =>
-            check.checkLambda(lambda, expFunTy, env1)
+            check.checkLambda(lambda, expFunTy, env)
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
             if (occurrence.eqwater(lambda.clauses)) {
-              val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy), env1)
+              val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy), lamEnv)
               lambda.clauses
                 .lazyZip(clauseEnvs)
                 .map((clause, occEnv) => elab.elabClause(clause, List(keyTy, valTy), occEnv, Set.empty)._1)
             } else {
-              lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), env, Set.empty)).map(_._1)
+              lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), lamEnv, Set.empty)).map(_._1)
             }
           case _ =>
             if (!subtype.subType(funArgTy, expFunTy))
