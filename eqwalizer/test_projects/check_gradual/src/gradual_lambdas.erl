@@ -80,3 +80,49 @@ hd_invariant([F | _]) -> F.
 
 -spec test_invariant() -> (fun((atom()) -> atom())).
 test_invariant() -> hd_invariant([]).
+
+-spec recursive_fold(map()) -> [term()].
+recursive_fold(Map) ->
+    maps:fold(
+        fun
+            F(K, true, Acc) -> F(K, false, Acc);
+            F(K, V, Acc) -> [{K, V} | Acc]
+        end,
+        [],
+        Map
+    ).
+
+-spec recursive_filtermap([boolean()]) ->
+    [term()].
+recursive_filtermap(L) ->
+    lists:filtermap(
+        fun
+            F(true) -> F(false);
+            F(B) -> B
+        end,
+        L
+    ).
+
+-spec recursive_filtermap_2
+    (#{boolean() => atom()}) ->
+    #{boolean() => term()}.
+recursive_filtermap_2(M) ->
+    maps:filtermap(
+        fun
+            F(true, V) -> F(false, V);
+            F(B, _) -> B
+        end,
+        M
+    ).
+
+-spec recursive_map
+    (#{boolean() => atom()}) ->
+    #{boolean() => term()}.
+recursive_map(M) ->
+    maps:map(
+        fun
+            F(true, V) -> F(false, V);
+            F(false, V) -> atom_to_binary(V)
+        end,
+        M
+    ).
