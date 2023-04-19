@@ -213,11 +213,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         (resTy, env1)
 
       case RemoteId("maps", "filter", 2) =>
-        val List(funArg, collection) = args
-        val List(funArgTy, collectionTy) = argTys
-        val (keyTy, valTy) = unpackMapTy(collectionTy)
+        val List(funArg, map) = args
+        val List(funArgTy, mapTy) = argTys
+        val (keyTy, valTy) = unpackMapTy(mapTy)
           .getOrElse(
-            throw ExpectedSubtype(collection.pos, collection, expected = anyMapTy, got = collectionTy)
+            throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
           )
         val expFunTy = FunType(Nil, List(keyTy, valTy), booleanType)
         funArg match {
@@ -227,7 +227,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
         }
-        (DictMap(keyTy, valTy), env1)
+        (narrow.setAllFieldsOptional(mapTy), env1)
 
       case RemoteId("maps", "find", 2) =>
         val List(key, map) = args
@@ -388,7 +388,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             throw new IllegalArgumentException(s"unexpected $ty")
         }
         val resItemTy = funResultsToValTy(funResTys, valTy, callPos)
-        (DictMap(valTy, resItemTy), env1)
+        (narrow.setAllFieldsOptional(mapTy, Some(resItemTy)), env1)
 
       case RemoteId("maps", "remove", 2) =>
         val List(keyArg, mapArg) = args
@@ -455,18 +455,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         if (!subtype.subType(keysTy, expKeysTy)) {
           throw ExpectedSubtype(keysArg.pos, keysArg, expected = expKeysTy, got = keysTy)
         }
-        def `with`(mapTy: Type): Type = mapTy match {
+        def `with`(mapTy: Type, keysToKeep: Set[String]): Type = mapTy match {
           case shape: ShapeMap =>
-            getKeysToKeep(keysArg, Nil).map(_.toSet) match {
-              case None =>
-                val valTy = subtype.join(shape.props.map(_.tp))
-                DictMap(AtomType, valTy)
-              case Some(keysToKeep) =>
-                val props = shape.props.filter(prop => keysToKeep(prop.key))
-                shape.copy(props = props)
-            }
+            val props = shape.props.filter(prop => keysToKeep(prop.key))
+            shape.copy(props = props)
           case UnionType(tys) =>
-            subtype.join(tys.map(`with`))
+            subtype.join(tys.map(`with`(_, keysToKeep)))
           case dict: DictMap =>
             dict
           case NoneType =>
@@ -474,8 +468,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case unexpected =>
             throw new IllegalStateException(s"unexpected non-map $unexpected")
         }
-        val ty = `with`(narrow.asMapType(mapTy))
-        (ty, env1)
+        val mapTys = narrow.asMapType(mapTy)
+        getKeysToKeep(keysArg, Nil).map(_.toSet) match {
+          case None       => (narrow.setAllFieldsOptional(mapTys), env1)
+          case Some(keys) => (`with`(mapTys, keys), env1)
+        }
 
       case RemoteId("maps", "without", 2) =>
         @tailrec
@@ -513,18 +510,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         if (!subtype.subType(keysTy, expKeysTy)) {
           throw ExpectedSubtype(keysArg.pos, keysArg, expected = expKeysTy, got = keysTy)
         }
-        def without(mapTy: Type): Type = mapTy match {
+        def without(mapTy: Type, keysToRemove: Set[String]): Type = mapTy match {
           case shape: ShapeMap =>
-            getKeysToRemove(keysArg, Nil).map(_.toSet) match {
-              case None =>
-                val valTy = subtype.join(shape.props.map(_.tp))
-                DictMap(AtomType, valTy)
-              case Some(keysToRemove) =>
-                val props = shape.props.filterNot(prop => keysToRemove(prop.key))
-                shape.copy(props = props)
-            }
+            val props = shape.props.filterNot(prop => keysToRemove(prop.key))
+            shape.copy(props = props)
           case UnionType(tys) =>
-            subtype.join(tys.map(without))
+            subtype.join(tys.map(without(_, keysToRemove)))
           case dict: DictMap =>
             dict
           case NoneType =>
@@ -532,8 +523,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case unexpected =>
             throw new IllegalStateException(s"unexpected non-map $unexpected")
         }
-        val ty = without(narrow.asMapType(mapTy))
-        (ty, env1)
+        val mapTys = narrow.asMapType(mapTy)
+        getKeysToRemove(keysArg, Nil).map(_.toSet) match {
+          case None       => (narrow.setAllFieldsOptional(mapTys), env1)
+          case Some(keys) => (without(mapTys, keys), env1)
+        }
 
       case RemoteId(CompilerMacro.fake_module, "record_info", 2) =>
         val List(AtomLit(access), name) = args

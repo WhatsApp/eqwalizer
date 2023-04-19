@@ -356,12 +356,10 @@ maps_filter_2_9_neg(B, M) ->               | ERROR   |
                                            |         |
 -spec maps_filter_2_8()                    |         |
         -> #{a => a, b => b}.              |         |
-maps_filter_2_8() ->                       | ERROR   |
+maps_filter_2_8() ->                       | OK      |
     M = #{a => a, b => b},                 |         |
     F = fun erlang:'=:='/2,                |         |
-    maps:filter(F, M).                     |         | maps:filter(F, M).
-                                           |         | Expected: shape map #S{a => 'a', b => 'b'}
-                                           |         | Got     : dict  map #D{atom() => 'a' | 'b'}
+    maps:filter(F, M).                     |         |
                                            |         |
 -spec maps_filter_2_10_neg() -> nok.       |         |
 maps_filter_2_10_neg() ->                  | ERROR   |
@@ -2220,8 +2218,17 @@ maps_without_4(Atom) ->                    | OK      |
 ) -> #{b => atom()}.                       |         |
 maps_without_5_neg(Atom, DOrE) ->          | ERROR   |
     maps:without(                          |         | maps:without(['a', 'c', DOrE], #{..}).
-                                           |         | Expected: shape map #S{b => atom()}
-                                           |         | Got     : dict  map #D{atom() => atom() | pid()}
+                                           |         | Expected: #S{b => atom()}
+                                           |         | Got     : #S{a => 'ka', b => atom(), c => pid(), d => 'kd'}
+                                           |         | 
+                                           |         | These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | +    a => ...
+                                           |         | +    c => ...
+                                           |         | +    d => ...
+                                           |         |      ...
+                                           |         |   }
         [a, c, DOrE],                      |         |
         #{                                 |         |
             a => ka,                       |         |
@@ -2287,8 +2294,16 @@ maps_without_12_neg(None) ->               | OK      |
 ) -> #{b := pid()}.                        |         |
 maps_without_13(Keys) ->                   | ERROR   |
     maps:without(                          |         | maps:without(Keys, #{..}).
-                                           |         | Expected: shape map #S{b := pid()}
-                                           |         | Got     : dict  map #D{atom() => pid()}
+                                           |         | Expected: #S{b := pid()}
+                                           |         | Got     : #S{a => pid(), b => pid()}
+                                           |         | 
+                                           |         | These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | +    a => ...
+                                           |         | -    b := ...
+                                           |         | +    b => ...
+                                           |         |   }
         Keys,                              |         |
         #{a => self(), b => self()}        |         |
     ).                                     |         |
@@ -2310,8 +2325,16 @@ maps_without_14_neg() ->                   | ERROR   |
 maps_without_15_neg() ->                   | ERROR   |
     Keys = [a, b],                         |         |
     maps:without(                          |         | maps:without(Keys, #{..}).
-                                           |         | Expected: shape map #S{b := pid()}
-                                           |         | Got     : dict  map #D{atom() => 'ka' | pid()}
+                                           |         | Expected: #S{b := pid()}
+                                           |         | Got     : #S{a => 'ka', b => pid()}
+                                           |         | 
+                                           |         | These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | +    a => ...
+                                           |         | -    b := ...
+                                           |         | +    b => ...
+                                           |         |   }
         Keys,                              |         |
         #{a => ka, b => self()}            |         |
     ).                                     |         |
@@ -2335,11 +2358,9 @@ maps_without_17_neg(M) ->                  | ERROR   |
 -spec maps_without_18                      |         |
     (#{a := av, b := bv})                  |         |
     -> #{a => av, b => bv}.                |         |
-maps_without_18(M) ->                      | ERROR   |
+maps_without_18(M) ->                      | OK      |
     L = [a, c, d],                         |         |
-    maps:without(L, M).                    |         | maps:without(L, M).
-                                           |         | Expected: shape map #S{a => 'av', b => 'bv'}
-                                           |         | Got     : dict  map #D{atom() => 'av' | 'bv'}
+    maps:without(L, M).                    |         |
                                            |         |
 -spec maps_without_19                      |         |
     (#{a := av, b := bv})                  |         |
@@ -2460,11 +2481,9 @@ maps_with_3(M) ->                          | OK      |
 -spec maps_with_4                          |         |
     (#{a := av, b := bv})                  |         |
     -> #{a => av, b => bv}.                |         |
-maps_with_4(M) ->                          | ERROR   |
+maps_with_4(M) ->                          | OK      |
     L = [a, c, d],                         |         |
-    maps:with(L, M).                       |         | maps:with(L, M).
-                                           |         | Expected: shape map #S{a => 'av', b => 'bv'}
-                                           |         | Got     : dict  map #D{atom() => 'av' | 'bv'}
+    maps:with(L, M).                       |         |
                                            |         |
 -spec maps_with_5                          |         |
     (#{a := av, b := bv})                  |         |
@@ -2916,10 +2935,8 @@ maps_filtermap_1(M) ->                     | OK      |
 -spec maps_filtermap_2(                    |         |
     #{a := atom(), b => atom()}            |         |
 ) -> #{a => binary(), b => binary()}.      |         |
-maps_filtermap_2(M) ->                     | ERROR   |
-    maps:filtermap(                        |         | maps:filtermap(fun, M).
-                                           |         | Expected: shape map #S{a => binary(), b => binary()}
-                                           |         | Got     : dict  map #D{atom() => binary()}
+maps_filtermap_2(M) ->                     | OK      |
+    maps:filtermap(                        |         |
         fun (_, V) ->                      |         |
             {true, atom_to_binary(V)}      |         |
         end,                               |         |
@@ -2931,8 +2948,18 @@ maps_filtermap_2(M) ->                     | ERROR   |
 ) -> #{a := atom(), b := binary()}.        |         |
 maps_filtermap_3_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         | maps:filtermap(fun, M).
-                                           |         | Expected: shape map #S{a := atom(), b := binary()}
-                                           |         | Got     : dict  map #D{atom() => atom() | binary()}
+                                           |         | Expected: #S{a := atom(), b := binary()}
+                                           |         | Got     : #S{a => atom() | binary(), b => atom() | binary(), c => atom() | binary()}
+                                           |         | 
+                                           |         | These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | -    a := ...
+                                           |         | +    a => ...
+                                           |         | -    b := ...
+                                           |         | +    b => ...
+                                           |         | +    c => ...
+                                           |         |   }
         fun                                |         |
             (a, V) -> true;                |         |
             (b, V) -> {true, atom_to_binar……         |

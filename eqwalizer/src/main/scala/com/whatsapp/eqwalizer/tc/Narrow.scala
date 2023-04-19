@@ -347,6 +347,29 @@ class Narrow(pipelineContext: PipelineContext) {
         throw new IllegalStateException()
     }
 
+  def setAllFieldsOptional(mapT: Type, newValTy: Option[Type] = None): Type =
+    mapT match {
+      case DynamicType =>
+        DynamicType
+      case shapeMap: ShapeMap =>
+        ShapeMap(shapeMap.props.map {
+          case ReqProp(key, tp) => OptProp(key, newValTy.getOrElse(tp))
+          case OptProp(key, tp) => OptProp(key, newValTy.getOrElse(tp))
+        })
+      case dictMap: DictMap =>
+        DictMap(dictMap.kType, newValTy.getOrElse(dictMap.vType))
+      case UnionType(elems) =>
+        val allMaps = elems.map(setAllFieldsOptional(_, newValTy))
+        subtype.join(allMaps)
+      case RemoteType(rid, args) =>
+        val body = util.getTypeDeclBody(rid, args)
+        setAllFieldsOptional(body, newValTy)
+      case NoneType =>
+        NoneType
+      case _ =>
+        throw new IllegalStateException()
+    }
+
   def getRecordField(recDecl: RecDeclTyped, recTy: Type, fieldName: String): Type = {
     val field = recDecl.fields(fieldName)
     recTy match {
