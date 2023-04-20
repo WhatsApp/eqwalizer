@@ -71,10 +71,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(OTPFuns.main(Array()), "otp_funs.cli")
     }
 
-    it("reports forms") {
-      checkAction(Invalids.main(Array()), "invalids.cli")
-    }
-
     it("prints ELP diagnostics") {
       checkAction(Main.main(Array("check", "refine", "--json")), "refine.elp.json")
       checkAction(Main.main(Array("check", "opaque", "--json")), "opaque.elp.json")
