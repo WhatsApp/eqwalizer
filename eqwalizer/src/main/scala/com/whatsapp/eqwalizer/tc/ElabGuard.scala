@@ -261,24 +261,24 @@ final class ElabGuard(pipelineContext: PipelineContext) {
   }
 
   private object NumTest {
-    def unapply(test: Test): Option[BigInt] = test match {
-      case TestNumber(nOpt)                   => nOpt
-      case TestUnOp("+", TestNumber(nOpt))    => nOpt
-      case TestUnOp("-", TestNumber(Some(n))) => Some(-n)
-      case _                                  => None
+    def unapply(test: Test): Boolean = test match {
+      case TestNumber(_)                => true
+      case TestUnOp("+", TestNumber(_)) => true
+      case TestUnOp("-", TestNumber(_)) => true
+      case _                            => false
     }
   }
 
   private def elabComparison(binOp: TestBinOp, env: Env)(implicit checkRedundancy: Boolean = false): Env =
     binOp match {
-      case TestBinOp("=:=" | "==", TestVar(v), NumTest(n)) =>
+      case TestBinOp("=:=" | "==", TestVar(v), NumTest()) =>
         env.get(v) match {
           case Some(ty) =>
             env + (v -> narrow.meet(ty, NumberType))
           case None =>
             env
         }
-      case TestBinOp("=:=" | "==", NumTest(n), TestVar(v)) =>
+      case TestBinOp("=:=" | "==", NumTest(), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
             env + (v -> narrow.meet(ty, NumberType))

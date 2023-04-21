@@ -97,25 +97,13 @@ guard_element_neg(T) -> T + 1.             |         | T.
                                            |         |
 -spec guard_float_1                        |         |
     (number() | atom()) -> number().       |         |
-guard_float_1(N)                           | ERROR   |
-    when N =:= -1.0 -> N.                  |         | N.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | atom()
-                                           |         | 
-                                           |         |   number() | atom() is not a subtype of number()
-                                           |         |   because
-                                           |         |   atom() is not a subtype of number()
+guard_float_1(N)                           | OK      |
+    when N =:= -1.0 -> N.                  |         |
                                            |         |
 -spec guard_float_2                        |         |
     (number() | atom()) -> number().       |         |
-guard_float_2(N)                           | ERROR   |
-    when N =:= +1.0 -> N.                  |         | N.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | atom()
-                                           |         | 
-                                           |         |   number() | atom() is not a subtype of number()
-                                           |         |   because
-                                           |         |   atom() is not a subtype of number()
+guard_float_2(N)                           | OK      |
+    when N =:= +1.0 -> N.                  |         |
                                            |         |
 -spec guard_float_3                        |         |
     (number() | atom()) -> number().       |         |
