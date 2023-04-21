@@ -87,3 +87,18 @@ guard_element_neg(T)
     when element(1, T) =:= a ->
     T;
 guard_element_neg(T) -> T + 1.
+
+-spec guard_float_1
+    (number() | atom()) -> number().
+guard_float_1(N)
+    when N =:= -1.0 -> N.
+
+-spec guard_float_2
+    (number() | atom()) -> number().
+guard_float_2(N)
+    when N =:= +1.0 -> N.
+
+-spec guard_float_3
+    (number() | atom()) -> number().
+guard_float_3(N)
+    when N =:= 1.0 -> N.
