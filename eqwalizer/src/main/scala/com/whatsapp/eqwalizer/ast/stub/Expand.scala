@@ -141,8 +141,8 @@ private class Expand(module: String) {
         MapExtType(List(OptExtProp(eqwalizerDynamic, eqwalizerDynamic)(t.pos)))(t.pos)
       case RecordRefinedExtType(name, refinedFields) =>
         RecordRefinedExtType(name, refinedFields.map(expandRefinedRecordField))(t.pos)
-      case _: VarExtType | _: BuiltinExtType | _: RangeExtType | _: IntLitExtType | _: AtomLitExtType |
-          _: RecordExtType | _: UnOpType | _: BinOpType =>
+      case _: VarExtType | _: BuiltinExtType | _: IntLitExtType | _: AtomLitExtType | _: RecordExtType | _: UnOpType |
+          _: BinOpType =>
         t
     }
 
@@ -201,8 +201,8 @@ private class Expand(module: String) {
             case Some(tp) => expandConstraints(tp, s, stack + v.name)
             case None     => t
           }
-      case _: BuiltinExtType | _: RangeExtType | _: IntLitExtType | _: AtomLitExtType | _: RecordExtType |
-          _: AnyMapExtType | _: UnOpType | _: BinOpType | _: AnyListExtType =>
+      case _: BuiltinExtType | _: IntLitExtType | _: AtomLitExtType | _: RecordExtType | _: AnyMapExtType |
+          _: UnOpType | _: BinOpType | _: AnyListExtType =>
         t
     }
 

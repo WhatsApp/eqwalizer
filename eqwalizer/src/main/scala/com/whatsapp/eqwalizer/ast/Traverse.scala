@@ -442,10 +442,7 @@ class Traverse(val listener: AstListener) {
     case bt @ BuiltinExtType(_) =>
       listener.enterType(bt)
       listener.exitType(bt)
-    case rt @ RangeExtType(_, _) =>
-      listener.enterType(rt)
-      listener.exitType(rt)
-    case ilt @ IntLitExtType(_) =>
+    case ilt @ IntLitExtType() =>
       listener.enterType(ilt)
       listener.exitType(ilt)
     case vt @ VarExtType(_) =>

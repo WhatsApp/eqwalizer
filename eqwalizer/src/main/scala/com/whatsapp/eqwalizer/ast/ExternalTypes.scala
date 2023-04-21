@@ -22,8 +22,7 @@ object ExternalTypes {
   case class LocalExtType(id: Id, args: List[ExtType])(val pos: Pos) extends ExtType
   case class RemoteExtType(id: RemoteId, args: List[ExtType])(val pos: Pos) extends ExtType
   case class BuiltinExtType(name: String)(val pos: Pos) extends ExtType
-  case class RangeExtType(first: BigInt, last: BigInt)(val pos: Pos) extends ExtType
-  case class IntLitExtType(value: BigInt)(val pos: Pos) extends ExtType
+  case class IntLitExtType()(val pos: Pos) extends ExtType
   case class UnOpType(op: String)(val pos: Pos) extends ExtType
   case class BinOpType(op: String)(val pos: Pos) extends ExtType
 

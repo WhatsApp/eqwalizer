@@ -27,7 +27,7 @@ object ExternalTypeVars {
     case RemoteExtType(_, args) =>
       args
     case _: AtomLitExtType | _: VarExtType | _: RecordExtType | _: AnyMapExtType | _: LocalExtType | _: BuiltinExtType |
-        _: RangeExtType | _: IntLitExtType | _: UnOpType | _: BinOpType | _: AnyListExtType =>
+        _: IntLitExtType | _: UnOpType | _: BinOpType | _: AnyListExtType =>
       Nil
   }
 

@@ -223,12 +223,7 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
           ) =>
         FunExtType(args.map(convertType), convertType(resultType))(pos)
       case ETuple(List(EAtom("type"), EPos(pos), EAtom("range"), EList(List(rangeFirst, rangeLast), _))) =>
-        (convertRangePart(rangeFirst), convertRangePart(rangeLast)) match {
-          case (Some(first), Some(last)) =>
-            RangeExtType(first, last)(pos)
-          case _ =>
-            intExtType(pos)
-        }
+        intExtType(pos)
       case ETuple(List(EAtom("type"), EPos(pos), EAtom("map"), EAtom("any"))) =>
         AnyMapExtType()(pos)
       case ETuple(List(EAtom("type"), EPos(pos), EAtom("map"), EList(assocTypes, _))) =>
@@ -259,8 +254,8 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         )(pos)
       case ETuple(List(EAtom("user_type"), EPos(pos), EAtom(name), EList(params, None))) =>
         LocalExtType(Id(name, params.size), params.map(convertType))(pos)
-      case ETuple(List(EAtom("integer"), EPos(pos), ELong(value))) =>
-        IntLitExtType(value)(pos)
+      case ETuple(List(EAtom("integer"), EPos(pos), ELong(_))) =>
+        IntLitExtType()(pos)
       case ETuple(List(EAtom("char"), EPos(pos), ELong(_))) =>
         BuiltinExtType("char")(pos)
       case ETuple(List(EAtom("op"), EPos(pos), EAtom(op), _)) =>
@@ -714,28 +709,5 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
     val extractor = new ExportAllExtractor
     EData.traverse(obj, extractor)
     extractor.exportAll
-  }
-
-  private def convertRangePart(r: EObject): Option[BigInt] = r match {
-    case ETuple(List(EAtom("integer"), _, ELong(value))) =>
-      Some(value)
-    case ETuple(
-          List(
-            EAtom("op"),
-            ETuple(_),
-            EAtom(op),
-            ETuple(List(EAtom("integer"), _pos, ELong(value))),
-          )
-        ) =>
-      op match {
-        case "-" =>
-          Some(0 - value)
-        case "+" =>
-          Some(value)
-        case _ =>
-          throw new IllegalStateException(s"unexpected op $op")
-      }
-    case _tooComplicated =>
-      None
   }
 }

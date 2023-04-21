@@ -132,9 +132,7 @@ class ConvertTypes(module: String) {
         else DictMap(c(props.head.key), c(props.head.tp))
       case BuiltinExtType(name) =>
         builtinTypes(name)
-      case RangeExtType(first, last) =>
-        NumberType
-      case IntLitExtType(value) =>
+      case IntLitExtType() =>
         NumberType
       case _: UnOpType | _: BinOpType =>
         NumberType
@@ -175,7 +173,7 @@ class ConvertTypes(module: String) {
       props.flatMap(p => List(p.key, p.tp)).flatMap(collectVarNames)
     case ListExtType(ty) =>
       collectVarNames(ty)
-    case _: AtomLitExtType | _: VarExtType | _: RecordExtType | _: BuiltinExtType | _: RangeExtType | _: IntLitExtType |
+    case _: AtomLitExtType | _: VarExtType | _: RecordExtType | _: BuiltinExtType | _: IntLitExtType |
         _: AnyMapExtType | _: UnOpType | _: BinOpType | _: AnyListExtType =>
       Nil
   }
