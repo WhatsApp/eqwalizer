@@ -312,6 +312,15 @@ when
 -spec 'gen_server:call'(gen_server:server_ref(), term(), timeout()) -> eqwalizer:dynamic().
 'gen_server:call'(_, _, _) -> error(eqwalizer_specs).
 
+%% -------- gen_statem --------
+
+-spec 'gen_statem:call'(gen_statem:server_ref(), term()) -> eqwalizer:dynamic().
+'gen_statem:call'(_, _) -> error(eqwalizer_specs).
+
+-spec 'gen_statem:call'(gen_statem:server_ref(), term(), Timeout) -> eqwalizer:dynamic() when
+    Timeout :: timeout() | {clean_timeout, timeout()} | {dirty_timeout | timeout()}.
+'gen_statem:call'(_, _, _) -> error(eqwalizer_specs).
+
 %% -------- gb_sets --------
 
 -spec 'gb_sets:empty'() -> gb_sets:set(none()).
