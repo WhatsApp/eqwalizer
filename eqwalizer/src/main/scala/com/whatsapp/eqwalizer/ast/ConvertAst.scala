@@ -478,7 +478,8 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(List(EAtom("float"), EPos(p), EDouble(_))) =>
         FloatLit()(p)
       case ETuple(List(EAtom("char" | "integer"), EPos(p), ELong(value))) =>
-        IntLit(value)(p)
+        val optInt = if (value.isValidInt) Some(value.intValue) else None
+        IntLit(optInt)(p)
       case ETuple(List(EAtom("string"), EPos(p), stringValue)) =>
         val emptyString = stringValue match {
           case EList(Nil, None) => true
@@ -657,7 +658,8 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(List(EAtom("float"), EPos(p), _value)) =>
         TestNumber(None)(p)
       case ETuple(List(EAtom("char" | "integer"), EPos(p), ELong(value))) =>
-        TestNumber(Some(value))(p)
+        val optInt = if (value.isValidInt) Some(value.intValue) else None
+        TestNumber(optInt)(p)
       case ETuple(List(EAtom("string"), EPos(p), _value)) =>
         TestString()(p)
       case _ => throw new IllegalStateException()

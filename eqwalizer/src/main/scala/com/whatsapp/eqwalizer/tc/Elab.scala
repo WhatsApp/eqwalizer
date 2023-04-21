@@ -164,8 +164,8 @@ final class Elab(pipelineContext: PipelineContext) {
           val env3 = check.checkExpr(arityExpr, NumberType, env2)
           val funType =
             arityExpr match {
-              case IntLit(arity) =>
-                FunType(Nil, List.fill(arity.intValue)(DynamicType), DynamicType)
+              case IntLit(Some(arity)) =>
+                FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
               case _ =>
                 AnyFunType
             }

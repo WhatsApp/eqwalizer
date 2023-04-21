@@ -55,7 +55,7 @@ class FancyGenericsSpec extends AnyFunSpec {
         val clause = Clause(patVars, Nil, Body(List(app)))(pos)
         Lambda(List(clause))(pos, name = None)
       }
-      val numExpr = IntLit(2)(TextRange.fake)
+      val numExpr = IntLit(Some(2))(TextRange.fake)
 
       val elabApply = ctx.elabApply
 

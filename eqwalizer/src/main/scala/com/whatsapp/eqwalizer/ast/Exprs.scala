@@ -17,7 +17,7 @@ object Exprs {
   case class Var(n: String)(val pos: Pos) extends Expr
   case class AtomLit(s: String)(val pos: Pos) extends Expr
 
-  case class IntLit(value: BigInt)(val pos: Pos) extends Expr
+  case class IntLit(value: Option[Int])(val pos: Pos) extends Expr
   case class FloatLit()(val pos: Pos) extends Expr
 
   case class Block(body: Body)(val pos: Pos) extends Expr

@@ -149,8 +149,10 @@ object Show {
       n
     case Exprs.AtomLit(atom) =>
       s"'$atom'"
-    case IntLit(value) =>
+    case IntLit(Some(value)) =>
       value.toString
+    case IntLit(None) =>
+      "int_lit"
     case FloatLit() =>
       "float_lit"
     case StringLit(_) =>
