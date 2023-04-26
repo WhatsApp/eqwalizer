@@ -63,14 +63,6 @@ interprets all such maps as the dictionary `#D{term() => term()}` in strict mode
 or `#D{dynamic() => dynamic()}` in gradual mode.
 
 
-### Function types
-
-Function types are interpreted as expected and as defined in the Erlang spec,
-except for the type `fun((...)) -> Type` (functions of any arity, returning `Type`).
-This type is considered by eqWAlizer to be the same as `fun()`, that is, the type
-of all functions.
-
-
 ### List types
 
 Much like numeric types, the various kind of list types are only supported in a
