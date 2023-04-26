@@ -42,7 +42,7 @@
          partition/2,
          unzip/1]).
 
--import_type({maybe, [{maybe, 1}]}).
+-import_type({'maybe', [{'maybe', 1}]}).
 
 -spec singleton(A) -> [A].
 
@@ -105,12 +105,12 @@ filter(F, List) ->
           [],
           List).
 
--spec filter_map(fun((A) -> maybe:maybe(B)),
+-spec filter_map(fun((A) -> 'maybe':'maybe'(B)),
                  [A]) -> [B].
 
 filter_map(F, Xs) -> foldr(maybe_cons(F), [], Xs).
 
--spec maybe_cons(fun((A) -> maybe:maybe(B)), A,
+-spec maybe_cons(fun((A) -> 'maybe':'maybe'(B)), A,
                  [B]) -> [B].
 
 maybe_cons(F, Mx, Xs) ->
@@ -119,7 +119,7 @@ maybe_cons(F, Mx, Xs) ->
         {'$#maybe:maybe.nothing'} -> Xs
     end.
 
--spec maybe_cons(fun((A) -> maybe:maybe(B))) -> fun((A,
+-spec maybe_cons(fun((A) -> 'maybe':'maybe'(B))) -> fun((A,
                                                      [B]) -> [B]).
 
 maybe_cons(F) ->
@@ -155,13 +155,13 @@ any(Pred, [H | T]) ->
     end;
 any(_Pred, []) -> false.
 
--spec maximum([A]) -> maybe:maybe(A).
+-spec maximum([A]) -> 'maybe':'maybe'(A).
 
 maximum([]) -> {'$#maybe:maybe.nothing'};
 maximum([H | T]) ->
     {'$#maybe:maybe.just', foldl(fun basics:max/2, H, T)}.
 
--spec minimum([A]) -> maybe:maybe(A).
+-spec minimum([A]) -> 'maybe':'maybe'(A).
 
 minimum([]) -> {'$#maybe:maybe.nothing'};
 minimum([H | T]) ->
@@ -205,12 +205,12 @@ map2(_, _, _) -> [].
 is_empty([_ | _]) -> false;
 is_empty([]) -> true.
 
--spec head([A]) -> maybe:maybe(A).
+-spec head([A]) -> 'maybe':'maybe'(A).
 
 head([H | _]) -> {'$#maybe:maybe.just', H};
 head([]) -> {'$#maybe:maybe.nothing'}.
 
--spec tail([A]) -> maybe:maybe([A]).
+-spec tail([A]) -> 'maybe':'maybe'([A]).
 
 tail([_ | T]) -> {'$#maybe:maybe.just', T};
 tail([]) -> {'$#maybe:maybe.nothing'}.

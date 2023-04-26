@@ -25,7 +25,7 @@
 
 -export([keys/1, values/1, to_list/1, from_list/1]).
 
--import_type({maybe, [{maybe, 1}]}).
+-import_type({'maybe', [{'maybe', 1}]}).
 
 -opaque map_(K, V) :: map_ffi:map_(K, V).
 
@@ -33,7 +33,7 @@
 
 empty() -> map_ffi:empty().
 
--spec get(K, map_(K, V)) -> maybe:maybe(V).
+-spec get(K, map_(K, V)) -> 'maybe':'maybe'(V).
 
 get(Key, Map) -> map_ffi:get(Key, Map).
 
@@ -62,7 +62,7 @@ insert(Key, Value, Map) ->
 
 remove(Key, Map) -> map_ffi:remove(Key, Map).
 
--spec update(K, fun((maybe:maybe(V)) -> maybe:maybe(V)),
+-spec update(K, fun(('maybe':'maybe'(V)) -> 'maybe':'maybe'(V)),
              map_(K, V)) -> map_(K, V).
 
 update(Key, Alter, Map) ->

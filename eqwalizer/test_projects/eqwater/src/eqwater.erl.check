@@ -811,7 +811,7 @@ occ32(X) ->                                | OK      |
   end.                                     |         |
                                            |         |
 -spec occ33                                |         |
-(true | false | maybe) ->                  |         |
+(true | false | 'maybe') ->                |         |
   boolean() | undefined.                   |         |
 occ33(X) when                              | OK      |
   not is_boolean(X) -> undefined;          |         |

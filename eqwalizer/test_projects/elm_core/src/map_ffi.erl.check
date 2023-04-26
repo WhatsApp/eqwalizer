@@ -19,7 +19,7 @@
                                                                                  |         |
 -export([keys/1, values/1, to_list/1, from_list/1]).                             |         |
                                                                                  |         |
--import_type({maybe, [{maybe, 1}]}).                                             |         |
+-import_type({'maybe', [{'maybe', 1}]}).                                         |         |
                                                                                  |         |
 -type map_(K, V) :: #{K => V}.                                                   |         |
                                                                                  |         |
@@ -27,7 +27,7 @@
                                                                                  |         |
 empty() -> maps:new().                                                           | OK      |
                                                                                  |         |
--spec get(K, map_(K, V)) -> maybe:maybe(V).                                      |         |
+-spec get(K, map_(K, V)) -> 'maybe':'maybe'(V).                                  |         |
                                                                                  |         |
 get(Key, Map) ->                                                                 | OK      |
     case maps:find(Key, Map) of                                                  |         |

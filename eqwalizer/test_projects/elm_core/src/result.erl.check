@@ -20,7 +20,7 @@
                                                                                  |         |
 -export([is_ok/1]).                                                              |         |
                                                                                  |         |
--import_type({maybe, [{maybe, 1}]}).                                             |         |
+-import_type({'maybe', [{'maybe', 1}]}).                                         |         |
                                                                                  |         |
 -type result(Error, Value) :: {'$#result:result.ok',                             |         |
                                Value} |                                          |         |
@@ -93,21 +93,21 @@ map_error(F, {'$#result:result.err', E}) ->                                     
                                                                                  |         |
 map_error(F) -> fun (Res) -> map_error(F, Res) end.                              | OK      |
                                                                                  |         |
--spec to_maybe(result(_, A)) -> maybe:maybe(A).                                  |         |
+-spec to_maybe(result(_, A)) -> 'maybe':'maybe'(A).                              |         |
                                                                                  |         |
 to_maybe({'$#result:result.ok', V}) ->                                           | OK      |
     {'$#maybe:maybe.just', V};                                                   |         |
 to_maybe({'$#result:result.err', _}) ->                                          |         |
     {'$#maybe:maybe.nothing'}.                                                   |         |
                                                                                  |         |
--spec from_maybe(X, maybe:maybe(A)) -> result(X, A).                             |         |
+-spec from_maybe(X, 'maybe':'maybe'(A)) -> result(X, A).                         |         |
                                                                                  |         |
 from_maybe(_Err, {'$#maybe:maybe.just', V}) ->                                   | OK      |
     {'$#result:result.ok', V};                                                   |         |
 from_maybe(Err, {'$#maybe:maybe.nothing'}) ->                                    |         |
     {'$#result:result.err', Err}.                                                |         |
                                                                                  |         |
--spec from_maybe(X) -> fun((maybe:maybe(A)) -> result(X,                         |         |
+-spec from_maybe(X) -> fun(('maybe':'maybe'(A)) -> result(X,                     |         |
                                                       A)).                       |         |
                                                                                  |         |
 from_maybe(Err) ->                                                               | OK      |
