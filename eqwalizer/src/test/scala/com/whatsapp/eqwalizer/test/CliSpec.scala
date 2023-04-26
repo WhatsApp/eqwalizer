@@ -59,10 +59,6 @@ class CliSpec extends SnapshotSpec {
       checkAction(UnionsWithTypeVars.main(Array()), "unions_with_type_vars.cli")
     }
 
-    it("reports clauses with repeated variable names") {
-      checkAction(RepeatedVars.main(Array()), "repeated_vars.cli")
-    }
-
     it("reports OTP function calls") {
       checkAction(OTPFuns.main(Array()), "otp_funs.cli")
     }
