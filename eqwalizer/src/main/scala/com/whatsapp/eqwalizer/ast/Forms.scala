@@ -13,6 +13,8 @@ import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{BehaviourError, TypeError}
+import com.github.plokhotnyuk.jsoniter_scala.macros._
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 import scala.collection.immutable.TreeSeqMap
 
@@ -87,4 +89,13 @@ object Forms {
   private val functionAtom = new OtpErlangAtom("function")
   def isFunForm(o: OtpErlangObject): Boolean =
     o.asInstanceOf[OtpErlangTuple].elementAt(0).equals(functionAtom)
+
+  implicit val codec: JsonValueCodec[List[ExternalForm]] = JsonCodecMaker.make(
+    CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
+      case "pos"                     => "location"
+      case "mod"                     => "module"
+      case s if !s.charAt(0).isUpper => JsonCodecMaker.enforce_snake_case(s)
+      case s                         => s
+    }
+  )
 }
