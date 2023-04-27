@@ -15,6 +15,7 @@ import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{BehaviourError, TypeError}
 import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
+import com.whatsapp.eqwalizer.io.Ipc
 
 import scala.collection.immutable.TreeSeqMap
 
@@ -77,13 +78,19 @@ object Forms {
     import com.whatsapp.eqwalizer.io.AstLoader
     import com.whatsapp.eqwalizer.io.EData.EList
 
-    val Some(EList(rawForms, None)) = AstLoader.loadAbstractForms(astStorage)
-    val isBeam = astStorage match {
-      case _: DbApi.AstBeam => true
-      case _                => false
+    astStorage match {
+      case storage: DbApi.AstBeamEtfStorage =>
+        val Some(EList(rawForms, None)) = AstLoader.loadAbstractForms(storage)
+        val isBeam = storage match {
+          case _: DbApi.AstBeam => true
+          case _                => false
+        }
+        val noAutoImport = rawForms.flatMap(new ConvertAst(isBeam).extractNoAutoImport).flatten.toSet
+        rawForms.flatMap(new ConvertAst(isBeam, noAutoImport).convertForm)
+      case DbApi.AstJsonIpc(module) =>
+        val bytes = Ipc.getAstBytes(module, stubsOnly = false, converted = true)
+        readFromArray[List[ExternalForm]](bytes)
     }
-    val noAutoImport = rawForms.flatMap(new ConvertAst(isBeam).extractNoAutoImport).flatten.toSet
-    rawForms.flatMap(new ConvertAst(isBeam, noAutoImport).convertForm)
   }
 
   private val functionAtom = new OtpErlangAtom("function")

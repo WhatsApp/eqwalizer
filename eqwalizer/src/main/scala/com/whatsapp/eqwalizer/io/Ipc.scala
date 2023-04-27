@@ -11,11 +11,11 @@ object Ipc {
   case object Terminated extends Exception
   private case class GotNull() extends Exception
 
-  def getAstBytes(module: String, stubsOnly: Boolean): Array[Byte] = {
+  def getAstBytes(module: String, stubsOnly: Boolean, converted: Boolean): Array[Byte] = {
     if (stubsOnly)
-      send(GetStubsBytes(module))
+      send(GetStubsBytes(module, converted))
     else
-      send(GetAstBytes(module))
+      send(GetAstBytes(module, converted))
     receive() match {
       case Right(GetAstBytesReply(astBytesLen)) =>
         println()
@@ -69,18 +69,20 @@ object Ipc {
   }
 
   private def reqToJson(req: Request): ujson.Obj = req match {
-    case GetAstBytes(module) =>
+    case GetAstBytes(module, converted) =>
       ujson.Obj(
         "tag" -> "GetAstBytes",
         "content" -> ujson.Obj(
-          "module" -> module
+          "module" -> module,
+          "converted" -> converted,
         ),
       )
-    case GetStubsBytes(module) =>
+    case GetStubsBytes(module, converted) =>
       ujson.Obj(
         "tag" -> "GetStubsBytes",
         "content" -> ujson.Obj(
-          "module" -> module
+          "module" -> module,
+          "converted" -> converted,
         ),
       )
     case EqwalizingStart(module) =>
@@ -138,8 +140,8 @@ object Ipc {
   }
 
   private sealed trait Request
-  private case class GetAstBytes(module: String) extends Request
-  private case class GetStubsBytes(module: String) extends Request
+  private case class GetAstBytes(module: String, converted: Boolean) extends Request
+  private case class GetStubsBytes(module: String, converted: Boolean) extends Request
   private case class EqwalizingStart(module: String) extends Request
   private case class EqwalizingDone(module: String) extends Request
   private case class Done(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]) extends Request

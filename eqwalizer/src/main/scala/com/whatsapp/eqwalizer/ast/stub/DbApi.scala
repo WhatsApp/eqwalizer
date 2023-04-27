@@ -13,12 +13,15 @@ import java.nio.file.Path
 object DbApi {
 
   sealed trait AstStorage
-  case class AstBeam(path: Path) extends AstStorage
-  case class AstEtfFile(path: Path) extends AstStorage
+  sealed trait AstBeamEtfStorage extends AstStorage
+  case class AstBeam(path: Path) extends AstBeamEtfStorage
+  case class AstEtfFile(path: Path) extends AstBeamEtfStorage
 
   /** The AST will be fetched in Erlang Term Format over inter-process communication
     */
-  case class AstEtfIpc(module: String) extends AstStorage
+  case class AstEtfIpc(module: String) extends AstBeamEtfStorage
+
+  case class AstJsonIpc(module: String) extends AstStorage
 
   def getCallbacks(module: String): (List[Callback], Set[Id]) =
     Db.getModuleStub(module) match {

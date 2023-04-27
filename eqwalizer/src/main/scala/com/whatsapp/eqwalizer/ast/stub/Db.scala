@@ -6,15 +6,16 @@
 
 package com.whatsapp.eqwalizer.ast.stub
 
+import com.github.plokhotnyuk.jsoniter_scala.core.readFromArray
+
 import java.nio.file.{Files, Paths}
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
-
 import com.whatsapp.eqwalizer.ast.{App, ConvertAst, ExtModuleStub, Id}
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.config
 import com.whatsapp.eqwalizer.io.BuildInfo.AppInfo
-import com.whatsapp.eqwalizer.io.{AstLoader, EData}
+import com.whatsapp.eqwalizer.io.{AstLoader, EData, Ipc}
 
 private object Db {
   private def beamModules(dir: String): List[String] =
@@ -59,15 +60,19 @@ private object Db {
     ExtModuleStub(module, forms)
 
   def loadStubForms(module: String): Option[List[ExternalForm]] = {
-    getAstStorage(module).map { astStorage =>
-      val formsJ = AstLoader.loadAbstractFormsJ(astStorage)(stubsOnly = true)
-      val formsDef = (for {
-        i <- 0 until formsJ.arity()
-        f = formsJ.elementAt(i)
-        if !isFunForm(f)
-      } yield f).toArray
-      val fromBeam = Db.fromBeam(module)
-      formsDef.flatMap(f => new ConvertAst(fromBeam).convertForm(EData.fromJava(f))).toList
+    getAstStorage(module).map {
+      case astStorage: DbApi.AstBeamEtfStorage =>
+        val formsJ = AstLoader.loadAbstractFormsJ(astStorage)(stubsOnly = true)
+        val formsDef = (for {
+          i <- 0 until formsJ.arity()
+          f = formsJ.elementAt(i)
+          if !isFunForm(f)
+        } yield f).toArray
+        val fromBeam = Db.fromBeam(module)
+        formsDef.flatMap(f => new ConvertAst(fromBeam).convertForm(EData.fromJava(f))).toList
+      case DbApi.AstJsonIpc(module) =>
+        val bytes = Ipc.getAstBytes(module, stubsOnly = true, converted = true)
+        readFromArray[List[ExternalForm]](bytes)
     }
   }
 
@@ -98,7 +103,11 @@ private object Db {
         val path = Paths.get(app.ebinDir, s"$module.beam")
         DbApi.AstBeam(path)
       } else if (config.useIpc) {
-        DbApi.AstEtfIpc(module)
+        if (config.useElpConvertedAst) {
+          DbApi.AstJsonIpc(module)
+        } else {
+          DbApi.AstEtfIpc(module)
+        }
       } else {
         val etf = Paths.get(config.astDir.get, s"$module.etf")
         DbApi.AstEtfFile(path = etf)
@@ -183,19 +192,29 @@ private object Db {
 
   private val generatedMark: String = "@" + "generated"
   def isGenerated(module: String): Boolean = {
-    val astStorage = getAstStorage(module).get
-    val formsJ = AstLoader.loadAbstractFormsJ(astStorage)
-    val fromBeam = Db.fromBeam(module)
-    for {
-      i <- 0 until formsJ.arity()
-      form <- new ConvertAst(fromBeam).convertForm(EData.fromJava(formsJ.elementAt(i)))
-    } form match {
-      case File(erlFile, _) =>
-        val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
-        return preamble.contains(generatedMark)
-      case _ =>
+    getAstStorage(module).get match {
+      case astStorage: DbApi.AstBeamEtfStorage =>
+        val formsJ = AstLoader.loadAbstractFormsJ(astStorage)
+        val fromBeam = Db.fromBeam(module)
+        for {
+          i <- 0 until formsJ.arity()
+          form <- new ConvertAst(fromBeam).convertForm(EData.fromJava(formsJ.elementAt(i)))
+        } form match {
+          case File(erlFile, _) =>
+            val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
+            return preamble.contains(generatedMark)
+          case _ =>
+        }
+        false
+      case DbApi.AstJsonIpc(module) =>
+        val bytes = Ipc.getAstBytes(module, stubsOnly = true, converted = true)
+        readFromArray[List[ExternalForm]](bytes).exists {
+          case File(erlFile, _) =>
+            val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
+            preamble.contains(generatedMark)
+          case _ => false
+        }
     }
-    false
   }
 
   private def dirsToModules(root: String, dirs: List[String], maxDepth: Int): List[String] =

@@ -24,6 +24,7 @@ package object eqwalizer {
       eqwater: Boolean,
       useElp: Boolean,
       useIpc: Boolean,
+      useElpConvertedAst: Boolean,
       tolerateErrors: Boolean,
       checkRedundantGuards: Boolean,
   )
@@ -45,6 +46,7 @@ package object eqwalizer {
       approximateComplexTypes = config.getBoolean("approximate_complex_types"),
       eqwater = config.getBoolean("eqwater"),
       useIpc = config.getBoolean("use_ipc"),
+      useElpConvertedAst = config.getBoolean("use_elp_converted_ast"),
       tolerateErrors = config.getBoolean("tolerate_errors"),
       checkRedundantGuards = config.getBoolean("check_redundant_guards"),
     )

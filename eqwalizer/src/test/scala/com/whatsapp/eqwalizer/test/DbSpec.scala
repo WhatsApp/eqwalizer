@@ -22,6 +22,7 @@ class DbSpec extends org.scalatest.funspec.AnyFunSpec {
         case DbApi.AstBeam(path)    => path.toAbsolutePath.toString
         case DbApi.AstEtfFile(path) => path.toAbsolutePath.toString
         case DbApi.AstEtfIpc(_)     => throw new IllegalStateException("ipc mode is not expected in tests")
+        case DbApi.AstJsonIpc(_)    => throw new IllegalStateException("ipc mode is not expected in tests")
       }
       assert(actualAbsPath === Some(expAbsPath))
     }
