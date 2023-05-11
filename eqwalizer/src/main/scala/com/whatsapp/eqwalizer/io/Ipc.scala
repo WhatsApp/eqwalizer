@@ -11,7 +11,7 @@ object Ipc {
   case object Terminated extends Exception
   private case class GotNull() extends Exception
 
-  def getAstBytes(module: String, stubsOnly: Boolean, converted: Boolean): Array[Byte] = {
+  def getAstBytes(module: String, stubsOnly: Boolean, converted: Boolean): Option[Array[Byte]] = {
     if (stubsOnly)
       send(GetStubsBytes(module, converted))
     else
@@ -23,14 +23,18 @@ object Ipc {
         val buf = new Array[Byte](astBytesLen)
         val read = readNBytes(System.in, buf, 0, astBytesLen)
         assert(read == astBytesLen, s"expected $astBytesLen for $module but got $read")
-        buf
+        Some(buf)
+      case Right(GetStubsBytesReply(stubsBytesLen)) if stubsBytesLen == 0 =>
+        println()
+        Console.out.flush()
+        None
       case Right(GetStubsBytesReply(stubsBytesLen)) =>
         println()
         Console.out.flush()
         val buf = new Array[Byte](stubsBytesLen)
         val read = readNBytes(System.in, buf, 0, stubsBytesLen)
         assert(read == stubsBytesLen, s"expected $stubsBytesLen for $module stubs but got $read")
-        buf
+        Some(buf)
       case Right(CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated

@@ -60,7 +60,7 @@ private object Db {
     ExtModuleStub(module, forms)
 
   def loadStubForms(module: String): Option[List[ExternalForm]] = {
-    getAstStorage(module).map {
+    getAstStorage(module).flatMap {
       case astStorage: DbApi.AstBeamEtfStorage =>
         val formsJ = AstLoader.loadAbstractFormsJ(astStorage)(stubsOnly = true)
         val formsDef = (for {
@@ -69,10 +69,11 @@ private object Db {
           if !isFunForm(f)
         } yield f).toArray
         val fromBeam = Db.fromBeam(module)
-        formsDef.flatMap(f => new ConvertAst(fromBeam).convertForm(EData.fromJava(f))).toList
+        Some(formsDef.flatMap(f => new ConvertAst(fromBeam).convertForm(EData.fromJava(f))).toList)
       case DbApi.AstJsonIpc(module) =>
-        val bytes = Ipc.getAstBytes(module, stubsOnly = true, converted = true)
-        readFromArray[List[ExternalForm]](bytes)
+        Ipc
+          .getAstBytes(module, stubsOnly = true, converted = true)
+          .map(bytes => readFromArray[List[ExternalForm]](bytes))
     }
   }
 
@@ -97,22 +98,23 @@ private object Db {
   def getExtModuleStub(module: String): Option[ExtModuleStub] =
     loadStubForms(module).map(loadExtModuleStub(_, module))
 
-  def getAstStorage(module: String): Option[DbApi.AstStorage] =
-    getModuleApp(module).map { app =>
-      if (fromBeam(module)) {
-        val path = Paths.get(app.ebinDir, s"$module.beam")
-        DbApi.AstBeam(path)
-      } else if (config.useIpc) {
-        if (config.useElpConvertedAst) {
-          DbApi.AstJsonIpc(module)
-        } else {
+  def getAstStorage(module: String): Option[DbApi.AstStorage] = {
+    if (config.useIpc && config.useElpConvertedAst) {
+      Some(DbApi.AstJsonIpc(module))
+    } else {
+      getModuleApp(module).map { app =>
+        if (fromBeam(module)) {
+          val path = Paths.get(app.ebinDir, s"$module.beam")
+          DbApi.AstBeam(path)
+        } else if (config.useIpc) {
           DbApi.AstEtfIpc(module)
+        } else {
+          val etf = Paths.get(config.astDir.get, s"$module.etf")
+          DbApi.AstEtfFile(path = etf)
         }
-      } else {
-        val etf = Paths.get(config.astDir.get, s"$module.etf")
-        DbApi.AstEtfFile(path = etf)
       }
     }
+  }
 
   private def getRawModuleStub(module: String): Option[ExtModuleStub] =
     if (typeIds.contains(module))
@@ -207,12 +209,13 @@ private object Db {
         }
         false
       case DbApi.AstJsonIpc(module) =>
-        val bytes = Ipc.getAstBytes(module, stubsOnly = true, converted = true)
-        readFromArray[List[ExternalForm]](bytes).exists {
-          case File(erlFile, _) =>
-            val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
-            preamble.contains(generatedMark)
-          case _ => false
+        Ipc.getAstBytes(module, stubsOnly = true, converted = true).exists { bytes =>
+          readFromArray[List[ExternalForm]](bytes).exists {
+            case File(erlFile, _) =>
+              val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
+              preamble.contains(generatedMark)
+            case _ => false
+          }
         }
     }
   }

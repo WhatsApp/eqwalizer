@@ -32,7 +32,7 @@ object AstLoader {
         val bytes = Files.readAllBytes(path)
         loadEtfJ(bytes, path.toString)
       case AstEtfIpc(module) =>
-        val bytes = Ipc.getAstBytes(module, stubsOnly, converted = false)
+        val bytes = Ipc.getAstBytes(module, stubsOnly, converted = false).get
         loadEtfJ(bytes, originForDebugging = s"from IPC request for $module")
     }
 

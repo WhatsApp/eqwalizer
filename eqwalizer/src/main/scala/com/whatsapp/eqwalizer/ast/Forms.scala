@@ -88,7 +88,7 @@ object Forms {
         val noAutoImport = rawForms.flatMap(new ConvertAst(isBeam).extractNoAutoImport).flatten.toSet
         rawForms.flatMap(new ConvertAst(isBeam, noAutoImport).convertForm)
       case DbApi.AstJsonIpc(module) =>
-        val bytes = Ipc.getAstBytes(module, stubsOnly = false, converted = true)
+        val bytes = Ipc.getAstBytes(module, stubsOnly = false, converted = true).get
         readFromArray[List[ExternalForm]](bytes)
     }
   }
