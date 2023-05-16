@@ -12,7 +12,7 @@
 main(_Args) ->
     erlang:system_flag(backtrace_depth, 20),
     State = #state{},
-    io:setopts(State#state.io, [binary]),
+    io:setopts(State#state.io, [binary, {encoding, latin1}]),
     loop(State).
 
 loop(State0) ->
