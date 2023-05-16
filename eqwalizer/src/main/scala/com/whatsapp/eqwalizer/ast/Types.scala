@@ -107,6 +107,7 @@ object Types {
       "any" -> AnyType,
       "atom" -> AtomType,
       "binary" -> BinaryType,
+      "dynamic" -> DynamicType,
       "nonempty_binary" -> BinaryType,
       "bitstring" -> BinaryType,
       "nonempty_bitstring" -> BinaryType,
