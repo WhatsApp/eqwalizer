@@ -329,6 +329,11 @@ scan1([$\t | Cs], St, Off, Toks) ->
 scan1([C | Cs], St, Off, Toks) when ?WHITE_SPACE(C) ->
     skip_white_space(Cs, St, Off, Toks, char_byte_size(C));
 %% Punctuation characters and operators, first recognise multiples.
+%% ?= for the maybe ... else ... end construct
+scan1("?=" ++ Cs, St, Off, Toks) ->
+    tok2(Cs, St, Off, Toks, '?=', 2);
+scan1("?" = Cs, _St, Off, Toks) ->
+    {more, {Cs, Off, Toks, [], fun scan/5}};
 %% << <- <=
 scan1("<<" ++ Cs, St, Off, Toks) ->
     tok2(Cs, St, Off, Toks, '<<', 2);
