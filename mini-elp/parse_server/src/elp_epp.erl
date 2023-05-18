@@ -275,7 +275,7 @@ format_error({error, Term}) ->
 format_error({warning, Term}) ->
     io_lib:format("-warning(~tp).", [Term]);
 format_error(ftr_after_prefix) ->
-    "feature directive not allowed after anything interesting";
+    "feature directive not allowed after exports or record definitions";
 format_error(E) ->
     file:format_error(E).
 
