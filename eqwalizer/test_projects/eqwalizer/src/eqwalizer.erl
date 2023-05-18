@@ -24,14 +24,14 @@
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
 %% It communicates the intent: "I know that the value would be of the right type".
 %% @end
--spec dynamic_cast(any()) -> dynamic().
+-spec dynamic_cast(term()) -> eqwalizer:dynamic().
 dynamic_cast(X) -> X.
 
 %% @doc
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
 %% It communicates the intent: "This code should be fixed" (later).
 %% @end
--spec fix_me(any()) -> dynamic().
+-spec fix_me(term()) -> eqwalizer:dynamic().
 fix_me(X) -> X.
 
 %% @doc
@@ -41,7 +41,7 @@ fix_me(X) -> X.
 %% This can be useful when you don't quite understand how
 %% eqWAlizer handles a particular piece of code.
 %% @end
--spec reveal_type(any()) -> none().
+-spec reveal_type(term()) -> none().
 reveal_type(_Expr) -> error(eqwalizer_reveal_type).
 
 %% This type can be used in a record type declaration to specify

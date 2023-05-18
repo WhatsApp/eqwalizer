@@ -7,7 +7,7 @@
 -compile(warn_missing_spec).
 -typing([eqwalizer]).
 
--export_type([dynamic/0]).
+-export_type([dynamic/0, refinable/0]).
 -export([dynamic_cast/1, fix_me/1, reveal_type/1]).
 
 %% This type is intended to help with code being transitioned
@@ -24,14 +24,14 @@
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
 %% It communicates the intent: "I know that the value would be of the right type".
 %% @end
--spec dynamic_cast(term()) -> dynamic().
+-spec dynamic_cast(term()) -> eqwalizer:dynamic().
 dynamic_cast(X) -> X.
 
 %% @doc
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
 %% It communicates the intent: "This code should be fixed" (later).
 %% @end
--spec fix_me(term()) -> dynamic().
+-spec fix_me(term()) -> eqwalizer:dynamic().
 fix_me(X) -> X.
 
 %% @doc
