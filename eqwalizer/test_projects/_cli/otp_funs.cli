@@ -2,11 +2,11 @@ Per module stats:
 io  1
 sets  2
 code  2
+timer  2
 io_lib  3
 rand  3
 string  6
 file  8
-timer  10
 application  11
 queue  16
 ets  16
@@ -19,4 +19,4 @@ erlang  372
 Per app stats:
 kernel  21
 erts  372
-stdlib  468
+stdlib  460
