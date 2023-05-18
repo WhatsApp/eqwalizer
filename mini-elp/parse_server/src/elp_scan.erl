@@ -888,6 +888,8 @@ reserved_word('bsl') -> true;
 reserved_word('bsr') -> true;
 reserved_word('or') -> true;
 reserved_word('xor') -> true;
+reserved_word('maybe') -> true;
+reserved_word('else') -> true;
 reserved_word(_) -> false.
 
 char_byte_size(C) ->
