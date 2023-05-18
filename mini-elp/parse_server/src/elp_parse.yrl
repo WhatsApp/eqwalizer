@@ -1449,9 +1449,7 @@ normalise({bin, _, Fs}) ->
             [],
             fun(E, _) ->
                 {value, normalise(E), []}
-            end,
-            [],
-            true
+            end
         ),
     B;
 normalise({cons, _, Head, Tail}) ->
