@@ -91,6 +91,7 @@
     uses = #{} :: #{name() => [{argspec(), [used()]}]},
     default_encoding = ?DEFAULT_ENCODING :: source_encoding(),
     pre_opened = false :: boolean(),
+    in_prefix = true :: boolean(),
     fname = [] :: function_name_type(),
     scan_opts = [] :: erl_scan:options()
 }).
@@ -155,12 +156,14 @@ open(Options) ->
         Name ->
             Self = self(),
             Epp = spawn(fun() -> server(Self, Name, Options) end),
+            Extra = proplists:get_bool(extra, Options),
             case epp_request(Epp) of
-                {ok, Pid, Encoding} ->
-                    case proplists:get_bool(extra, Options) of
-                        true -> {ok, Pid, [{encoding, Encoding}]};
-                        false -> {ok, Pid}
-                    end;
+                {ok, Pid, Encoding} when Extra ->
+                    {ok, Pid, [{encoding, Encoding}]};
+                {ok, Pid, _} ->
+                    {ok, Pid};
+                {ok, Pid} when Extra ->
+                    {ok, Pid, []};
                 Other ->
                     Other
             end
@@ -271,6 +274,8 @@ format_error({error, Term}) ->
     io_lib:format("-error(~tp).", [Term]);
 format_error({warning, Term}) ->
     io_lib:format("-warning(~tp).", [Term]);
+format_error(ftr_after_prefix) ->
+    "feature directive not allowed after anything interesting";
 format_error(E) ->
     file:format_error(E).
 
@@ -895,14 +900,16 @@ scan_toks(From, St) ->
             leave_file(wait_request(St), St)
     end.
 
+scan_toks([{'-', _Lh}, {atom, _Ld, feature} = Feature | Toks], From, St) ->
+    scan_feature(Toks, Feature, From, St);
 scan_toks([{'-', _Lh}, {atom, _Ld, define} = Define | Toks], From, St) ->
     scan_define(Toks, Define, From, St);
 scan_toks([{'-', _Lh}, {atom, _Ld, undef} = Undef | Toks], From, St) ->
-    scan_undef(Toks, Undef, From, St);
+    scan_undef(Toks, Undef, From, leave_prefix(St));
 scan_toks([{'-', _Lh}, {atom, _Ld, error} = Error | Toks], From, St) ->
-    scan_err_warn(Toks, Error, From, St);
+    scan_err_warn(Toks, Error, From, leave_prefix(St));
 scan_toks([{'-', _Lh}, {atom, _Ld, warning} = Warn | Toks], From, St) ->
-    scan_err_warn(Toks, Warn, From, St);
+    scan_err_warn(Toks, Warn, From, leave_prefix(St));
 scan_toks([{'-', _Lh}, {atom, _Li, include} = Inc | Toks], From, St) ->
     scan_include(Toks, Inc, From, St);
 scan_toks([{'-', _Lh}, {atom, _Li, include_lib} = IncLib | Toks], From, St) ->
@@ -933,13 +940,44 @@ scan_toks([{'-', _Lh}, {atom, _Lf, file} = FileToken | Toks0], From, St) ->
 scan_toks(Toks0, From, St) ->
     try expand_macros(Toks0, St#epp{fname = Toks0}) of
         Toks1 when is_list(Toks1) ->
+            InPrefix =
+                St#epp.in_prefix andalso
+                    case Toks1 of
+                        [] -> true;
+                        [{'-', _Loc}, Tok | _] -> in_prefix(Tok);
+                        _ -> false
+                    end,
             epp_reply(From, {ok, Toks1}),
-            wait_req_scan(St#epp{macs = scan_module(Toks1, St#epp.macs)})
+            wait_req_scan(St#epp{in_prefix = InPrefix, macs = scan_module(Toks1, St#epp.macs)})
     catch
         {error, ErrL, What} ->
             epp_reply(From, {error, {ErrL, epp, What}}),
             wait_req_scan(St)
     end.
+
+%% Determine whether we have passed the prefix where a -feature
+%% directive is allowed.
+in_prefix({atom, _, Atom}) ->
+    %% These directives are allowed inside the prefix
+    lists:member(Atom, [
+        'module',
+        'feature',
+        'if',
+        'else',
+        'elif',
+        'endif',
+        'ifdef',
+        'ifndef',
+        'define',
+        'undef',
+        'include',
+        'include_lib'
+    ]);
+in_prefix(_T) ->
+    false.
+
+leave_prefix(#epp{} = St) ->
+    St#epp{in_prefix = false}.
 
 scan_module([{'-', _Ah}, {atom, _Am, module}, {'(', _Al} | Ts], Ms) ->
     scan_module_1(Ts, Ms);
@@ -983,6 +1021,50 @@ scan_err_warn(Toks, {atom, _, Tag} = Token, From, St) ->
     T = no_match(Toks, Token),
     epp_reply(From, {error, {loc(T), epp, {bad, Tag}}}),
     wait_req_scan(St).
+
+%% scan a feature directive
+scan_feature(
+    [
+        {'(', _Ap},
+        {atom, _Am, Ind},
+        {',', _},
+        {atom, _, Ftr},
+        {')', _},
+        {dot, _}
+    ],
+    Feature,
+    From,
+    St
+) when
+    St#epp.in_prefix,
+    (Ind =:= enable orelse
+        Ind =:= disable)
+    ->
+    {ok, St1} = update_features(St, Ind, Ftr, loc(Feature)),
+    scan_toks(From, St1);
+scan_feature(
+    [
+        {'(', _Ap},
+        {atom, _Am, _Ind},
+        {',', _},
+        {atom, _, _Ftr},
+        {')', _},
+        {dot, _}
+        | _Toks
+    ],
+    Feature,
+    From,
+    St
+) when not St#epp.in_prefix ->
+    epp_reply(From, {error, {loc(Feature), epp, ftr_after_prefix}}),
+    wait_req_scan(St);
+scan_feature(Toks, {atom, _, Tag} = Token, From, St) ->
+    T = no_match(Toks, Token),
+    epp_reply(From, {error, {loc(T), epp, {bad, Tag}}}),
+    wait_req_scan(St).
+
+%% This is just a stub. We don't update any feature in the ELP fork.
+update_features(St0, _Ind, _Ftr, _Loc) -> {ok, St0}.
 
 %% scan_define(Tokens, DefineToken, From, EppState)
 
