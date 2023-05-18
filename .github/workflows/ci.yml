@@ -4,7 +4,7 @@ jobs:
     name: Linux CI (OTP ${{matrix.otp}})
     strategy:
       matrix:
-        otp: ['25.2', '24.3', '23.3']
+        otp: ['26.0', '25.3', '24.3']
     steps:
       - name: Checkout
         uses: "actions/checkout@v2"
@@ -47,10 +47,9 @@ jobs:
       - name: Add elp to path
         run: 'echo "$GITHUB_WORKSPACE/mini-elp/target/x86_64-unknown-linux-musl/release" >> $GITHUB_PATH'
       - name: Test eqwalizer
-        if: matrix.otp != '23.3'
         run: 'cd eqwalizer && sbt test'
       - name: Upload eqwalizer.jar
-        if: matrix.otp == '25.2'
+        if: matrix.otp == '25.3'
         uses: "actions/upload-artifact@v2"
         with:
           name: eqwalizer.jar
@@ -62,7 +61,7 @@ jobs:
     name: MacOS CI (${{matrix.brew_erlang}})
     strategy:
       matrix:
-        brew_erlang: ['erlang@25', 'erlang@24', 'erlang@23']
+        brew_erlang: ['erlang@25', 'erlang@24']
     steps:
       - name: Checkout
         uses: "actions/checkout@v2"
