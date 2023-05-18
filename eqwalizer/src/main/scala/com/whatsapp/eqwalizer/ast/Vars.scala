@@ -120,6 +120,8 @@ object Vars {
       Set.empty
     case BComprehension(_, _) =>
       Set.empty
+    case MComprehension(_, _, _) =>
+      Set.empty
     case RecordCreate(_, fields) =>
       fields.flatMap(fieldVars).toSet
     case RecordUpdate(e, recName, fields) =>

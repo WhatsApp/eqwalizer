@@ -49,6 +49,7 @@ object Exprs {
 
   case class LComprehension(template: Expr, qualifiers: List[Qualifier])(val pos: Pos) extends Expr
   case class BComprehension(template: Expr, qualifiers: List[Qualifier])(val pos: Pos) extends Expr
+  case class MComprehension(kTemplate: Expr, vTemplate: Expr, qualifiers: List[Qualifier])(val pos: Pos) extends Expr
   case class Binary(elems: List[BinaryElem])(val pos: Pos) extends Expr
   case class Catch(expr: Expr)(val pos: Pos) extends Expr
   case class TryCatchExpr(tryBody: Body, catchClauses: List[Clause], afterBody: Option[Body])(val pos: Pos) extends Expr
@@ -82,5 +83,6 @@ object Exprs {
   sealed trait Generator extends Qualifier
   case class LGenerate(pat: Pat, expr: Expr) extends Generator
   case class BGenerate(pat: Pat, expr: Expr) extends Generator
+  case class MGenerate(kPat: Pat, vPat: Pat, expr: Expr) extends Generator
   case class Filter(expr: Expr) extends Qualifier
 }

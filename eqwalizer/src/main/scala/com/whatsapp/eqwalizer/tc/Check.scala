@@ -348,6 +348,14 @@ final class Check(pipelineContext: PipelineContext) {
           val qEnv = elab.elabQualifiers(qualifiers, env)
           checkExpr(template, BinaryType, qEnv)
           env
+        case MComprehension(kTemplate, vTemplate, qualifiers) =>
+          val qEnv = elab.elabQualifiers(qualifiers, env)
+          val (kType, _) = elab.elabExpr(kTemplate, qEnv)
+          val (vType, _) = elab.elabExpr(vTemplate, qEnv)
+          val elabType = DictMap(kType, vType)
+          if (!subtype.subType(elabType, resTy))
+            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType)
+          env
         case rCreate: RecordCreate =>
           val recDecl = util
             .getRecord(module, rCreate.recName)

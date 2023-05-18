@@ -418,6 +418,9 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         LComprehension(convertExp(eTemplate), eQualifiers.map(convertQualifier))(p)
       case ETuple(List(EAtom("bc"), EPos(p), eTemplate, EList(eQualifiers, None))) =>
         BComprehension(convertExp(eTemplate), eQualifiers.map(convertQualifier))(p)
+      case ETuple(List(EAtom("mc"), EPos(p), kvTemplate, EList(eQualifiers, None))) =>
+        val (kTemplate, vTemplate) = convertCreateKV(kvTemplate)
+        MComprehension(kTemplate, vTemplate, eQualifiers.map(convertQualifier))(p)
       case ETuple(List(EAtom("block"), EPos(p), EList(eExps, None))) =>
         Block(Body(eExps.map(convertExp)))(p)
       case ETuple(List(EAtom("if"), EPos(p), EList(eClauses, None))) =>
@@ -607,6 +610,10 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         LGenerate(convertPat(ePat), convertExp(eExp))
       case ETuple(List(EAtom("b_generate"), EPos(p), ePat, eExp)) =>
         BGenerate(convertPat(ePat), convertExp(eExp))
+      case ETuple(
+            List(EAtom("m_generate"), EPos(p), ETuple(List(EAtom("map_field_exact"), EPos(_), kPat, vPat)), eExp)
+          ) =>
+        MGenerate(convertPat(kPat), convertPat(vPat), convertExp(eExp))
       case _ =>
         Filter(convertExp(term))
     }
