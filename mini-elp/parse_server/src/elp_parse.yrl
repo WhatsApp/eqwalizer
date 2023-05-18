@@ -288,10 +288,6 @@ pat_expr_max -> '(' pat_expr ')' : '$2'.
 
 map_pat_expr -> '#' map_tuple :
 	{map, ?anno('$1', '$2'), element(1, '$2')}.
-map_pat_expr -> pat_expr_max '#' map_tuple :
-	{map, ?anno('$1', '$3'), '$1', element(1, '$3')}.
-map_pat_expr -> map_pat_expr '#' map_tuple :
-	{map, ?anno('$1', '$3'), '$1', element(1, '$3')}.
 
 record_pat_expr -> '#' atom '.' atom :
 	{record_index,?anno('$1','$4'),element(3, '$2'),'$4'}.
