@@ -1026,9 +1026,9 @@ scan_err_warn(Toks, {atom, _, Tag} = Token, From, St) ->
 scan_feature(
     [
         {'(', _Ap},
-        {atom, _Am, Ind},
+        {atom, _Am, Ftr},
         {',', _},
-        {atom, _, Ftr},
+        {atom, _, Ind},
         {')', _},
         {dot, _}
     ],
