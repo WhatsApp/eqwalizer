@@ -28,7 +28,6 @@
 %% Copied from https://github.com/erlang/otp/blob/7b0b6ec4cf75b841d20e16b1f2113a2ba99bfc18/lib/stdlib/src/erl_lint.erl
 
 -module(elp_lint).
--feature(maybe_expr, enable).
 
 -export([module/1,module/2,module/3,format_error/1]).
 -export([exprs/2,exprs_opt/3,used_vars/2]). % Used from erl_eval.erl.
@@ -4050,13 +4049,7 @@ test_overriden_by_local(Anno, OldTest, Arity, St) ->
     end.
 
 feature_keywords() ->
-    Features = erl_features:configurable(),
-    G = fun(Ftr, Map) ->
-                Keywords = erl_features:keywords(Ftr),
-                Add = fun(Keyword, M) -> maps:put(Keyword, Ftr, M) end,
-                lists:foldl(Add, Map, Keywords)
-        end,
-    lists:foldl(G, #{}, Features).
+    #{}.
 
 %% keyword_warning(Anno, Atom, State) -> State.
 %%  Add warning for atoms that will be reserved keywords in the future.
@@ -4084,20 +4077,21 @@ keyword_warning(Anno, Atom, St) ->
 %%  Add warning for bad calls to io:fwrite/format functions.
 
 format_function(DefAnno, M, F, As, St) ->
-    maybe
-        true ?= is_format_function(M, F),
-        Lev = St#lint.warn_format,
-        true ?= Lev > 0,
-        case check_format_1(As) of
+  case is_format_function(M, F) of
+    true ->
+      case St#lint.warn_format of
+        Lev when Lev > 0 ->
+          case check_format_1(As) of
             {warn,Level,Fmt,Fas} when Level =< Lev ->
-                add_warning(DefAnno, {format_error,{Fmt,Fas}}, St);
+              add_warning(DefAnno, {format_error,{Fmt,Fas}}, St);
             {warn,Level,Anno,Fmt,Fas} when Level =< Lev ->
-                add_warning(Anno, {format_error,{Fmt,Fas}}, St);
+              add_warning(Anno, {format_error,{Fmt,Fas}}, St);
             _ -> St
-        end
-    else
-        false -> St
-    end.
+          end;
+        _Lev -> St
+      end;
+    false -> St
+  end.
 
 is_format_function(io, fwrite) -> true;
 is_format_function(io, format) -> true;
@@ -4249,14 +4243,16 @@ extract_sequence(4, Fmt0, Need) ->
         {error, _} = Error ->
             Error;
         {[C|Fmt], Modifiers} ->
-            maybe
-                ok ?= check_modifiers(C, Modifiers),
+            case check_modifiers(C, Modifiers) of
+              ok ->
                 case ordsets:is_element($K, Modifiers) of
                     true ->
                         extract_sequence(5, [C|Fmt], ['fun'|Need]);
                     false ->
                         extract_sequence(5, [C|Fmt], Need)
-                end
+                end;
+              Err ->
+                Err
             end;
         {[], _} ->
             extract_sequence(5, [], Need)
@@ -4291,10 +4287,13 @@ extract_modifiers([], Modifiers) ->
     {[], Modifiers}.
 
 check_modifiers(C, Modifiers) ->
-    maybe
-        ok ?= check_modifiers_1("l", Modifiers, C, "Pp"),
-        ok ?= check_modifiers_1("lt", Modifiers, C, "cPpsWw"),
-        ok ?= check_modifiers_1("Kk", Modifiers, C, "PpWw")
+    case check_modifiers_1("l", Modifiers, C, "Pp") of
+      ok ->
+        case check_modifiers_1("lt", Modifiers, C, "cPpsWw") of
+          ok -> check_modifiers_1("Kk", Modifiers, C, "PpWw");
+          Err -> Err
+        end;
+      Err -> Err
     end.
 
 check_modifiers_1(M, Modifiers, C, Cs) ->
