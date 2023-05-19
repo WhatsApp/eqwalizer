@@ -426,48 +426,12 @@ final class Elab(pipelineContext: PipelineContext) {
         val (timeoutT, timeoutEnv) = elabBody(timeoutBlock, env1)
         (subtype.join(timeoutT :: ts), subtype.joinEnvs(timeoutEnv :: envs))
       case LComprehension(template, qualifiers) =>
-        var envAcc = env
-        qualifiers.foreach {
-          case LGenerate(gPat, gExpr) =>
-            val (gT, gEnv) = elabExpr(gExpr, envAcc)
-            if (!subtype.subType(gT, ListType(AnyType)))
-              throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-            val Some(ListType(gElemT)) = narrow.asListType(gT)
-            val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
-            envAcc = pEnv
-          case BGenerate(gPat, gExpr) =>
-            envAcc = check.checkExpr(gExpr, BinaryType, envAcc)
-            val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
-            envAcc = pEnv
-          case Filter(fExpr) =>
-            Filters.asTest(fExpr).foreach { test =>
-              envAcc = elabGuard.elabGuards(List(Guard(List(test))), envAcc)
-            }
-            envAcc = elabExpr(fExpr, envAcc)._2
-        }
-        val (tType, _) = elabExpr(template, envAcc)
+        val qEnv = elabQualifiers(qualifiers, env)
+        val (tType, _) = elabExpr(template, qEnv)
         (ListType(tType), env)
       case BComprehension(template, qualifiers) =>
-        var envAcc = env
-        qualifiers.foreach {
-          case LGenerate(gPat, gExpr) =>
-            val (gT, gEnv) = elabExpr(gExpr, envAcc)
-            if (!subtype.subType(gT, ListType(AnyType)))
-              throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-            val Some(ListType(gElemT)) = narrow.asListType(gT)
-            val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
-            envAcc = pEnv
-          case BGenerate(gPat, gExpr) =>
-            envAcc = check.checkExpr(gExpr, BinaryType, envAcc)
-            val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
-            envAcc = pEnv
-          case Filter(fExpr) =>
-            Filters.asTest(fExpr).foreach { test =>
-              envAcc = elabGuard.elabGuards(List(Guard(List(test))), envAcc)
-            }
-            envAcc = elabExpr(fExpr, envAcc)._2
-        }
-        check.checkExpr(template, BinaryType, envAcc)
+        val qEnv = elabQualifiers(qualifiers, env)
+        check.checkExpr(template, BinaryType, qEnv)
         (BinaryType, env)
       case rCreate: RecordCreate =>
         elabRecordCreate(rCreate, env)
@@ -629,5 +593,28 @@ final class Elab(pipelineContext: PipelineContext) {
     }
     if (refinedFields.isEmpty) (recType, envAcc)
     else (RefinedRecordType(recType, refinedFields), envAcc)
+  }
+
+  def elabQualifiers(qualifiers: List[Qualifier], env: Env): Env = {
+    var envAcc = env
+    qualifiers.foreach {
+      case LGenerate(gPat, gExpr) =>
+        val (gT, gEnv) = elabExpr(gExpr, envAcc)
+        if (!subtype.subType(gT, ListType(AnyType)))
+          throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
+        val Some(ListType(gElemT)) = narrow.asListType(gT)
+        val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
+        envAcc = pEnv
+      case BGenerate(gPat, gExpr) =>
+        envAcc = check.checkExpr(gExpr, BinaryType, envAcc)
+        val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
+        envAcc = pEnv
+      case Filter(fExpr) =>
+        Filters.asTest(fExpr).foreach { test =>
+          envAcc = elabGuard.elabGuards(List(Guard(List(test))), envAcc)
+        }
+        envAcc = elabExpr(fExpr, envAcc)._2
+    }
+    envAcc
   }
 }

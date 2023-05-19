@@ -8,9 +8,8 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.Forms.{FunDecl, FunSpec, OverloadedFunSpec}
-import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.{Filters, RemoteId, TypeVars, Vars}
+import com.whatsapp.eqwalizer.ast.{RemoteId, TypeVars, Vars}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics._
 
 final class Check(pipelineContext: PipelineContext) {
@@ -337,27 +336,8 @@ final class Check(pipelineContext: PipelineContext) {
           val tEnv3 = util.exitScope(env, tEnv2, effVars)
           subtype.joinEnvs(tEnv3 :: envs1)
         case LComprehension(template, qualifiers) =>
-          var envAcc = env
-          qualifiers.foreach {
-            case LGenerate(gPat, gExpr) =>
-              val (gT, gEnv) = elab.elabExpr(gExpr, envAcc)
-              if (!subtype.subType(gT, ListType(AnyType)))
-                throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-              val Some(ListType(gElemT)) = narrow.asListType(gT)
-              val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
-              envAcc = pEnv
-            case BGenerate(gPat, gExpr) =>
-              envAcc = checkExpr(gExpr, BinaryType, envAcc)
-              val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
-              envAcc = pEnv
-            case Filter(fExpr) =>
-              Filters.asTest(fExpr).foreach { test =>
-                val env1 = elabGuard.elabGuards(List(Guard(List(test))), envAcc)
-                envAcc = env1
-              }
-              envAcc = elab.elabExpr(fExpr, envAcc)._2
-          }
-          val (tType, _) = elab.elabExpr(template, envAcc)
+          val qEnv = elab.elabQualifiers(qualifiers, env)
+          val (tType, _) = elab.elabExpr(template, qEnv)
           val elabType = ListType(tType)
           if (!subtype.subType(elabType, resTy))
             throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType)
@@ -365,27 +345,8 @@ final class Check(pipelineContext: PipelineContext) {
         case BComprehension(template, qualifiers) =>
           if (!subtype.subType(BinaryType, resTy))
             throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = BinaryType)
-          var envAcc = env
-          qualifiers.foreach {
-            case LGenerate(gPat, gExpr) =>
-              val (gT, gEnv) = elab.elabExpr(gExpr, envAcc)
-              if (!subtype.subType(gT, ListType(AnyType)))
-                throw ExpectedSubtype(gExpr.pos, gExpr, expected = ListType(AnyType), got = gT)
-              val Some(ListType(gElemT)) = narrow.asListType(gT)
-              val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
-              envAcc = pEnv
-            case BGenerate(gPat, gExpr) =>
-              envAcc = checkExpr(gExpr, BinaryType, envAcc)
-              val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
-              envAcc = pEnv
-            case Filter(fExpr) =>
-              Filters.asTest(fExpr).foreach { test =>
-                val env1 = elabGuard.elabGuards(List(Guard(List(test))), envAcc)
-                envAcc = env1
-              }
-              envAcc = elab.elabExpr(fExpr, envAcc)._2
-          }
-          checkExpr(template, BinaryType, envAcc)
+          val qEnv = elab.elabQualifiers(qualifiers, env)
+          checkExpr(template, BinaryType, qEnv)
           env
         case rCreate: RecordCreate =>
           val recDecl = util
