@@ -7,7 +7,7 @@
 -compile(warn_missing_spec).
 -typing([eqwalizer]).
 
--export_type([dynamic/0, refinable/0]).
+-export_type([dynamic/0, refinable/1]).
 -export([dynamic_cast/1, fix_me/1, reveal_type/1]).
 
 %% This type is intended to help with code being transitioned
