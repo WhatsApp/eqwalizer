@@ -433,6 +433,11 @@ final class Elab(pipelineContext: PipelineContext) {
         val qEnv = elabQualifiers(qualifiers, env)
         check.checkExpr(template, BinaryType, qEnv)
         (BinaryType, env)
+      case MComprehension(kTemplate, vTemplate, qualifiers) =>
+        val qEnv = elabQualifiers(qualifiers, env)
+        val (kType, _) = elabExpr(kTemplate, qEnv)
+        val (vType, _) = elabExpr(vTemplate, qEnv)
+        (DictMap(kType, vType), env)
       case rCreate: RecordCreate =>
         elabRecordCreate(rCreate, env)
       case rUpdate: RecordUpdate =>
@@ -609,6 +614,17 @@ final class Elab(pipelineContext: PipelineContext) {
         envAcc = check.checkExpr(gExpr, BinaryType, envAcc)
         val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
         envAcc = pEnv
+      case MGenerate(gkPat, gvPat, gExpr) =>
+        val (gT, gEnv) = elabExpr(gExpr, envAcc)
+        val anyMap = DictMap(AnyType, AnyType)
+        if (!subtype.subType(gT, anyMap)) {
+          throw ExpectedSubtype(gExpr.pos, gExpr, expected = anyMap, got = gT)
+        }
+        val kT = narrow.getKeyType(gT)
+        val vT = narrow.getValType(gT)
+        val (_, kPatEnv) = elabPat.elabPat(gkPat, kT, gEnv)
+        val (_, vPatEnv) = elabPat.elabPat(gvPat, vT, kPatEnv)
+        envAcc = vPatEnv
       case Filter(fExpr) =>
         Filters.asTest(fExpr).foreach { test =>
           envAcc = elabGuard.elabGuards(List(Guard(List(test))), envAcc)

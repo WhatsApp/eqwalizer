@@ -55,6 +55,8 @@ class Patch(erroneousExpr: Expr) {
           LComprehension(patchExpr(template), qualifiers.map(patchQualifier))(e.pos)
         case BComprehension(template, qualifiers) =>
           BComprehension(patchExpr(template), qualifiers.map(patchQualifier))(e.pos)
+        case MComprehension(kTemplate, vTemplate, qualifiers) =>
+          MComprehension(patchExpr(kTemplate), patchExpr(vTemplate), qualifiers.map(patchQualifier))(e.pos)
         case Binary(elems) =>
           Binary(elems.map(patchBinaryElem))(e.pos)
         case Catch(expr) =>
@@ -98,6 +100,8 @@ class Patch(erroneousExpr: Expr) {
         LGenerate(pat, patchExpr(expr))
       case BGenerate(pat, expr) =>
         BGenerate(pat, patchExpr(expr))
+      case MGenerate(kPat, vPat, expr) =>
+        MGenerate(kPat, vPat, patchExpr(expr))
       case Filter(expr) =>
         Filter(patchExpr(expr))
     }

@@ -214,6 +214,8 @@ object Show {
       "[ || ]"
     case BComprehension(_, _) =>
       "<< || >>"
+    case MComprehension(_, _, _) =>
+      "#{ || }"
     case RecordCreate(recName, _) =>
       s"#$recName{...}"
     case RecordUpdate(_, recName, _) =>

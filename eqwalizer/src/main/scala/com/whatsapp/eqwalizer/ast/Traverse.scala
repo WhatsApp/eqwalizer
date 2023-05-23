@@ -156,6 +156,12 @@ class Traverse(val listener: AstListener) {
       traverseExpr(template)
       qualifiers.foreach(traverseQualifier)
       listener.exitExpr(bc)
+    case mc @ MComprehension(kTemplate, vTemplate, qualifiers) =>
+      listener.enterExpr(mc)
+      traverseExpr(kTemplate)
+      traverseExpr(vTemplate)
+      qualifiers.foreach(traverseQualifier)
+      listener.exitExpr(mc)
     case b @ Binary(elems) =>
       listener.enterExpr(b)
       elems.foreach(traverseBinaryElem)
@@ -378,6 +384,10 @@ class Traverse(val listener: AstListener) {
       traverseExpr(expr)
     case LGenerate(pat, expr) =>
       traversePat(pat)
+      traverseExpr(expr)
+    case MGenerate(kPat, vPat, expr) =>
+      traversePat(kPat)
+      traversePat(vPat)
       traverseExpr(expr)
     case Filter(expr) =>
       traverseExpr(expr)
