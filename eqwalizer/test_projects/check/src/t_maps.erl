@@ -260,9 +260,9 @@ kvs(Dict, K2, V2) ->
 kvs_neg(Dict, K2, V2) ->
     Dict#{V2 => K2}.
 
--spec lit_type_neg(a) ->
+-spec lit_type(a) ->
     #{a => number()}.
-lit_type_neg(A) -> #{A => 3}.
+lit_type(A) -> #{A => 3}.
 
 -spec needs_shape_a
     (#{a := term()}) -> ok.
@@ -710,3 +710,28 @@ misc_mismatch_1_neg(X) ->
 map_k_pattern(
     #{#{key => val} := I}
 ) -> I.
+
+-spec dict_to_shape_1(
+    #{a | b => boolean()}
+) -> #{a => boolean(), b => term()}.
+dict_to_shape_1(M) -> M.
+
+-spec dict_to_shape_2(
+    #{a | b => boolean()}
+) -> #{a => boolean(), b => term(), c => boolean()}.
+dict_to_shape_2(M) -> M.
+
+-spec dict_to_shape_neg_1(
+    #{a | b => boolean()}
+) -> #{a => true, b => boolean()}.
+dict_to_shape_neg_1(M) -> M.
+
+-spec dict_to_shape_neg_2(
+    #{a | b => boolean()}
+) -> #{a => boolean(), b := term()}.
+dict_to_shape_neg_2(M) -> M.
+
+-spec dict_to_shape_neg_3(
+    #{a | b => boolean()}
+) -> #{a => boolean()}.
+dict_to_shape_neg_3(M) -> M.
