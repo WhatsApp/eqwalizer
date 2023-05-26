@@ -233,6 +233,15 @@ class Constraints(pipelineContext: PipelineContext) {
             t2 = kvs2(prop1.key)
           } yield (t1, t2)
           constrainSeq(state, uppersAndLowers)
+        case (DictMap(kT, vT), ShapeMap(props)) =>
+          val (reqProps, optProps) = props.partition {
+            case ReqProp(_, _) => true
+            case OptProp(_, _) => false
+          }
+          if (reqProps.nonEmpty) failSubtype()
+          val shapeDomain = subtype.join(optProps.map(prop => AtomLitType(prop.key)))
+          val codomainConstraints = props.map(p => (vT, p.tp))
+          constrainSeq(state, (kT, shapeDomain) :: codomainConstraints)
         case _ =>
           if (!subtype.subType(lowerBound, upperBound)) failSubtype()
           else state

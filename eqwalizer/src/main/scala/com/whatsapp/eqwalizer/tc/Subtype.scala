@@ -193,6 +193,14 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case (DictMap(kT, vT), ShapeMap(_)) if isDynamicType(kT) && isDynamicType(vT) =>
         true
+      case (DictMap(kT, vT), ShapeMap(props)) =>
+        val (reqProps, optProps) = props.partition {
+          case ReqProp(_, _) => true
+          case OptProp(_, _) => false
+        }
+        if (reqProps.nonEmpty) return false
+        val shapeDomain = join(optProps.map(prop => AtomLitType(prop.key)))
+        subTypePol(kT, shapeDomain, seen) && props.forall(prop => subTypePol(vT, prop.tp, seen))
       case _ =>
         false
     }

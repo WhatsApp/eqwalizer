@@ -390,9 +390,7 @@ kvs_neg(Dict, K2, V2) ->                   | ERROR   |
                                            |         |
 -spec lit_type(a) ->                       |         |
     #{a => number()}.                      |         |
-lit_type(A) -> #{A => 3}.                  | ERROR   | #{..}.
-                                           |         | Expected: shape map #S{a => number()}
-                                           |         | Got     : dict  map #D{'a' => number()}
+lit_type(A) -> #{A => 3}.                  | OK      |
                                            |         |
 -spec needs_shape_a                        |         |
     (#{a := term()}) -> ok.                |         |
@@ -708,10 +706,8 @@ test_update_with_1(Map, F) ->              | OK      |
     #{a := b},                             |         |
     fun((b) -> c)                          |         |
 ) -> #{a => b | c }.                       |         |
-test_update_with_2(Map, F) ->              | ERROR   |
-    maps:update_with(a, F, Map).           |         | maps:update_with('a', F, Map).
-                                           |         | Expected: shape map #S{a => 'b' | 'c'}
-                                           |         | Got     : dict  map #D{'a' => 'b' | 'c'}
+test_update_with_2(Map, F) ->              | OK      |
+    maps:update_with(a, F, Map).           |         |
                                            |         |
 -spec test_update_with_3(                  |         |
     #{string() => binary()},               |         |
@@ -1011,16 +1007,12 @@ map_k_pattern(                             | OK      |
 -spec dict_to_shape_1(                     |         |
     #{a | b => boolean()}                  |         |
 ) -> #{a => boolean(), b => term()}.       |         |
-dict_to_shape_1(M) -> M.                   | ERROR   | M.
-                                           |         | Expected: shape map #S{a => boolean(), b => term()}
-                                           |         | Got     : dict  map #D{'a' | 'b' => boolean()}
+dict_to_shape_1(M) -> M.                   | OK      |
                                            |         |
 -spec dict_to_shape_2(                     |         |
     #{a | b => boolean()}                  |         |
 ) -> #{a => boolean(), b => term(), c => b……         |
-dict_to_shape_2(M) -> M.                   | ERROR   | M.
-                                           |         | Expected: shape map #S{a => boolean(), b => term(), c => boolean()}
-                                           |         | Got     : dict  map #D{'a' | 'b' => boolean()}
+dict_to_shape_2(M) -> M.                   | OK      |
                                            |         |
 -spec dict_to_shape_neg_1(                 |         |
     #{a | b => boolean()}                  |         |
