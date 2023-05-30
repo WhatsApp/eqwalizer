@@ -62,14 +62,15 @@ private object Db {
   def loadStubForms(module: String): Option[List[ExternalForm]] = {
     getAstStorage(module).flatMap {
       case astStorage: DbApi.AstBeamEtfStorage =>
-        val formsJ = AstLoader.loadAbstractFormsJ(astStorage)(stubsOnly = true)
-        val formsDef = (for {
-          i <- 0 until formsJ.arity()
-          f = formsJ.elementAt(i)
-          if !isFunForm(f)
-        } yield f).toArray
-        val fromBeam = Db.fromBeam(module)
-        Some(formsDef.flatMap(f => new ConvertAst(fromBeam).convertForm(EData.fromJava(f))).toList)
+        AstLoader.loadAbstractFormsJ(astStorage, stubsOnly = true).map { formsJ =>
+          val formsDef = (for {
+            i <- 0 until formsJ.arity()
+            f = formsJ.elementAt(i)
+            if !isFunForm(f)
+          } yield f).toArray
+          val fromBeam = Db.fromBeam(module)
+          formsDef.flatMap(f => new ConvertAst(fromBeam).convertForm(EData.fromJava(f))).toList
+        }
       case DbApi.AstJsonIpc(module) =>
         Ipc
           .getAstBytes(module, stubsOnly = true, converted = true)
@@ -196,16 +197,17 @@ private object Db {
   def isGenerated(module: String): Boolean = {
     getAstStorage(module).get match {
       case astStorage: DbApi.AstBeamEtfStorage =>
-        val formsJ = AstLoader.loadAbstractFormsJ(astStorage)
-        val fromBeam = Db.fromBeam(module)
-        for {
-          i <- 0 until formsJ.arity()
-          form <- new ConvertAst(fromBeam).convertForm(EData.fromJava(formsJ.elementAt(i)))
-        } form match {
-          case File(erlFile, _) =>
-            val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
-            return preamble.contains(generatedMark)
-          case _ =>
+        AstLoader.loadAbstractFormsJ(astStorage).foreach { formsJ =>
+          val fromBeam = Db.fromBeam(module)
+          for {
+            i <- 0 until formsJ.arity()
+            form <- new ConvertAst(fromBeam).convertForm(EData.fromJava(formsJ.elementAt(i)))
+          } form match {
+            case File(erlFile, _) =>
+              val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
+              return preamble.contains(generatedMark)
+            case _ =>
+          }
         }
         false
       case DbApi.AstJsonIpc(module) =>
