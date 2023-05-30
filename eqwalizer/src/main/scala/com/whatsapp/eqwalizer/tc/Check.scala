@@ -144,7 +144,7 @@ final class Check(pipelineContext: PipelineContext) {
           } else
             util.getFunType(module, id) match {
               case Some(ft) =>
-                checkApply(expr, freshen(ft), args, resTy, env)
+                checkApply(funId, expr, freshen(ft), args, resTy, env)
               case None =>
                 throw UnboundVar(expr.pos, id.toString)
             }
@@ -172,7 +172,7 @@ final class Check(pipelineContext: PipelineContext) {
           } else
             util.getFunType(fqn) match {
               case Some(ft) =>
-                checkApply(expr, freshen(ft), args, resTy, env)
+                checkApply(fqn, expr, freshen(ft), args, resTy, env)
               case None =>
                 throw UnboundVar(expr.pos, fqn.toString)
             }
@@ -453,9 +453,11 @@ final class Check(pipelineContext: PipelineContext) {
     env
   }
 
-  private def checkApply(expr: Expr, ft: FunType, args: List[Expr], resTy: Type, env: Env): Env = {
+  private def checkApply(funId: RemoteId, expr: Expr, ft: FunType, args: List[Expr], resTy: Type, env: Env): Env = {
     val (argTys, env1) = elab.elabExprs(args, env)
-    val ftResTy = elabApply.elabApply(ft, args, argTys, env1)
+    var ftResTy = elabApply.elabApply(ft, args, argTys, env1)
+    if (CustomReturn.isCustomReturn(funId))
+      ftResTy = CustomReturn.customizeResultType(funId, args, resTy)
     if (!subtype.subType(ftResTy, resTy)) throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy)
     env1
   }

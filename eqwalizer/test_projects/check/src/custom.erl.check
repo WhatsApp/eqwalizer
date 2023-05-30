@@ -2918,3 +2918,47 @@ maps_filtermap_7_neg(M) ->                 | ERROR   |
                                            |         | Got     : binary()
         M                                  |         |
     ).                                     |         |
+                                           |         |
+-spec re_replace_1(iodata()) -> string().  |         |
+re_replace_1(Subj) ->                      | OK      |
+    re:replace(Subj, "+", "-", [{return, l……         |
+                                           |         |
+-spec re_replace_2(iodata()) -> binary().  |         |
+re_replace_2(Subj) ->                      | OK      |
+    re:replace(Subj, "+", "-", [{return, b……         |
+                                           |         |
+-spec re_replace_3_neg(iodata()) -> string……         |
+re_replace_3_neg(Subj) ->                  | ERROR   |
+    re:replace(Subj, "+", "-", [{return, b……         | re:replace(Subj, string_lit, string_lit, [{'return', 'binary'}]).
+                                           |         | Expected: string()
+                                           |         | Got     : binary()
+                                           |         |
+-spec re_replace_4_neg(iodata()) -> binary……         |
+re_replace_4_neg(Subj) ->                  | ERROR   |
+    re:replace(Subj, "+", "-", [{return, l……         | re:replace(Subj, string_lit, string_lit, [{'return', 'list'}]).
+                                           |         | Expected: binary()
+                                           |         | Got     : string()
+                                           |         |
+-spec re_replace_5_neg(atom()) -> binary()……         |
+re_replace_5_neg(Subj) ->                  | ERROR   |
+    Res = re:replace(Subj, "+", "-", [{ret……         | Subj.
+                                           |         | Expected: iodata() | unicode:charlist()
+                                           |         | Got     : atom()
+                                           |         | 
+                                           |         |   atom() is not a subtype of iodata() | unicode:charlist()
+                                           |         |   because
+                                           |         |   atom() is not a subtype of iodata()
+    Res.                                   |         |
+                                           |         |
+-spec re_replace_6_neg(iodata()) -> term()……         |
+re_replace_6_neg(Subj) ->                  | ERROR   |
+    Res = re:replace(Subj, "+", "-", [{ret……         | [{'return', 'something'}].
+                                           |         | Expected: [{'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored']
+                                           |         | Got     : [{'return', 'something'}]
+                                           |         | 
+                                           |         |   [{'return', 'something'}] is not a subtype of [{'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored']
+                                           |         |   because
+                                           |         |   {'return', 'something'} is not a subtype of {'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored'
+                                           |         |   because
+                                           |         |   {'return', 'something'} is not a subtype of 'noteol'
+    Res.                                   |         |

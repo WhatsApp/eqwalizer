@@ -2172,3 +2172,29 @@ maps_filtermap_7_neg(M) ->
         fun (_, V) -> {true, atom_to_binary(V)} end,
         M
     ).
+
+-spec re_replace_1(iodata()) -> string().
+re_replace_1(Subj) ->
+    re:replace(Subj, "+", "-", [{return, list}]).
+
+-spec re_replace_2(iodata()) -> binary().
+re_replace_2(Subj) ->
+    re:replace(Subj, "+", "-", [{return, binary}]).
+
+-spec re_replace_3_neg(iodata()) -> string().
+re_replace_3_neg(Subj) ->
+    re:replace(Subj, "+", "-", [{return, binary}]).
+
+-spec re_replace_4_neg(iodata()) -> binary().
+re_replace_4_neg(Subj) ->
+    re:replace(Subj, "+", "-", [{return, list}]).
+
+-spec re_replace_5_neg(atom()) -> binary().
+re_replace_5_neg(Subj) ->
+    Res = re:replace(Subj, "+", "-", [{return, list}]),
+    Res.
+
+-spec re_replace_6_neg(iodata()) -> term().
+re_replace_6_neg(Subj) ->
+    Res = re:replace(Subj, "+", "-", [{return, something}]),
+    Res.

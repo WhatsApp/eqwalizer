@@ -108,7 +108,9 @@ final class Elab(pipelineContext: PipelineContext) {
           util.getFunType(module, id) match {
             case Some(ft) =>
               val (argTys, env1) = elabExprs(args, env)
-              val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+              var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+              if (CustomReturn.isCustomReturn(funId))
+                resTy = CustomReturn.customizeResultType(funId, args, resTy)
               (resTy, env1)
             case None =>
               throw UnboundVar(expr.pos, id.toString)
@@ -184,7 +186,9 @@ final class Elab(pipelineContext: PipelineContext) {
           util.getFunType(fqn) match {
             case Some(ft) =>
               val (argTys, env1) = elabExprs(args, env)
-              val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+              var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+              if (CustomReturn.isCustomReturn(fqn))
+                resTy = CustomReturn.customizeResultType(fqn, args, resTy)
               (resTy, env1)
             case None =>
               throw UnboundVar(expr.pos, fqn.toString)

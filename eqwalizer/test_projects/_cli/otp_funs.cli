@@ -5,6 +5,7 @@ code  2
 timer  2
 io_lib  3
 rand  3
+re  6
 string  6
 file  8
 application  11
@@ -19,4 +20,4 @@ erlang  372
 Per app stats:
 kernel  21
 erts  372
-stdlib  460
+stdlib  466
