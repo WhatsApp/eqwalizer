@@ -64,7 +64,7 @@ object Types {
   val clsExnStackTypeDynamic: Type =
     TupleType(List(exnClassType, DynamicType, ListType(DynamicType)))
 
-  val builtinTypeAliasBodies = Map(
+  val builtinTypeAliasBodies: Map[String, Type] = Map(
     "string" -> ListType(charType),
     "boolean" -> UnionType(Set(falseType, trueType)),
     "timeout" -> UnionType(Set(AtomLitType("infinity"), NumberType)),
@@ -74,11 +74,11 @@ object Types {
     "iodata" -> UnionType(Set(RemoteType(RemoteId("erlang", "iolist", 0), Nil), BinaryType)),
   )
 
-  val builtinTypeAliases =
+  val builtinTypeAliases: Map[String, Type] =
     builtinTypeAliasBodies.keySet.map(name => name -> RemoteType(RemoteId("erlang", name, 0), Nil)).toMap
 
-  val stringType = builtinTypeAliases("string")
-  val booleanType = builtinTypeAliases("boolean")
+  val stringType: Type = builtinTypeAliases("string")
+  val booleanType: Type = builtinTypeAliases("boolean")
 
   def join(tys: Set[Type]): Type = {
     def collect(ty: Type): Set[Type] = {
