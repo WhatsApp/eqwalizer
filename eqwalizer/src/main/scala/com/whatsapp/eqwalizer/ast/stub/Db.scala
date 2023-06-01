@@ -73,7 +73,7 @@ private object Db {
         }
       case DbApi.AstJsonIpc(module) =>
         Ipc
-          .getAstBytes(module, stubsOnly = true, converted = true)
+          .getAstBytes(module, Ipc.ConvertedStubs)
           .map(bytes => readFromArray[List[ExternalForm]](bytes))
     }
   }
@@ -211,7 +211,7 @@ private object Db {
         }
         false
       case DbApi.AstJsonIpc(module) =>
-        Ipc.getAstBytes(module, stubsOnly = true, converted = true).exists { bytes =>
+        Ipc.getAstBytes(module, Ipc.ConvertedStubs).exists { bytes =>
           readFromArray[List[ExternalForm]](bytes).exists {
             case File(erlFile, _) =>
               val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)

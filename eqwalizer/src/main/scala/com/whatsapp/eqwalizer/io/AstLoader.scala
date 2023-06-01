@@ -32,8 +32,11 @@ object AstLoader {
         val bytes = Files.readAllBytes(path)
         Some(loadEtfJ(bytes, path.toString))
       case AstEtfIpc(module) =>
+        val format =
+          if (stubsOnly) Ipc.RawStubs
+          else Ipc.RawForms
         Ipc
-          .getAstBytes(module, stubsOnly, converted = false)
+          .getAstBytes(module, format)
           .map(bytes => loadEtfJ(bytes, originForDebugging = s"from IPC request for $module"))
     }
 

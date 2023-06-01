@@ -11,29 +11,27 @@ object Ipc {
   case object Terminated extends Exception
   private case class GotNull() extends Exception
 
-  def getAstBytes(module: String, stubsOnly: Boolean, converted: Boolean): Option[Array[Byte]] = {
-    if (stubsOnly)
-      send(GetStubsBytes(module, converted))
-    else
-      send(GetAstBytes(module, converted))
+  sealed trait ASTFormat {
+    val jsonName: String
+  }
+  case object RawForms extends ASTFormat { val jsonName = "RawForms" }
+  case object ConvertedForms extends ASTFormat { val jsonName = "ConvertedForms" }
+  case object RawStubs extends ASTFormat { val jsonName = "RawStubs" }
+  case object ConvertedStubs extends ASTFormat { val jsonName = "ConvertedStubs" }
+
+  def getAstBytes(module: String, kind: ASTFormat): Option[Array[Byte]] = {
+    send(GetAstBytes(module, kind))
     receive() match {
+      case Right(GetAstBytesReply(astBytesLen)) if astBytesLen == 0 =>
+        println()
+        Console.out.flush()
+        None
       case Right(GetAstBytesReply(astBytesLen)) =>
         println()
         Console.out.flush()
         val buf = new Array[Byte](astBytesLen)
         val read = readNBytes(System.in, buf, 0, astBytesLen)
         assert(read == astBytesLen, s"expected $astBytesLen for $module but got $read")
-        Some(buf)
-      case Right(GetStubsBytesReply(stubsBytesLen)) if stubsBytesLen == 0 =>
-        println()
-        Console.out.flush()
-        None
-      case Right(GetStubsBytesReply(stubsBytesLen)) =>
-        println()
-        Console.out.flush()
-        val buf = new Array[Byte](stubsBytesLen)
-        val read = readNBytes(System.in, buf, 0, stubsBytesLen)
-        assert(read == stubsBytesLen, s"expected $stubsBytesLen for $module stubs but got $read")
         Some(buf)
       case Right(CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
@@ -73,20 +71,12 @@ object Ipc {
   }
 
   private def reqToJson(req: Request): ujson.Obj = req match {
-    case GetAstBytes(module, converted) =>
+    case GetAstBytes(module, format) =>
       ujson.Obj(
         "tag" -> "GetAstBytes",
         "content" -> ujson.Obj(
           "module" -> module,
-          "converted" -> converted,
-        ),
-      )
-    case GetStubsBytes(module, converted) =>
-      ujson.Obj(
-        "tag" -> "GetStubsBytes",
-        "content" -> ujson.Obj(
-          "module" -> module,
-          "converted" -> converted,
+          "format" -> format.jsonName,
         ),
       )
     case EqwalizingStart(module) =>
@@ -119,10 +109,6 @@ object Ipc {
         val content = value.obj("content").obj
         val astBytesLen = content("ast_bytes_len").num.toInt
         GetAstBytesReply(astBytesLen)
-      case ujson.Str("GetStubsBytesReply") =>
-        val content = value.obj("content").obj
-        val stubsBytesLen = content("stubs_bytes_len").num.toInt
-        GetStubsBytesReply(stubsBytesLen)
       case ujson.Str("CannotCompleteRequest") =>
         CannotCompleteRequest
       case _ =>
@@ -144,8 +130,7 @@ object Ipc {
   }
 
   private sealed trait Request
-  private case class GetAstBytes(module: String, converted: Boolean) extends Request
-  private case class GetStubsBytes(module: String, converted: Boolean) extends Request
+  private case class GetAstBytes(module: String, format: ASTFormat) extends Request
   private case class EqwalizingStart(module: String) extends Request
   private case class EqwalizingDone(module: String) extends Request
   private case class Done(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]) extends Request
@@ -158,6 +143,5 @@ object Ipc {
     * and then reads `astBytesLen` bytes from stdin
     */
   private case class GetAstBytesReply(astBytesLen: Int) extends Reply
-  private case class GetStubsBytesReply(stubsBytesLen: Int) extends Reply
   private case object CannotCompleteRequest extends Reply
 }
