@@ -9,7 +9,7 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.TypeError
 
 object InvalidDiagnostics {
-  trait Invalid extends TypeError {
+  sealed trait Invalid extends TypeError {
     override def erroneousExpr: Option[Exprs.Expr] = None
   }
   case class UnknownId(pos: Pos, id: RemoteId) extends Invalid {
