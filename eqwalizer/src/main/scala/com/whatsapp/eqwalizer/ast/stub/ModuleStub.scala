@@ -6,6 +6,8 @@
 
 package com.whatsapp.eqwalizer.ast.stub
 
+import com.github.plokhotnyuk.jsoniter_scala.macros._
+import com.github.plokhotnyuk.jsoniter_scala.core._
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Id
 
@@ -24,3 +26,19 @@ private case class ModuleStub(
     optionalCallbacks: Set[Id],
     invalidForms: List[InvalidForm],
 )
+
+private object ModuleStub {
+  implicit val codec: JsonValueCodec[ModuleStub] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper {
+        case "pos"                     => "location"
+        case "mod"                     => "module"
+        case s if !s.charAt(0).isUpper => JsonCodecMaker.enforce_snake_case(s)
+        case s                         => s
+      }
+  )
+}
