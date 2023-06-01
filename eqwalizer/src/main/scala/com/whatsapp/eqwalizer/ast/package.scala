@@ -7,6 +7,7 @@
 package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.Forms._
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 package object ast {
   case class Id(name: String, arity: Int) {
@@ -35,4 +36,40 @@ package object ast {
       module: String,
       forms: List[ExternalForm],
   )
+
+  object Id {
+    implicit val keyCodec: JsonKeyCodec[Id] = new JsonKeyCodec[Id] {
+      override def decodeKey(in: JsonReader): Id = {
+        val key = in.readKeyAsString()
+        parse(key).getOrElse(in.decodeError(s"Invalid ID ${key}"))
+      }
+
+      override def encodeKey(x: Id, out: JsonWriter): Unit = {
+        out.writeKey(x.toString)
+      }
+    }
+
+    implicit val valCodec: JsonValueCodec[Id] = new JsonValueCodec[Id] {
+      override def nullValue: Id = null
+
+      override def decodeValue(in: JsonReader, _default: Id): Id = {
+        val key = in.readString("")
+        parse(key).getOrElse(in.decodeError(s"Invalid ID ${key}"))
+      }
+
+      override def encodeValue(x: Id, out: JsonWriter): Unit = {
+        out.writeVal(x.toString)
+      }
+    }
+
+    private def parse(str: String): Option[Id] = {
+      val splitIndex = str.lastIndexOf('/')
+      if (splitIndex <= 0)
+        None
+      else {
+        val (module, arityStr) = str.splitAt(splitIndex)
+        arityStr.substring(1).toIntOption.map(Id(module, _))
+      }
+    }
+  }
 }
