@@ -53,9 +53,7 @@ pub struct RebarConfig {
 
 impl RebarConfig {
     pub fn rebar3_command(&self) -> CommandProxy<'_> {
-        lazy_static! {
-            static ref REBAR_GLOBAL_LOCK: Mutex<()> = Mutex::new(());
-        }
+        static REBAR_GLOBAL_LOCK: Mutex<()> = Mutex::new(());
         let guard = REBAR_GLOBAL_LOCK.lock().unwrap();
         let mut cmd = Command::new("rebar3");
         cmd.arg("as");
