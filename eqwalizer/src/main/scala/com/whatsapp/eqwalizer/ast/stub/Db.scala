@@ -169,7 +169,12 @@ private object Db {
   def getContractiveModuleStub(module: String): Option[ModuleStub] =
     if (contractiveModuleStubs.contains(module))
       contractiveModuleStubs(module)
-    else {
+    else if (config.useElpConvertedAst && config.useIpc) {
+      val optStub =
+        Ipc.getAstBytes(module, Ipc.ContractiveStub).map(readFromArray[ModuleStub](_))
+      contractiveModuleStubs.put(module, optStub)
+      optStub
+    } else {
       val optStub = getExpandedModuleStub(module).map { new Contractivity(module).checkStub }
       contractiveModuleStubs.put(module, optStub)
       optStub
