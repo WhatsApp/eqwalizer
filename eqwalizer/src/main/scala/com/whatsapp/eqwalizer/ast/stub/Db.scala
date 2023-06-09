@@ -154,7 +154,12 @@ private object Db {
   def getExpandedModuleStub(module: String): Option[ModuleStub] =
     if (expandedModuleStubs.contains(module))
       expandedModuleStubs(module)
-    else {
+    else if (config.useElpConvertedAst && config.useIpc) {
+      val optStub =
+        Ipc.getAstBytes(module, Ipc.ExpandedStubs).map(readFromArray[ModuleStub](_))
+      expandedModuleStubs.put(module, optStub)
+      optStub
+    } else {
       val optStub = getRawModuleStub(module).map(Expander.expandStub)
       expandedModuleStubs.put(module, optStub)
       rawModuleStubs.remove(module)
