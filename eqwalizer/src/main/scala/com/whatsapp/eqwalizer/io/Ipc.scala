@@ -16,9 +16,9 @@ object Ipc {
   }
   case object RawForms extends ASTFormat { val jsonName = "RawForms" }
   case object ConvertedForms extends ASTFormat { val jsonName = "ConvertedForms" }
-  case object RawStubs extends ASTFormat { val jsonName = "RawStubs" }
-  case object ConvertedStubs extends ASTFormat { val jsonName = "ConvertedStubs" }
-  case object ExpandedStubs extends ASTFormat { val jsonName = "ExpandedStubs" }
+  case object RawStub extends ASTFormat { val jsonName = "RawStub" }
+  case object ConvertedStub extends ASTFormat { val jsonName = "ConvertedStub" }
+  case object ExpandedStub extends ASTFormat { val jsonName = "ExpandedStub" }
 
   def getAstBytes(module: String, kind: ASTFormat): Option[Array[Byte]] = {
     send(GetAstBytes(module, kind))

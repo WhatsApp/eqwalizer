@@ -62,7 +62,7 @@ private object Db {
   def loadStubForms(module: String): Option[List[ExternalForm]] = {
     getAstStorage(module).flatMap {
       case astStorage: DbApi.AstBeamEtfStorage =>
-        AstLoader.loadAbstractFormsJ(astStorage, stubsOnly = true).map { formsJ =>
+        AstLoader.loadAbstractFormsJ(astStorage, stubOnly = true).map { formsJ =>
           val formsDef = (for {
             i <- 0 until formsJ.arity()
             f = formsJ.elementAt(i)
@@ -73,7 +73,7 @@ private object Db {
         }
       case DbApi.AstJsonIpc(module) =>
         Ipc
-          .getAstBytes(module, Ipc.ConvertedStubs)
+          .getAstBytes(module, Ipc.ConvertedStub)
           .map(bytes => readFromArray[List[ExternalForm]](bytes))
     }
   }
@@ -156,7 +156,7 @@ private object Db {
       expandedModuleStubs(module)
     else if (config.useElpConvertedAst && config.useIpc) {
       val optStub =
-        Ipc.getAstBytes(module, Ipc.ExpandedStubs).map(readFromArray[ModuleStub](_))
+        Ipc.getAstBytes(module, Ipc.ExpandedStub).map(readFromArray[ModuleStub](_))
       expandedModuleStubs.put(module, optStub)
       optStub
     } else {
@@ -216,7 +216,7 @@ private object Db {
         }
         false
       case DbApi.AstJsonIpc(module) =>
-        Ipc.getAstBytes(module, Ipc.ConvertedStubs).exists { bytes =>
+        Ipc.getAstBytes(module, Ipc.ConvertedStub).exists { bytes =>
           readFromArray[List[ExternalForm]](bytes).exists {
             case File(erlFile, _) =>
               val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)

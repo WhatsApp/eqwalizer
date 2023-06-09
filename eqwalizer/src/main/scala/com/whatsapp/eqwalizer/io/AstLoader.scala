@@ -23,7 +23,7 @@ object AstLoader {
   def loadAbstractForms(astData: DbApi.AstBeamEtfStorage): Option[EObject] =
     loadAbstractFormsJ(astData).map(EData.fromJava)
 
-  def loadAbstractFormsJ(astStorage: DbApi.AstBeamEtfStorage, stubsOnly: Boolean = false): Option[OtpErlangList] =
+  def loadAbstractFormsJ(astStorage: DbApi.AstBeamEtfStorage, stubOnly: Boolean = false): Option[OtpErlangList] =
     astStorage match {
       case AstBeam(path) =>
         val bytes = Files.readAllBytes(path)
@@ -33,7 +33,7 @@ object AstLoader {
         Some(loadEtfJ(bytes, path.toString))
       case AstEtfIpc(module) =>
         val format =
-          if (stubsOnly) Ipc.RawStubs
+          if (stubOnly) Ipc.RawStub
           else Ipc.RawForms
         Ipc
           .getAstBytes(module, format)
