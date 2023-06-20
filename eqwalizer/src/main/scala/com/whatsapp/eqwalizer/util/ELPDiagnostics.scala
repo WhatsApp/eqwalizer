@@ -44,6 +44,21 @@ object ELPDiagnostics {
       case Ipc.Terminated => ()
     }
 
+  def getDiagnosticsIpcShell(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit =
+    try {
+      for { (module, astStorage) <- modulesAndStorages } {
+        if (Ipc.shouldEqwalize(module)) {
+          Ipc.sendEqwalizingStart(module)
+          val diagnostics = getDiagnostics(module, astStorage, noOptions)
+          Ipc.sendEqwalizingDone(module)
+          Ipc.finishEqwalization(Map(module -> diagnostics), DbApi.loadedModules().toList)
+        }
+      }
+      Ipc.sendDone(Map.empty)
+    } catch {
+      case Ipc.Terminated => Ipc.sendDone(Map.empty)
+    }
+
   private def getDiagnostics(module: String, astStorage: DbApi.AstStorage, options: Options): List[Error] = {
     val invalidForms = DbApi.getInvalidForms(module).get
     val forms = Pipeline.checkForms(astStorage, options) ++ invalidForms

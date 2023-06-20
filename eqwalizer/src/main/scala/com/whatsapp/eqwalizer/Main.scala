@@ -60,7 +60,11 @@ object Main {
     }
     val modules = ipcArgs.tail
     val modulesAndStorages = modules.distinct.flatMap(m => DbApi.getAstStorage(m).map(m -> _))
-    ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
+    if (config.elpShell) {
+      ELPDiagnostics.getDiagnosticsIpcShell(modulesAndStorages)
+    } else {
+      ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
+    }
   }
 
   private def custom_lint(customLintArgs: Array[String]): Unit = {

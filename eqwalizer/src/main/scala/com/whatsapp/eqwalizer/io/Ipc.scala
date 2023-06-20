@@ -65,6 +65,37 @@ object Ipc {
     Console.flush()
   }
 
+  def shouldEqwalize(module: String): Boolean = {
+    send(EnteringModule(module))
+    receive() match {
+      case Right(ELPEnteringModule) =>
+        true
+      case Right(ELPExitingModule) =>
+        false
+      case Right(reply) =>
+        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        throw Terminated
+      case Left(GotNull()) =>
+        Console.err.println(s"eqWAlizer received empty reply from ELP while waiting to start eqWAlization")
+        throw Terminated
+    }
+  }
+
+  def finishEqwalization(diagnostics: Map[String, List[ELPDiagnostics.Error]], deps: List[String]): Unit = {
+    send(Dependencies(deps))
+    sendDone(diagnostics)
+    receive() match {
+      case Right(ELPExitingModule) =>
+        ()
+      case Right(reply) =>
+        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        throw Terminated
+      case Left(GotNull()) =>
+        Console.err.println(s"eqWAlizer received empty reply from ELP while ending eqWAlization")
+        throw Terminated
+    }
+  }
+
   private def receive(): Either[GotNull, Reply] = {
     val str = Console.in.readLine()
     if (str == null) {
