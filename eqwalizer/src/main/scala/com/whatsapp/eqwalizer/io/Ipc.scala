@@ -38,6 +38,9 @@ object Ipc {
       case Right(CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
+      case Right(reply) =>
+        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        throw Terminated
       case Left(GotNull()) =>
         // Happens when the client panics, such as ELP bug T111364923.
         // This error will only show up in logging, not really user-facing
@@ -95,6 +98,13 @@ object Ipc {
           "module" -> module
         ),
       )
+    case Dependencies(modules) =>
+      ujson.Obj(
+        "tag" -> "Dependencies",
+        "content" -> ujson.Obj(
+          "modules" -> modules
+        ),
+      )
     case Done(diagnostics) =>
       ujson.Obj(
         "tag" -> ujson.Str("Done"),
@@ -103,10 +113,28 @@ object Ipc {
             "diagnostics" -> ELPDiagnostics.toJsonObj(diagnostics)
           ),
       )
+    case EnteringModule(module) =>
+      ujson.Obj(
+        "tag" -> "EnteringModule",
+        "content" -> ujson.Obj(
+          "module" -> module
+        ),
+      )
+    case ExitingModule(module) =>
+      ujson.Obj(
+        "tag" -> "ExitingModule",
+        "content" -> ujson.Obj(
+          "module" -> module
+        ),
+      )
   }
 
   private def jsonToReply(value: ujson.Value): Reply =
     value.obj("tag") match {
+      case ujson.Str("ELPEnteringModule") =>
+        ELPEnteringModule
+      case ujson.Str("ELPExitingModule") =>
+        ELPExitingModule
       case ujson.Str("GetAstBytesReply") =>
         val content = value.obj("content").obj
         val astBytesLen = content("ast_bytes_len").num.toInt
@@ -132,12 +160,18 @@ object Ipc {
   }
 
   private sealed trait Request
+  private case class EnteringModule(module: String) extends Request
+  private case class ExitingModule(module: String) extends Request
   private case class GetAstBytes(module: String, format: ASTFormat) extends Request
   private case class EqwalizingStart(module: String) extends Request
   private case class EqwalizingDone(module: String) extends Request
+  private case class Dependencies(modules: List[String]) extends Request
   private case class Done(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]) extends Request
 
   private sealed trait Reply
+
+  private case object ELPEnteringModule extends Reply
+  private case object ELPExitingModule extends Reply
 
   /**
     * This is the only non-JSON part of the protocol.
