@@ -25,6 +25,7 @@ package object eqwalizer {
       useElp: Boolean,
       useIpc: Boolean,
       useElpConvertedAst: Boolean,
+      elpShell: Boolean,
       tolerateErrors: Boolean,
       checkRedundantGuards: Boolean,
   )
@@ -47,6 +48,7 @@ package object eqwalizer {
       eqwater = config.getBoolean("eqwater"),
       useIpc = config.getBoolean("use_ipc"),
       useElpConvertedAst = config.getBoolean("use_elp_converted_ast"),
+      elpShell = config.getBoolean("elp_shell"),
       tolerateErrors = config.getBoolean("tolerate_errors"),
       checkRedundantGuards = config.getBoolean("check_redundant_guards"),
     )
