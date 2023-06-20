@@ -101,4 +101,7 @@ object DbApi {
 
   def isGenerated(module: String): Boolean =
     Db.isGenerated(module)
+
+  def loadedModules(): Set[String] =
+    Db.getLoadedModules()
 }

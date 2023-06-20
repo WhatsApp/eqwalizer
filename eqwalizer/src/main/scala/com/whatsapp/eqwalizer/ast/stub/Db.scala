@@ -90,6 +90,7 @@ private object Db {
     mutable.Map.empty
   private val transValidStubs: mutable.Map[String, Option[ModuleStub]] =
     mutable.Map.empty
+  private val loadedModules: mutable.Set[String] = mutable.Set.empty
 
   private def getModuleApp(module: String): Option[App] = {
     val appNames = module2App(module)
@@ -191,17 +192,27 @@ private object Db {
 
   /** module stub suitable for type-checking
     */
-  def getModuleStub(module: String): Option[ModuleStub] =
+  def getModuleStub(module: String): Option[ModuleStub] = {
+    loadedModules.add(module)
     if (transValidStubs.contains(module))
       transValidStubs(module)
     else {
-      val optStub = getValidatedModuleStub(module).map { new TransValid().checkStub }
+      val optStub = getValidatedModuleStub(module).map {
+        new TransValid().checkStub
+      }
       transValidStubs.put(module, optStub)
       optStub
     }
+  }
 
   def fromBeam(module: String): Boolean =
     ((otpModules(module) || depModules(module)) && !projectModules(module)) || !config.useElp
+
+  def getLoadedModules(): Set[String] = {
+    val set = loadedModules.toSet
+    loadedModules.clear()
+    set
+  }
 
   private val generatedMark: String = "@" + "generated"
   def isGenerated(module: String): Boolean = {
