@@ -18,7 +18,12 @@ private class TransValid {
   private var inProgress = Set[Ref]()
   private var invalidRefs = Map[Ref, List[Ref]]()
 
+  // Temporary fix, to gather transitive dependencies introduced during
+  // this validation.
+  private var currentModule: Option[String] = None
+
   def checkStub(stub: ModuleStub): ModuleStub = {
+    currentModule = Some(stub.module)
     val module = stub.module
     val typesMut = ListBuffer[TypeDecl]()
     val privateOpaquesMut = ListBuffer[TypeDecl]()
@@ -140,6 +145,7 @@ private class TransValid {
     else if (invalidRefs.contains(ref)) invalidRefs(ref).isEmpty
     else {
       inProgress += ref
+      currentModule.foreach(Db.addValidationDep(_, ref.refModule))
       val invalids = Db.getValidatedModuleStub(ref.refModule) match {
         case Some(cStub) =>
           ref match {
