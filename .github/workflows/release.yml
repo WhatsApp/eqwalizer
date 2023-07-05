@@ -17,9 +17,8 @@ jobs:
           packages: musl-tools
           version: 1.0
       - name: Set up rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
           target: x86_64-unknown-linux-musl
       - name: Install OTP
         uses: erlef/setup-beam@v1
@@ -87,9 +86,8 @@ jobs:
           packages: musl-tools
           version: 1.0
       - name: Set up rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
           target: x86_64-unknown-linux-musl
       - name: Install OTP
         uses: erlef/setup-beam@v1
@@ -150,9 +148,7 @@ jobs:
       - name: Install rebar3
         run: "mkdir rebar3 && curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3/rebar3 && chmod +x rebar3/rebar3"
       - name: Set up rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+        uses: dtolnay/rust-toolchain@stable
       - name: Download eqwalizer.jar
         uses: "actions/download-artifact@v2"
         with:
@@ -199,9 +195,7 @@ jobs:
       - name: Install rebar3
         run: "mkdir rebar3 && curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3/rebar3 && chmod +x rebar3/rebar3"
       - name: Set up rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+        uses: dtolnay/rust-toolchain@stable
       - name: Download eqwalizer.jar
         uses: "actions/download-artifact@v2"
         with:
