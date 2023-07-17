@@ -9,12 +9,11 @@ jobs:
       - name: Checkout
         uses: "actions/checkout@v2"
       - name: Set up GraalVM
-        uses: "DeLaGuardo/setup-graalvm@5.0"
+        uses: graalvm/setup-graalvm@v1
         with:
-          graalvm: '22.1.0'
-          java: 'java11'
-      - name: Install Native Image Plugin
-        run: gu install native-image
+          java-version: '17'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install musl-tools for rust toolchain
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -64,12 +63,11 @@ jobs:
       - name: Checkout
         uses: "actions/checkout@v2"
       - name: Set up GraalVM
-        uses: "DeLaGuardo/setup-graalvm@5.0"
+        uses: graalvm/setup-graalvm@v1
         with:
-          graalvm: '22.1.0'
-          java: 'java11'
-      - name: Install Native Image Plugin
-        run: gu install native-image
+          java-version: '17'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install Erlang
         run: brew install ${{matrix.brew_erlang}}
       - name: Install rebar3
