@@ -7,7 +7,7 @@ jobs:
         otp: ['26.0', '25.3', '24.3']
     steps:
       - name: Checkout
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
@@ -61,7 +61,7 @@ jobs:
         brew_erlang: ['erlang@25', 'erlang@24']
     steps:
       - name: Checkout
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
