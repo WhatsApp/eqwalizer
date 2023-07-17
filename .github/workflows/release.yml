@@ -43,12 +43,12 @@ jobs:
       - name: Test eqwalizer
         run: 'cd eqwalizer && sbt test'
       - name: Upload eqwalizer.jar
-        uses: "actions/upload-artifact@v2"
+        uses: "actions/upload-artifact@v3"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13/eqwalizer.jar
       - name: Upload eqwalizer native binary
-        uses: "actions/upload-artifact@v2"
+        uses: "actions/upload-artifact@v3"
         with:
           name: eqwalizer
           path: eqwalizer/eqwalizer
@@ -100,12 +100,12 @@ jobs:
       - name: "add rebar3 to path"
         run: 'echo "$GITHUB_WORKSPACE/rebar3" >> $GITHUB_PATH'
       - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v2"
+        uses: "actions/download-artifact@v3"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13
       - name: Download eqwalizer binary
-        uses: "actions/download-artifact@v2"
+        uses: "actions/download-artifact@v3"
         with:
           name: eqwalizer
           path: eqwalizer
@@ -150,7 +150,7 @@ jobs:
       - name: Set up rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v2"
+        uses: "actions/download-artifact@v3"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13
@@ -197,7 +197,7 @@ jobs:
       - name: Set up rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v2"
+        uses: "actions/download-artifact@v3"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13

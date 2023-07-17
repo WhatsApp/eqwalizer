@@ -48,7 +48,7 @@ jobs:
         run: 'cd eqwalizer && sbt test'
       - name: Upload eqwalizer.jar
         if: matrix.otp == '25.3'
-        uses: "actions/upload-artifact@v2"
+        uses: "actions/upload-artifact@v3"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13/eqwalizer.jar
@@ -77,7 +77,7 @@ jobs:
       - name: Set up rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v2"
+        uses: "actions/download-artifact@v3"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13
