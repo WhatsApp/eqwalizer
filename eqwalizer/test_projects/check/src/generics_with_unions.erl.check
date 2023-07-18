@@ -284,11 +284,11 @@ unwrap_bool(B) ->                          | OK      |
     (undefined, Default) -> Default;       |         |
     (Value, _) -> Value.                   |         |
 unwrap_override(undefined, Default) ->     | ERROR   |
-    Default;                               |         |
+    Default;                               |         | Default.
+                                           |         | Expected: Value
+                                           |         | Got     : term()
 unwrap_override(Value, _) ->               |         |
-    Value.                                 |         | Value.
-                                           |         | Expected: Default
-                                           |         | Got     : 'undefined'
+    Value.                                 |         |
                                            |         |
 -spec unwrap_override_bool                 |         |
     (undefined | boolean())                |         |

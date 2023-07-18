@@ -40,12 +40,21 @@ final class Check(pipelineContext: PipelineContext) {
     }
   }
 
-  def checkOverloadedFun(f: FunDecl, overloadedSpec: OverloadedFunSpec): Unit =
+  def checkOverloadedFun(f: FunDecl, overloadedSpec: OverloadedFunSpec): Unit = {
+    val occTyping = occurrence.eqwater(f.clauses)
     overloadedSpec.tys.foreach { funTy =>
       val ft = freshen(funTy)
       val FunType(_, argTys, resTy) = ft
-      f.clauses.map(checkClauseOverloadedClause(_, argTys, resTy))
+      if (occTyping) {
+        val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Env.empty)
+        f.clauses
+          .lazyZip(clauseEnvs)
+          .map((clause, occEnv) => checkClauseOverloadedClause(clause, argTys, resTy, occEnv))
+      } else {
+        f.clauses.map(checkClauseOverloadedClause(_, argTys, resTy, Env.empty))
+      }
     }
+  }
 
   private def checkBody(body: Body, resTy: Type, env: Env): Env = {
     var envAcc = env
@@ -78,9 +87,10 @@ final class Check(pipelineContext: PipelineContext) {
       clause: Clause,
       argTys: List[Type],
       resTy: Type,
+      env: Env,
   ): Unit = {
     val patVars = Vars.clausePatVars(clause)
-    val env1 = util.enterScope(Map.empty, patVars)
+    val env1 = util.enterScope(env, patVars)
     val env2 = elabGuard.elabGuards(clause.guards, env1)
     val (patTys, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val reachable = !patTys.exists(subtype.isNoneType)

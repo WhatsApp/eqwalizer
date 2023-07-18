@@ -206,10 +206,10 @@ get_list([Key | T], List, Acc) ->          |         |
                                            |         |
 -spec overlap_neg_1(atom()) -> number();   |         |
                  (T) -> {T}.               |         |
-overlap_neg_1(X) when is_atom(X) -> 1;     | ERROR   |
-overlap_neg_1(X) -> {X}.                   |         | {X}.
-                                           |         | Expected: number()
-                                           |         | Got     : {atom()}
+overlap_neg_1(X) when is_atom(X) -> 1;     | ERROR   | 1.
+                                           |         | Expected: {T}
+                                           |         | Got     : number()
+overlap_neg_1(X) -> {X}.                   |         |
                                            |         |
 -spec overlap_neg_2(atom()) -> number();   |         |
     (T) -> {T}.                            |         |
@@ -326,18 +326,14 @@ swap2_neg() ->                             | ERROR   |
 -spec reachable_1                          |         |
     (a) -> a;                              |         |
     (b | c) -> b.                          |         |
-reachable_1(a) -> a;                       | ERROR   |
-reachable_1(O) when O =/= a -> b.          |         | 'b'.
-                                           |         | Expected: 'a'
-                                           |         | Got     : 'b'
+reachable_1(a) -> a;                       | OK      |
+reachable_1(O) when O =/= a -> b.          |         |
                                            |         |
 -spec reachable_2                          |         |
     (a, atom()) -> atom();                 |         |
     (b, binary()) -> atom().               |         |
-reachable_2(a, A) -> A;                    | ERROR   |
-reachable_2(O, B) when O =/= a -> binary_t……         | B.
-                                           |         | Expected: binary()
-                                           |         | Got     : atom()
+reachable_2(a, A) -> A;                    | OK      |
+reachable_2(O, B) when O =/= a -> binary_t……         |
                                            |         |
 -spec reachable_3                          |         |
     (a) -> a;                              |         |
