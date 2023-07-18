@@ -283,3 +283,21 @@ use_fst_gen2(X) ->
 -spec swap2_neg() -> number().
 swap2_neg() ->
     swap(ok).
+
+-spec reachable_1
+    (a) -> a;
+    (b | c) -> b.
+reachable_1(a) -> a;
+reachable_1(O) when O =/= a -> b.
+
+-spec reachable_2
+    (a, atom()) -> atom();
+    (b, binary()) -> atom().
+reachable_2(a, A) -> A;
+reachable_2(O, B) when O =/= a -> binary_to_atom(B).
+
+-spec reachable_3
+    (a) -> a;
+    ([atom()]) -> b.
+reachable_3(I) when not is_list(I) -> a;
+reachable_3(_) -> b.

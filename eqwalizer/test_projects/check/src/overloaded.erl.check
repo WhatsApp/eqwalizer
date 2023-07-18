@@ -322,3 +322,27 @@ swap2_neg() ->                             | ERROR   |
     swap(ok).                              |         | swap('ok').
                                            |         | Expected: number()
                                            |         | Got     : binary()
+                                           |         |
+-spec reachable_1                          |         |
+    (a) -> a;                              |         |
+    (b | c) -> b.                          |         |
+reachable_1(a) -> a;                       | ERROR   |
+reachable_1(O) when O =/= a -> b.          |         | 'b'.
+                                           |         | Expected: 'a'
+                                           |         | Got     : 'b'
+                                           |         |
+-spec reachable_2                          |         |
+    (a, atom()) -> atom();                 |         |
+    (b, binary()) -> atom().               |         |
+reachable_2(a, A) -> A;                    | ERROR   |
+reachable_2(O, B) when O =/= a -> binary_t……         | B.
+                                           |         | Expected: binary()
+                                           |         | Got     : atom()
+                                           |         |
+-spec reachable_3                          |         |
+    (a) -> a;                              |         |
+    ([atom()]) -> b.                       |         |
+reachable_3(I) when not is_list(I) -> a;   | ERROR   |
+reachable_3(_) -> b.                       |         | 'b'.
+                                           |         | Expected: 'a'
+                                           |         | Got     : 'b'

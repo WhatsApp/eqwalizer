@@ -23,6 +23,9 @@ check/src/overloaded.erl:239 overloaded:take_ok_or_any/1
 check/src/overloaded.erl:248 overloaded:over/1
 check/src/overloaded.erl:258 overloaded:use_invalid_neg/1
 check/src/overloaded.erl:267 overloaded:fst_gen/1
+check/src/overloaded.erl:287 overloaded:reachable_1/1
+check/src/overloaded.erl:293 overloaded:reachable_2/2
+check/src/overloaded.erl:299 overloaded:reachable_3/1
 check/src/parametricity.erl:203 parametricity:select/3
 check/src/parametricity.erl:209 parametricity:select_tagged/1
 check/src/parametricity.erl:214 parametricity:select_tagged_neg1/1
@@ -38,4 +41,4 @@ check_gradual/src/gradual_overloaded.erl:63 gradual_overloaded:fst_gen/1
 check_gradual/src/gradual_overloaded.erl:95 gradual_overloaded:rec_each/2
 debug/src/types1.erl:303 types1:inter/1
 eqwalizer/src/eqwalizer_specs.erl:304 eqwalizer_specs:custom:custom_overloaded/1
-Total: 40
+Total: 43
