@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.ast.stub
 
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.{Id, InvalidDiagnostics, RemoteId, Show, TypeVars}
+import com.whatsapp.eqwalizer.ast.{Id, InvalidDiagnostics, RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.tc.Subst
 
 import scala.collection.mutable.ListBuffer
@@ -16,7 +16,6 @@ import scala.collection.mutable.ListBuffer
 private class TypesValid {
 
   def checkStub(stub: ModuleStub): ModuleStub = {
-    val module = stub.module
     val privateOpaquesMut = ListBuffer[TypeDecl]()
     val invalidFormsMut = ListBuffer.from(stub.invalidForms)
 
@@ -44,13 +43,11 @@ private class TypesValid {
   }
 
   private def toInvalidContravariant(decl: TypeDecl, tvar: VarType, exps: List[Type]): InvalidForm = {
-    val show = Show(None)
-    val expsStr = exps.map(show.show)
     val diag = InvalidDiagnostics.AliasWithNonCovariantParam(
       decl.pos,
       decl.id.name,
       tvar.name,
-      expsStr,
+      exps,
     )
     InvalidTypeDecl(decl.id, diag)(decl.pos)
   }
