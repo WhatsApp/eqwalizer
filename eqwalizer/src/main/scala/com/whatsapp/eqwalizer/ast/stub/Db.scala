@@ -181,18 +181,6 @@ private object Db {
       optStub
     }
 
-  /* Temporary fix needed to track dependencies introduced during
-   * transitive stubs validation, otherwise we only track dependencies
-   * introduced during actual type-checking.
-   * This is needed because ELP only tracks dependencies up to
-   * contractivity checks.
-   */
-  private val stubValidationDeps: mutable.Map[String, Set[String]] = mutable.Map.empty
-  def addValidationDep(module: String, dep: String): Unit = {
-    val deps = stubValidationDeps.getOrElse(module, Set.empty)
-    stubValidationDeps.put(module, deps + dep)
-  }
-
   def getValidatedModuleStub(module: String): Option[ModuleStub] =
     if (validatedModuleStubs.contains(module))
       validatedModuleStubs(module)
@@ -233,8 +221,7 @@ private object Db {
   def getLoadedModules(): Set[String] = {
     val set = loadedModules.toSet
     loadedModules.clear()
-    val validDeps = set.flatMap { module => stubValidationDeps.getOrElse(module, Set.empty) }
-    validDeps ++ set
+    set
   }
 
   private val generatedMark: String = "@" + "generated"
