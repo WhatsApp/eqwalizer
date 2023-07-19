@@ -213,7 +213,12 @@ private object Db {
     loadedModules.add(module)
     if (transValidStubs.contains(module))
       transValidStubs(module)
-    else {
+    else if (config.useElpConvertedAst && config.useIpc) {
+      val optStub =
+        Ipc.getAstBytes(module, Ipc.TransitiveStub).map(readFromArray[ModuleStub](_))
+      transValidStubs.put(module, optStub)
+      optStub
+    } else {
       val optStub = getValidatedModuleStub(module).map {
         new TransValid().checkStub
       }
