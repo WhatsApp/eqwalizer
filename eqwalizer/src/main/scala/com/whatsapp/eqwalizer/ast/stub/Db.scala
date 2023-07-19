@@ -196,7 +196,12 @@ private object Db {
   def getValidatedModuleStub(module: String): Option[ModuleStub] =
     if (validatedModuleStubs.contains(module))
       validatedModuleStubs(module)
-    else {
+    else if (config.useElpConvertedAst && config.useIpc) {
+      val optStub =
+        Ipc.getAstBytes(module, Ipc.CovariantStub).map(readFromArray[ModuleStub](_))
+      validatedModuleStubs.put(module, optStub)
+      optStub
+    } else {
       val optStub = getContractiveModuleStub(module).map { new TypesValid().checkStub }
       validatedModuleStubs.put(module, optStub)
       optStub
