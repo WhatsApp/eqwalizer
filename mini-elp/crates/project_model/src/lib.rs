@@ -27,7 +27,6 @@ use anyhow::Result;
 use eetf::Term;
 use eetf::Term::Atom;
 use fxhash::FxHashSet;
-use lazy_static::lazy_static;
 use paths::AbsPath;
 use paths::AbsPathBuf;
 use serde::Deserialize;

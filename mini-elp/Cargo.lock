@@ -284,7 +284,6 @@ dependencies = [
  "anyhow",
  "eetf",
  "fxhash",
- "lazy_static",
  "log",
  "paths",
  "serde",
