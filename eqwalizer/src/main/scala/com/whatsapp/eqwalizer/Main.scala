@@ -25,11 +25,10 @@ object Main {
     )
 
     cmd match {
-      case "check"       => check(args1, json)
-      case "ipc"         => ipc(args1)
-      case "index"       => gleanIndex(args)
-      case "custom-lint" => custom_lint(args1)
-      case _             => help()
+      case "check" => check(args1, json)
+      case "ipc"   => ipc(args1)
+      case "index" => gleanIndex(args)
+      case _       => help()
     }
   }
 
@@ -65,15 +64,6 @@ object Main {
     } else {
       ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
     }
-  }
-
-  private def custom_lint(customLintArgs: Array[String]): Unit = {
-    val ignoredApps = customLintArgs.tail.toList
-    val analysis = Class.forName("com.whatsapp.eqwalizer.custom.ApplicationEnv")
-
-    val main = analysis.getDeclaredMethod("main", classOf[List[String]])
-    main.invoke(null, ignoredApps)
-    ()
   }
 
   private def gleanIndex(args: Array[String]): Unit = {

@@ -99,9 +99,6 @@ object DbApi {
   def fromBeam(module: String): Boolean =
     Db.fromBeam(module)
 
-  def isGenerated(module: String): Boolean =
-    Db.isGenerated(module)
-
   def loadedModules(): Set[String] =
     Db.getLoadedModules()
 }

@@ -224,35 +224,6 @@ private object Db {
     set
   }
 
-  private val generatedMark: String = "@" + "generated"
-  def isGenerated(module: String): Boolean = {
-    getAstStorage(module).get match {
-      case astStorage: DbApi.AstBeamEtfStorage =>
-        AstLoader.loadAbstractFormsJ(astStorage).foreach { formsJ =>
-          val fromBeam = Db.fromBeam(module)
-          for {
-            i <- 0 until formsJ.arity()
-            form <- new ConvertAst(fromBeam).convertForm(EData.fromJava(formsJ.elementAt(i)))
-          } form match {
-            case File(erlFile, _) =>
-              val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
-              return preamble.contains(generatedMark)
-            case _ =>
-          }
-        }
-        false
-      case DbApi.AstJsonIpc(module) =>
-        Ipc.getAstBytes(module, Ipc.ConvertedStub).exists { bytes =>
-          readFromArray[List[ExternalForm]](bytes).exists {
-            case File(erlFile, _) =>
-              val preamble = new String(Files.readAllBytes(Paths.get(erlFile))).take(200)
-              preamble.contains(generatedMark)
-            case _ => false
-          }
-        }
-    }
-  }
-
   private def dirsToModules(root: String, dirs: List[String], maxDepth: Int): List[String] =
     dirs
       .map(srcDir => Paths.get(s"$root/$srcDir"))
