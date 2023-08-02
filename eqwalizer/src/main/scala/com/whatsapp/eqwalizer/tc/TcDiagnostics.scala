@@ -25,9 +25,10 @@ object TcDiagnostics {
   case class ExpectedSubtype(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit pipelineContext: PipelineContext)
       extends TypeError {
     private val (showGot, showExpected) = showNotSubtype(got, expected)
-    override lazy val msg: String = s"Expected: $showExpected\nGot     : $showGot"
+    override lazy val msg: String =
+      s"Expression has type:   $showGot\nContext expected type: $showExpected"
 
-    def errorName = "expected_subtype"
+    def errorName = "incompatible_types"
     override def erroneousExpr: Option[Expr] = Some(expr)
     override lazy val explanation = pipelineContext.subtypeDetail.explain(expected = expected, got = got)
   }

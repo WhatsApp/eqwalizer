@@ -24,8 +24,8 @@ map_occ_03(M) -> M#{a => 0}.               |         |
 -spec map_occ_04_neg(#{a => term(), b => i……         |
     -> #{a := integer(), b := integer()}.  |         |
 map_occ_04_neg(M = #{a := I}) when is_inte…… ERROR   | M.
-                                           |         | Expected: #S{a := number(), b := number()}
-                                           |         | Got     : #S{a := number(), b => number()}
+                                           |         | Expression has type:   #S{a := number(), b => number()}
+                                           |         | Context expected type: #S{a := number(), b := number()}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -44,24 +44,24 @@ map_occ_05(M) -> M#{a => 0, b => 0}.       |         |
 -spec map_occ_06_neg(#{a => integer()} | o……         |
 map_occ_06_neg(#{a := I}) when is_integer(…… ERROR   |
 map_occ_06_neg(V) -> V.                    |         | V.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : #S{} | 'ok'
+                                           |         | Expression has type:   #S{} | 'ok'
+                                           |         | Context expected type: 'ok'
                                            |         | 
-                                           |         |   #S{} | 'ok' is not a subtype of 'ok'
+                                           |         |   #S{} | 'ok' is not compatible with 'ok'
                                            |         |   because
-                                           |         |   #S{} is not a subtype of 'ok'
+                                           |         |   #S{} is not compatible with 'ok'
                                            |         |
 -spec map_occ_07_neg                       |         |
     (#{a := integer()} | #{c := integer()}……         |
     -> #{b := integer()}.                  |         |
 map_occ_07_neg(#{a := _}) -> #{b => 0};    | ERROR   |
 map_occ_07_neg(M) -> M.                    |         | M.
-                                           |         | Expected: #S{b := number()}
-                                           |         | Got     : none() | #S{c := number()}
+                                           |         | Expression has type:   none() | #S{c := number()}
+                                           |         | Context expected type: #S{b := number()}
                                            |         | 
-                                           |         |   none() | #S{c := number()} is not a subtype of #S{b := number()}
+                                           |         |   none() | #S{c := number()} is not compatible with #S{b := number()}
                                            |         |   because
-                                           |         |   #S{c := number()} is not a subtype of #S{b := number()}
+                                           |         |   #S{c := number()} is not compatible with #S{b := number()}
                                            |         |   These associations do not match:
                                            |         | 
                                            |         |   #S{

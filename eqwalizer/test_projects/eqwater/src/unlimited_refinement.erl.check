@@ -58,12 +58,12 @@ bar(X) when 1500 =< X, X =< 1600 ->        |         |
   true;                                    |         |
 bar(X) ->                                  |         |
   is_special(X).                           |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : binary() | number()
+                                           |         | Expression has type:   binary() | number()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   binary() | number() is not a subtype of number()
+                                           |         |   binary() | number() is not compatible with number()
                                            |         |   because
-                                           |         |   binary() is not a subtype of number()
+                                           |         |   binary() is not compatible with number()
                                            |         |
 -type map1() :: #{k11 := term(), k12 := te……         |
 -type map2() :: #{k21 := term(), k22 := te……         |
@@ -98,6 +98,6 @@ map_union_neg(#{ty := Ty, data := Data}) -…… ERROR   |
         {ok8, #{k81 := V1, k82 := V2, k83 ……         |
         {ok9, #{k91 := V1, k92 := V2, k93 ……         |
         V -> V                             |         | V.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {'ok4' | 'ok3' | 'ok8' | 'ok2' | 'ok9' | 'ok1' | 'ok6' | 'ok5' | 'ok7', map4() | map3() | map8() | map2() | map9() | map1() | map6() | map5() | map7()}
+                                           |         | Expression has type:   {'ok4' | 'ok3' | 'ok8' | 'ok2' | 'ok9' | 'ok1' | 'ok6' | 'ok5' | 'ok7', map4() | map3() | map8() | map2() | map9() | map1() | map6() | map5() | map7()}
+                                           |         | Context expected type: 'ok'
     end.                                   |         |

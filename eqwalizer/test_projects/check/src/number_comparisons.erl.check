@@ -9,8 +9,8 @@
 -spec test_1_neg(term()) ->                |         |
   pos_integer().                           |         |
 test_1_neg(X) when X >= 1 -> X.            | ERROR   | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_2(term()) ->                    |         |
   pos_integer().                           |         |
@@ -253,8 +253,8 @@ test_31() ->                               | OK      |
   none().                                  |         |
 test_32_wip_neg(X) when X > 0 ->           | ERROR   |
   X.                                       |         | X.
-                                           |         | Expected: none()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: none()
                                            |         |
 -spec test_34(term()) -> pos_integer().    |         |
 test_34(X)                                 | OK      |

@@ -76,7 +76,7 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
               val (showT1, showT2) = Show.showNotSubtype(t1, t2)(pipelineContext)
               val msgBefore = reasonPrefix.map(msg => s"  $msg\n").getOrElse("")
               val msgAfter = reasonPostfix.map(msg => s"\n  $msg").getOrElse("")
-              s"$msgBefore  $showT1 is not a subtype of $showT2$msgAfter"
+              s"$msgBefore  $showT1 is not compatible with $showT2$msgAfter"
             }
             .mkString("\n  because\n")
         )

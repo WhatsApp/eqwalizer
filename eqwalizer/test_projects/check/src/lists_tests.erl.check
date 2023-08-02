@@ -10,27 +10,27 @@
 -spec lists_union_neg                      |         |
     (atom(), binary()) -> [atom()] | [bina……         |
 lists_union_neg(V1, V2) -> [V1, V2].       | ERROR   | [V1, V2].
-                                           |         | Expected: [atom()] | [binary()]
-                                           |         | Got     : [atom() | binary()]
+                                           |         | Expression has type:   [atom() | binary()]
+                                           |         | Context expected type: [atom()] | [binary()]
                                            |         | 
-                                           |         |   [atom() | binary()] is not a subtype of [atom()] | [binary()]
+                                           |         |   [atom() | binary()] is not compatible with [atom()] | [binary()]
                                            |         |   because
-                                           |         |   [atom() | binary()] is not a subtype of [atom()]
+                                           |         |   [atom() | binary()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   atom() | binary() is not compatible with atom()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()
                                            |         |
 -spec lists_union_2_neg                    |         |
     (atom(), [atom()] | [binary()]) -> [at……         |
 lists_union_2_neg(V, L) -> [V | L].        | ERROR   | [V | L].
-                                           |         | Expected: [atom()] | [binary()]
-                                           |         | Got     : [atom() | binary()]
+                                           |         | Expression has type:   [atom() | binary()]
+                                           |         | Context expected type: [atom()] | [binary()]
                                            |         | 
-                                           |         |   [atom() | binary()] is not a subtype of [atom()] | [binary()]
+                                           |         |   [atom() | binary()] is not compatible with [atom()] | [binary()]
                                            |         |   because
-                                           |         |   [atom() | binary()] is not a subtype of [atom()]
+                                           |         |   [atom() | binary()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   atom() | binary() is not compatible with atom()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()

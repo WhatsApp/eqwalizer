@@ -15,15 +15,15 @@ test01_pos(X, Y) -> union(X, Y).           | OK      |
 % TS's error message is good               |         |
 -spec test02_neg(T | U) -> {T, U}.         |         |
 test02_neg(X) -> {X, X}.                   | ERROR   | {X, X}.
-                                           |         | Expected: {T, U}
-                                           |         | Got     : {T | U, T | U}
+                                           |         | Expression has type:   {T | U, T | U}
+                                           |         | Context expected type: {T, U}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {T | U, T | U} is not a subtype of {T, U}
+                                           |         |   {T | U, T | U} is not compatible with {T, U}
                                            |         |   because
-                                           |         |   T | U is not a subtype of T
+                                           |         |   T | U is not compatible with T
                                            |         |   because
-                                           |         |   U is not a subtype of T
+                                           |         |   U is not compatible with T
                                            |         |
 -spec test03(T, U, [T|U]) -> [T|U].        |         |
 test03(_X, _Y, XYs) -> XYs.                | OK      |
@@ -77,8 +77,8 @@ id(T) -> T.                                | OK      |
                                            |         |
 -spec test_ret_neg() -> ok.                |         |
 test_ret_neg() -> union(a, b).             | ERROR   | union('a', 'b').
-                                           |         | Expected: 'ok'
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: 'ok'
                                            |         |
 -type ty_var_from_nowhere() :: _T.         | INVALID | _T: Type variable is unbound.
 
@@ -143,12 +143,12 @@ use_set_list_2() ->                        | OK      |
     wrong_ret.                             |         |
 use_set_list_neg() ->                      | ERROR   |
     set_list([{a, 5}], [{a, 5}]).          |         | set_list([{'a', 5}], [{'a', 5}]).
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : props('a', number())
+                                           |         | Expression has type:   props('a', number())
+                                           |         | Context expected type: 'wrong_ret'
                                            |         | 
-                                           |         |   props('a', number()) is not a subtype of 'wrong_ret'
+                                           |         |   props('a', number()) is not compatible with 'wrong_ret'
                                            |         |   because
-                                           |         |   [prop('a', number())] is not a subtype of 'wrong_ret'
+                                           |         |   [prop('a', number())] is not compatible with 'wrong_ret'
                                            |         |
 % inspired by wa_props:                    |         |
 % collect_nondefault/1                     |         |
@@ -234,18 +234,18 @@ use_handle_res_2() ->                      | OK      |
                                            |         |
 -spec overlap_1([T] | T) -> T.             |         |
 overlap_1([T]) -> T;                       | ERROR   | T.
-                                           |         | Expected: T
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: T
 overlap_1(T) -> T.                         |         |
                                            |         |
 -spec overlap_2(T | [T]) -> T.             |         |
 overlap_2(T) -> T;                         | ERROR   | T.
-                                           |         | Expected: T
-                                           |         | Got     : T | [T]
+                                           |         | Expression has type:   T | [T]
+                                           |         | Context expected type: T
                                            |         | 
-                                           |         |   T | [T] is not a subtype of T
+                                           |         |   T | [T] is not compatible with T
                                            |         |   because
-                                           |         |   [T] is not a subtype of T
+                                           |         |   [T] is not compatible with T
 overlap_2([T]) -> T.                       |         |
                                            |         |
 -spec use_overlap_1() -> ok.               |         |
@@ -255,13 +255,13 @@ use_overlap_1() ->                         | OK      |
 -spec use_overlap_2() -> [ok].             |         |
 use_overlap_2() ->                         | ERROR   |
     overlap_2([ok]).                       |         | overlap_2(['ok']).
-                                           |         | Expected: ['ok']
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: ['ok']
                                            |         |
 -spec trick(A, A | {B}) -> B.              |         |
 trick(_, {B}) -> B.                        | ERROR   | B.
-                                           |         | Expected: B
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: B
                                            |         |
 -spec use_trick(term(), term()) -> none(). |         |
 use_trick(A, B) -> trick(A, B).            | OK      |
@@ -285,8 +285,8 @@ unwrap_bool(B) ->                          | OK      |
     (Value, _) -> Value.                   |         |
 unwrap_override(undefined, Default) ->     | ERROR   |
     Default;                               |         | Default.
-                                           |         | Expected: Value
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: Value
 unwrap_override(Value, _) ->               |         |
     Value.                                 |         |
                                            |         |
@@ -359,14 +359,14 @@ convert(undefined, D) -> D.                |         |
     [K] | [[K]]                            |         |
 ) -> [K].                                  |         |
 overlapping_union_neg(X) -> X.             | ERROR   | X.
-                                           |         | Expected: [K]
-                                           |         | Got     : [K] | [[K]]
+                                           |         | Expression has type:   [K] | [[K]]
+                                           |         | Context expected type: [K]
                                            |         | 
-                                           |         |   [K] | [[K]] is not a subtype of [K]
+                                           |         |   [K] | [[K]] is not compatible with [K]
                                            |         |   because
-                                           |         |   [[K]] is not a subtype of [K]
+                                           |         |   [[K]] is not compatible with [K]
                                            |         |   because
-                                           |         |   [K] is not a subtype of K
+                                           |         |   [K] is not compatible with K
                                            |         |
 -spec use_bad_union_neg() -> term().       |         |
 use_bad_union_neg() ->                     | ERROR   |

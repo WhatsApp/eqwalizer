@@ -42,44 +42,44 @@ t02(B) when is_binary(B),                  | ERROR   |
 %% A may be not a binary - because of      |         |
 %% the condition bit_size                  |         |
 t02(A) -> atom_to_binary(A).               |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : ab()
+                                           |         | Expression has type:   ab()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   ab() is not a subtype of atom()
+                                           |         |   ab() is not compatible with atom()
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   atom() | binary() is not compatible with atom()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()
                                            |         |
 %% no smart logic about repeated vars      |         |
 -spec t03(atom(), ab()) ->                 |         |
   binary().                                |         |
 t03(A, A) -> atom_to_binary(A);            | ERROR   |
 t03(_, B) -> B.                            |         | B.
-                                           |         | Expected: binary()
-                                           |         | Got     : ab()
+                                           |         | Expression has type:   ab()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   ab() is not a subtype of binary()
+                                           |         |   ab() is not compatible with binary()
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of binary()
+                                           |         |   atom() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
                                            |         |
 -spec tuple_trick_neg(_T, U) -> U.         |         |
 tuple_trick_neg({X}, _) -> X.              | ERROR   | X.
-                                           |         | Expected: U
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: U
                                            |         |
 -spec fun_trick_neg(_T, U) -> U.           |         |
 fun_trick_neg(X, _) when is_function(X, 0) | ERROR   |
   -> X.                                    |         | X.
-                                           |         | Expected: U
-                                           |         | Got     : _T
+                                           |         | Expression has type:   _T
+                                           |         | Context expected type: U
                                            |         |
 -spec union_trick(A, A | {B}) -> B.        |         |
 union_trick(_, {B}) -> B.                  | ERROR   | B.
-                                           |         | Expected: B
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: B
                                            |         |
 %% these edge cases don't                  |         |
 %% degrade with eqwater                    |         |

@@ -6,9 +6,9 @@
         "end": 477
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'true'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'true'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'true'",
       "explanationOrNull": null
     },
@@ -18,9 +18,9 @@
         "end": 504
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'false'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'false'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'false'",
       "explanationOrNull": null
     },
@@ -30,11 +30,11 @@
         "end": 586
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'false' | none()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'false' | none()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": "  'false' | none() is not a subtype of number()\n  because\n  'false' is not a subtype of number()"
+      "explanationOrNull": "  'false' | none() is not compatible with number()\n  because\n  'false' is not compatible with number()"
     },
     {
       "range": {
@@ -42,9 +42,9 @@
         "end": 652
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'true'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'true'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'true'",
       "explanationOrNull": null
     },
@@ -54,11 +54,11 @@
         "end": 671
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'false' | none()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'false' | none()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": "  'false' | none() is not a subtype of number()\n  because\n  'false' is not a subtype of number()"
+      "explanationOrNull": "  'false' | none() is not compatible with number()\n  because\n  'false' is not compatible with number()"
     },
     {
       "range": {
@@ -66,9 +66,9 @@
         "end": 762
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "1",
       "explanationOrNull": null
     },
@@ -78,9 +78,9 @@
         "end": 794
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "2",
       "explanationOrNull": null
     },
@@ -90,9 +90,9 @@
         "end": 828
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "3",
       "explanationOrNull": null
     },
@@ -102,9 +102,9 @@
         "end": 860
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "4",
       "explanationOrNull": null
     },
@@ -114,9 +114,9 @@
         "end": 934
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "1",
       "explanationOrNull": null
     },
@@ -126,9 +126,9 @@
         "end": 961
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "2",
       "explanationOrNull": null
     },
@@ -138,9 +138,9 @@
         "end": 988
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "3",
       "explanationOrNull": null
     },
@@ -150,9 +150,9 @@
         "end": 1015
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "4",
       "explanationOrNull": null
     },
@@ -162,9 +162,9 @@
         "end": 1042
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "5",
       "explanationOrNull": null
     },
@@ -174,9 +174,9 @@
         "end": 1301
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(b_to_n(eqwalizer:dynamic_cast(N))))",
       "explanationOrNull": null
     },
@@ -186,9 +186,9 @@
         "end": 1297
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "b_to_n(eqwalizer:dynamic_cast(N))",
       "explanationOrNull": null
     },
@@ -198,9 +198,9 @@
         "end": 1291
       },
       "lineAndCol": null,
-      "message": "Expected: boolean()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: boolean()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "N",
       "explanationOrNull": null
     },
@@ -234,9 +234,9 @@
         "end": 1394
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : {dynamic(), dynamic()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {dynamic(), dynamic()}\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "{X, Y}",
       "explanationOrNull": null
     },
@@ -258,9 +258,9 @@
         "end": 1528
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : [dynamic()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [dynamic()]\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -270,9 +270,9 @@
         "end": 1538
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
       "explanationOrNull": null
     },
@@ -282,9 +282,9 @@
         "end": 1743
       },
       "lineAndCol": null,
-      "message": "Expected: [T]\nGot     : #D{dynamic() => dynamic()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #D{dynamic() => dynamic()}\nContext expected type: [T]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M1",
       "explanationOrNull": null
     },
@@ -294,9 +294,9 @@
         "end": 1751
       },
       "lineAndCol": null,
-      "message": "Expected: [dynamic()]\nGot     : #D{dynamic() => dynamic()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #D{dynamic() => dynamic()}\nContext expected type: [dynamic()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M2",
       "explanationOrNull": null
     },
@@ -306,9 +306,9 @@
         "end": 1762
       },
       "lineAndCol": null,
-      "message": "Expected: #D{dynamic() => dynamic()}\nGot     : [dynamic()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [dynamic()]\nContext expected type: #D{dynamic() => dynamic()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -318,9 +318,9 @@
         "end": 1857
       },
       "lineAndCol": null,
-      "message": "Expected: #D{term() => term()}\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: #D{term() => term()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M",
       "explanationOrNull": null
     },
@@ -330,9 +330,9 @@
         "end": 1876
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "V",
       "explanationOrNull": null
     },
@@ -342,9 +342,9 @@
         "end": 1888
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "V",
       "explanationOrNull": null
     },
@@ -354,9 +354,9 @@
         "end": 2000
       },
       "lineAndCol": null,
-      "message": "Expected: #D{term() => term()}\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: #D{term() => term()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M",
       "explanationOrNull": null
     },
@@ -366,9 +366,9 @@
         "end": 2017
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "V",
       "explanationOrNull": null
     },
@@ -378,9 +378,9 @@
         "end": 2027
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "V",
       "explanationOrNull": null
     },
@@ -390,9 +390,9 @@
         "end": 2158
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "L1",
       "explanationOrNull": null
     },
@@ -402,9 +402,9 @@
         "end": 2168
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "L2",
       "explanationOrNull": null
     },
@@ -414,9 +414,9 @@
         "end": 2181
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : [dynamic()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [dynamic()]\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -426,9 +426,9 @@
         "end": 2283
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -438,9 +438,9 @@
         "end": 2295
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Y",
       "explanationOrNull": null
     },
@@ -450,9 +450,9 @@
         "end": 2302
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Z",
       "explanationOrNull": null
     },
@@ -462,9 +462,9 @@
         "end": 2408
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "T",
       "explanationOrNull": null
     },
@@ -474,9 +474,9 @@
         "end": 2427
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "H",
       "explanationOrNull": null
     },
@@ -486,11 +486,11 @@
         "end": 2438
       },
       "lineAndCol": null,
-      "message": "Expected: [atom()]\nGot     : [term()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [term()]\nContext expected type: [atom()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": "  [term()] is not a subtype of [atom()]\n  because\n  term() is not a subtype of atom()"
+      "explanationOrNull": "  [term()] is not compatible with [atom()]\n  because\n  term() is not compatible with atom()"
     },
     {
       "range": {
@@ -510,9 +510,9 @@
         "end": 2534
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
       "explanationOrNull": null
     },
@@ -522,9 +522,9 @@
         "end": 2554
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
       "explanationOrNull": null
     },
@@ -534,9 +534,9 @@
         "end": 2644
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
       "explanationOrNull": null
     },
@@ -546,9 +546,9 @@
         "end": 2663
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
       "explanationOrNull": null
     },
@@ -558,9 +558,9 @@
         "end": 2751
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "F",
       "explanationOrNull": null
     },
@@ -570,9 +570,9 @@
         "end": 2763
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M",
       "explanationOrNull": null
     },
@@ -582,9 +582,9 @@
         "end": 2916
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : [dynamic()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [dynamic()]\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "[ || ]",
       "explanationOrNull": null
     },
@@ -594,9 +594,9 @@
         "end": 2878
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : #S{a := 'b', c := number()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #S{a := 'b', c := number()}\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "#{..}",
       "explanationOrNull": null
     },
@@ -606,9 +606,9 @@
         "end": 2868
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'd'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'd'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'d'",
       "explanationOrNull": null
     },
@@ -618,9 +618,9 @@
         "end": 2909
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : {dynamic()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {dynamic()}\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "{X}",
       "explanationOrNull": null
     },
@@ -630,9 +630,9 @@
         "end": 3010
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Y",
       "explanationOrNull": null
     },
@@ -642,9 +642,9 @@
         "end": 3029
       },
       "lineAndCol": null,
-      "message": "Expected: binary()\nGot     : [term()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [term()]\nContext expected type: binary()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "L",
       "explanationOrNull": null
     },
@@ -654,9 +654,9 @@
         "end": 3040
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : [binary()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [binary()]\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -666,9 +666,9 @@
         "end": 3135
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "B",
       "explanationOrNull": null
     },
@@ -678,9 +678,9 @@
         "end": 3149
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -690,9 +690,9 @@
         "end": 3212
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'a'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'a'",
       "explanationOrNull": null
     },
@@ -702,9 +702,9 @@
         "end": 3241
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'b'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'b'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'b'",
       "explanationOrNull": null
     },
@@ -714,9 +714,9 @@
         "end": 3252
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : #D{dynamic() | 'id' => dynamic() | number()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M1",
       "explanationOrNull": null
     },
@@ -726,9 +726,9 @@
         "end": 3257
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "_ + _",
       "explanationOrNull": null
     },
@@ -738,9 +738,9 @@
         "end": 3257
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : #D{dynamic() | 'id' => dynamic() | number()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M2",
       "explanationOrNull": null
     },
@@ -750,9 +750,9 @@
         "end": 3332
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
       "explanationOrNull": null
     },
@@ -762,9 +762,9 @@
         "end": 3339
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "S",
       "explanationOrNull": null
     },
@@ -774,9 +774,9 @@
         "end": 3349
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "B",
       "explanationOrNull": null
     },
@@ -786,9 +786,9 @@
         "end": 3353
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "_ + _",
       "explanationOrNull": null
     },
@@ -822,9 +822,9 @@
         "end": 3532
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'a'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'a'",
       "explanationOrNull": null
     },
@@ -834,11 +834,11 @@
         "end": 3545
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : dynamic() | []",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   dynamic() | []\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": "  dynamic() | [] is not a subtype of atom()\n  because\n  [] is not a subtype of atom()"
+      "explanationOrNull": "  dynamic() | [] is not compatible with atom()\n  because\n  [] is not compatible with atom()"
     },
     {
       "range": {
@@ -858,9 +858,9 @@
         "end": 3656
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "A",
       "explanationOrNull": null
     },
@@ -870,9 +870,9 @@
         "end": 3722
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'a'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'a'",
       "explanationOrNull": null
     },
@@ -882,9 +882,9 @@
         "end": 3741
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : number() | []",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number() | []\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -894,9 +894,9 @@
         "end": 3881
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : pid()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   pid()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Pid",
       "explanationOrNull": null
     },
@@ -906,9 +906,9 @@
         "end": 3895
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Id",
       "explanationOrNull": null
     },
@@ -918,9 +918,9 @@
         "end": 3906
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : #rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #rec{}\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -930,9 +930,9 @@
         "end": 3995
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Id",
       "explanationOrNull": null
     },
@@ -942,9 +942,9 @@
         "end": 4013
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   number()\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "...#rec.id",
       "explanationOrNull": null
     },
@@ -954,9 +954,9 @@
         "end": 4076
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "<<..>>",
       "explanationOrNull": null
     },
@@ -966,9 +966,9 @@
         "end": 4087
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : #rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #rec{}\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -978,9 +978,9 @@
         "end": 4217
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(_ ++ _))",
       "explanationOrNull": null
     },
@@ -990,9 +990,9 @@
         "end": 4209
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : [dynamic()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [dynamic()]\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "_ ++ _",
       "explanationOrNull": null
     },
@@ -1002,9 +1002,9 @@
         "end": 4209
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'a'\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'a'",
       "explanationOrNull": null
     },
@@ -1014,9 +1014,9 @@
         "end": 4263
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "<<..>>",
       "explanationOrNull": null
     },
@@ -1026,9 +1026,9 @@
         "end": 4278
       },
       "lineAndCol": null,
-      "message": "Expected: [term()]\nGot     : 'b'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'b'\nContext expected type: [term()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'b'",
       "explanationOrNull": null
     },
@@ -1038,9 +1038,9 @@
         "end": 4407
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast([N]))",
       "explanationOrNull": null
     },
@@ -1050,9 +1050,9 @@
         "end": 4399
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : [dynamic()]",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   [dynamic()]\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "[N]",
       "explanationOrNull": null
     },
@@ -1062,9 +1062,9 @@
         "end": 4461
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(<<..>>))",
       "explanationOrNull": null
     },
@@ -1074,9 +1074,9 @@
         "end": 4453
       },
       "lineAndCol": null,
-      "message": "Expected: atom()\nGot     : binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   binary()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "<<..>>",
       "explanationOrNull": null
     },
@@ -1086,9 +1086,9 @@
         "end": 4482
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : []",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   []\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "[]",
       "explanationOrNull": null
     },
@@ -1098,9 +1098,9 @@
         "end": 4540
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'a'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'a'",
       "explanationOrNull": null
     },
@@ -1110,9 +1110,9 @@
         "end": 4544
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : 'b'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'b'\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'b'",
       "explanationOrNull": null
     },
@@ -1134,9 +1134,9 @@
         "end": 4912
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : 'error'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'error'\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "'error'",
       "explanationOrNull": null
     },
@@ -1158,9 +1158,9 @@
         "end": 5312
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Arg 2 of 'make_pair/2'",
       "explanationOrNull": null
     }

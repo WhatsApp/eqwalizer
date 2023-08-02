@@ -20,11 +20,11 @@ test01_pos() ->                            | OK      |
 test02_neg() ->                            | ERROR   |
   case catch foo() of                      |         |
     {ok, A} -> A;                          |         | A.
-                                           |         | Expected: binary()
-                                           |         | Got     : atom() | dynamic()
+                                           |         | Expression has type:   atom() | dynamic()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   atom() | dynamic() is not a subtype of binary()
+                                           |         |   atom() | dynamic() is not compatible with binary()
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
     {err, A} -> A                          |         |
   end.                                     |         |

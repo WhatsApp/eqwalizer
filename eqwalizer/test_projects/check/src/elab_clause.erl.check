@@ -28,8 +28,8 @@ app_foo_neg(X) ->                          | ERROR   |
               {_, Y} -> Y                  |         |
           end,                             |         |
     Res.                                   |         | Res.
-                                           |         | Expected: binary()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: binary()
                                            |         |
 -spec app_bar(term()) ->                   |         |
     {atom()} | number().                   |         |
@@ -48,8 +48,8 @@ app_bar_neg(X) ->                          | ERROR   |
               {N} -> {N}                   |         |
           end,                             |         |
     Res.                                   |         | Res.
-                                           |         | Expected: {atom()} | number()
-                                           |         | Got     : atom() | {number()}
+                                           |         | Expression has type:   atom() | {number()}
+                                           |         | Context expected type: {atom()} | number()
                                            |         |
 -spec catch_foo(term()) -> atom().         |         |
 catch_foo(X) ->                            | OK      |
@@ -78,12 +78,12 @@ catch_foo1_neg(X) ->                       | ERROR   |
             A:_  -> A                      |         |
         end,                               |         |
     Res.                                   |         | Res.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'error' | 'exit' | 'throw'
+                                           |         | Expression has type:   number() | 'error' | 'exit' | 'throw'
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | 'error' | 'exit' | 'throw' is not a subtype of number()
+                                           |         |   number() | 'error' | 'exit' | 'throw' is not compatible with number()
                                            |         |   because
-                                           |         |   'error' is not a subtype of number()
+                                           |         |   'error' is not compatible with number()
                                            |         |
 -spec catch_foo2_neg(term()) -> number().  |         |
 catch_foo2_neg(X) ->                       | ERROR   |
@@ -94,12 +94,12 @@ catch_foo2_neg(X) ->                       | ERROR   |
             _:_:Stack  -> Stack            |         |
         end,                               |         |
     Res.                                   |         | Res.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | [term()]
+                                           |         | Expression has type:   number() | [term()]
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | [term()] is not a subtype of number()
+                                           |         |   number() | [term()] is not compatible with number()
                                            |         |   because
-                                           |         |   [term()] is not a subtype of number()
+                                           |         |   [term()] is not compatible with number()
                                            |         |
 -spec catch_foo3_neg(term()) -> number().  |         |
 catch_foo3_neg(X) ->                       | ERROR   |
@@ -107,8 +107,8 @@ catch_foo3_neg(X) ->                       | ERROR   |
     of {_Y, _} -> 1                        |         |
     catch                                  |         |
         A:_  -> A                          |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'error' | 'exit' | 'throw'
+                                           |         | Expression has type:   'error' | 'exit' | 'throw'
+                                           |         | Context expected type: number()
     end.                                   |         |
                                            |         |
 -spec catch_foo4_neg(term()) -> number().  |         |
@@ -117,6 +117,6 @@ catch_foo4_neg(X) ->                       | ERROR   |
     of {_Y, _} -> 1                        |         |
     catch                                  |         |
         Class:_:Stack  -> {Class, Stack}   |         | {Class, Stack}.
-                                           |         | Expected: number()
-                                           |         | Got     : {'error' | 'exit' | 'throw', [term()]}
+                                           |         | Expression has type:   {'error' | 'exit' | 'throw', [term()]}
+                                           |         | Context expected type: number()
     end.                                   |         |

@@ -21,30 +21,30 @@ swap({A, B}) -> {B, A}.                    | OK      |
   sets:set({ok, ok}).                      |         |
 otp_1_neg(X) ->                            | ERROR   |
   X.                                       |         | X.
-                                           |         | Expected: sets:set({'ok', 'ok'})
-                                           |         | Got     : sets:set({'ok', 'error'})
+                                           |         | Expression has type:   sets:set({'ok', 'error'})
+                                           |         | Context expected type: sets:set({'ok', 'ok'})
                                            |         | 
-                                           |         |   sets:set({'ok', 'error'}) is not a subtype of sets:set({'ok', 'ok'})
+                                           |         |   sets:set({'ok', 'error'}) is not compatible with sets:set({'ok', 'ok'})
                                            |         |   because
                                            |         |   at tuple index 2:
-                                           |         |   {'ok', 'error'} is not a subtype of {'ok', 'ok'}
+                                           |         |   {'ok', 'error'} is not compatible with {'ok', 'ok'}
                                            |         |   because
-                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |   'error' is not compatible with 'ok'
                                            |         |
 -spec test1_neg(misc:o()) -> ok.           |         |
 test1_neg({X}) -> X.                       | ERROR   | X.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec test2_neg(misc:o()) -> ok.           |         |
 test2_neg(X=#{a := b}) -> X.               | ERROR   | X.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : #D{term() => term()}
+                                           |         | Expression has type:   #D{term() => term()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec test3_neg(misc:o()) -> tuple().      |         |
 test3_neg(X) -> X.                         | ERROR   | X.
-                                           |         | Expected: tuple()
-                                           |         | Got     : misc:o()
+                                           |         | Expression has type:   misc:o()
+                                           |         | Context expected type: tuple()
                                            |         |
 -spec to_any(misc:o()) -> term().          |         |
 to_any(X) -> X.                            | OK      |
@@ -70,16 +70,16 @@ test4_neg(X) ->                            | ERROR   |
   case X of                                |         |
         X2 when is_tuple(X2) ->            |         |
           X2                               |         | X2.
-                                           |         | Expected: none()
-                                           |         | Got     : misc:o()
+                                           |         | Expression has type:   misc:o()
+                                           |         | Context expected type: none()
   end.                                     |         |
                                            |         |
 -spec test5_neg(misc:o()) -> tuple().      |         |
 test5_neg(X) ->                            | ERROR   |
   Res = X,                                 |         |
   Res.                                     |         | Res.
-                                           |         | Expected: tuple()
-                                           |         | Got     : misc:o()
+                                           |         | Expression has type:   misc:o()
+                                           |         | Context expected type: tuple()
                                            |         |
 -spec test6(misc:o()) -> misc:o().         |         |
 test6(X) -> X.                             | OK      |
@@ -112,8 +112,8 @@ test10({rec_w_opaque_field,                | OK      |
 test11_neg({rec_w_opaque_field,            | ERROR   |
   {X}}                                     |         |
 ) -> X.                                    |         | X.
-                                           |         | Expected: {'ok'}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: {'ok'}
                                            |         |
 -spec test12_neg(                          |         |
     misc:o()                               |         |
@@ -126,8 +126,8 @@ test13_neg(_) -> false.                    |         |
                                            |         |
 -spec test14_neg(misc:o()) -> true.        |         |
 test14_neg(X) -> X =:= {ok}.               | ERROR   | _ =:= _.
-                                           |         | Expected: 'true'
-                                           |         | Got     : boolean()
+                                           |         | Expression has type:   boolean()
+                                           |         | Context expected type: 'true'
                                            |         |
 -spec test15(misc:o()) ->                  |         |
   misc:o() | a.                            |         |
@@ -141,25 +141,25 @@ test16(X) -> X.                            | OK      |
 -spec test17_neg(misc:o() | a) ->          |         |
   {ok} | a.                                |         |
 test17_neg(X) -> X.                        | ERROR   | X.
-                                           |         | Expected: {'ok'} | 'a'
-                                           |         | Got     : misc:o() | 'a'
+                                           |         | Expression has type:   misc:o() | 'a'
+                                           |         | Context expected type: {'ok'} | 'a'
                                            |         | 
-                                           |         |   misc:o() | 'a' is not a subtype of {'ok'} | 'a'
+                                           |         |   misc:o() | 'a' is not compatible with {'ok'} | 'a'
                                            |         |   because
-                                           |         |   misc:o() is not a subtype of {'ok'} | 'a'
+                                           |         |   misc:o() is not compatible with {'ok'} | 'a'
                                            |         |   because
-                                           |         |   misc:o() is not a subtype of {'ok'}
+                                           |         |   misc:o() is not compatible with {'ok'}
                                            |         |
 -spec test18_neg(                          |         |
     misc:o() | a                           |         |
 ) -> misc:o().                             |         |
 test18_neg(X) -> X.                        | ERROR   | X.
-                                           |         | Expected: misc:o()
-                                           |         | Got     : misc:o() | 'a'
+                                           |         | Expression has type:   misc:o() | 'a'
+                                           |         | Context expected type: misc:o()
                                            |         | 
-                                           |         |   misc:o() | 'a' is not a subtype of misc:o()
+                                           |         |   misc:o() | 'a' is not compatible with misc:o()
                                            |         |   because
-                                           |         |   'a' is not a subtype of misc:o()
+                                           |         |   'a' is not compatible with misc:o()
                                            |         |
 -spec test19(                              |         |
     {misc:o() | a}                         |         |
@@ -170,12 +170,12 @@ test19({X}) -> X.                          | OK      |
     misc:o() | a                           |         |
 ) -> misc:o().                             |         |
 test20_neg(X) -> X.                        | ERROR   | X.
-                                           |         | Expected: misc:o()
-                                           |         | Got     : misc:o() | 'a'
+                                           |         | Expression has type:   misc:o() | 'a'
+                                           |         | Context expected type: misc:o()
                                            |         | 
-                                           |         |   misc:o() | 'a' is not a subtype of misc:o()
+                                           |         |   misc:o() | 'a' is not compatible with misc:o()
                                            |         |   because
-                                           |         |   'a' is not a subtype of misc:o()
+                                           |         |   'a' is not compatible with misc:o()
                                            |         |
                                            |         |
 -spec ttt(T, T) -> T.                      |         |
@@ -214,8 +214,8 @@ test23_wip(X)                              | ERROR   |
   when element(1, {X})                     |         |
     =:= element(1, {{ok}}) ->              |         |
   X.                                       |         | X.
-                                           |         | Expected: {'ok'}
-                                           |         | Got     : misc:o()
+                                           |         | Expression has type:   misc:o()
+                                           |         | Context expected type: {'ok'}
                                            |         |
 -spec test24_neg(misc:o()) -> term().      |         |
 test24_neg(X)                              | OK      |

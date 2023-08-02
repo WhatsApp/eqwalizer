@@ -5,13 +5,13 @@ error: type_alias_is_non_productive
    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ recursive type invalid/0 is not productive
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a_mod2.erl:36:9
    │
 36 │     1 + an_atom,
    │         ^^^^^^^ 'an_atom'.
-Expected: number()
-Got     : 'an_atom'
+Expression has type:   'an_atom'
+Context expected type: number()
 
 
 2 ERRORS

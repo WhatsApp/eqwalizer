@@ -21,8 +21,8 @@ test03(_, Y) when Y -> Y.                  |         |
                                            |         |
 -spec test04(atom(), atom()) -> boolean(). |         |
 test04(X, Y) when X orelse Y -> X.         | ERROR   | X.
-                                           |         | Expected: boolean()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec test05(atom(), atom()) -> boolean(). |         |
 test05(X, Y) when X andalso Y -> Y.        | OK      |
@@ -32,13 +32,13 @@ test06(X, Y) when X andalso Y -> Y.        | OK      |
                                            |         |
 -spec test07_neg(atom(), atom()) -> false. |         |
 test07_neg(X, Y) when X andalso Y -> Y.    | ERROR   | Y.
-                                           |         | Expected: 'false'
-                                           |         | Got     : 'true'
+                                           |         | Expression has type:   'true'
+                                           |         | Context expected type: 'false'
                                            |         |
 -spec test08_neg(term()) -> number().      |         |
 test08_neg(X) when not is_number(X) -> X.  | ERROR   | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 % We don't try to process                  |         |
 % logic connectives in a smart way         |         |
@@ -61,14 +61,14 @@ test11_neg(X)                              | ERROR   |
   when is_number(X);                       |         |
        is_atom(X);                         |         |
        is_pid(X)-> X.                      |         | X.
-                                           |         | Expected: number() | atom()
-                                           |         | Got     : number() | atom() | pid()
+                                           |         | Expression has type:   number() | atom() | pid()
+                                           |         | Context expected type: number() | atom()
                                            |         | 
-                                           |         |   number() | atom() | pid() is not a subtype of number() | atom()
+                                           |         |   number() | atom() | pid() is not compatible with number() | atom()
                                            |         |   because
-                                           |         |   pid() is not a subtype of number() | atom()
+                                           |         |   pid() is not compatible with number() | atom()
                                            |         |   because
-                                           |         |   pid() is not a subtype of number()
+                                           |         |   pid() is not compatible with number()
                                            |         |
 -spec test12(term(), term()) -> number().  |         |
 test12(X, _) when X + 1 > 0 -> X;          | OK      |
@@ -85,13 +85,13 @@ test13(X, Y)                               | OK      |
 test14_neg(X, Y)                           | ERROR   |
     when X + 1 > 0; Y / 3 > 1 ->           |         |
     {X, Y}.                                |         | {X, Y}.
-                                           |         | Expected: {number(), number()}
-                                           |         | Got     : {term(), term()}
+                                           |         | Expression has type:   {term(), term()}
+                                           |         | Context expected type: {number(), number()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {term(), term()} is not a subtype of {number(), number()}
+                                           |         |   {term(), term()} is not compatible with {number(), number()}
                                            |         |   because
-                                           |         |   term() is not a subtype of number()
+                                           |         |   term() is not compatible with number()
                                            |         |
 -spec test15 (term(), term())              |         |
          -> {number(), number()}           |         |

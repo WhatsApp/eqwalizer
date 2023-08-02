@@ -31,8 +31,8 @@ case01() ->                                | OK      |
 case02_neg() ->                            | ERROR   |
   Ns = dyn_val(),                          |         |
   lists:map(fun inc/1, Ns).                |         | lists:map(inc/1, Ns).
-                                           |         | Expected: 'ok'
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec case03() -> [number()].              |         |
 case03() ->                                | OK      |
@@ -43,8 +43,8 @@ case03() ->                                | OK      |
 case04_neg() ->                            | ERROR   |
   Ns = [0, 1, 2],                          |         |
   lists:map(fun dyn_fun/1, Ns).            |         | lists:map(dyn_fun/1, Ns).
-                                           |         | Expected: 'ok'
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec case05() -> number().                |         |
 case05() ->                                | OK      |
@@ -55,8 +55,8 @@ case05() ->                                | OK      |
 case05_neg() ->                            | ERROR   |
   Ns = dyn_val(),                          |         |
   lists:foldl(fun add/2, 0, Ns).           |         | lists:foldl(add/2, 0, Ns).
-                                           |         | Expected: 'ok'
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec case06() -> number().                |         |
 case06() ->                                | OK      |
@@ -69,12 +69,12 @@ case07() ->                                | ERROR   |
   Ns = [0, 1, 2],                          |         |
   Acc = dyn_val(),                         |         |
   lists:foldl(fun add/2, Acc, Ns).         |         | lists:foldl(add/2, Acc, Ns).
-                                           |         | Expected: none()
-                                           |         | Got     : number() | dynamic()
+                                           |         | Expression has type:   number() | dynamic()
+                                           |         | Context expected type: none()
                                            |         | 
-                                           |         |   number() | dynamic() is not a subtype of none()
+                                           |         |   number() | dynamic() is not compatible with none()
                                            |         |   because
-                                           |         |   number() is not a subtype of none()
+                                           |         |   number() is not compatible with none()
                                            |         |
 -spec case08_neg() -> ok.                  |         |
 case08_neg() ->                            | ERROR   |
@@ -82,20 +82,20 @@ case08_neg() ->                            | ERROR   |
   Acc = dyn_val(),                         |         |
   Res = lists:foldl(fun add/2, Acc, Ns),   |         |
   {Res}.                                   |         | {Res}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {number() | dynamic()}
+                                           |         | Expression has type:   {number() | dynamic()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec case09_neg() -> ok.                  |         |
 case09_neg() ->                            | ERROR   |
   Ns = [0, 1, 2],                          |         |
   Acc = "string",                          |         |
   lists:foldl(fun dyn_fun/2, Acc, Ns).     |         | lists:foldl(dyn_fun/2, Acc, Ns).
-                                           |         | Expected: 'ok'
-                                           |         | Got     : dynamic() | string()
+                                           |         | Expression has type:   dynamic() | string()
+                                           |         | Context expected type: 'ok'
                                            |         | 
-                                           |         |   dynamic() | string() is not a subtype of 'ok'
+                                           |         |   dynamic() | string() is not compatible with 'ok'
                                            |         |   because
-                                           |         |   string() is not a subtype of 'ok'
+                                           |         |   string() is not compatible with 'ok'
                                            |         |
 -spec fapply(fun((T) -> U), T) -> U.       |         |
 fapply(F, X) ->                            | OK      |
@@ -105,15 +105,15 @@ fapply(F, X) ->                            | OK      |
 -spec case10_neg() -> ok.                  |         |
 case10_neg() ->                            | ERROR   |
   fapply(fun inc/1, dyn_val()).            |         | fapply(inc/1, dyn_val()).
-                                           |         | Expected: 'ok'
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec case11_neg(X) -> X.                  |         |
 case11_neg(X) ->                           | ERROR   |
   Res = fapply(fun dyn_fun/1, X),          |         |
   {Res}.                                   |         | {Res}.
-                                           |         | Expected: X
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: X
                                            |         |
 -spec named1() -> [integer()].             |         |
 named1() ->                                | OK      |
@@ -137,12 +137,12 @@ named2_neg() ->                            | ERROR   |
         three;                             |         |
       Fib(N) ->                            |         |
         Fib(N - 2) + Fib(N - 1)            |         | Fib(_ - _).
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'three'
+                                           |         | Expression has type:   number() | 'three'
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | 'three' is not a subtype of number()
+                                           |         |   number() | 'three' is not compatible with number()
                                            |         |   because
-                                           |         |   'three' is not a subtype of number()
+                                           |         |   'three' is not compatible with number()
     end,                                   |         |
     [1, 2, 3]                              |         |
   ).                                       |         |
@@ -155,8 +155,8 @@ named3_neg() ->                            | ERROR   |
         -> 1;                              |         |
       Fib(N) ->                            |         |
         Fib(undefined) + Fib(N - 1)        |         | 'undefined'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'undefined'
+                                           |         | Expression has type:   'undefined'
+                                           |         | Context expected type: number()
     end,                                   |         |
     [1, 2, 3]                              |         |
   ).                                       |         |

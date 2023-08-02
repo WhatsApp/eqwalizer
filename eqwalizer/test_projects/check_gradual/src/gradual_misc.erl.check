@@ -38,8 +38,8 @@ fuzz01() when #{(true andalso false) => {}…… OK      |
 -spec fuzz02() -> ok.                      |         |
 fuzz02() ->                                | ERROR   |
     <<X || X <- [], (X ++ X) >>.           |         | << || >>.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec fuzz03(term()) -> ok.                |         |
 fuzz03([_ | {}]) ->                        | OK      |

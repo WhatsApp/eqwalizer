@@ -30,14 +30,14 @@ test_foldl1_pos() -> lists:foldl(          | OK      |
 -spec test_foldl2_neg() -> term().         |         |
 test_foldl2_neg() -> lists:foldl(          | ERROR   |
     fun(_, Acc) -> [Acc] end,              |         | [Acc].
-                                           |         | Expected: [[[]]]
-                                           |         | Got     : [[[[]]]]
+                                           |         | Expression has type:   [[[[]]]]
+                                           |         | Context expected type: [[[]]]
                                            |         | 
-                                           |         |   [[[[]]]] is not a subtype of [[[]]]
+                                           |         |   [[[[]]]] is not compatible with [[[]]]
                                            |         |   because
-                                           |         |   [[[]]] is not a subtype of [[]]
+                                           |         |   [[[]]] is not compatible with [[]]
                                            |         |   because
-                                           |         |   [[]] is not a subtype of []
+                                           |         |   [[]] is not compatible with []
     [], [1]).                              |         |
                                            |         |
 -spec test_foldl3() -> [number()].         |         |
@@ -59,12 +59,12 @@ test_deep_lambda1() ->                     | ERROR   |
     X = mapdeep(                           |         |
         {fun(X) -> X + 1 end},             |         |
         [1, 2, 3]),                        |         | [1, 2, 3].
-                                           |         | Expected: [none()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [none()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [none()]
+                                           |         |   [number()] is not compatible with [none()]
                                            |         |   because
-                                           |         |   number() is not a subtype of none()
+                                           |         |   number() is not compatible with none()
     X.                                     |         |
                                            |         |
 -spec mapboth(                             |         |
@@ -107,20 +107,20 @@ test_trans1_wip() -> trans(                | OK      |
     T                                      |         |
 ) -> T.                                    |         |
 generic({}, {}, {}) -> nok.                | ERROR   | 'nok'.
-                                           |         | Expected: T
-                                           |         | Got     : 'nok'
+                                           |         | Expression has type:   'nok'
+                                           |         | Context expected type: T
                                            |         |
 -spec test_err_msg() -> nok.               |         |
 test_err_msg() ->                          | ERROR   |
     generic(                               |         |
         fun(X) -> X end,                   |         |
         fun erlang:atom_to_list/1,         |         | erlang:atom_to_list/1.
-                                           |         | Expected: fun((atom()) -> atom())
-                                           |         | Got     : fun((atom()) -> string())
+                                           |         | Expression has type:   fun((atom()) -> string())
+                                           |         | Context expected type: fun((atom()) -> atom())
                                            |         | 
-                                           |         |   fun((atom()) -> string()) is not a subtype of fun((atom()) -> atom())
+                                           |         |   fun((atom()) -> string()) is not compatible with fun((atom()) -> atom())
                                            |         |   because
-                                           |         |   string() is not a subtype of atom()
+                                           |         |   string() is not compatible with atom()
         fun erlang:list_to_atom/1          |         |
     ),                                     |         |
     nok.                                   |         |
@@ -172,8 +172,8 @@ repeated_vars_neg(A) ->                    | ERROR   |
     (                                      |         |
         fun                                |         |
             (X, X) -> X + A                |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
         end                                |         |
     )(2, 2).                               |         |
                                            |         |

@@ -49,8 +49,8 @@ test04(_) -> undef.                        |         |
     #{number() => number()}.               |         |
 test05(X) when X =:= #{1 => b} ->          | ERROR   |
     X.                                     |         | X.
-                                           |         | Expected: #D{number() => number()}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: #D{number() => number()}
                                            |         |
 -type loop() :: loop().                    | INVALID | recursive type loop/0 is not productive
 
@@ -92,8 +92,8 @@ guard_element_neg(T)                       | ERROR   |
     when element(1, T) =:= a ->            |         |
     T;                                     |         |
 guard_element_neg(T) -> T + 1.             |         | T.
-                                           |         | Expected: number()
-                                           |         | Got     : tuple()
+                                           |         | Expression has type:   tuple()
+                                           |         | Context expected type: number()
                                            |         |
 -spec guard_float_1                        |         |
     (number() | atom()) -> number().       |         |

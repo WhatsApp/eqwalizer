@@ -160,12 +160,12 @@ occ05_3_neg(Arg) ->                        | ERROR   |
       <<>>;                                |         |
     B ->                                   |         |
       B                                    |         | B.
-                                           |         | Expected: binary()
-                                           |         | Got     : none() | number() | binary()
+                                           |         | Expression has type:   none() | number() | binary()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   none() | number() | binary() is not a subtype of binary()
+                                           |         |   none() | number() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   number() is not a subtype of binary()
+                                           |         |   number() is not compatible with binary()
   end.                                     |         |
                                            |         |
 -spec occ05_3_neg_cl                       |         |
@@ -176,12 +176,12 @@ occ05_3_neg_cl(A)                          | ERROR   |
        is_integer(A), A > 0 ->             |         |
     <<>>;                                  |         |
 occ05_3_neg_cl(B) -> B.                    |         | B.
-                                           |         | Expected: binary()
-                                           |         | Got     : none() | number() | binary()
+                                           |         | Expression has type:   none() | number() | binary()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   none() | number() | binary() is not a subtype of binary()
+                                           |         |   none() | number() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   number() is not a subtype of binary()
+                                           |         |   number() is not compatible with binary()
                                            |         |
 -spec occ05_3_neg_if                       |         |
   (atom() | integer() | binary())          |         |
@@ -193,12 +193,12 @@ occ05_3_neg_if(A) ->                       | ERROR   |
       <<>>;                                |         |
     true ->                                |         |
       A                                    |         | A.
-                                           |         | Expected: binary()
-                                           |         | Got     : none() | number() | binary()
+                                           |         | Expression has type:   none() | number() | binary()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   none() | number() | binary() is not a subtype of binary()
+                                           |         |   none() | number() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   number() is not a subtype of binary()
+                                           |         |   number() is not compatible with binary()
   end.                                     |         |
                                            |         |
 -spec occ06                                |         |
@@ -356,12 +356,12 @@ collect_ids(Rec) ->                        | OK      |
 occ11(#ab_rec{ab = A})                     | ERROR   |
   when is_atom(A) -> A;                    |         |
 occ11(A) -> A.                             |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : #ab_rec{} | atom()
+                                           |         | Expression has type:   #ab_rec{} | atom()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   #ab_rec{} | atom() is not a subtype of atom()
+                                           |         |   #ab_rec{} | atom() is not compatible with atom()
                                            |         |   because
-                                           |         |   #ab_rec{} is not a subtype of atom()
+                                           |         |   #ab_rec{} is not compatible with atom()
                                            |         |
 -spec occ12(#ab_rec{} | atom())            |         |
   -> atom().                               |         |
@@ -378,12 +378,12 @@ occ12(A) -> A.                             |         |
 occ13(#ab_rec{ab = A},                     | ERROR   |
       #a_rec{a = A}) -> A;                 |         |
 occ13(A, _) -> A.                          |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : #ab_rec{} | atom()
+                                           |         | Expression has type:   #ab_rec{} | atom()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   #ab_rec{} | atom() is not a subtype of atom()
+                                           |         |   #ab_rec{} | atom() is not compatible with atom()
                                            |         |   because
-                                           |         |   #ab_rec{} is not a subtype of atom()
+                                           |         |   #ab_rec{} is not compatible with atom()
                                            |         |
 -spec occ14                                |         |
   (#a_rec{} | atom())                      |         |
@@ -432,8 +432,8 @@ get_int3({I, _}) -> I.                     |         |
 get_int4_neg({A, I})                       | ERROR   |
   when is_atom(A) -> I;                    |         |
 get_int4_neg({_, I}) -> I.                 |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -spec get_int5                             |         |
   (rich_tuple()) -> none().                |         |
@@ -445,12 +445,12 @@ get_int5({A, A})                           | OK      |
 get_int6({A1, A2})                         | ERROR   |
   when is_atom(A1) and is_atom(A2) -> 1;   |         |
 get_int6({_, I}) -> I.                     |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | atom()
+                                           |         | Expression has type:   number() | atom()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | atom() is not a subtype of number()
+                                           |         |   number() | atom() is not compatible with number()
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec get_int7_neg                         |         |
   (rich_tuple()) -> number().              |         |
@@ -458,12 +458,12 @@ get_int7_neg({A, A})                       | ERROR   |
   % A is none()                            |         |
   when is_atom(A) -> 0;                    |         |
 get_int7_neg({_, I}) -> I.                 |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | atom()
+                                           |         | Expression has type:   number() | atom()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | atom() is not a subtype of number()
+                                           |         |   number() | atom() is not compatible with number()
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec get_int8_neg                         |         |
   (rich_tuple()) -> number().              |         |
@@ -471,12 +471,12 @@ get_int8_neg({A, A1})                      | ERROR   |
 % A is none()                              |         |
   when is_atom(A) andalso A == A1 -> 0;    |         |
 get_int8_neg({_, I}) -> I.                 |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | atom()
+                                           |         | Expression has type:   number() | atom()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | atom() is not a subtype of number()
+                                           |         |   number() | atom() is not compatible with number()
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec use_num_literals(                    |         |
   {number(), atom()} |                     |         |
@@ -544,12 +544,12 @@ record_occ05_neg(#union_field{field = B})  | ERROR   |
   when is_binary(B) -> B;                  |         |
 record_occ05_neg(#union_field{field = A}) ……         |
   A.                                       |         | A.
-                                           |         | Expected: binary()
-                                           |         | Got     : atom() | none()
+                                           |         | Expression has type:   atom() | none()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   atom() | none() is not a subtype of binary()
+                                           |         |   atom() | none() is not compatible with binary()
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
                                            |         |
 -spec record_occ06                         |         |
   (#union_field{}) -> binary().            |         |
@@ -575,15 +575,15 @@ record_occ08_neg(#union_field{field = A})  | ERROR   |
   when is_atom(A) -> A;                    |         |
 record_occ08_neg(R) ->                     |         |
   record_occ07_tuple(R).                   |         | R.
-                                           |         | Expected: {'union_field', atom()}
-                                           |         | Got     : #union_field{}
+                                           |         | Expression has type:   #union_field{}
+                                           |         | Context expected type: {'union_field', atom()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'union_field', none() | binary()} is not a subtype of {'union_field', atom()}
+                                           |         |   {'union_field', none() | binary()} is not compatible with {'union_field', atom()}
                                            |         |   because
-                                           |         |   none() | binary() is not a subtype of atom()
+                                           |         |   none() | binary() is not compatible with atom()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()
                                            |         |
 -record(union_field3, {                    |         |
   union :: atom() | binary(),              |         |
@@ -622,12 +622,12 @@ record_occ12(#union_field4{}) -> 0.        |         |
 -spec record_occ13_neg                     |         |
     (#union_field4{}) -> integer().        |         |
 record_occ13_neg(#union_field4{x = A, y = …… ERROR   | A.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'ok'
+                                           |         | Expression has type:   number() | 'ok'
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | 'ok' is not a subtype of number()
+                                           |         |   number() | 'ok' is not compatible with number()
                                            |         |   because
-                                           |         |   'ok' is not a subtype of number()
+                                           |         |   'ok' is not compatible with number()
                                            |         |
 -record(triple_union, {                    |         |
     field :: #a{} | #b{} | #c{}            |         |
@@ -659,12 +659,12 @@ triple_union_occ2({triple_union, B})       |         |
     when                                   |         |
         not is_record(B, a)                |         |
     -> B#b.id;                             |         | B.
-                                           |         | Expected: #b{}
-                                           |         | Got     : #a{} | #b{} | #c{}
+                                           |         | Expression has type:   #a{} | #b{} | #c{}
+                                           |         | Context expected type: #b{}
                                            |         | 
-                                           |         |   #a{} | #b{} | #c{} is not a subtype of #b{}
+                                           |         |   #a{} | #b{} | #c{} is not compatible with #b{}
                                            |         |   because
-                                           |         |   #a{} is not a subtype of #b{}
+                                           |         |   #a{} is not compatible with #b{}
 triple_union_occ2({triple_union, A})       |         |
     -> A#a.id.                             |         |
                                            |         |
@@ -706,12 +706,12 @@ occ22({b, B}, F) -> F(B).                  |         |
   ({a, A} | {b, B}, fun((B) -> A)) -> A.   |         |
 occ23_neg({a, A}, _) -> A;                 | ERROR   |
 occ23_neg({_, B}, F) -> F(B).              |         | B.
-                                           |         | Expected: B
-                                           |         | Got     : A | B
+                                           |         | Expression has type:   A | B
+                                           |         | Context expected type: B
                                            |         | 
-                                           |         |   A | B is not a subtype of B
+                                           |         |   A | B is not compatible with B
                                            |         |   because
-                                           |         |   A is not a subtype of B
+                                           |         |   A is not compatible with B
                                            |         |
 -spec occ24                                |         |
 (fun(() -> atom()) | atom()) ->            |         |
@@ -730,12 +730,12 @@ occ25(F) -> F().                           |         |
   {term()}.                                |         |
 occ26_neg(F) when is_function(F, 1) -> {F(…… ERROR   |
 occ26_neg(T) -> T.                         |         | T.
-                                           |         | Expected: {term()}
-                                           |         | Got     : fun() | {term()}
+                                           |         | Expression has type:   fun() | {term()}
+                                           |         | Context expected type: {term()}
                                            |         | 
-                                           |         |   fun() | {term()} is not a subtype of {term()}
+                                           |         |   fun() | {term()} is not compatible with {term()}
                                            |         |   because
-                                           |         |   fun() is not a subtype of {term()}
+                                           |         |   fun() is not compatible with {term()}
                                            |         |
 -spec occ27_neg                            |         |
   (fun() | {term()}) ->                    |         |
@@ -749,12 +749,12 @@ occ27_neg(F) -> F().                       |         | F.
 (tuple() | atom()) -> atom().              |         |
 occ28_neg(R) when is_record(R, a) -> R#a.i…… ERROR   |
 occ28_neg(A) -> A.                         |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : tuple() | atom()
+                                           |         | Expression has type:   tuple() | atom()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   tuple() | atom() is not a subtype of atom()
+                                           |         |   tuple() | atom() is not compatible with atom()
                                            |         |   because
-                                           |         |   tuple() is not a subtype of atom()
+                                           |         |   tuple() is not compatible with atom()
                                            |         |
 -record(one_field, {                       |         |
   f1 :: integer()                          |         |
@@ -776,12 +776,12 @@ integer().                                 |         |
 todo04(X) ->                               | ERROR   |
   case X of                                |         |
     {_N, _N1} -> X#one_field.f1            |         | X.
-                                           |         | Expected: #one_field{}
-                                           |         | Got     : #one_field{} | #two_fields1{}
+                                           |         | Expression has type:   #one_field{} | #two_fields1{}
+                                           |         | Context expected type: #one_field{}
                                            |         | 
-                                           |         |   #one_field{} | #two_fields1{} is not a subtype of #one_field{}
+                                           |         |   #one_field{} | #two_fields1{} is not compatible with #one_field{}
                                            |         |   because
-                                           |         |   #two_fields1{} is not a subtype of #one_field{}
+                                           |         |   #two_fields1{} is not compatible with #one_field{}
   end.                                     |         |
                                            |         |
 -spec occ29(#one_field{} | #two_fields1{})……         |
@@ -940,12 +940,12 @@ multi_param1(_, Y) -> Y.                   |         |
 multi_param2_neg(X, Y) when is_atom(X),    | ERROR   |
                 is_atom(Y) -> 1;           |         |
 multi_param2_neg(_, Y) -> Y.               |         | Y.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | atom()
+                                           |         | Expression has type:   number() | atom()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | atom() is not a subtype of number()
+                                           |         |   number() | atom() is not compatible with number()
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec multi_param3(                        |         |
     atom(),                                |         |
@@ -1104,8 +1104,8 @@ occ41(T = {S, _}) -> S.                    |         |
                                            |         |
 occ42_neg({F, S} = {undefined, _}) -> S;   | ERROR   |
 occ42_neg({F, S} = {_, _}) -> F.           |         | F.
-                                           |         | Expected: string()
-                                           |         | Got     : string() | 'undefined'
+                                           |         | Expression has type:   string() | 'undefined'
+                                           |         | Context expected type: string()
                                            |         |
 -spec occ43_neg(                           |         |
     {string() | undefined, string()}       |         |
@@ -1113,8 +1113,8 @@ occ42_neg({F, S} = {_, _}) -> F.           |         | F.
                                            |         |
 occ43_neg({F, S} = {_, _}) -> S;           | ERROR   |
 occ43_neg({F, S} = {_, _}) -> F.           |         | F.
-                                           |         | Expected: string()
-                                           |         | Got     : string() | 'undefined'
+                                           |         | Expression has type:   string() | 'undefined'
+                                           |         | Context expected type: string()
                                            |         |
 -record(string_or_def, {                   |         |
     value :: string() | undefined,         |         |
@@ -1202,12 +1202,12 @@ occ52(_, I) -> I.                          |         |
     -> integer().                          |         |
 occ53_neg(L, undefined) when is_integer(L)…… ERROR   |
 occ53_neg(_, I) -> I.                      |         | I.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | 'undefined'
+                                           |         | Expression has type:   number() | 'undefined'
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | 'undefined' is not a subtype of number()
+                                           |         |   number() | 'undefined' is not compatible with number()
                                            |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+                                           |         |   'undefined' is not compatible with number()
                                            |         |
 -type m() :: #{                            |         |
     a => a,                                |         |
@@ -1239,14 +1239,14 @@ occ57_neg(V, _) ->                         | ERROR   |
     case V of                              |         |
         [_] -> V;                          |         |
         A -> [A]                           |         | [A].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [[atom()]] | [atom()]
+                                           |         | Expression has type:   [[atom()]] | [atom()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [[atom()]] | [atom()] is not a subtype of [atom()]
+                                           |         |   [[atom()]] | [atom()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   [[atom()]] is not a subtype of [atom()]
+                                           |         |   [[atom()]] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   [atom()] is not a subtype of atom()
+                                           |         |   [atom()] is not compatible with atom()
     end.                                   |         |
                                            |         |
 -spec occ58_neg                            |         |
@@ -1256,14 +1256,14 @@ occ58_neg(V, A) ->                         | ERROR   |
         [_] -> V;                          |         |
         [] -> V;                           |         |
         A2 -> [A2]                         |         | [A2].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [[atom()]] | [atom()]
+                                           |         | Expression has type:   [[atom()]] | [atom()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [[atom()]] | [atom()] is not a subtype of [atom()]
+                                           |         |   [[atom()]] | [atom()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   [[atom()]] is not a subtype of [atom()]
+                                           |         |   [[atom()]] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   [atom()] is not a subtype of atom()
+                                           |         |   [atom()] is not compatible with atom()
     end.                                   |         |
                                            |         |
 -spec occ_binary_pat_1(                    |         |
@@ -1288,12 +1288,12 @@ occ_binary_pat_2_neg(X, Size) ->           | ERROR   |
       X;                                   |         |
     _ ->                                   |         |
       X                                    |         | X.
-                                           |         | Expected: binary()
-                                           |         | Got     : binary() | string()
+                                           |         | Expression has type:   binary() | string()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   binary() | string() is not a subtype of binary()
+                                           |         |   binary() | string() is not compatible with binary()
                                            |         |   because
-                                           |         |   string() is not a subtype of binary()
+                                           |         |   string() is not compatible with binary()
   end.                                     |         |
                                            |         |
 -spec occ_binary_pat_3(                    |         |
@@ -1320,12 +1320,12 @@ occ_binary_pat_4_neg(X, Size) ->           | ERROR   |
       Bin;                                 |         |
     {_, Y} ->                              |         |
       Y                                    |         | Y.
-                                           |         | Expected: binary()
-                                           |         | Got     : binary() | atom()
+                                           |         | Expression has type:   binary() | atom()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   binary() | atom() is not a subtype of binary()
+                                           |         |   binary() | atom() is not compatible with binary()
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
   end.                                     |         |
                                            |         |
 -spec occ_guard_binary_1(any()) -> binary(……         |
@@ -1334,23 +1334,23 @@ occ_guard_binary_1(V) -> <<"err">>.        |         |
                                            |         |
 -spec occ_guard_binary_2_neg(any()) -> bin……         |
 occ_guard_binary_2_neg(V) when V =:= <<"ok…… ERROR   | V.
-                                           |         | Expected: binary()
-                                           |         | Got     : 'ok' | binary()
+                                           |         | Expression has type:   'ok' | binary()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   'ok' | binary() is not a subtype of binary()
+                                           |         |   'ok' | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   'ok' is not a subtype of binary()
+                                           |         |   'ok' is not compatible with binary()
 occ_guard_binary_2_neg(V) -> <<"err">>.    |         |
                                            |         |
 -spec occ_guard_binary_3_neg(binary() | ok……         |
 occ_guard_binary_3_neg(V) when V =:= <<"ok…… ERROR   |
 occ_guard_binary_3_neg(V) -> V.            |         | V.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : binary() | 'ok'
+                                           |         | Expression has type:   binary() | 'ok'
+                                           |         | Context expected type: 'ok'
                                            |         | 
-                                           |         |   binary() | 'ok' is not a subtype of 'ok'
+                                           |         |   binary() | 'ok' is not compatible with 'ok'
                                            |         |   because
-                                           |         |   binary() is not a subtype of 'ok'
+                                           |         |   binary() is not compatible with 'ok'
                                            |         |
 -spec occ_guard_binary_4(any()) -> binary(……         |
 occ_guard_binary_4(V) when V =/= <<"ok">> …… OK      |
@@ -1382,20 +1382,20 @@ foo8_neg(Args) ->                          | ERROR   |
     case Args of                           |         |
         {_, Args} -> 1 + foo8_neg(Args);   |         |
         _ -> Args                          |         | Args.
-                                           |         | Expected: number()
-                                           |         | Got     : {term(), my_list()} | none() | none() | number()
+                                           |         | Expression has type:   {term(), my_list()} | none() | none() | number()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   {term(), my_list()} | none() | none() | number() is not a subtype of number()
+                                           |         |   {term(), my_list()} | none() | none() | number() is not compatible with number()
                                            |         |   because
-                                           |         |   {term(), my_list()} is not a subtype of number()
+                                           |         |   {term(), my_list()} is not compatible with number()
     end.                                   |         |
                                            |         |
 -spec any_tuple_neg(tuple()) -> ok.        |         |
 any_tuple_neg(T) ->                        | ERROR   |
     case T of                              |         |
         _ when is_tuple(T) -> T            |         | T.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : tuple()
+                                           |         | Expression has type:   tuple()
+                                           |         | Context expected type: 'ok'
     end.                                   |         |
                                            |         |
 -spec non_linear_1                         |         |
@@ -1422,12 +1422,12 @@ non_linear_3({_, B}) -> B.                 |         |
 non_linear_neg_1({A, A}) -> b;             | ERROR   |
 non_linear_neg_1({_, a}) -> b;             |         |
 non_linear_neg_1({B, B}) -> B.             |         | B.
-                                           |         | Expected: 'b'
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: 'b'
                                            |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'b'
+                                           |         |   'a' | 'b' is not compatible with 'b'
                                            |         |   because
-                                           |         |   'a' is not a subtype of 'b'
+                                           |         |   'a' is not compatible with 'b'
                                            |         |
 -spec andalso_throw_1                      |         |
     (a | b) -> b.                          |         |
@@ -1440,12 +1440,12 @@ andalso_throw_1(V) ->                      | OK      |
 andalso_throw_1_neg(V) ->                  | ERROR   |
     V =:= b andalso throw(error),          |         |
     V.                                     |         | V.
-                                           |         | Expected: 'b'
-                                           |         | Got     : 'a' | none()
+                                           |         | Expression has type:   'a' | none()
+                                           |         | Context expected type: 'b'
                                            |         | 
-                                           |         |   'a' | none() is not a subtype of 'b'
+                                           |         |   'a' | none() is not compatible with 'b'
                                            |         |   because
-                                           |         |   'a' is not a subtype of 'b'
+                                           |         |   'a' is not compatible with 'b'
                                            |         |
 -spec andalso_throw_2                      |         |
     ({a, ok} | {b, error}) -> ok.          |         |

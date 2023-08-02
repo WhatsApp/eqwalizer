@@ -20,8 +20,8 @@ test_01_pos(F, X) -> F(X).                 | OK      |
 ) -> pid().                                |         |
 test_02_neg(F, X) ->                       | ERROR   |
     F(X).                                  |         | F(X).
-                                           |         | Expected: pid()
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: pid()
                                            |         |
 -spec test_03_pos(                         |         |
     #rec{},                                |         |
@@ -38,8 +38,8 @@ test_03_pos(                               | OK      |
 ) -> number().                             |         |
 test_04_neg(Rec) ->                        | ERROR   |
     (Rec#rec.method)(atom).                |         | (...#rec.method)('atom').
-                                           |         | Expected: number()
-                                           |         | Got     : pid()
+                                           |         | Expression has type:   pid()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_05_pos(#rec{}) -> pid().        |         |
 test_05_pos(Rec) ->                        | OK      |
@@ -61,8 +61,8 @@ test_07_pos() ->                           | OK      |
 test_07_neg() ->                           | ERROR   |
     F = fun ret_ok/0,                      |         |
     F().                                   |         | F().
-                                           |         | Expected: pid()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: pid()
                                            |         |
 -spec test_08_neg() -> term().             |         |
 test_08_neg() ->                           | ERROR   |
@@ -89,12 +89,12 @@ test_10_neg() ->                           | ERROR   |
 ) -> ok.                                   |         |
 test_11_neg(FUnion) ->                     | ERROR   |
     (FUnion)(false).                       |         | 'false'.
-                                           |         | Expected: 'a1' | 'a2'
-                                           |         | Got     : 'false'
+                                           |         | Expression has type:   'false'
+                                           |         | Context expected type: 'a1' | 'a2'
                                            |         | 
-                                           |         |   'false' is not a subtype of 'a1' | 'a2'
+                                           |         |   'false' is not compatible with 'a1' | 'a2'
                                            |         |   because
-                                           |         |   'false' is not a subtype of 'a1'
+                                           |         |   'false' is not compatible with 'a1'
                                            |         |
 % 'e' tests exercise elaboration instead o……         |
 -spec test_11e_neg(                        |         |
@@ -103,12 +103,12 @@ test_11_neg(FUnion) ->                     | ERROR   |
 ) -> ok.                                   |         |
 test_11e_neg(FUnion) ->                    | ERROR   |
     Res = (FUnion)(false),                 |         | 'false'.
-                                           |         | Expected: 'a1' | 'a2'
-                                           |         | Got     : 'false'
+                                           |         | Expression has type:   'false'
+                                           |         | Context expected type: 'a1' | 'a2'
                                            |         | 
-                                           |         |   'false' is not a subtype of 'a1' | 'a2'
+                                           |         |   'false' is not compatible with 'a1' | 'a2'
                                            |         |   because
-                                           |         |   'false' is not a subtype of 'a1'
+                                           |         |   'false' is not compatible with 'a1'
     Res.                                   |         |
                                            |         |
 -spec test_12_pos(                         |         |
@@ -117,12 +117,12 @@ test_11e_neg(FUnion) ->                    | ERROR   |
 ) -> r1.                                   |         |
 test_12_pos(FUnion) ->                     | ERROR   |
     (FUnion)(a2).                          |         | FUnion('a2').
-                                           |         | Expected: 'r1'
-                                           |         | Got     : 'r1' | 'r2'
+                                           |         | Expression has type:   'r1' | 'r2'
+                                           |         | Context expected type: 'r1'
                                            |         | 
-                                           |         |   'r1' | 'r2' is not a subtype of 'r1'
+                                           |         |   'r1' | 'r2' is not compatible with 'r1'
                                            |         |   because
-                                           |         |   'r2' is not a subtype of 'r1'
+                                           |         |   'r2' is not compatible with 'r1'
                                            |         |
 -spec test_12e_pos(                        |         |
     fun((a1 | a2) -> r1 | r2)              |         |
@@ -131,12 +131,12 @@ test_12_pos(FUnion) ->                     | ERROR   |
 test_12e_pos(FUnion) ->                    | ERROR   |
     Res = (FUnion)(a2),                    |         |
     Res.                                   |         | Res.
-                                           |         | Expected: 'r1'
-                                           |         | Got     : 'r1' | 'r2' | 'r2' | 'r3'
+                                           |         | Expression has type:   'r1' | 'r2' | 'r2' | 'r3'
+                                           |         | Context expected type: 'r1'
                                            |         | 
-                                           |         |   'r1' | 'r2' | 'r2' | 'r3' is not a subtype of 'r1'
+                                           |         |   'r1' | 'r2' | 'r2' | 'r3' is not compatible with 'r1'
                                            |         |   because
-                                           |         |   'r2' is not a subtype of 'r1'
+                                           |         |   'r2' is not compatible with 'r1'
                                            |         |
 -spec test_13_neg(                         |         |
     fun((a) -> b) | z                      |         |

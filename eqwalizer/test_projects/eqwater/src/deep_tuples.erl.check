@@ -12,29 +12,29 @@
       -> none().                           |         |
 test1_neg({{Tag1, _}, {_Tag2, _}}) ->      | ERROR   |
   Tag1.                                    |         | Tag1.
-                                           |         | Expected: none()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: none()
                                            |         |
 -spec test2_neg                            |         |
     ({{ok, number()}, {ok, number()}})     |         |
       -> none().                           |         |
 test2_neg({{_Tag1, _}, {Tag2, _}}) ->      | ERROR   |
   Tag2.                                    |         | Tag2.
-                                           |         | Expected: none()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: none()
                                            |         |
 -spec test3_neg                            |         |
     ({{ok, number()}, {ok, number()}})     |         |
       -> none().                           |         |
 test3_neg({{Tag1, _}, {_, _}}) ->          | ERROR   |
   Tag1.                                    |         | Tag1.
-                                           |         | Expected: none()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: none()
                                            |         |
 -spec test4_neg                            |         |
     ({{ok, number()}, {ok, number()}})     |         |
       -> none().                           |         |
 test4_neg({{_, _}, {Tag2, _}}) ->          | ERROR   |
   Tag2.                                    |         | Tag2.
-                                           |         | Expected: none()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: none()

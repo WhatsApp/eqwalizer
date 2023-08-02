@@ -69,16 +69,16 @@ contravariant_subtype(F) -> F.             | OK      |
     (ref_contravariant(a)) ->              |         |
     ref_contravariant_ab().                |         |
 contravariant_subtype_neg(F) -> F.         | ERROR   | F.
-                                           |         | Expected: ref_contravariant_ab()
-                                           |         | Got     : ref_contravariant('a')
+                                           |         | Expression has type:   ref_contravariant('a')
+                                           |         | Context expected type: ref_contravariant_ab()
                                            |         | 
-                                           |         |   ref_contravariant('a') is not a subtype of ref_contravariant_ab()
+                                           |         |   ref_contravariant('a') is not compatible with ref_contravariant_ab()
                                            |         |   because
-                                           |         |   contravariant('a') is not a subtype of ref_contravariant_ab()
+                                           |         |   contravariant('a') is not compatible with ref_contravariant_ab()
                                            |         |   because
-                                           |         |   fun(('a') -> 'ok') is not a subtype of ref_contravariant_ab()
+                                           |         |   fun(('a') -> 'ok') is not compatible with ref_contravariant_ab()
                                            |         |   because
-                                           |         |   fun(('a') -> 'ok') is not a subtype of ref_contravariant('a' | 'b')
+                                           |         |   fun(('a') -> 'ok') is not compatible with ref_contravariant('a' | 'b')
                                            |         |
 -type runnable(A) :: fun((A) -> ok).       |         |
 -type id(A) :: fun((A) -> A).              |         |

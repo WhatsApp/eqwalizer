@@ -6,11 +6,11 @@
         "end": 586
       },
       "lineAndCol": null,
-      "message": "Expected: sets:set({'ok', 'ok'})\nGot     : sets:set({'ok', 'error'})",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   sets:set({'ok', 'error'})\nContext expected type: sets:set({'ok', 'ok'})",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  sets:set({'ok', 'error'}) is not a subtype of sets:set({'ok', 'ok'})\n  because\n  at tuple index 2:\n  {'ok', 'error'} is not a subtype of {'ok', 'ok'}\n  because\n  'error' is not a subtype of 'ok'"
+      "explanationOrNull": "  sets:set({'ok', 'error'}) is not compatible with sets:set({'ok', 'ok'})\n  because\n  at tuple index 2:\n  {'ok', 'error'} is not compatible with {'ok', 'ok'}\n  because\n  'error' is not compatible with 'ok'"
     },
     {
       "range": {
@@ -18,9 +18,9 @@
         "end": 641
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -30,9 +30,9 @@
         "end": 704
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : #D{term() => term()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #D{term() => term()}\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -42,9 +42,9 @@
         "end": 762
       },
       "lineAndCol": null,
-      "message": "Expected: tuple()\nGot     : misc:o()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   misc:o()\nContext expected type: tuple()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -54,9 +54,9 @@
         "end": 1197
       },
       "lineAndCol": null,
-      "message": "Expected: none()\nGot     : misc:o()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   misc:o()\nContext expected type: none()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X2",
       "explanationOrNull": null
     },
@@ -66,9 +66,9 @@
         "end": 1276
       },
       "lineAndCol": null,
-      "message": "Expected: tuple()\nGot     : misc:o()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   misc:o()\nContext expected type: tuple()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -78,9 +78,9 @@
         "end": 1772
       },
       "lineAndCol": null,
-      "message": "Expected: {'ok'}\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: {'ok'}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -90,9 +90,9 @@
         "end": 2020
       },
       "lineAndCol": null,
-      "message": "Expected: 'true'\nGot     : boolean()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   boolean()\nContext expected type: 'true'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "_ =:= _",
       "explanationOrNull": null
     },
@@ -102,11 +102,11 @@
         "end": 2219
       },
       "lineAndCol": null,
-      "message": "Expected: {'ok'} | 'a'\nGot     : misc:o() | 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   misc:o() | 'a'\nContext expected type: {'ok'} | 'a'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  misc:o() | 'a' is not a subtype of {'ok'} | 'a'\n  because\n  misc:o() is not a subtype of {'ok'} | 'a'\n  because\n  misc:o() is not a subtype of {'ok'}"
+      "explanationOrNull": "  misc:o() | 'a' is not compatible with {'ok'} | 'a'\n  because\n  misc:o() is not compatible with {'ok'} | 'a'\n  because\n  misc:o() is not compatible with {'ok'}"
     },
     {
       "range": {
@@ -114,11 +114,11 @@
         "end": 2290
       },
       "lineAndCol": null,
-      "message": "Expected: misc:o()\nGot     : misc:o() | 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   misc:o() | 'a'\nContext expected type: misc:o()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  misc:o() | 'a' is not a subtype of misc:o()\n  because\n  'a' is not a subtype of misc:o()"
+      "explanationOrNull": "  misc:o() | 'a' is not compatible with misc:o()\n  because\n  'a' is not compatible with misc:o()"
     },
     {
       "range": {
@@ -126,11 +126,11 @@
         "end": 2432
       },
       "lineAndCol": null,
-      "message": "Expected: misc:o()\nGot     : misc:o() | 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   misc:o() | 'a'\nContext expected type: misc:o()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  misc:o() | 'a' is not a subtype of misc:o()\n  because\n  'a' is not a subtype of misc:o()"
+      "explanationOrNull": "  misc:o() | 'a' is not compatible with misc:o()\n  because\n  'a' is not compatible with misc:o()"
     },
     {
       "range": {
@@ -162,9 +162,9 @@
         "end": 3065
       },
       "lineAndCol": null,
-      "message": "Expected: {'ok'}\nGot     : misc:o()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   misc:o()\nContext expected type: {'ok'}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },

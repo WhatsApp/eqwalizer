@@ -28,8 +28,8 @@ test01_pos() ->                            | OK      |
 test02_neg() ->                            | ERROR   |
     try foo() of                           |         |
         {_, Y} -> Y                        |         | Y.
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
     catch                                  |         |
         {error, _} -> error                |         |
     end.                                   |         |
@@ -42,12 +42,12 @@ test03_neg() ->                            | ERROR   |
         {error, _} -> error                |         |
     end,                                   |         |
     Res.                                   |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : [] | 'error'
+                                           |         | Expression has type:   [] | 'error'
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   [] | 'error' is not a subtype of atom()
+                                           |         |   [] | 'error' is not compatible with atom()
                                            |         |   because
-                                           |         |   [] is not a subtype of atom()
+                                           |         |   [] is not compatible with atom()
                                            |         |
 -spec test04_pos(term()) ->                |         |
     {ok | error, atom()}.                  |         |
@@ -81,15 +81,15 @@ test05_pos(X) ->                           | OK      |
 test06_neg() ->                            | ERROR   |
     try ok()                               |         |
     catch _ -> error                       |         | 'error'.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : 'error'
+                                           |         | Expression has type:   'error'
+                                           |         | Context expected type: 'ok'
     end.                                   |         |
                                            |         |
 -spec test07_neg() -> error.               |         |
 test07_neg() ->                            | ERROR   |
     try ok()                               |         | ok().
-                                           |         | Expected: 'error'
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: 'error'
     catch _ -> error                       |         |
     end.                                   |         |
                                            |         |
@@ -98,8 +98,8 @@ test08_neg() ->                            | ERROR   |
     try ok()                               |         |
     after                                  |         |
         only_atom(1)                       |         | 1.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
     end.                                   |         |
                                            |         |
 -spec test09_pos() -> ok.                  |         |
@@ -142,16 +142,16 @@ test12_neg(Y, Cond) ->                     | ERROR   |
     if                                     |         |
         Cond -> Res;                       |         |
         true -> Y                          |         | Y.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
     end.                                   |         |
                                            |         |
 -spec repeated_vars(term()) -> ok.         |         |
 repeated_vars(X) ->                        | ERROR   |
     try X of                               |         |
         {X, X} -> X                        |         | X.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'ok'
     after                                  |         |
         ok                                 |         |
     end.                                   |         |
@@ -164,5 +164,5 @@ test_repeated_vars2(X) ->                  | ERROR   |
         ok                                 |         |
     end,                                   |         |
     Res.                                   |         | Res.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'ok'

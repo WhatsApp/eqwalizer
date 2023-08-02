@@ -28,20 +28,20 @@ fold2_neg(L) ->                            | ERROR   |
     N1 + N2 + Acc                          |         |
   end,                                     |         |
   lists:foldl(F, 0, L).                    |         | lists:foldl(F, 0, L).
-                                           |         | Expected: atom()
-                                           |         | Got     : dynamic() | number()
+                                           |         | Expression has type:   dynamic() | number()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   dynamic() | number() is not a subtype of atom()
+                                           |         |   dynamic() | number() is not compatible with atom()
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec fold3_neg                            |         |
 ([{number(), number()}]) -> number().      |         |
 fold3_neg(L) ->                            | ERROR   |
   F = fun({N1, N2}, Acc) ->                |         |
     N1 + N2 + binary_to_atom(Acc)          |         | erlang:binary_to_atom(Acc).
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   end,                                     |         |
   lists:foldl(F, 0, L).                    |         |
                                            |         |
@@ -54,8 +54,8 @@ test() ->                                  | OK      |
 test_arity_neg() ->                        | ERROR   |
   X = fun(a, _) -> b end,                  |         |
   X.                                       |         | X.
-                                           |         | Expected: fun(('a') -> 'b')
-                                           |         | Got     : fun((dynamic(), dynamic()) -> dynamic())
+                                           |         | Expression has type:   fun((dynamic(), dynamic()) -> dynamic())
+                                           |         | Context expected type: fun(('a') -> 'b')
                                            |         |
 -spec fun1a() -> atom().                   |         |
 fun1a() ->                                 | OK      |
@@ -119,5 +119,5 @@ fun4b() ->                                 | ERROR   |
     end                                    |         |
   end),                                    |         |
   ok.                                      |         | 'ok'.
-                                           |         | Expected: pid()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: pid()

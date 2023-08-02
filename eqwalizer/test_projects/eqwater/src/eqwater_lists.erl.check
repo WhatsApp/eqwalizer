@@ -29,14 +29,14 @@ occ_list_03(L) -> lists:map(fun atom_to_bi……         |
     ([binary() | atom()]) ->               |         |
     [binary()].                            |         |
 occ_list_04_neg(L = [H | _]) when is_binar…… ERROR   | L.
-                                           |         | Expected: [binary()]
-                                           |         | Got     : [binary() | atom()]
+                                           |         | Expression has type:   [binary() | atom()]
+                                           |         | Context expected type: [binary()]
                                            |         | 
-                                           |         |   [binary() | atom()] is not a subtype of [binary()]
+                                           |         |   [binary() | atom()] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   binary() | atom() is not a subtype of binary()
+                                           |         |   binary() | atom() is not compatible with binary()
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
                                            |         |
 -spec occ_list_05                          |         |
     ([binary()] | [atom()]) ->             |         |
@@ -54,20 +54,20 @@ occ_list_06(L) -> L.                       |         |
     [].                                    |         |
 occ_list_07_neg([_, _ | _]) -> [];         | ERROR   |
 occ_list_07_neg(L) -> L.                   |         | L.
-                                           |         | Expected: []
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: []
                                            |         |
 -spec occ_list_08_neg                      |         |
     ([term()] | atom()) ->                 |         |
     atom().                                |         |
 occ_list_08_neg([_ | _]) -> ok;            | ERROR   |
 occ_list_08_neg(A) -> A.                   |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : none() | atom() | []
+                                           |         | Expression has type:   none() | atom() | []
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   none() | atom() | [] is not a subtype of atom()
+                                           |         |   none() | atom() | [] is not compatible with atom()
                                            |         |   because
-                                           |         |   [] is not a subtype of atom()
+                                           |         |   [] is not compatible with atom()
                                            |         |
 -spec occ_list_09                          |         |
     ([term()] | atom()) ->                 |         |
@@ -75,12 +75,12 @@ occ_list_08_neg(A) -> A.                   |         | A.
 occ_list_09([_ | _]) -> ok;                | ERROR   |
 occ_list_09([]) -> nil;                    |         |
 occ_list_09(A) -> A.                       |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : none() | atom() | []
+                                           |         | Expression has type:   none() | atom() | []
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   none() | atom() | [] is not a subtype of atom()
+                                           |         |   none() | atom() | [] is not compatible with atom()
                                            |         |   because
-                                           |         |   [] is not a subtype of atom()
+                                           |         |   [] is not compatible with atom()
                                            |         |
 % Not supported                            |         |
 -spec occ_list_10                          |         |
@@ -89,8 +89,8 @@ occ_list_09(A) -> A.                       |         | A.
 occ_list_10([_, _ | _]) -> [];             | ERROR   |
 occ_list_10([_]) -> [];                    |         |
 occ_list_10(L) -> L.                       |         | L.
-                                           |         | Expected: []
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: []
                                            |         |
 -spec occ_list_11_neg                      |         |
     ([atom()] | [binary()]) ->             |         |
@@ -98,14 +98,14 @@ occ_list_10(L) -> L.                       |         | L.
 occ_list_11_neg([_, X | _]) when is_atom(X…… ERROR   |
     -> [atom_to_binary(X)];                |         |
 occ_list_11_neg(L) -> L.                   |         | L.
-                                           |         | Expected: [binary()]
-                                           |         | Got     : [atom()] | [binary()]
+                                           |         | Expression has type:   [atom()] | [binary()]
+                                           |         | Context expected type: [binary()]
                                            |         | 
-                                           |         |   [atom()] | [binary()] is not a subtype of [binary()]
+                                           |         |   [atom()] | [binary()] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   [atom()] is not a subtype of [binary()]
+                                           |         |   [atom()] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
                                            |         |
 -spec occ_list_12                          |         |
     ([atom()] | [binary()]) ->             |         |
@@ -127,8 +127,8 @@ occ_list_13(L) -> L.                       |         |
 occ_list_14_neg([H | _]) when is_binary(H)…… ERROR   |
 occ_list_14_neg([H | _]) -> atom_to_binary……         |
 occ_list_14_neg(L) -> L.                   |         | L.
-                                           |         | Expected: binary()
-                                           |         | Got     : []
+                                           |         | Expression has type:   []
+                                           |         | Context expected type: binary()
                                            |         |
 -spec occ_list_15                          |         |
     ([atom()] | [binary()]) ->             |         |
@@ -162,13 +162,13 @@ occ_list_19(V) -> [ok | [V]].              | OK      |
 -spec occ_list_20_neg                      |         |
     (atom() | binary()) -> [atom()] | [bin……         |
 occ_list_20_neg(V) -> [ok | [V]].          | ERROR   | ['ok', V].
-                                           |         | Expected: [atom()] | [binary()]
-                                           |         | Got     : [atom() | binary()]
+                                           |         | Expression has type:   [atom() | binary()]
+                                           |         | Context expected type: [atom()] | [binary()]
                                            |         | 
-                                           |         |   [atom() | binary()] is not a subtype of [atom()] | [binary()]
+                                           |         |   [atom() | binary()] is not compatible with [atom()] | [binary()]
                                            |         |   because
-                                           |         |   [atom() | binary()] is not a subtype of [atom()]
+                                           |         |   [atom() | binary()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   atom() | binary() is not compatible with atom()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()

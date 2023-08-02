@@ -48,34 +48,34 @@ refine4(X, X) -> X.                        | OK      |
     iolist(), [atom() | binary()]          |         |
 ) -> [binary()].                           |         |
 refine5(X, X) -> X.                        | ERROR   | X.
-                                           |         | Expected: [binary()]
-                                           |         | Got     : [atom() | binary()]
+                                           |         | Expression has type:   [atom() | binary()]
+                                           |         | Context expected type: [binary()]
                                            |         | 
-                                           |         |   [atom() | binary()] is not a subtype of [binary()]
+                                           |         |   [atom() | binary()] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of binary()
+                                           |         |   atom() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
                                            |         |
 -spec refine6_neg(                         |         |
     iolist(), [atom() | binary()]          |         |
 ) -> [atom()].                             |         |
 refine6_neg(X, X) -> X.                    | ERROR   | X.
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [atom() | binary()]
+                                           |         | Expression has type:   [atom() | binary()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [atom() | binary()] is not a subtype of [atom()]
+                                           |         |   [atom() | binary()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom()
+                                           |         |   atom() | binary() is not compatible with atom()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()
                                            |         |
 -spec refine_to_empty1(                    |         |
     iolist(), [atom()]                     |         |
 ) -> [].                                   |         |
 refine_to_empty1(X, X) -> X.               | ERROR   | X.
-                                           |         | Expected: []
-                                           |         | Got     : [atom()]
+                                           |         | Expression has type:   [atom()]
+                                           |         | Context expected type: []
                                            |         |
 -spec refine_to_empty2(                    |         |
     [atom()], iolist()                     |         |
@@ -99,5 +99,5 @@ test() -> ioio([<<>>], ok).                | OK      |
                                            |         |
 -spec test2_neg(iolist()) -> wrong_ret.    |         |
 test2_neg(X) -> X.                         | ERROR   | X.
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : iolist()
+                                           |         | Expression has type:   iolist()
+                                           |         | Context expected type: 'wrong_ret'

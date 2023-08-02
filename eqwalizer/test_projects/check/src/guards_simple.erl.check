@@ -24,23 +24,23 @@ atom_pos_3(X) ->                           | OK      |
                                            |         |
 -spec atom_neg_1(term()) -> atom().        |         |
 atom_neg_1(X) when is_number(X) -> X.      | ERROR   | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec atom_neg_2(term()) -> atom().        |         |
 atom_neg_2(X) ->                           | ERROR   |
     if                                     |         |
         is_list(X) -> X                    |         | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: atom()
     end.                                   |         |
                                            |         |
 -spec atom_neg_3(term()) -> atom().        |         |
 atom_neg_3(X) ->                           | ERROR   |
     case X of                              |         |
         Y when is_tuple(Y) -> Y            |         | Y.
-                                           |         | Expected: atom()
-                                           |         | Got     : tuple()
+                                           |         | Expression has type:   tuple()
+                                           |         | Context expected type: atom()
     end.                                   |         |
                                            |         |
 -spec boolean_pos_1(term()) -> boolean().  |         |
@@ -60,23 +60,23 @@ boolean_pos_3(X) ->                        | OK      |
                                            |         |
 -spec boolean_neg_1(term()) -> boolean().  |         |
 boolean_neg_1(X) when is_atom(X) -> X.     | ERROR   | X.
-                                           |         | Expected: boolean()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec boolean_neg_2(term()) -> boolean().  |         |
 boolean_neg_2(X) ->                        | ERROR   |
     if                                     |         |
         is_atom(X) -> X                    |         | X.
-                                           |         | Expected: boolean()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: boolean()
     end.                                   |         |
                                            |         |
 -spec boolean_neg_3(term()) -> boolean().  |         |
 boolean_neg_3(X) ->                        | ERROR   |
     case X of                              |         |
         Y when is_atom(Y) -> Y             |         | Y.
-                                           |         | Expected: boolean()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: boolean()
     end.                                   |         |
                                            |         |
 -spec float_pos(term()) -> float().        |         |
@@ -84,39 +84,39 @@ float_pos(X) when is_float(X) -> X.        | OK      |
                                            |         |
 -spec float_neg(term()) -> float().        |         |
 float_neg(X) when is_boolean(X) -> X.      | ERROR   | X.
-                                           |         | Expected: number()
-                                           |         | Got     : 'false' | 'true'
+                                           |         | Expression has type:   'false' | 'true'
+                                           |         | Context expected type: number()
                                            |         |
 -spec integer_pos(term()) -> integer().    |         |
 integer_pos(X) when is_integer(X) -> X.    | OK      |
                                            |         |
 -spec integer_neg(term()) -> integer().    |         |
 integer_neg(X) when is_boolean(X) -> X.    | ERROR   | X.
-                                           |         | Expected: number()
-                                           |         | Got     : 'false' | 'true'
+                                           |         | Expression has type:   'false' | 'true'
+                                           |         | Context expected type: number()
                                            |         |
 -spec pid_pos(term()) -> pid().            |         |
 pid_pos(X) when is_pid(X) -> X.            | OK      |
                                            |         |
 -spec pid_neg(term()) -> pid().            |         |
 pid_neg(X) when is_number(X) -> X.         | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec port_pos(term()) -> port().          |         |
 port_pos(X) when is_port(X) -> X.          | OK      |
                                            |         |
 -spec port_neg(term()) -> pid().           |         |
 port_neg(X) when is_reference(X) -> X.     | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : reference()
+                                           |         | Expression has type:   reference()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec reference_pos(term()) -> port().     |         |
 reference_pos(X) when is_reference(X) -> X…… ERROR   | X.
-                                           |         | Expected: port()
-                                           |         | Got     : reference()
+                                           |         | Expression has type:   reference()
+                                           |         | Context expected type: port()
                                            |         |
 -spec reference_neg(term()) -> pid().      |         |
 reference_neg(X) when is_port(X) -> X.     | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : port()
+                                           |         | Expression has type:   port()
+                                           |         | Context expected type: pid()

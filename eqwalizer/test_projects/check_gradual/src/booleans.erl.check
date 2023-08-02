@@ -45,8 +45,8 @@ andalso6() ->                              | OK      |
 -spec andalso7_neg() -> boolean().         |         |
 andalso7_neg() ->                          | ERROR   |
   1 andalso b().                           |         | 1.
-                                           |         | Expected: boolean()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec andalso8() -> false.                 |         |
 andalso8() ->                              | OK      |
@@ -59,12 +59,12 @@ andalso9() ->                              | OK      |
 -spec andalso10_neg() -> true.             |         |
 andalso10_neg() ->                         | ERROR   |
   dyn() andalso only_true().               |         | _ andalso _.
-                                           |         | Expected: 'true'
-                                           |         | Got     : 'false' | 'true'
+                                           |         | Expression has type:   'false' | 'true'
+                                           |         | Context expected type: 'true'
                                            |         | 
-                                           |         |   'false' | 'true' is not a subtype of 'true'
+                                           |         |   'false' | 'true' is not compatible with 'true'
                                            |         |   because
-                                           |         |   'false' is not a subtype of 'true'
+                                           |         |   'false' is not compatible with 'true'
                                            |         |
 -spec andalso11() -> true.                 |         |
 andalso11() ->                             | OK      |

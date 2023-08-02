@@ -119,65 +119,65 @@ test_23_wip_neg() ->                       | OK      |
 -spec test_24_wip_neg(a) -> number().      |         |
 test_24_wip_neg(A) ->                      | ERROR   |
   A / 2.                                   |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_25_wip_neg(a) -> number().      |         |
 test_25_wip_neg(A) ->                      | ERROR   |
   2 / A.                                   |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_26_wip_neg(a) -> number().      |         |
 test_26_wip_neg(A) ->                      | ERROR   |
   2 * A.                                   |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_27_wip_neg(a) -> number().      |         |
 test_27_wip_neg(A) ->                      | ERROR   |
   A * 2.                                   |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_27b_wip_neg(a) -> number().     |         |
 test_27b_wip_neg(A) ->                     | ERROR   |
   X = A * 2,                               |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
   X.                                       |         |
                                            |         |
 -spec test_28_wip_neg(a) -> number().      |         |
 test_28_wip_neg(A) ->                      | ERROR   |
   2 div A.                                 |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_28b_wip_neg(a) -> number().     |         |
 test_28b_wip_neg(A) ->                     | ERROR   |
   X = (2 div A),                           |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
   X.                                       |         |
                                            |         |
 -spec test_29_wip_neg(a) -> number().      |         |
 test_29_wip_neg(A) ->                      | ERROR   |
   A div 2.                                 |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_29b_wip_neg(a) -> number().     |         |
 test_29b_wip_neg(A) ->                     | ERROR   |
   X = A div 2,                             |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
   X.                                       |         |
                                            |         |
 -spec test_30_wip_neg() -> a.              |         |
 test_30_wip_neg() ->                       | ERROR   |
   1 div 2.                                 |         | _ div _.
-                                           |         | Expected: 'a'
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: 'a'
                                            |         |
 -spec test_31() -> integer().              |         |
 test_31() ->                               | OK      |
@@ -200,8 +200,8 @@ test_bnot_1() ->                           | OK      |
 -spec test_bnot_2_neg() -> pid().          |         |
 test_bnot_2_neg() ->                       | ERROR   |
   bnot 0.                                  |         | bnot _.
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec test_33(pos_integer())               |         |
       -> non_neg_integer().                |         |
@@ -370,28 +370,28 @@ test_49b() ->                              | OK      |
       -> number().                         |         |
 test_50_neg(X) ->                          | ERROR   |
   (+X).                                    |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_50b_neg(term()) -> nok.         |         |
 test_50b_neg(X) ->                         | ERROR   |
   _ = (+X),                                |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
   nok.                                     |         |
                                            |         |
 -spec test_51_neg(term()) -> nok.          |         |
 test_51_neg(X) ->                          | ERROR   |
   _ = (-X),                                |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
   nok.                                     |         |
                                            |         |
 -spec test_51b_neg(term()) -> nok.         |         |
 test_51b_neg(X) ->                         | ERROR   |
   _ = (-X),                                |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
   nok.                                     |         |
                                            |         |
 -spec test_52_wip_neg(pos_integer()) ->    |         |
@@ -456,15 +456,15 @@ test_59b_wip_neg(X) ->                     | OK      |
   integer().                               |         |
 test_60_neg(X) ->                          | ERROR   |
   bnot X.                                  |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_60b_neg(term()) ->              |         |
   nok.                                     |         |
 test_60b_neg(X) ->                         | ERROR   |
   _ = bnot X,                              |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
   nok.                                     |         |
                                            |         |
 -spec test_61() -> +1..2.                  |         |
@@ -523,12 +523,12 @@ test_72(N1, N2) -> N1 div N2.              | OK      |
 ) -> number().                             |         |
 test_78_neg(U, N) ->                       | ERROR   |
   U * N.                                   |         | U.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a' | number()
+                                           |         | Expression has type:   'a' | number()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   'a' | number() is not a subtype of number()
+                                           |         |   'a' | number() is not compatible with number()
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 -spec test_79_wip_neg(                     |         |
     float() | integer(),                   |         |
@@ -590,8 +590,8 @@ test_86(X) ->                              | OK      |
 ) -> non_neg_integer().                    |         |
 test_87_wip_neg(U1, U2) ->                 | ERROR   |
   U1 div U2 / (U2 bsl U1).                 |         | U1.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_88_wip_neg(                     |         |
     a | b,                                 |         |
@@ -599,8 +599,8 @@ test_87_wip_neg(U1, U2) ->                 | ERROR   |
 ) -> non_neg_integer().                    |         |
 test_88_wip_neg(U1, U2) ->                 | ERROR   |
   U1 * U2 / (U2 + U1).                     |         | U1.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_89(                             |         |
     neg_integer() | pos_integer()          |         |
@@ -619,24 +619,24 @@ test_90(X) ->                              | OK      |
 ) -> none().                               |         |
 test_91_neg(X) ->                          | ERROR   |
   -X.                                      |         | - _.
-                                           |         | Expected: none()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: none()
                                            |         |
 -spec test_92_neg(                         |         |
     none()                                 |         |
 ) -> none().                               |         |
 test_92_neg(X) ->                          | ERROR   |
   bnot X.                                  |         | bnot _.
-                                           |         | Expected: none()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: none()
                                            |         |
 -spec test_93_neg(                         |         |
     none()                                 |         |
 ) -> none().                               |         |
 test_93_neg(X) ->                          | ERROR   |
   5 * X.                                   |         | _ * _.
-                                           |         | Expected: none()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: none()
                                            |         |
 -spec test_94(                             |         |
     non_neg_integer(),                     |         |
@@ -692,13 +692,13 @@ test_101(X) when X / 2 < self() ->         | OK      |
   }.                                       |         |
 test_102_neg(Int) ->                       | ERROR   |
   {                                        |         | {1, 0, - _, Int, 'error'}.
-                                           |         | Expected: {number(), number(), number(), number(), 'ok'}
-                                           |         | Got     : {number(), number(), number(), number(), 'error'}
+                                           |         | Expression has type:   {number(), number(), number(), number(), 'error'}
+                                           |         | Context expected type: {number(), number(), number(), number(), 'ok'}
                                            |         | 
                                            |         |   at tuple index 5:
-                                           |         |   {number(), number(), number(), number(), 'error'} is not a subtype of {number(), number(), number(), number(), 'ok'}
+                                           |         |   {number(), number(), number(), number(), 'error'} is not compatible with {number(), number(), number(), number(), 'ok'}
                                            |         |   because
-                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |   'error' is not compatible with 'ok'
     1,                                     |         |
     0,                                     |         |
     -1,                                    |         |
@@ -713,5 +713,5 @@ test_103_wip_neg(X) -> X.                  | OK      |
 -spec test_104_neg() -> pid().             |         |
 test_104_neg() ->                          | ERROR   |
   1.0.                                     |         | float_lit.
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()

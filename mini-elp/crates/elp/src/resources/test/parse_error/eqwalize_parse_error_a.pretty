@@ -1,10 +1,10 @@
-error: expected_subtype
+error: incompatible_types
    ┌─ parse_error_a/src/parse_error_a.erl:20:5
    │
 20 │     X.
    │     ^ X.
-Expected: atom()
-Got     : [number()]
+Expression has type:   [number()]
+Context expected type: atom()
 
 
 1 ERROR

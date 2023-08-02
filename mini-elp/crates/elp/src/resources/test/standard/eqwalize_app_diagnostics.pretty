@@ -1,10 +1,10 @@
-error: expected_subtype
+error: incompatible_types
     ┌─ app_a/src/app_a_lists.erl:581:5
     │
 581 │     flatmap(fun thing_to_list/1, List).
     │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ flatmap(thing_to_list/1, List).
-Expected: string()
-Got     : [term()]
+Expression has type:   [term()]
+Context expected type: string()
 
 
 error: recursive_constraint
@@ -28,56 +28,56 @@ error: recursive_constraint
     │                             ^^^^^^^^ Recursive constraint: DeepList
 
 
-error: expected_subtype
+error: incompatible_types
      ┌─ app_a/src/app_a_lists.erl:1119:36
      │
 1119 │    lists:reverse(umerge3_1(L1, [H2 | H3], T2, H2, [], T3, H3), []).
      │                                    ^^^^^ H3.
-Expected: [term()]
-Got     : term()
+Expression has type:   term()
+Context expected type: [term()]
 
 
-error: expected_subtype
+error: incompatible_types
      ┌─ app_a/src/app_a_lists.erl:1310:5
      │
 1310 │     filtermap(F, L).
      │     ^^^^^^^^^^^^^^^
      │     │
      │     filtermap(eqwalizer:dynamic_cast(F), L).
-Expected: [T | X]
-Got     : [term()]
+Expression has type:   [term()]
+Context expected type: [T | X]
 
      │     
 
-  [term()] is not a subtype of [T | X]
+  [term()] is not compatible with [T | X]
   because
-  term() is not a subtype of T | X
+  term() is not compatible with T | X
   because
-  term() is not a subtype of T
+  term() is not compatible with T
 
-error: expected_subtype
+error: incompatible_types
      ┌─ app_a/src/app_a_lists.erl:1310:15
      │
 1310 │     filtermap(F, L).
      │               ^
      │               │
      │               F.
-Expected: fun((term()) -> boolean() | {'true', term()})
-Got     : fun((T) -> boolean() | {'true', X})
+Expression has type:   fun((T) -> boolean() | {'true', X})
+Context expected type: fun((term()) -> boolean() | {'true', term()})
 
      │               
 
-  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((term()) -> boolean() | {'true', term()})
+  fun((T) -> boolean() | {'true', X}) is not compatible with fun((term()) -> boolean() | {'true', term()})
   because
-  term() is not a subtype of T
+  term() is not compatible with T
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a_errors_generated.erl:13:10
    │
 13 │ foo() -> wrong_ret.
    │          ^^^^^^^^^ 'wrong_ret'.
-Expected: 'foo'
-Got     : 'wrong_ret'
+Expression has type:   'wrong_ret'
+Context expected type: 'foo'
 
 
 error: type_alias_is_non_productive
@@ -87,40 +87,40 @@ error: type_alias_is_non_productive
    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ recursive type invalid/0 is not productive
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a_mod2.erl:36:9
    │
 36 │     1 + an_atom,
    │         ^^^^^^^ 'an_atom'.
-Expected: number()
-Got     : 'an_atom'
+Expression has type:   'an_atom'
+Context expected type: number()
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:14:5
    │
 14 │     ?OK.
    │     ^^^ 'error'.
-Expected: 'ok'
-Got     : 'error'
+Expression has type:   'error'
+Context expected type: 'ok'
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:18:5
    │
 18 │     error.
    │     ^^^^^ 'error'.
-Expected: 'ok'
-Got     : 'error'
+Expression has type:   'error'
+Context expected type: 'ok'
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:22:13
    │
 22 │     _ = 3 * an_atom, ok.
    │             ^^^^^^^ 'an_atom'.
-Expected: number()
-Got     : 'an_atom'
+Expression has type:   'an_atom'
+Context expected type: number()
 
 
 error: redundant_fixme
@@ -130,15 +130,15 @@ error: redundant_fixme
    │     ^^^^^^^^^^^^^^^^^ redundant fixme
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:82:5
    │
 82 │     X.
    │     ^
    │     │
    │     X.
-Expected: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
-Got     : #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
+Expression has type:   #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
+Context expected type: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
 
    │     
 
@@ -154,48 +154,48 @@ These associations do not match:
      ...
   }
 
-error: expected_subtype
+error: incompatible_types
     ┌─ app_a/src/app_a.erl:106:5
     │
 106 │     X.
     │     ^
     │     │
     │     X.
-Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
-Got     : id(#S{a := 'va', b := #S{c := #S{d => atom()}}})
+Expression has type:   id(#S{a := 'va', b := #S{c := #S{d => atom()}}})
+Context expected type: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
 
     │     
 
-  id(#S{a := 'va', b := #S{c := #S{d => atom()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  id(#S{a := 'va', b := #S{c := #S{d => atom()}}}) is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'b':
-  #S{a := 'va', b := #S{c := #S{d => atom()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  #S{a := 'va', b := #S{c := #S{d => atom()}}} is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'c':
-  #S{c := #S{d => atom()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  #S{c := #S{d => atom()}} is not compatible with #S{c := id(#S{d := atom(), e := atom()})}
   because
-  #S{d => atom()} is not a subtype of id(#S{d := atom(), e := atom()})
+  #S{d => atom()} is not compatible with id(#S{d := atom(), e := atom()})
 
-error: expected_subtype
+error: incompatible_types
     ┌─ app_a/src/app_a.erl:129:5
     │
 129 │     X.
     │     ^
     │     │
     │     X.
-Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
-Got     : id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}})
+Expression has type:   id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}})
+Context expected type: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
 
     │     
 
-  id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}}) is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'b':
-  #S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  #S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}} is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'c':
-  #S{c := #S{d := pid(), e := pid()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  #S{c := #S{d := pid(), e := pid()}} is not compatible with #S{c := id(#S{d := atom(), e := atom()})}
   because
-  #S{d := pid(), e := pid()} is not a subtype of id(#S{d := atom(), e := atom()})
+  #S{d := pid(), e := pid()} is not compatible with id(#S{d := atom(), e := atom()})
 
 17 ERRORS

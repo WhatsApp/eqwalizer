@@ -6,9 +6,9 @@
         "end": 331
       },
       "lineAndCol": null,
-      "message": "Expected: none()\nGot     : _B",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   _B\nContext expected type: none()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -18,11 +18,11 @@
         "end": 405
       },
       "lineAndCol": null,
-      "message": "Expected: {none(), none()}\nGot     : {B, A}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {B, A}\nContext expected type: {none(), none()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  at tuple index 1:\n  {B, A} is not a subtype of {none(), none()}\n  because\n  B is not a subtype of none()"
+      "explanationOrNull": "  at tuple index 1:\n  {B, A} is not compatible with {none(), none()}\n  because\n  B is not compatible with none()"
     },
     {
       "range": {
@@ -30,9 +30,9 @@
         "end": 492
       },
       "lineAndCol": null,
-      "message": "Expected: none()\nGot     : #D{atom() => atom()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #D{atom() => atom()}\nContext expected type: none()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "M",
       "explanationOrNull": null
     },
@@ -42,11 +42,11 @@
         "end": 590
       },
       "lineAndCol": null,
-      "message": "Expected: fun((A | B) -> none())\nGot     : fun((B | A) -> A)",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   fun((B | A) -> A)\nContext expected type: fun((A | B) -> none())",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "F",
-      "explanationOrNull": "  fun((B | A) -> A) is not a subtype of fun((A | B) -> none())\n  because\n  A is not a subtype of none()"
+      "explanationOrNull": "  fun((B | A) -> A) is not compatible with fun((A | B) -> none())\n  because\n  A is not compatible with none()"
     },
     {
       "range": {
@@ -54,11 +54,11 @@
         "end": 703
       },
       "lineAndCol": null,
-      "message": "Expected: fun((A | atom()) -> none())\nGot     : fun((atom() | A) -> A)",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   fun((atom() | A) -> A)\nContext expected type: fun((A | atom()) -> none())",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "F",
-      "explanationOrNull": "  fun((atom() | A) -> A) is not a subtype of fun((A | atom()) -> none())\n  because\n  A is not a subtype of none()"
+      "explanationOrNull": "  fun((atom() | A) -> A) is not compatible with fun((A | atom()) -> none())\n  because\n  A is not compatible with none()"
     },
     {
       "range": {
@@ -66,9 +66,9 @@
         "end": 1516
       },
       "lineAndCol": null,
-      "message": "Expected: U\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: U",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -78,9 +78,9 @@
         "end": 1684
       },
       "lineAndCol": null,
-      "message": "Expected: U\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: U",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -90,9 +90,9 @@
         "end": 1876
       },
       "lineAndCol": null,
-      "message": "Expected: U\nGot     : _T",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   _T\nContext expected type: U",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -102,9 +102,9 @@
         "end": 2085
       },
       "lineAndCol": null,
-      "message": "Expected: none()\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: none()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Val",
       "explanationOrNull": null
     },
@@ -114,11 +114,11 @@
         "end": 2201
       },
       "lineAndCol": null,
-      "message": "Expected: {none(), none()}\nGot     : {number(), binary()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {number(), binary()}\nContext expected type: {none(), none()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "{X, Y}",
-      "explanationOrNull": "  at tuple index 1:\n  {number(), binary()} is not a subtype of {none(), none()}\n  because\n  number() is not a subtype of none()"
+      "explanationOrNull": "  at tuple index 1:\n  {number(), binary()} is not compatible with {none(), none()}\n  because\n  number() is not compatible with none()"
     },
     {
       "range": {
@@ -126,11 +126,11 @@
         "end": 2381
       },
       "lineAndCol": null,
-      "message": "Expected: {none(), none()}\nGot     : {number(), atom()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {number(), atom()}\nContext expected type: {none(), none()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "{N, A}",
-      "explanationOrNull": "  at tuple index 1:\n  {number(), atom()} is not a subtype of {none(), none()}\n  because\n  number() is not a subtype of none()"
+      "explanationOrNull": "  at tuple index 1:\n  {number(), atom()} is not compatible with {none(), none()}\n  because\n  number() is not compatible with none()"
     },
     {
       "range": {
@@ -138,9 +138,9 @@
         "end": 2620
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : ['a' | 'b']",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   ['a' | 'b']\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -150,11 +150,11 @@
         "end": 2699
       },
       "lineAndCol": null,
-      "message": "Expected: ['a']\nGot     : ['a' | 'b']",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   ['a' | 'b']\nContext expected type: ['a']",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  ['a' | 'b'] is not a subtype of ['a']\n  because\n  'a' | 'b' is not a subtype of 'a'\n  because\n  'b' is not a subtype of 'a'"
+      "explanationOrNull": "  ['a' | 'b'] is not compatible with ['a']\n  because\n  'a' | 'b' is not compatible with 'a'\n  because\n  'b' is not compatible with 'a'"
     },
     {
       "range": {
@@ -162,9 +162,9 @@
         "end": 2824
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : ['a' | 'b']",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   ['a' | 'b']\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -174,11 +174,11 @@
         "end": 2904
       },
       "lineAndCol": null,
-      "message": "Expected: ['a']\nGot     : ['a' | 'b']",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   ['a' | 'b']\nContext expected type: ['a']",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  ['a' | 'b'] is not a subtype of ['a']\n  because\n  'a' | 'b' is not a subtype of 'a'\n  because\n  'b' is not a subtype of 'a'"
+      "explanationOrNull": "  ['a' | 'b'] is not compatible with ['a']\n  because\n  'a' | 'b' is not compatible with 'a'\n  because\n  'b' is not compatible with 'a'"
     },
     {
       "range": {
@@ -186,9 +186,9 @@
         "end": 3080
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : {'cons', 'nil' | my_list()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {'cons', 'nil' | my_list()}\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "Res",
       "explanationOrNull": null
     },
@@ -198,9 +198,9 @@
         "end": 3292
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -210,9 +210,9 @@
         "end": 3396
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -222,9 +222,9 @@
         "end": 3522
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : term()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   term()\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -234,9 +234,9 @@
         "end": 3646
       },
       "lineAndCol": null,
-      "message": "Expected: pid()\nGot     : {term(), term()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {term(), term()}\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -246,9 +246,9 @@
         "end": 3739
       },
       "lineAndCol": null,
-      "message": "Expected: none()\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: none()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "R",
       "explanationOrNull": null
     },
@@ -258,9 +258,9 @@
         "end": 3832
       },
       "lineAndCol": null,
-      "message": "Expected: none()\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: none()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "R",
       "explanationOrNull": null
     },
@@ -270,9 +270,9 @@
         "end": 4080
       },
       "lineAndCol": null,
-      "message": "Expected: #my_rec{}\nGot     : tuple()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   tuple()\nContext expected type: #my_rec{}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "R",
       "explanationOrNull": null
     },
@@ -282,11 +282,11 @@
         "end": 4183
       },
       "lineAndCol": null,
-      "message": "Expected: {'not_my_rec', term(), term()}\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: {'not_my_rec', term(), term()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "R",
-      "explanationOrNull": "  at tuple index 1:\n  {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', term(), term()}\n  because\n  'my_rec' is not a subtype of 'not_my_rec'"
+      "explanationOrNull": "  at tuple index 1:\n  {'my_rec', number(), atom()} is not compatible with {'not_my_rec', term(), term()}\n  because\n  'my_rec' is not compatible with 'not_my_rec'"
     },
     {
       "range": {
@@ -318,11 +318,11 @@
         "end": 4553
       },
       "lineAndCol": null,
-      "message": "Expected: #my_rec{}\nGot     : {'my_rec', atom(), number()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {'my_rec', atom(), number()}\nContext expected type: #my_rec{}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "R",
-      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}\n  because\n  atom() is not a subtype of number()"
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', atom(), number()} is not compatible with {'my_rec', number(), atom()}\n  because\n  atom() is not compatible with number()"
     },
     {
       "range": {
@@ -330,9 +330,9 @@
         "end": 4825
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -342,9 +342,9 @@
         "end": 4935
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -354,9 +354,9 @@
         "end": 4991
       },
       "lineAndCol": null,
-      "message": "Expected: T\nGot     : fun((T) -> 'ok')",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   fun((T) -> 'ok')\nContext expected type: T",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -366,9 +366,9 @@
         "end": 5051
       },
       "lineAndCol": null,
-      "message": "Expected: 'ok'\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: 'ok'",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
       "explanationOrNull": null
     },
@@ -378,11 +378,11 @@
         "end": 5262
       },
       "lineAndCol": null,
-      "message": "Expected: #my_rec{}\nGot     : {'my_rec', atom(), number()}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   {'my_rec', atom(), number()}\nContext expected type: #my_rec{}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}\n  because\n  atom() is not a subtype of number()"
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', atom(), number()} is not compatible with {'my_rec', number(), atom()}\n  because\n  atom() is not compatible with number()"
     },
     {
       "range": {
@@ -390,11 +390,11 @@
         "end": 5474
       },
       "lineAndCol": null,
-      "message": "Expected: {'my_rec', atom(), number()}\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: {'my_rec', atom(), number()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), number()}\n  because\n  number() is not a subtype of atom()"
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not compatible with {'my_rec', atom(), number()}\n  because\n  number() is not compatible with atom()"
     },
     {
       "range": {
@@ -402,11 +402,11 @@
         "end": 5718
       },
       "lineAndCol": null,
-      "message": "Expected: {'my_rec', atom(), atom()}\nGot     : #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{}\nContext expected type: {'my_rec', atom(), atom()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), atom()}\n  because\n  number() is not a subtype of atom()"
+      "explanationOrNull": "  at tuple index 2:\n  {'my_rec', number(), atom()} is not compatible with {'my_rec', atom(), atom()}\n  because\n  number() is not compatible with atom()"
     },
     {
       "range": {
@@ -414,11 +414,11 @@
         "end": 5791
       },
       "lineAndCol": null,
-      "message": "Expected: number()\nGot     : atom() | number()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   atom() | number()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "ttt1(X, 1)",
-      "explanationOrNull": "  atom() | number() is not a subtype of number()\n  because\n  atom() is not a subtype of number()"
+      "explanationOrNull": "  atom() | number() is not compatible with number()\n  because\n  atom() is not compatible with number()"
     },
     {
       "range": {
@@ -426,11 +426,11 @@
         "end": 5853
       },
       "lineAndCol": null,
-      "message": "Expected: {'my_rec', term(), term()}\nGot     : #my_rec{} | 'a'",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   #my_rec{} | 'a'\nContext expected type: {'my_rec', term(), term()}",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": "  #my_rec{} | 'a' is not a subtype of {'my_rec', term(), term()}\n  because\n  'a' is not a subtype of {'my_rec', term(), term()}"
+      "explanationOrNull": "  #my_rec{} | 'a' is not compatible with {'my_rec', term(), term()}\n  because\n  'a' is not compatible with {'my_rec', term(), term()}"
     },
     {
       "range": {
@@ -438,11 +438,11 @@
         "end": 6044
       },
       "lineAndCol": null,
-      "message": "Expected: binary()\nGot     : 'undefined' | binary()",
-      "uri": "https://fb.me/eqwalizer_errors#expected_subtype",
-      "code": "expected_subtype",
+      "message": "Expression has type:   'undefined' | binary()\nContext expected type: binary()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
       "expressionOrNull": "B",
-      "explanationOrNull": "  'undefined' | binary() is not a subtype of binary()\n  because\n  'undefined' is not a subtype of binary()"
+      "explanationOrNull": "  'undefined' | binary() is not compatible with binary()\n  because\n  'undefined' is not compatible with binary()"
     },
     {
       "range": {

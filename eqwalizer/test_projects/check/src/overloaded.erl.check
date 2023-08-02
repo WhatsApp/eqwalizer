@@ -22,8 +22,8 @@ swap_neg(A) when is_atom(A) ->             | ERROR   |
     atom_to_binary(A);                     |         |
 swap_neg(B) when is_binary(B) ->           |         |
     B.                                     |         | B.
-                                           |         | Expected: atom()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec fancy_gen_first                      |         |
     ({A}) -> A;                            |         |
@@ -145,8 +145,8 @@ test_inner_bar() ->                        | ERROR   |
       Map :: #{Key => Value}.              |         |
 maps_filter(_, Map) when is_map(Map) ->    | ERROR   |
     Map.                                   |         | Map.
-                                           |         | Expected: #D{Key => Value}
-                                           |         | Got     : maps:iterator(Key, Value)
+                                           |         | Expression has type:   maps:iterator(Key, Value)
+                                           |         | Context expected type: #D{Key => Value}
                                            |         |
 -spec test_overloaded_generic(boolean())   |         |
         -> #{number() => number()}.        |         |
@@ -207,15 +207,15 @@ get_list([Key | T], List, Acc) ->          |         |
 -spec overlap_neg_1(atom()) -> number();   |         |
                  (T) -> {T}.               |         |
 overlap_neg_1(X) when is_atom(X) -> 1;     | ERROR   | 1.
-                                           |         | Expected: {T}
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: {T}
 overlap_neg_1(X) -> {X}.                   |         |
                                            |         |
 -spec overlap_neg_2(atom()) -> number();   |         |
     (T) -> {T}.                            |         |
 overlap_neg_2(X) when is_atom(X) -> 1;     | ERROR   | 1.
-                                           |         | Expected: {T}
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: {T}
 overlap_neg_2(_X) -> 1.                    |         |
                                            |         |
 -spec get_list_atoms                       |         |
@@ -263,8 +263,8 @@ non_overlap_any2() ->                      | ERROR   |
 -spec take_ok_or_any(term()) -> error;     |         |
     (ok) -> ok.                            |         |
 take_ok_or_any(ok) -> ok;                  | ERROR   | 'ok'.
-                                           |         | Expected: 'error'
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: 'error'
 take_ok_or_any(_) -> error.                |         |
                                            |         |
 -spec overlap_any_neg(term()) -> error.    |         |
@@ -279,12 +279,12 @@ over(_X) -> throw(not_implemented).        | OK      |
                                            |         |
 -spec use_over(integer() | {}) -> atom().  |         |
 use_over(X) -> over(X).                    | ERROR   | X.
-                                           |         | Expected: number()
-                                           |         | Got     : number() | {}
+                                           |         | Expression has type:   number() | {}
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | {} is not a subtype of number()
+                                           |         |   number() | {} is not compatible with number()
                                            |         |   because
-                                           |         |   {} is not a subtype of number()
+                                           |         |   {} is not compatible with number()
                                            |         |
 -type invalid() :: _T.                     | INVALID | _T: Type variable is unbound.
 
@@ -320,8 +320,8 @@ use_fst_gen2(X) ->                         | ERROR   |
 -spec swap2_neg() -> number().             |         |
 swap2_neg() ->                             | ERROR   |
     swap(ok).                              |         | swap('ok').
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
                                            |         |
 -spec reachable_1                          |         |
     (a) -> a;                              |         |
@@ -340,5 +340,5 @@ reachable_2(O, B) when O =/= a -> binary_t……         |
     ([atom()]) -> b.                       |         |
 reachable_3(I) when not is_list(I) -> a;   | ERROR   |
 reachable_3(_) -> b.                       |         | 'b'.
-                                           |         | Expected: 'a'
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: 'a'

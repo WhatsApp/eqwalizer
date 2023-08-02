@@ -20,9 +20,9 @@ use_local_error() ->                       | OK      |
 -spec use_erlang_error() -> atom().        |         |
 use_erlang_error() ->                      | ERROR   |
   erlang:error(ok, ok).                    |         | 'ok'.
-                                           |         | Expected: [term()] | 'none'
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: [term()] | 'none'
                                            |         | 
-                                           |         |   'ok' is not a subtype of [term()] | 'none'
+                                           |         |   'ok' is not compatible with [term()] | 'none'
                                            |         |   because
-                                           |         |   'ok' is not a subtype of [term()]
+                                           |         |   'ok' is not compatible with [term()]

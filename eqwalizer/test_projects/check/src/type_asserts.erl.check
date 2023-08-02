@@ -35,8 +35,8 @@ assert4(Arg) ->                            | OK      |
 assert5_neg(Arg) ->                        | ERROR   |
   is_list(Arg) orelse throw(bad_arg),      |         |
   Arg.                                     |         | Arg.
-                                           |         | Expected: binary()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: binary()
                                            |         |
 %% we don't support not yet                |         |
 -spec assert6(                             |         |
@@ -46,12 +46,12 @@ assert6(Arg) ->                            | ERROR   |
   (not is_list(Arg))                       |         |
     orelse throw(bad_arg),                 |         |
   Arg.                                     |         | Arg.
-                                           |         | Expected: binary()
-                                           |         | Got     : string() | binary()
+                                           |         | Expression has type:   string() | binary()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   string() | binary() is not a subtype of binary()
+                                           |         |   string() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   string() is not a subtype of binary()
+                                           |         |   string() is not compatible with binary()
                                            |         |
 -spec any_to_atom1(                        |         |
     string() | binary()                    |         |
@@ -67,8 +67,8 @@ any_to_atom1(A) ->                         | OK      |
 any_to_atom2(A) ->                         | ERROR   |
   is_binary(A)                             |         |
     andalso list_to_atom(A).               |         | A.
-                                           |         | Expected: string()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: string()
                                            |         |
 -spec any_to_atom3_neg(                    |         |
     term()                                 |         |
@@ -76,8 +76,8 @@ any_to_atom2(A) ->                         | ERROR   |
 any_to_atom3_neg(A) ->                     | ERROR   |
   is_binary(A)                             |         |
     andalso list_to_atom(A).               |         | A.
-                                           |         | Expected: string()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: string()
                                            |         |
 -spec double_andalso(                      |         |
     term(), term()                         |         |
@@ -92,14 +92,14 @@ double_andalso(N, A) ->                    | OK      |
 ) -> false |  {atom(), number()}.          |         |
 double_andalso_neg(N, A) ->                | ERROR   |
   is_number(N)                             |         | _ andalso _.
-                                           |         | Expected: 'false' | {atom(), number()}
-                                           |         | Got     : 'false' | {number(), atom()}
+                                           |         | Expression has type:   'false' | {number(), atom()}
+                                           |         | Context expected type: 'false' | {atom(), number()}
                                            |         | 
-                                           |         |   'false' | {number(), atom()} is not a subtype of 'false' | {atom(), number()}
+                                           |         |   'false' | {number(), atom()} is not compatible with 'false' | {atom(), number()}
                                            |         |   because
-                                           |         |   {number(), atom()} is not a subtype of 'false' | {atom(), number()}
+                                           |         |   {number(), atom()} is not compatible with 'false' | {atom(), number()}
                                            |         |   because
-                                           |         |   {number(), atom()} is not a subtype of 'false'
+                                           |         |   {number(), atom()} is not compatible with 'false'
     andalso is_atom(A)                     |         |
     andalso {N, A}.                        |         |
                                            |         |
@@ -108,10 +108,10 @@ double_andalso_neg(N, A) ->                | ERROR   |
 scope_neg(A) ->                            | ERROR   |
   X = is_number(A) andalso A,              |         |
   {X, A}.                                  |         | {X, A}.
-                                           |         | Expected: {'false' | number(), number()}
-                                           |         | Got     : {'false' | number(), term()}
+                                           |         | Expression has type:   {'false' | number(), term()}
+                                           |         | Context expected type: {'false' | number(), number()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'false' | number(), term()} is not a subtype of {'false' | number(), number()}
+                                           |         |   {'false' | number(), term()} is not compatible with {'false' | number(), number()}
                                            |         |   because
-                                           |         |   term() is not a subtype of number()
+                                           |         |   term() is not compatible with number()

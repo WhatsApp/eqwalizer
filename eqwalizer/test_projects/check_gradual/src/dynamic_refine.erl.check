@@ -84,8 +84,8 @@ refine_any1_neg(Arg) ->                    | ERROR   |
   if                                       |         |
     % Arg is refined as [term()] here      |         |
     is_list(Arg) -> {Arg}                  |         | {Arg}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {[term()]}
+                                           |         | Expression has type:   {[term()]}
+                                           |         | Context expected type: 'ok'
   end.                                     |         |
                                            |         |
 -spec refine_todo1_neg() -> ok.            |         |
@@ -95,8 +95,8 @@ refine_todo1_neg() ->                      | ERROR   |
     % It would be better to have           |         |
     % Dyn refined as [dynamic()] here      |         |
     is_list(Dyn) -> {Dyn}                  |         | {Dyn}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: 'ok'
   end.                                     |         |
                                            |         |
 -spec refine_any2_neg(any()) -> ok.        |         |
@@ -104,8 +104,8 @@ refine_any2_neg(Arg) ->                    | ERROR   |
   if                                       |         |
     % Arg is refined as binary() here      |         |
     is_binary(Arg) -> {Arg}                |         | {Arg}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {binary()}
+                                           |         | Expression has type:   {binary()}
+                                           |         | Context expected type: 'ok'
   end.                                     |         |
                                            |         |
 -spec refine_todo2_neg() -> ok.            |         |
@@ -115,8 +115,8 @@ refine_todo2_neg() ->                      | ERROR   |
     % It would be better to have           |         |
     % Dyn refined as binary here           |         |
     is_binary(Dyn) -> {Dyn};               |         | {Dyn}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: 'ok'
     true -> ok                             |         |
   end.                                     |         |
                                            |         |
@@ -129,8 +129,8 @@ mixed1(Arg, UseOrig) ->                    | ERROR   |
       true -> dyn_val()                    |         |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {term()}
+                                           |         | Expression has type:   {term()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec mixed2                               |         |
   (term(), boolean()) -> ok.               |         |
@@ -141,8 +141,8 @@ mixed2(Arg, UseDyn) ->                     | ERROR   |
       true -> Arg                          |         |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {term()}
+                                           |         | Expression has type:   {term()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec mixed3                               |         |
   (boolean(), boolean()) -> ok.            |         |
@@ -153,8 +153,8 @@ mixed3(Arg, UseOrig) ->                    | ERROR   |
       true -> dyn_val()                    |         |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {boolean() | dynamic()}
+                                           |         | Expression has type:   {boolean() | dynamic()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec mixed4                               |         |
   (binary(), boolean()) -> ok.             |         |
@@ -165,8 +165,8 @@ mixed4(Arg, UseDyn) ->                     | ERROR   |
       true -> Arg                          |         |
     end,                                   |         |
   {Mixed}.                                 |         | {Mixed}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {dynamic() | binary()}
+                                           |         | Expression has type:   {dynamic() | binary()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec mixed5                               |         |
   (binary() | atom(), boolean()) -> ok.    |         |
@@ -182,8 +182,8 @@ mixed5(Arg, Flag) ->                       | ERROR   |
       true -> dyn_val()                    |         |
     end,                                   |         |
   {Mixed2}.                                |         | {Mixed2}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {binary() | atom() | dynamic()}
+                                           |         | Expression has type:   {binary() | atom() | dynamic()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec dyn_union_1(                         |         |
     [eqwalizer:dynamic()] | error          |         |
@@ -238,12 +238,12 @@ dyn_refine_union_2(D) -> D.                |         |
 ) -> ok.                                   |         |
 dyn_refine_union_neg(ok) -> ok;            | ERROR   |
 dyn_refine_union_neg(D) -> D.              |         | D.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : dynamic() | 'error' | none()
+                                           |         | Expression has type:   dynamic() | 'error' | none()
+                                           |         | Context expected type: 'ok'
                                            |         | 
-                                           |         |   dynamic() | 'error' | none() is not a subtype of 'ok'
+                                           |         |   dynamic() | 'error' | none() is not compatible with 'ok'
                                            |         |   because
-                                           |         |   'error' is not a subtype of 'ok'
+                                           |         |   'error' is not compatible with 'ok'
                                            |         |
 -record(foo, {id :: integer()}).           |         |
                                            |         |
@@ -251,8 +251,8 @@ with_rec_neg(undefined) ->                 | ERROR   |
   undefined;                               |         |
 with_rec_neg(#foo{id = Id}) ->             |         |
   atom_to_binary(Id).                      |         | Id.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec with_rec_neg2(                       |         |
     eqwalizer:dynamic() | #foo{}           |         |
@@ -261,8 +261,8 @@ with_rec_neg2(undefined) ->                | ERROR   |
   undefined;                               |         |
 with_rec_neg2(#foo{id = Id}) ->            |         |
   atom_to_binary(Id).                      |         | Id.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -type dyn_alias() :: eqwalizer:dynamic().  |         |
 -type union() :: {dyn_alias() | err}.      |         |
@@ -274,12 +274,12 @@ refine_union_alias({X}) -> X.              |         |
                                            |         |
 -spec refine_union_alias_neg(union()) -> o……         |
 refine_union_alias_neg({X}) -> X.          | ERROR   | X.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : dyn_alias() | 'err'
+                                           |         | Expression has type:   dyn_alias() | 'err'
+                                           |         | Context expected type: 'ok'
                                            |         | 
-                                           |         |   dyn_alias() | 'err' is not a subtype of 'ok'
+                                           |         |   dyn_alias() | 'err' is not compatible with 'ok'
                                            |         |   because
-                                           |         |   'err' is not a subtype of 'ok'
+                                           |         |   'err' is not compatible with 'ok'
                                            |         |
 -spec refine_to_tuple(union()) -> {ok}.    |         |
 refine_to_tuple({err}) -> {ok};            | OK      |
@@ -293,17 +293,17 @@ refine_in_tuple_2(T) -> T.                 | OK      |
                                            |         |
 -spec refine_in_tuple_neg(union()) -> {ok}……         |
 refine_in_tuple_neg(T) -> T.               | ERROR   | T.
-                                           |         | Expected: {'ok'}
-                                           |         | Got     : union()
+                                           |         | Expression has type:   union()
+                                           |         | Context expected type: {'ok'}
                                            |         | 
-                                           |         |   union() is not a subtype of {'ok'}
+                                           |         |   union() is not compatible with {'ok'}
                                            |         |   because
                                            |         |   at tuple index 1:
-                                           |         |   {dyn_alias() | 'err'} is not a subtype of {'ok'}
+                                           |         |   {dyn_alias() | 'err'} is not compatible with {'ok'}
                                            |         |   because
-                                           |         |   dyn_alias() | 'err' is not a subtype of 'ok'
+                                           |         |   dyn_alias() | 'err' is not compatible with 'ok'
                                            |         |   because
-                                           |         |   'err' is not a subtype of 'ok'
+                                           |         |   'err' is not compatible with 'ok'
                                            |         |
 -spec refine_to_none(dyn_alias()) -> ok.   |         |
 refine_to_none(X) when is_integer(X) -> X. | OK      |
@@ -341,8 +341,8 @@ refine_dyn_record(R = #ref_rec{a = I})     | OK      |
 ) -> integer().                            |         |
 refine_dyn_select(R = #ref_rec{a = I})     | ERROR   |
     when is_integer(I) -> R#ref_rec.a.     |         | ...#ref_rec.a.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 % Testing interaction between generics and……         |
 filter_none(D) ->                          | OK      |

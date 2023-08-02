@@ -11,8 +11,8 @@
 my_apply(X, Y) ->                          | ERROR   |
   case {is_atom(X), is_atom(Y)} of         |         |
     {true, true} -> aa(X, Y);              |         | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
     {true, _} -> a(X);                     |         |
     {_, true} -> a(Y);                     |         |
     _ -> not-ok                            |         |
@@ -124,15 +124,15 @@ wrap3_neg(X) ->                            | ERROR   |
   case is_atom(X) of                       |         |
     true -> {a, X};                        |         |
     false -> {p, X}                        |         | {'p', X}.
-                                           |         | Expected: {'a', atom()} | {'p', pid()}
-                                           |         | Got     : {'p', none() | pid() | reference()}
+                                           |         | Expression has type:   {'p', none() | pid() | reference()}
+                                           |         | Context expected type: {'a', atom()} | {'p', pid()}
                                            |         | 
-                                           |         |   {'p', none() | pid() | reference()} is not a subtype of {'a', atom()} | {'p', pid()}
+                                           |         |   {'p', none() | pid() | reference()} is not compatible with {'a', atom()} | {'p', pid()}
                                            |         |   because
                                            |         |   at tuple index 1:
-                                           |         |   {'p', none() | pid() | reference()} is not a subtype of {'a', atom()}
+                                           |         |   {'p', none() | pid() | reference()} is not compatible with {'a', atom()}
                                            |         |   because
-                                           |         |   'p' is not a subtype of 'a'
+                                           |         |   'p' is not compatible with 'a'
   end.                                     |         |
                                            |         |
 -spec wrap4(                               |         |
@@ -151,14 +151,14 @@ wrap5(X) ->                                | ERROR   |
   case is_pid(X) of                        |         |
     true -> {p, X};                        |         |
     _ -> X                                 |         | X.
-                                           |         | Expected: {'p', pid()} | 'undefined'
-                                           |         | Got     : 'undefined' | none() | 'restarting'
+                                           |         | Expression has type:   'undefined' | none() | 'restarting'
+                                           |         | Context expected type: {'p', pid()} | 'undefined'
                                            |         | 
-                                           |         |   'undefined' | none() | 'restarting' is not a subtype of {'p', pid()} | 'undefined'
+                                           |         |   'undefined' | none() | 'restarting' is not compatible with {'p', pid()} | 'undefined'
                                            |         |   because
-                                           |         |   'restarting' is not a subtype of {'p', pid()} | 'undefined'
+                                           |         |   'restarting' is not compatible with {'p', pid()} | 'undefined'
                                            |         |   because
-                                           |         |   'restarting' is not a subtype of {'p', pid()}
+                                           |         |   'restarting' is not compatible with {'p', pid()}
   end.                                     |         |
                                            |         |
 -spec andalso1(                            |         |

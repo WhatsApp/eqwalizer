@@ -24,22 +24,22 @@ mk_fun_wrap1a() ->                         | OK      |
 mk_fun_wrap1b() ->                         | ERROR   |
   #fun_wrap1{inner_fun =                   |         |
     fun lists:filter/2                     |         | lists:filter/2.
-                                           |         | Expected: fun()
-                                           |         | Got     : fun((fun((T) -> boolean()), [T]) -> [T])
+                                           |         | Expression has type:   fun((fun((T) -> boolean()), [T]) -> [T])
+                                           |         | Context expected type: fun()
   }.                                       |         |
                                            |         |
 -spec mk_fun_wrap2(fun()) ->               |         |
   #fun_wrap2{}.                            |         |
 mk_fun_wrap2(F) ->                         | ERROR   |
   #fun_wrap2{inner_fun = F}.               |         | F.
-                                           |         | Expected: fun((atom()) -> atom())
-                                           |         | Got     : fun()
+                                           |         | Expression has type:   fun()
+                                           |         | Context expected type: fun((atom()) -> atom())
                                            |         |
 -spec filter_any(fun(), list()) -> list(). |         |
 filter_any(F, L) ->                        | ERROR   |
   lists:filter(F, L).                      |         | F.
-                                           |         | Expected: fun((T) -> boolean())
-                                           |         | Got     : fun()
+                                           |         | Expression has type:   fun()
+                                           |         | Context expected type: fun((T) -> boolean())
                                            |         |
 -spec fun_apply(fun(), atom()) -> atom().  |         |
 fun_apply(F, A) ->                         | ERROR   |

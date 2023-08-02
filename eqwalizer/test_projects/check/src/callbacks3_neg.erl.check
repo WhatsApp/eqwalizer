@@ -11,9 +11,9 @@
 ]).                                        |         |
 -behavior(gen_server).                     | ERROR   | Incorrect return type for implementation of gen_server:handle_cast/2. Expected: {'noreply', term()} | {'noreply', term(), timeout() | 'hibernate' | {'continue', term()}} | {'stop', term(), term()}, Got: 'wrong_ret'.
                                            |         | 
-                                           |         |   'wrong_ret' is not a subtype of {'noreply', term()} | {'noreply', term(), timeout() | 'hibernate' | {'continue', term()}} | {'stop', term(), term()}
+                                           |         |   'wrong_ret' is not compatible with {'noreply', term()} | {'noreply', term(), timeout() | 'hibernate' | {'continue', term()}} | {'stop', term(), term()}
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of {'noreply', term()}
+                                           |         |   'wrong_ret' is not compatible with {'noreply', term()}
                                            |         |
 init([]) -> {ok, []}.                      | NO SPEC |
                                            |         |

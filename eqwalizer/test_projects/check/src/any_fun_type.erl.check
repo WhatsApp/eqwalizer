@@ -35,20 +35,20 @@ to_f_any_pos(F) -> F.                      | OK      |
     fun((atom()) -> pid())                 |         |
 ) -> fun().                                |         |
 to_f_any_neg1(F) -> F.                     | ERROR   | F.
-                                           |         | Expected: fun()
-                                           |         | Got     : fun((atom()) -> pid())
+                                           |         | Expression has type:   fun((atom()) -> pid())
+                                           |         | Context expected type: fun()
                                            |         |
 -spec to_f_any_neg2(                       |         |
     f0 | fun((atom()) -> pid()) | f1       |         |
 ) -> fun().                                |         |
 to_f_any_neg2(F) -> F.                     | ERROR   | F.
-                                           |         | Expected: fun()
-                                           |         | Got     : 'f0' | fun((atom()) -> pid()) | 'f1'
+                                           |         | Expression has type:   'f0' | fun((atom()) -> pid()) | 'f1'
+                                           |         | Context expected type: fun()
                                            |         |
 -spec f_any_to_f0_neg(fun()) -> f0.        |         |
 f_any_to_f0_neg(F) -> F.                   | ERROR   | F.
-                                           |         | Expected: 'f0'
-                                           |         | Got     : fun()
+                                           |         | Expression has type:   fun()
+                                           |         | Context expected type: 'f0'
                                            |         |
 -spec guard01_pos(term()) -> fun().        |         |
 guard01_pos(F)                             | OK      |
@@ -61,12 +61,12 @@ guard02_pos(F)                             | OK      |
 -spec guard03_neg(term()) -> f2().         |         |
 guard03_neg(F)                             | ERROR   |
     when is_function(F, 1) -> F.           |         | F.
-                                           |         | Expected: f2()
-                                           |         | Got     : fun((term()) -> term())
+                                           |         | Expression has type:   fun((term()) -> term())
+                                           |         | Context expected type: f2()
                                            |         | 
-                                           |         |   fun((term()) -> term()) is not a subtype of f2()
+                                           |         |   fun((term()) -> term()) is not compatible with f2()
                                            |         |   because
-                                           |         |   fun((term()) -> term()) is not a subtype of fun((term(), term()) -> term())
+                                           |         |   fun((term()) -> term()) is not compatible with fun((term(), term()) -> term())
                                            |         |
 -spec a_to_a(none()) -> a.                 |         |
 a_to_a(a) -> a.                            | OK      |
@@ -98,16 +98,16 @@ f5_to_f4_cov(F) -> F.                      | OK      |
                                            |         |
 -spec f5_to_f4_cov_neg(f5(a | b)) -> f4(a)……         |
 f5_to_f4_cov_neg(F) -> F.                  | ERROR   | F.
-                                           |         | Expected: f4('a')
-                                           |         | Got     : f5('a' | 'b')
+                                           |         | Expression has type:   f5('a' | 'b')
+                                           |         | Context expected type: f4('a')
                                            |         | 
-                                           |         |   f5('a' | 'b') is not a subtype of f4('a')
+                                           |         |   f5('a' | 'b') is not compatible with f4('a')
                                            |         |   because
-                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of f4('a')
+                                           |         |   fun((term()) -> 'a' | 'b') is not compatible with f4('a')
                                            |         |   because
-                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of fun((...) -> 'a')
+                                           |         |   fun((term()) -> 'a' | 'b') is not compatible with fun((...) -> 'a')
                                            |         |   because
-                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   'a' | 'b' is not compatible with 'a'
                                            |         |
 -spec f5_or_f6_to_f4(f5(atom()) | f6(numbe……         |
 f5_or_f6_to_f4(F) -> F.                    | OK      |
@@ -122,48 +122,48 @@ f4_id_T(F) -> F.                           | OK      |
                                            |         |
 -spec apply_f4_id(f4(a)) -> f4(a | b).     |         |
 apply_f4_id(F) -> f4_id_T(F).              | ERROR   | f4_id_T(F).
-                                           |         | Expected: f4('a' | 'b')
-                                           |         | Got     : f4('a')
+                                           |         | Expression has type:   f4('a')
+                                           |         | Context expected type: f4('a' | 'b')
                                            |         | 
-                                           |         |   f4('a') is not a subtype of f4('a' | 'b')
+                                           |         |   f4('a') is not compatible with f4('a' | 'b')
                                            |         |   because
-                                           |         |   fun((...) -> 'a') is not a subtype of f4('a' | 'b')
+                                           |         |   fun((...) -> 'a') is not compatible with f4('a' | 'b')
                                            |         |   because
-                                           |         |   fun((...) -> 'a') is not a subtype of fun((...) -> 'a' | 'b')
+                                           |         |   fun((...) -> 'a') is not compatible with fun((...) -> 'a' | 'b')
                                            |         |
 -spec fun_to_f4_neg(fun()) -> f4(term()).  |         |
 fun_to_f4_neg(F) -> F.                     | ERROR   | F.
-                                           |         | Expected: f4(term())
-                                           |         | Got     : fun()
+                                           |         | Expression has type:   fun()
+                                           |         | Context expected type: f4(term())
                                            |         | 
-                                           |         |   fun() is not a subtype of f4(term())
+                                           |         |   fun() is not compatible with f4(term())
                                            |         |   because
-                                           |         |   fun() is not a subtype of fun((...) -> term())
+                                           |         |   fun() is not compatible with fun((...) -> term())
                                            |         |
 -spec fun2_to_f4(fun((term()) -> a)) -> f4……         |
 fun2_to_f4(F) -> F.                        | OK      |
                                            |         |
 -spec fun3_to_f4_neg(fun((term()) -> a | b……         |
 fun3_to_f4_neg(F) -> F.                    | ERROR   | F.
-                                           |         | Expected: f4('a')
-                                           |         | Got     : fun((term()) -> 'a' | 'b')
+                                           |         | Expression has type:   fun((term()) -> 'a' | 'b')
+                                           |         | Context expected type: f4('a')
                                            |         | 
-                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of f4('a')
+                                           |         |   fun((term()) -> 'a' | 'b') is not compatible with f4('a')
                                            |         |   because
-                                           |         |   fun((term()) -> 'a' | 'b') is not a subtype of fun((...) -> 'a')
+                                           |         |   fun((term()) -> 'a' | 'b') is not compatible with fun((...) -> 'a')
                                            |         |   because
-                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   'a' | 'b' is not compatible with 'a'
                                            |         |   because
-                                           |         |   'b' is not a subtype of 'a'
+                                           |         |   'b' is not compatible with 'a'
                                            |         |
 -spec f4_to_fun_neg(f4(a)) -> fun((term())……         |
 f4_to_fun_neg(F) -> F.                     | ERROR   | F.
-                                           |         | Expected: fun((term()) -> 'a' | 'b')
-                                           |         | Got     : f4('a')
+                                           |         | Expression has type:   f4('a')
+                                           |         | Context expected type: fun((term()) -> 'a' | 'b')
                                            |         | 
-                                           |         |   f4('a') is not a subtype of fun((term()) -> 'a' | 'b')
+                                           |         |   f4('a') is not compatible with fun((term()) -> 'a' | 'b')
                                            |         |   because
-                                           |         |   fun((...) -> 'a') is not a subtype of fun((term()) -> 'a' | 'b')
+                                           |         |   fun((...) -> 'a') is not compatible with fun((term()) -> 'a' | 'b')
                                            |         |
 -spec map_f1(fun((term()) -> atom()), [ter……         |
 map_f1(F, Ts) -> lists:map(F, Ts).         | OK      |
@@ -173,13 +173,13 @@ map_f2(F, Ts) -> lists:map(F, Ts).         | OK      |
                                            |         |
 -spec map_f3_neg(fun((...) -> atom()), [te……         |
 map_f3_neg(F, Ts) -> lists:map(F, Ts).     | ERROR   | F.
-                                           |         | Expected: fun((term()) -> atom())
-                                           |         | Got     : fun((...) -> atom())
+                                           |         | Expression has type:   fun((...) -> atom())
+                                           |         | Context expected type: fun((term()) -> atom())
                                            |         |
 -spec map_f4_neg(fun((...) -> A), [term()]……         |
 map_f4_neg(F, Ts) -> lists:map(F, Ts).     | ERROR   | F.
-                                           |         | Expected: fun((term()) -> A)
-                                           |         | Got     : fun((...) -> A)
+                                           |         | Expression has type:   fun((...) -> A)
+                                           |         | Context expected type: fun((term()) -> A)
                                            |         |
 -spec map_f5(fun((term()) -> atom()), [ter……         |
 map_f5(F, Ts) -> map_f4_neg(F, Ts).        | OK      |

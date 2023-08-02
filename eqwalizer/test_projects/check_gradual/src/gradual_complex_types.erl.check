@@ -22,12 +22,12 @@ mk_complex_map() ->                        | OK      |
       -> complex_map().                    |         |
 mk_complex_map_neg() ->                    | ERROR   |
   undefined.                               |         | 'undefined'.
-                                           |         | Expected: complex_map()
-                                           |         | Got     : 'undefined'
+                                           |         | Expression has type:   'undefined'
+                                           |         | Context expected type: complex_map()
                                            |         | 
-                                           |         |   'undefined' is not a subtype of complex_map()
+                                           |         |   'undefined' is not compatible with complex_map()
                                            |         |   because
-                                           |         |   'undefined' is not a subtype of #D{dynamic() => dynamic()}
+                                           |         |   'undefined' is not compatible with #D{dynamic() => dynamic()}
                                            |         |
 -spec use_complex_map1(complex_map())      |         |
       -> complex_map().                    |         |
@@ -54,12 +54,12 @@ use_complex_map3() ->                      | OK      |
 use_complex_map4_neg() ->                  | ERROR   |
   Map = mk_complex_map(),                  |         |
   lists:nth(7, Map).                       |         | Map.
-                                           |         | Expected: [T]
-                                           |         | Got     : complex_map()
+                                           |         | Expression has type:   complex_map()
+                                           |         | Context expected type: [T]
                                            |         | 
-                                           |         |   complex_map() is not a subtype of [T]
+                                           |         |   complex_map() is not compatible with [T]
                                            |         |   because
-                                           |         |   #D{dynamic() => dynamic()} is not a subtype of [T]
+                                           |         |   #D{dynamic() => dynamic()} is not compatible with [T]
                                            |         |
 -spec map_update_opt                       |         |
     (eqwalizer:dynamic())                  |         |
@@ -124,17 +124,17 @@ generic(_, _) -> error(stub).              | OK      |
     (dyn_map(), #{a => atom()}) -> ok.     |         |
 use_generic_shape(DM, S) ->                | ERROR   |
   generic(DM, S).                          |         | generic(DM, S).
-                                           |         | Expected: 'ok'
-                                           |         | Got     : #S{a => atom()}
+                                           |         | Expression has type:   #S{a => atom()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec tuple_mismatch(dyn_map()) ->         |         |
   {#{a => atom}, integer()}.               |         |
 tuple_mismatch(DM) ->                      | ERROR   |
   {DM, ok}.                                |         | {DM, 'ok'}.
-                                           |         | Expected: {#S{a => 'atom'}, number()}
-                                           |         | Got     : {dyn_map(), 'ok'}
+                                           |         | Expression has type:   {dyn_map(), 'ok'}
+                                           |         | Context expected type: {#S{a => 'atom'}, number()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {dyn_map(), 'ok'} is not a subtype of {#S{a => 'atom'}, number()}
+                                           |         |   {dyn_map(), 'ok'} is not compatible with {#S{a => 'atom'}, number()}
                                            |         |   because
-                                           |         |   'ok' is not a subtype of number()
+                                           |         |   'ok' is not compatible with number()

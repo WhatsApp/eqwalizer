@@ -19,8 +19,8 @@ app_env1_gradual() ->                      | OK      |
 -> number().                               |         |
 app_env1_gradual_neg() ->                  | ERROR   |
   application:get_env(app1).               |         | application:get_env('app1').
-                                           |         | Expected: number()
-                                           |         | Got     : 'undefined' | {'ok', dynamic()}
+                                           |         | Expression has type:   'undefined' | {'ok', dynamic()}
+                                           |         | Context expected type: number()
                                            |         |
 -spec app_env2_gradual() -> number().      |         |
 app_env2_gradual() ->                      | OK      |
@@ -34,8 +34,8 @@ app_env2_gradual() ->                      | OK      |
 -> number().                               |         |
 app_env2_gradual_neg() ->                  | ERROR   |
   application:get_env(app1, key1).         |         | application:get_env('app1', 'key1').
-                                           |         | Expected: number()
-                                           |         | Got     : 'undefined' | {'ok', dynamic()}
+                                           |         | Expression has type:   'undefined' | {'ok', dynamic()}
+                                           |         | Context expected type: number()
                                            |         |
 -spec app_env3_gradual() -> number().      |         |
 app_env3_gradual() ->                      | OK      |
@@ -53,8 +53,8 @@ flatten1_gradual() ->                      | OK      |
 flatten1_gradual_neg() ->                  | ERROR   |
   In = [a, [b, c]],                        |         |
   lists:flatten(In).                       |         | lists:flatten(In).
-                                           |         | Expected: atom()
-                                           |         | Got     : ['a' | 'b' | 'c']
+                                           |         | Expression has type:   ['a' | 'b' | 'c']
+                                           |         | Context expected type: atom()
                                            |         |
 -spec flatten2_gradual() -> [atom()].      |         |
 flatten2_gradual() ->                      | OK      |
@@ -67,8 +67,8 @@ flatten2_gradual_neg() ->                  | ERROR   |
   In = [a, [b, c]],                        |         |
   Tail = [x, y, z],                        |         |
   lists:flatten(In, Tail).                 |         | lists:flatten(In, Tail).
-                                           |         | Expected: atom()
-                                           |         | Got     : ['a' | 'b' | 'c' | 'x' | 'y' | 'z']
+                                           |         | Expression has type:   ['a' | 'b' | 'c' | 'x' | 'y' | 'z']
+                                           |         | Context expected type: atom()
                                            |         |
 -spec file_consult() -> [anything].        |         |
 file_consult() ->                          | OK      |
@@ -78,15 +78,15 @@ file_consult() ->                          | OK      |
 -spec file_consult_neg() -> nok.           |         |
 file_consult_neg() ->                      | ERROR   |
   file:consult(some_file).                 |         | file:consult('some_file').
-                                           |         | Expected: 'nok'
-                                           |         | Got     : {'ok', [dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
+                                           |         | Expression has type:   {'ok', [dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
+                                           |         | Context expected type: 'nok'
                                            |         |
 -spec abs1() ->                            |         |
   anything.                                |         |
 abs1() ->                                  | ERROR   |
   abs(dynamic()).                          |         | erlang:abs(dynamic()).
-                                           |         | Expected: 'anything'
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: 'anything'
                                            |         |
 -spec abs2_neg() ->                        |         |
   anything.                                |         |
@@ -96,12 +96,12 @@ abs2_neg() ->                              | ERROR   |
         2 -> a                             |         |
       end,                                 |         |
   abs(N).                                  |         | N.
-                                           |         | Expected: number()
-                                           |         | Got     : dynamic() | 'a'
+                                           |         | Expression has type:   dynamic() | 'a'
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   dynamic() | 'a' is not a subtype of number()
+                                           |         |   dynamic() | 'a' is not compatible with number()
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 dynamic() ->                               | OK      |
   ok.                                      |         |
@@ -114,14 +114,14 @@ ets_lookup_1(Any) ->                       | OK      |
 -spec ets_lookup_2_neg(term()) -> pid().   |         |
 ets_lookup_2_neg(Any) ->                   | ERROR   |
   ets:lookup(tab, Any).                    |         | ets:lookup('tab', Any).
-                                           |         | Expected: pid()
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: pid()
                                            |         |
 -spec ets_lookup_3_neg(term()) -> pid().   |         |
 ets_lookup_3_neg(Any) ->                   | ERROR   |
   ets:lookup("not atom", Any).             |         | string_lit.
-                                           |         | Expected: ets:tab()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: ets:tab()
                                            |         |
 -spec ets_lookup_4(term()) ->              |         |
   [tuple()].                               |         |
@@ -141,8 +141,8 @@ ets_tab2list_2(Atom) ->                    | OK      |
 -spec ets_tab2list_3_neg() -> term().      |         |
 ets_tab2list_3_neg() ->                    | ERROR   |
   ets:tab2list("not atom").                |         | string_lit.
-                                           |         | Expected: ets:tab()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: ets:tab()
                                            |         |
 -spec maps_without_1                       |         |
     (eqwalizer:dynamic()) ->               |         |
@@ -158,8 +158,8 @@ maps_without_1(Dyn) ->                     | OK      |
   wrong_ret.                               |         |
 maps_without_2_neg(Dyn) ->                 | ERROR   |
   maps:without(                            |         | maps:without(['a'], Dyn).
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : #D{dynamic() => dynamic()}
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
+                                           |         | Context expected type: 'wrong_ret'
     [a],                                   |         |
     Dyn                                    |         |
   ).                                       |         |
@@ -187,8 +187,8 @@ maps_with_1(Dyn) ->                        | OK      |
   wrong_ret.                               |         |
 maps_with_2_neg(Dyn) ->                    | ERROR   |
   maps:with(                               |         | maps:with(['a'], Dyn).
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : #D{dynamic() => dynamic()}
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
+                                           |         | Context expected type: 'wrong_ret'
     [a],                                   |         |
     Dyn                                    |         |
   ).                                       |         |

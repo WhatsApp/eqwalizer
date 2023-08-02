@@ -34,8 +34,8 @@ wy_ey_sn() -> ok.                          | NO SPEC |
 -spec wn_ey_sy() -> ok.                    |         |
 wn_ey_sy() ->                              | ERROR   |
   wn_ey_sy() + 3.                          |         | wn_ey_sy().
-                                           |         | Expected: number()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: number()
                                            |         |
 wn_ey_sn() ->                              | NO SPEC |
   _ = wy_en_sy(),                          |         |

@@ -19,8 +19,8 @@ good() ->                                  | OK      |
   integer().                               |         |
 bad() ->                                   | ERROR   |
   ok.                                      |         | 'ok'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: number()
                                            |         |
 -spec nowarn_bad() ->                      |         |
   integer().                               |         |

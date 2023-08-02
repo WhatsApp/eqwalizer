@@ -13,8 +13,8 @@
 -spec errors(atom()) -> ok.                |         |
 errors(Atom) ->                            | ERROR   |
   _ = 1 + Atom,                            |         | Atom.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   _ = binary_to_atom(Atom),                |         |
   _ = "" ++ Atom,                          |         |
   ok.                                      |         |

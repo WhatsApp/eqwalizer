@@ -10,51 +10,51 @@
 -spec param1(_A, _B) ->                    |         |
     none().                                |         |
 param1(X, X) -> X.                         | ERROR   | X.
-                                           |         | Expected: none()
-                                           |         | Got     : _B
+                                           |         | Expression has type:   _B
+                                           |         | Context expected type: none()
                                            |         |
 -spec param2({A, B}, {B, A}) ->            |         |
     {none(), none()}.                      |         |
 param2(X, X) -> X.                         | ERROR   | X.
-                                           |         | Expected: {none(), none()}
-                                           |         | Got     : {B, A}
+                                           |         | Expression has type:   {B, A}
+                                           |         | Context expected type: {none(), none()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {B, A} is not a subtype of {none(), none()}
+                                           |         |   {B, A} is not compatible with {none(), none()}
                                            |         |   because
-                                           |         |   B is not a subtype of none()
+                                           |         |   B is not compatible with none()
                                            |         |
 -spec maps(                                |         |
     #{a := term()},                        |         |
     #{atom() => atom()}                    |         |
 ) -> none().                               |         |
 maps(M, M) -> M.                           | ERROR   | M.
-                                           |         | Expected: none()
-                                           |         | Got     : #D{atom() => atom()}
+                                           |         | Expression has type:   #D{atom() => atom()}
+                                           |         | Context expected type: none()
                                            |         |
 -spec funs1(                               |         |
     fun((A) -> B),                         |         |
     fun((B) -> A)                          |         |
 ) -> fun((A | B) -> none()).               |         |
 funs1(F, F) -> F.                          | ERROR   | F.
-                                           |         | Expected: fun((A | B) -> none())
-                                           |         | Got     : fun((B | A) -> A)
+                                           |         | Expression has type:   fun((B | A) -> A)
+                                           |         | Context expected type: fun((A | B) -> none())
                                            |         | 
-                                           |         |   fun((B | A) -> A) is not a subtype of fun((A | B) -> none())
+                                           |         |   fun((B | A) -> A) is not compatible with fun((A | B) -> none())
                                            |         |   because
-                                           |         |   A is not a subtype of none()
+                                           |         |   A is not compatible with none()
                                            |         |
 -spec funs2(                               |         |
     fun((A) -> atom()),                    |         |
     fun((atom()) -> A)                     |         |
 ) -> fun((A | atom()) -> none()).          |         |
 funs2(F, F) -> F.                          | ERROR   | F.
-                                           |         | Expected: fun((A | atom()) -> none())
-                                           |         | Got     : fun((atom() | A) -> A)
+                                           |         | Expression has type:   fun((atom() | A) -> A)
+                                           |         | Context expected type: fun((A | atom()) -> none())
                                            |         | 
-                                           |         |   fun((atom() | A) -> A) is not a subtype of fun((A | atom()) -> none())
+                                           |         |   fun((atom() | A) -> A) is not compatible with fun((A | atom()) -> none())
                                            |         |   because
-                                           |         |   A is not a subtype of none()
+                                           |         |   A is not compatible with none()
                                            |         |
 -spec tuple1                               |         |
     ({number(), atom()}) -> none().        |         |
@@ -105,8 +105,8 @@ eliminate2(A) ->                           | OK      |
                                            |         |
 -spec list_trick_neg(_T, U) -> U.          |         |
 list_trick_neg([X], _) -> X.               | ERROR   | X.
-                                           |         | Expected: U
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: U
                                            |         |
 -spec use_list_refine() -> ok.             |         |
 use_list_refine() ->                       | OK      |
@@ -115,8 +115,8 @@ use_list_refine() ->                       | OK      |
                                            |         |
 -spec tuple_trick_neg(_T, U) -> U.         |         |
 tuple_trick_neg({X}, _) -> X.              | ERROR   | X.
-                                           |         | Expected: U
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: U
                                            |         |
 -spec use_tuple_refine() -> ok.            |         |
 use_tuple_refine() ->                      | OK      |
@@ -126,8 +126,8 @@ use_tuple_refine() ->                      | OK      |
 -spec fun_trick_neg(_T, U) -> U.           |         |
 fun_trick_neg(X, _) when is_function(X, 0) | ERROR   |
     -> X.                                  |         | X.
-                                           |         | Expected: U
-                                           |         | Got     : _T
+                                           |         | Expression has type:   _T
+                                           |         | Context expected type: U
                                            |         |
 -spec use_fun_refine(fun(() -> ok))        |         |
         -> ok.                             |         |
@@ -139,20 +139,20 @@ use_fun_refine(F) ->                       | OK      |
     (_V) -> none().                        |         |
 map_refine_tvar_neg                        | ERROR   |
     (#{key := Val}) -> Val.                |         | Val.
-                                           |         | Expected: none()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: none()
                                            |         |
 -spec binary_refine_tvar_neg               |         |
     (_V) -> {none(), none()}.              |         |
 binary_refine_tvar_neg                     | ERROR   |
     (<<X, Y/binary>>) -> {X, Y}.           |         | {X, Y}.
-                                           |         | Expected: {none(), none()}
-                                           |         | Got     : {number(), binary()}
+                                           |         | Expression has type:   {number(), binary()}
+                                           |         | Context expected type: {none(), none()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {number(), binary()} is not a subtype of {none(), none()}
+                                           |         |   {number(), binary()} is not compatible with {none(), none()}
                                            |         |   because
-                                           |         |   number() is not a subtype of none()
+                                           |         |   number() is not compatible with none()
                                            |         |
 -record(my_rec, {                          |         |
     n :: integer(),                        |         |
@@ -162,13 +162,13 @@ binary_refine_tvar_neg                     | ERROR   |
     (_V) -> {none(), none()}.              |         |
 record_refine_tvar_neg                     | ERROR   |
     (#my_rec{n = N, a = A}) -> {N, A}.     |         | {N, A}.
-                                           |         | Expected: {none(), none()}
-                                           |         | Got     : {number(), atom()}
+                                           |         | Expression has type:   {number(), atom()}
+                                           |         | Context expected type: {none(), none()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {number(), atom()} is not a subtype of {none(), none()}
+                                           |         |   {number(), atom()} is not compatible with {none(), none()}
                                            |         |   because
-                                           |         |   number() is not a subtype of none()
+                                           |         |   number() is not compatible with none()
                                            |         |
 -spec refine_w_char(term())                |         |
         -> fun(() -> term()).              |         |
@@ -182,21 +182,21 @@ refine_w_char(X)                           | OK      |
     alist(), [a | b]                       |         |
 ) -> pid().                                |         |
 refine_alist1_neg(X, X) -> X.              | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : ['a' | 'b']
+                                           |         | Expression has type:   ['a' | 'b']
+                                           |         | Context expected type: pid()
                                            |         |
 -spec refine_alist2(                       |         |
     alist(), [a | b]                       |         |
 ) -> [a].                                  |         |
 refine_alist2(X, X) -> X.                  | ERROR   | X.
-                                           |         | Expected: ['a']
-                                           |         | Got     : ['a' | 'b']
+                                           |         | Expression has type:   ['a' | 'b']
+                                           |         | Context expected type: ['a']
                                            |         | 
-                                           |         |   ['a' | 'b'] is not a subtype of ['a']
+                                           |         |   ['a' | 'b'] is not compatible with ['a']
                                            |         |   because
-                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   'a' | 'b' is not compatible with 'a'
                                            |         |   because
-                                           |         |   'b' is not a subtype of 'a'
+                                           |         |   'b' is not compatible with 'a'
                                            |         |
 -type tlist(T) :: [tlist(T) | T].          |         |
                                            |         |
@@ -204,21 +204,21 @@ refine_alist2(X, X) -> X.                  | ERROR   | X.
     tlist(a), [a | b]                      |         |
 ) -> pid().                                |         |
 refine_tlist1_neg(X, X) -> X.              | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : ['a' | 'b']
+                                           |         | Expression has type:   ['a' | 'b']
+                                           |         | Context expected type: pid()
                                            |         |
 -spec refine_tlist2(                       |         |
     tlist(a), [a | b]                      |         |
 ) -> [a].                                  |         |
 refine_tlist2(X, X) -> X.                  | ERROR   | X.
-                                           |         | Expected: ['a']
-                                           |         | Got     : ['a' | 'b']
+                                           |         | Expression has type:   ['a' | 'b']
+                                           |         | Context expected type: ['a']
                                            |         | 
-                                           |         |   ['a' | 'b'] is not a subtype of ['a']
+                                           |         |   ['a' | 'b'] is not compatible with ['a']
                                            |         |   because
-                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   'a' | 'b' is not compatible with 'a'
                                            |         |   because
-                                           |         |   'b' is not a subtype of 'a'
+                                           |         |   'b' is not compatible with 'a'
                                            |         |
 -type my_list()                            |         |
 :: nil                                     |         |
@@ -229,8 +229,8 @@ refine_tlist2(X, X) -> X.                  | ERROR   | X.
 refine_recursive_neg({cons, H}) ->         | ERROR   |
     Res = {cons, H},                       |         |
     Res.                                   |         | Res.
-                                           |         | Expected: number()
-                                           |         | Got     : {'cons', 'nil' | my_list()}
+                                           |         | Expression has type:   {'cons', 'nil' | my_list()}
+                                           |         | Context expected type: number()
                                            |         |
 -spec exploit_recursive() -> ok.           |         |
 exploit_recursive() ->                     | OK      |
@@ -242,16 +242,16 @@ exploit_recursive() ->                     | OK      |
     gb_sets:set(atom())) ->                |         |
     pid().                                 |         |
 opaque1_neg({X, _}) -> X.                  | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid()
                                            |         |
 % returns a tuple                          |         |
 -spec opaque2_neg(                         |         |
     gb_sets:iter(atom())) ->               |         |
     pid().                                 |         |
 opaque2_neg([X, _]) -> X.                  | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid()
                                            |         |
 % returns an atom                          |         |
 -spec opaque_3_neg(                        |         |
@@ -260,8 +260,8 @@ opaque2_neg([X, _]) -> X.                  | ERROR   | X.
 opaque_3_neg({                             | ERROR   |
     X, _, _, _, _, _, _, _, _              |         |
 }) -> X.                                   |         | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid()
                                            |         |
 % returns a 2-tuple                        |         |
 -spec opaque_4_neg(                        |         |
@@ -269,20 +269,20 @@ opaque_3_neg({                             | ERROR   |
     {term(), term()}                       |         |
 ) -> pid().                                |         |
 opaque_4_neg(X, X) -> X.                   | ERROR   | X.
-                                           |         | Expected: pid()
-                                           |         | Got     : {term(), term()}
+                                           |         | Expression has type:   {term(), term()}
+                                           |         | Context expected type: pid()
                                            |         |
 -spec record_as_tuple1_neg                 |         |
 (#my_rec{}, tuple()) -> none().            |         |
 record_as_tuple1_neg(R, R) -> R.           | ERROR   | R.
-                                           |         | Expected: none()
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: none()
                                            |         |
 -spec record_as_tuple2_neg                 |         |
 (tuple(), #my_rec{}) -> none().            |         |
 record_as_tuple2_neg(R, R) -> R.           | ERROR   | R.
-                                           |         | Expected: none()
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: none()
                                            |         |
 -spec record_as_tuple3                     |         |
 (#my_rec{}) -> tuple().                    |         |
@@ -295,19 +295,19 @@ record_as_tuple4(R) -> R.                  | OK      |
 -spec record_as_tuple5_neg                 |         |
 (tuple()) ->  #my_rec{}.                   |         |
 record_as_tuple5_neg(R) -> R.              | ERROR   | R.
-                                           |         | Expected: #my_rec{}
-                                           |         | Got     : tuple()
+                                           |         | Expression has type:   tuple()
+                                           |         | Context expected type: #my_rec{}
                                            |         |
 -spec record_as_tuple6_neg                 |         |
 (#my_rec{}) -> {not_my_rec, term(), term()……         |
 record_as_tuple6_neg(R) -> R.              | ERROR   | R.
-                                           |         | Expected: {'not_my_rec', term(), term()}
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: {'not_my_rec', term(), term()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'not_my_rec', term(), term()}
+                                           |         |   {'my_rec', number(), atom()} is not compatible with {'not_my_rec', term(), term()}
                                            |         |   because
-                                           |         |   'my_rec' is not a subtype of 'not_my_rec'
+                                           |         |   'my_rec' is not compatible with 'not_my_rec'
                                            |         |
 % subtyping "bad" record                   |         |
 -record(bad_rec, {                         | INVALID |
@@ -328,13 +328,13 @@ tuple_as_record1(R) -> R.                  | OK      |
   ({my_rec, atom(), integer()}) ->         |         |
     #my_rec{}.                             |         |
 tuple_as_record2_neg(R) -> R.              | ERROR   | R.
-                                           |         | Expected: #my_rec{}
-                                           |         | Got     : {'my_rec', atom(), number()}
+                                           |         | Expression has type:   {'my_rec', atom(), number()}
+                                           |         | Context expected type: #my_rec{}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}
+                                           |         |   {'my_rec', atom(), number()} is not compatible with {'my_rec', number(), atom()}
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 %% different arities -> X = none()         |         |
 -spec tup_guard_record1                    |         |
@@ -348,26 +348,26 @@ tup_guard_record1(X)                       | OK      |
 tup_guard_record2_neg(X)                   | ERROR   |
     when is_record(X, my_rec) ->           |         |
     X * 2.                                 |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: number()
                                            |         |
 -spec record_guard_tup_neg                 |         |
 (#my_rec{}) -> term().                     |         |
 record_guard_tup_neg(X)                    | ERROR   |
     when is_tuple(X) ->                    |         |
     X * 2.                                 |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: number()
                                            |         |
 -spec ftt(fun((T) -> ok), T) -> T.         |         |
 ftt(X, _) -> X.                            | ERROR   | X.
-                                           |         | Expected: T
-                                           |         | Got     : fun((T) -> 'ok')
+                                           |         | Expression has type:   fun((T) -> 'ok')
+                                           |         | Context expected type: T
                                            |         |
 -spec my_rec_to_ok(#my_rec{}) -> ok.       |         |
 my_rec_to_ok(X) -> X.                      | ERROR   | X.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec use1                                 |         |
 (fun((#my_rec{}) -> ok),                   |         |
@@ -380,13 +380,13 @@ use1(F, X) -> ftt(F, X).                   | OK      |
 {my_rec, atom(), integer()})               |         |
 -> term().                                 |         |
 use2_neg(F, X) -> ftt(F, X).               | ERROR   | X.
-                                           |         | Expected: #my_rec{}
-                                           |         | Got     : {'my_rec', atom(), number()}
+                                           |         | Expression has type:   {'my_rec', atom(), number()}
+                                           |         | Context expected type: #my_rec{}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'my_rec', atom(), number()} is not a subtype of {'my_rec', number(), atom()}
+                                           |         |   {'my_rec', atom(), number()} is not compatible with {'my_rec', number(), atom()}
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec use3                                 |         |
 (fun(({my_rec, integer(), atom()}) -> ok), |         |
@@ -399,13 +399,13 @@ use3(F, X) -> ftt(F, X).                   | OK      |
 #my_rec{})                                 |         |
 -> term().                                 |         |
 use4_neg(F, X) -> ftt(F, X).               | ERROR   | X.
-                                           |         | Expected: {'my_rec', atom(), number()}
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: {'my_rec', atom(), number()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), number()}
+                                           |         |   {'my_rec', number(), atom()} is not compatible with {'my_rec', atom(), number()}
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec ttt1                                 |         |
 ({my_rec, integer(), T}, T) -> T.          |         |
@@ -422,33 +422,33 @@ ttt2(T, T) -> T.                           | OK      |
 -spec use6_neg                             |         |
 (#my_rec{}) -> atom().                     |         |
 use6_neg(X) -> ttt2(X, x).                 | ERROR   | X.
-                                           |         | Expected: {'my_rec', atom(), atom()}
-                                           |         | Got     : #my_rec{}
+                                           |         | Expression has type:   #my_rec{}
+                                           |         | Context expected type: {'my_rec', atom(), atom()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'my_rec', number(), atom()} is not a subtype of {'my_rec', atom(), atom()}
+                                           |         |   {'my_rec', number(), atom()} is not compatible with {'my_rec', atom(), atom()}
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec use7_neg                             |         |
 (#my_rec{}) -> integer().                  |         |
 use7_neg(X) -> ttt1(X, 1).                 | ERROR   | ttt1(X, 1).
-                                           |         | Expected: number()
-                                           |         | Got     : atom() | number()
+                                           |         | Expression has type:   atom() | number()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   atom() | number() is not a subtype of number()
+                                           |         |   atom() | number() is not compatible with number()
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec deets(#my_rec{} | a)                 |         |
 -> {my_rec, _, _}.                         |         |
 deets(X) -> X.                             | ERROR   | X.
-                                           |         | Expected: {'my_rec', term(), term()}
-                                           |         | Got     : #my_rec{} | 'a'
+                                           |         | Expression has type:   #my_rec{} | 'a'
+                                           |         | Context expected type: {'my_rec', term(), term()}
                                            |         | 
-                                           |         |   #my_rec{} | 'a' is not a subtype of {'my_rec', term(), term()}
+                                           |         |   #my_rec{} | 'a' is not compatible with {'my_rec', term(), term()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of {'my_rec', term(), term()}
+                                           |         |   'a' is not compatible with {'my_rec', term(), term()}
                                            |         |
 -record(union_rec, {                       |         |
     b :: undefined | binary(),             |         |
@@ -459,12 +459,12 @@ deets(X) -> X.                             | ERROR   | X.
     (#union_rec{}) -> binary().            |         |
 rec_field_b_1_neg(#union_rec{b = B}) ->    | ERROR   |
     B.                                     |         | B.
-                                           |         | Expected: binary()
-                                           |         | Got     : 'undefined' | binary()
+                                           |         | Expression has type:   'undefined' | binary()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   'undefined' | binary() is not a subtype of binary()
+                                           |         |   'undefined' | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   'undefined' is not a subtype of binary()
+                                           |         |   'undefined' is not compatible with binary()
                                            |         |
 -spec rec_field_b_2                        |         |
     (#union_rec{}) -> binary().            |         |

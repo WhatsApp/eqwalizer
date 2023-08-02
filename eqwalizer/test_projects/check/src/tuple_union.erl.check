@@ -25,17 +25,17 @@ test_02(X) -> X.                           | OK      |
                                            |         |
 -spec test_03_neg(t4 ()) -> t5 ().         |         |
 test_03_neg(X) -> X.                       | ERROR   | X.
-                                           |         | Expected: t5()
-                                           |         | Got     : t4()
+                                           |         | Expression has type:   t4()
+                                           |         | Context expected type: t5()
                                            |         | 
-                                           |         |   t4() is not a subtype of t5()
+                                           |         |   t4() is not compatible with t5()
                                            |         |   because
-                                           |         |   {'msg', 'ok' | 'err', 'arg' | 'nil'} is not a subtype of t5()
+                                           |         |   {'msg', 'ok' | 'err', 'arg' | 'nil'} is not compatible with t5()
                                            |         |   because
-                                           |         |   {'msg', 'ok' | 'err', 'arg' | 'nil'} is not a subtype of {'msg', 'ok', 'arg'} | {'msg', 'err', 'arg'} | {'msg', 'ok', 'nil'} | {'msg', 'err', 'nil'}
+                                           |         |   {'msg', 'ok' | 'err', 'arg' | 'nil'} is not compatible with {'msg', 'ok', 'arg'} | {'msg', 'err', 'arg'} | {'msg', 'ok', 'nil'} | {'msg', 'err', 'nil'}
                                            |         |   because
                                            |         |   at tuple index 2:
-                                           |         |   {'msg', 'ok' | 'err', 'arg' | 'nil'} is not a subtype of {'msg', 'ok', 'arg'}
+                                           |         |   {'msg', 'ok' | 'err', 'arg' | 'nil'} is not compatible with {'msg', 'ok', 'arg'}
                                            |         |
 % Aliases                                  |         |
 -type t6a() ::                             |         |
@@ -75,13 +75,13 @@ tree2_as_tree1(T) -> T.                    | OK      |
 -spec tree3_as_tree1_neg                   |         |
     (tree3()) -> tree1().                  |         |
 tree3_as_tree1_neg(T) -> T.                | ERROR   | T.
-                                           |         | Expected: tree1()
-                                           |         | Got     : tree3()
+                                           |         | Expression has type:   tree3()
+                                           |         | Context expected type: tree1()
                                            |         | 
-                                           |         |   tree3() is not a subtype of tree1()
+                                           |         |   tree3() is not compatible with tree1()
                                            |         |   because
-                                           |         |   {'leaf', atom()} | {'b1' | 'b2' | 'b3', tree2()} is not a subtype of tree1()
+                                           |         |   {'leaf', atom()} | {'b1' | 'b2' | 'b3', tree2()} is not compatible with tree1()
                                            |         |   because
-                                           |         |   {'leaf', atom()} | {'b1' | 'b2' | 'b3', tree2()} is not a subtype of {'leaf', atom()} | {'b1', tree1()} | {'b2', tree1()}
+                                           |         |   {'leaf', atom()} | {'b1' | 'b2' | 'b3', tree2()} is not compatible with {'leaf', atom()} | {'b1', tree1()} | {'b2', tree1()}
                                            |         |   because
-                                           |         |   {'b1' | 'b2' | 'b3', tree2()} is not a subtype of {'leaf', atom()} | {'b1', tree1()} | {'b2', tree1()}
+                                           |         |   {'b1' | 'b2' | 'b3', tree2()} is not compatible with {'leaf', atom()} | {'b1', tree1()} | {'b2', tree1()}

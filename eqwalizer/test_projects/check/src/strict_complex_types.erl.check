@@ -22,12 +22,12 @@ mk_complex_map() ->                        | OK      |
       -> complex_map().                    |         |
 mk_complex_map_neg() ->                    | ERROR   |
   undefined.                               |         | 'undefined'.
-                                           |         | Expected: complex_map()
-                                           |         | Got     : 'undefined'
+                                           |         | Expression has type:   'undefined'
+                                           |         | Context expected type: complex_map()
                                            |         | 
-                                           |         |   'undefined' is not a subtype of complex_map()
+                                           |         |   'undefined' is not compatible with complex_map()
                                            |         |   because
-                                           |         |   'undefined' is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |   'undefined' is not compatible with #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
                                            |         |
 -spec use_complex_map1(complex_map())      |         |
       -> complex_map().                    |         |
@@ -48,21 +48,21 @@ use_complex_map2(List) ->                  | ERROR   |
 use_complex_map3() ->                      | ERROR   |
   Map = mk_complex_map(),                  |         |
   maps:get(id, Map).                       |         | maps:get('id', Map).
-                                           |         | Expected: number()
-                                           |         | Got     : eqwalizer:dynamic()
+                                           |         | Expression has type:   eqwalizer:dynamic()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   eqwalizer:dynamic() is not a subtype of number()
+                                           |         |   eqwalizer:dynamic() is not compatible with number()
                                            |         |   because
-                                           |         |   term() is not a subtype of number()
+                                           |         |   term() is not compatible with number()
                                            |         |
 -spec use_complex_map4_neg()               |         |
       -> integer().                        |         |
 use_complex_map4_neg() ->                  | ERROR   |
   Map = mk_complex_map(),                  |         |
   lists:nth(7, Map).                       |         | Map.
-                                           |         | Expected: [T]
-                                           |         | Got     : complex_map()
+                                           |         | Expression has type:   complex_map()
+                                           |         | Context expected type: [T]
                                            |         | 
-                                           |         |   complex_map() is not a subtype of [T]
+                                           |         |   complex_map() is not compatible with [T]
                                            |         |   because
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not a subtype of [T]
+                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with [T]

@@ -10,37 +10,37 @@
 -spec use_dynamic_type                     |         |
     (eqwalizer:dynamic()) -> {atom()}.     |         |
 use_dynamic_type(Dyn) -> {Dyn}.            | ERROR   | {Dyn}.
-                                           |         | Expected: {atom()}
-                                           |         | Got     : {eqwalizer:dynamic()}
+                                           |         | Expression has type:   {eqwalizer:dynamic()}
+                                           |         | Context expected type: {atom()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {eqwalizer:dynamic()} is not a subtype of {atom()}
+                                           |         |   {eqwalizer:dynamic()} is not compatible with {atom()}
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of atom()
+                                           |         |   eqwalizer:dynamic() is not compatible with atom()
                                            |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         |   term() is not compatible with atom()
                                            |         |
 -spec use_dynamic_type_neg                 |         |
     (eqwalizer:dynamic()) -> {atom()}.     |         |
 use_dynamic_type_neg(Dyn) ->               | ERROR   |
   {erlang:atom_to_binary(Dyn)}.            |         | Dyn.
-                                           |         | Expected: atom()
-                                           |         | Got     : eqwalizer:dynamic()
+                                           |         | Expression has type:   eqwalizer:dynamic()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   eqwalizer:dynamic() is not a subtype of atom()
+                                           |         |   eqwalizer:dynamic() is not compatible with atom()
                                            |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         |   term() is not compatible with atom()
                                            |         |
 -spec use_cast(term()) -> {atom()}.        |         |
 use_cast(A) ->                             | ERROR   |
   Dyn = eqwalizer:dynamic_cast(A),         |         |
   {Dyn}.                                   |         | {Dyn}.
-                                           |         | Expected: {atom()}
-                                           |         | Got     : {eqwalizer:dynamic()}
+                                           |         | Expression has type:   {eqwalizer:dynamic()}
+                                           |         | Context expected type: {atom()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {eqwalizer:dynamic()} is not a subtype of {atom()}
+                                           |         |   {eqwalizer:dynamic()} is not compatible with {atom()}
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of atom()
+                                           |         |   eqwalizer:dynamic() is not compatible with atom()
                                            |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         |   term() is not compatible with atom()

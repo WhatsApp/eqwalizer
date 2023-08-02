@@ -43,23 +43,23 @@ test02(6 / 3 = Y) -> Y.                    | OK      |
                                            |         |
 -spec test03_neg(term()) -> atom().        |         |
 test03_neg(-4 = X) -> X.                   | ERROR   | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test04_neg(term()) -> atom().        |         |
 test04_neg(6 / 3 = Y) -> Y.                | ERROR   | Y.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test05_neg(term()) -> term().        |         |
 test05_neg(X) -> + X.                      | ERROR   | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test06_neg(term()) -> atom().        |         |
 test06_neg(X) when is_number(X) -> + X.    | ERROR   | + _.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test07(boolean()) -> atom().         |         |
 test07(X) ->                               | OK      |
@@ -68,8 +68,8 @@ test07(X) ->                               | OK      |
 -spec test08_neg(boolean()) -> number().   |         |
 test08_neg(X) ->                           | ERROR   |
     not X.                                 |         | not _.
-                                           |         | Expected: number()
-                                           |         | Got     : boolean()
+                                           |         | Expression has type:   boolean()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test09(term(), term()) -> number().  |         |
 test09(X, Y) when                          | OK      |
@@ -80,26 +80,26 @@ test09(X, Y) when                          | OK      |
                -> number().                |         |
 test10_neg(X, Y) when                      | ERROR   |
     is_number(X) -> X + Y.                 |         | Y.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test11_neg (number(), number())      |         |
         -> atom().                         |         |
 test11_neg(X, Y) -> X + Y.                 | ERROR   | _ + _.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test12_neg (atom())                  |         |
         -> number().                       |         |
 test12_neg(X) -> -X.                       | ERROR   | X.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test13_neg (term(), term())          |         |
         -> boolean().                      |         |
 test13_neg(X, Y) -> X or Y.                | ERROR   | X.
-                                           |         | Expected: boolean()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec test14 (boolean(), atom())           |         |
         -> atom().                         |         |
@@ -112,75 +112,75 @@ test15(X, Y) -> X andalso Y.               | OK      |
 -spec test16_neg (boolean(), boolean())    |         |
         -> number().                       |         |
 test16_neg(X, Y) -> X or Y.                | ERROR   | _ or _.
-                                           |         | Expected: number()
-                                           |         | Got     : boolean()
+                                           |         | Expression has type:   boolean()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test17_neg (boolean(), atom())       |         |
         -> boolean().                      |         |
 test17_neg(X, Y) -> X or Y.                | ERROR   | Y.
-                                           |         | Expected: boolean()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec test18_neg (boolean(), atom())       |         |
         -> number().                       |         |
 test18_neg(X, Y) -> X orelse Y.            | ERROR   | _ orelse _.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test19_neg (boolean(), number())     |         |
         -> {number()}.                     |         |
 test19_neg(X, Y) -> X andalso Y.           | ERROR   | _ andalso _.
-                                           |         | Expected: {number()}
-                                           |         | Got     : 'false' | number()
+                                           |         | Expression has type:   'false' | number()
+                                           |         | Context expected type: {number()}
                                            |         |
 -spec test20_neg(number()) -> [atom()].    |         |
 test20_neg(X) -> [- X].                    | ERROR   | [- _].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   [number()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec test21_neg (number(), number())      |         |
               -> [atom()].                 |         |
 test21_neg(X, Y) -> [X / Y].               | ERROR   | [_ / _].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   [number()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec test22_neg (boolean())               |         |
         -> [number()].                     |         |
 test22_neg(X) -> [not X].                  | ERROR   | [not _].
-                                           |         | Expected: [number()]
-                                           |         | Got     : [boolean()]
+                                           |         | Expression has type:   [boolean()]
+                                           |         | Context expected type: [number()]
                                            |         | 
-                                           |         |   [boolean()] is not a subtype of [number()]
+                                           |         |   [boolean()] is not compatible with [number()]
                                            |         |   because
-                                           |         |   boolean() is not a subtype of number()
+                                           |         |   boolean() is not compatible with number()
                                            |         |
 -spec test23_neg (boolean(), boolean())    |         |
         -> [number()].                     |         |
 test23_neg(X, Y) -> [X or Y].              | ERROR   | [_ or _].
-                                           |         | Expected: [number()]
-                                           |         | Got     : [boolean()]
+                                           |         | Expression has type:   [boolean()]
+                                           |         | Context expected type: [number()]
                                            |         | 
-                                           |         |   [boolean()] is not a subtype of [number()]
+                                           |         |   [boolean()] is not compatible with [number()]
                                            |         |   because
-                                           |         |   boolean() is not a subtype of number()
+                                           |         |   boolean() is not compatible with number()
                                            |         |
 -spec test24_neg (boolean(), atom())       |         |
         -> [number()].                     |         |
 test24_neg(X, Y) -> [X orelse Y].          | ERROR   | [_ orelse _].
-                                           |         | Expected: [number()]
-                                           |         | Got     : [atom()]
+                                           |         | Expression has type:   [atom()]
+                                           |         | Context expected type: [number()]
                                            |         | 
-                                           |         |   [atom()] is not a subtype of [number()]
+                                           |         |   [atom()] is not compatible with [number()]
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec test25_pos                           |         |
   ([boolean()]) -> boolean() | undefined.  |         |
@@ -196,28 +196,28 @@ test27_pos(X) -> [X].                      | OK      |
                                            |         |
 -spec test28_neg(atom()) -> boolean().     |         |
 test28_neg(B) -> boolean_id(B).            | ERROR   | B.
-                                           |         | Expected: boolean()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec test29_neg() -> [].                  |         |
 test29_neg() -> [true, false].             | ERROR   | ['true', 'false'].
-                                           |         | Expected: []
-                                           |         | Got     : ['true' | 'false']
+                                           |         | Expression has type:   ['true' | 'false']
+                                           |         | Context expected type: []
                                            |         |
 -spec test30_neg() -> atom.                |         |
 test30_neg() -> 1.                         | ERROR   | 1.
-                                           |         | Expected: 'atom'
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: 'atom'
                                            |         |
 -spec test31_neg() -> atom.                |         |
 test31_neg() -> fun test30_neg/0.          | ERROR   | test30_neg/0.
-                                           |         | Expected: 'atom'
-                                           |         | Got     : fun(() -> 'atom')
+                                           |         | Expression has type:   fun(() -> 'atom')
+                                           |         | Context expected type: 'atom'
                                            |         |
 -spec test32_neg() -> atom.                |         |
 test32_neg() -> fun misc_lib:boolean_id/1. | ERROR   | misc_lib:boolean_id/1.
-                                           |         | Expected: 'atom'
-                                           |         | Got     : fun((boolean()) -> boolean())
+                                           |         | Expression has type:   fun((boolean()) -> boolean())
+                                           |         | Context expected type: 'atom'
                                            |         |
 -spec test33_pos(a | b, b | c) -> b.       |         |
 test33_pos(AB, BC) ->                      | OK      |
@@ -284,23 +284,23 @@ test45_pos(X) ->                           | OK      |
                                            |         |
 -spec test46_neg() -> number().            |         |
 test46_neg() -> false.                     | ERROR   | 'false'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'false'
+                                           |         | Expression has type:   'false'
+                                           |         | Context expected type: number()
                                            |         |
 -spec test47_neg() -> number().            |         |
 test47_neg() -> [].                        | ERROR   | [].
-                                           |         | Expected: number()
-                                           |         | Got     : []
+                                           |         | Expression has type:   []
+                                           |         | Context expected type: number()
                                            |         |
 -spec test48_neg() -> atom().              |         |
 test48_neg() -> test47_neg().              | ERROR   | test47_neg().
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test49_neg() -> atom().              |         |
 test49_neg() -> misc:test47_neg().         | ERROR   | misc:test47_neg().
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test50_pos() -> number().            |         |
 test50_pos() -> misc:test47_neg().         | OK      |
@@ -422,30 +422,30 @@ test69_pos([H | T]) -> [H | T].            | OK      |
     [atom() | number()].                   |         |
 test70_neg() ->                            | ERROR   |
     catch test69_pos([atom]).              |         | catch.
-                                           |         | Expected: [atom() | number()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [atom() | number()]
                                            |         |
 -spec test71_neg() ->                      |         |
     [atom() | number()].                   |         |
 test71_neg() ->                            | ERROR   |
     catch test69_pos(atom).                |         | 'atom'.
-                                           |         | Expected: [atom()] | [number()]
-                                           |         | Got     : 'atom'
+                                           |         | Expression has type:   'atom'
+                                           |         | Context expected type: [atom()] | [number()]
                                            |         | 
-                                           |         |   'atom' is not a subtype of [atom()] | [number()]
+                                           |         |   'atom' is not compatible with [atom()] | [number()]
                                            |         |   because
-                                           |         |   'atom' is not a subtype of [atom()]
+                                           |         |   'atom' is not compatible with [atom()]
                                            |         |
 -spec test72_neg() ->                      |         |
     term().                                |         |
 test72_neg() ->                            | ERROR   |
     catch test69_pos(atom).                |         | 'atom'.
-                                           |         | Expected: [atom()] | [number()]
-                                           |         | Got     : 'atom'
+                                           |         | Expression has type:   'atom'
+                                           |         | Context expected type: [atom()] | [number()]
                                            |         | 
-                                           |         |   'atom' is not a subtype of [atom()] | [number()]
+                                           |         |   'atom' is not compatible with [atom()] | [number()]
                                            |         |   because
-                                           |         |   'atom' is not a subtype of [atom()]
+                                           |         |   'atom' is not compatible with [atom()]
                                            |         |
 -spec test73_pos() ->                      |         |
     term().                                |         |
@@ -475,8 +475,8 @@ test76_pos(_) ->                           |         |
                                            |         |
 -spec test77_neg(term()) -> atom().        |         |
 test77_neg(A) -> catch(test76_pos(A)).     | ERROR   | catch.
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test78_pos() -> term().              |         |
 test78_pos() ->                            | OK      |
@@ -488,16 +488,16 @@ test78_pos() ->                            | OK      |
 test79_neg() ->                            | ERROR   |
     receive                                |         |
         X -> X                             |         | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
     end.                                   |         |
                                            |         |
 -spec test80_neg(term()) -> atom().        |         |
 test80_neg(Timeout) ->                     | ERROR   |
     receive                                |         |
         X -> X                             |         | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
     after Timeout ->                       |         |
         default                            |         |
     end.                                   |         |
@@ -507,8 +507,8 @@ test81_neg(Timeout) ->                     | ERROR   |
     receive                                |         |
         X when is_atom(X) -> X             |         |
     after Timeout ->                       |         | Timeout.
-                                           |         | Expected: timeout()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: timeout()
         default                            |         |
     end.                                   |         |
                                            |         |
@@ -521,8 +521,8 @@ test82_pos() ->                            | ERROR   |
         default                            |         |
     end,                                   |         |
     {Msg}.                                 |         | {Msg}.
-                                           |         | Expected: atom()
-                                           |         | Got     : {'default' | 'atom'}
+                                           |         | Expression has type:   {'default' | 'atom'}
+                                           |         | Context expected type: atom()
                                            |         |
 -spec test83_pos(integer()) -> atom().     |         |
 test83_pos(Timeout) ->                     | OK      |
@@ -552,17 +552,17 @@ unzip1_neg([]) -> {[],[]};                 | ERROR   |
 unzip1_neg([{H1, H2}|T]) ->                |         |
     {T1, T2} = unzip1_neg(T),              |         |
     {[H1|T1], [H2|T2]}.                    |         | {[H1 | T1], [H2 | T2]}.
-                                           |         | Expected: {[atom()], [number()]}
-                                           |         | Got     : {[number() | atom()], [atom() | number()]}
+                                           |         | Expression has type:   {[number() | atom()], [atom() | number()]}
+                                           |         | Context expected type: {[atom()], [number()]}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {[number() | atom()], [atom() | number()]} is not a subtype of {[atom()], [number()]}
+                                           |         |   {[number() | atom()], [atom() | number()]} is not compatible with {[atom()], [number()]}
                                            |         |   because
-                                           |         |   [number() | atom()] is not a subtype of [atom()]
+                                           |         |   [number() | atom()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   number() | atom() is not a subtype of atom()
+                                           |         |   number() | atom() is not compatible with atom()
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec unzip2_neg([{integer(),atom()}])     |         |
     -> {[atom()] | [integer()],            |         |
@@ -571,23 +571,23 @@ unzip2_neg([]) -> {[],[]};                 | ERROR   |
 unzip2_neg([{H1, H2}|T]) ->                |         |
     {T1, T2} = unzip2_neg(T),              |         |
     {[H1|T1], [H2|T2]}.                    |         | {[H1 | T1], [H2 | T2]}.
-                                           |         | Expected: {[atom()] | [number()], [atom()] | [number()]}
-                                           |         | Got     : {[atom() | number()], [atom() | number()]}
+                                           |         | Expression has type:   {[atom() | number()], [atom() | number()]}
+                                           |         | Context expected type: {[atom()] | [number()], [atom()] | [number()]}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {[atom() | number()], [atom() | number()]} is not a subtype of {[atom()] | [number()], [atom()] | [number()]}
+                                           |         |   {[atom() | number()], [atom() | number()]} is not compatible with {[atom()] | [number()], [atom()] | [number()]}
                                            |         |   because
-                                           |         |   [atom() | number()] is not a subtype of [atom()] | [number()]
+                                           |         |   [atom() | number()] is not compatible with [atom()] | [number()]
                                            |         |   because
-                                           |         |   [atom() | number()] is not a subtype of [atom()]
+                                           |         |   [atom() | number()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   atom() | number() is not a subtype of atom()
+                                           |         |   atom() | number() is not compatible with atom()
                                            |         |
 -spec wrong_list_neg() -> term().          |         |
 wrong_list_neg() ->                        | ERROR   |
     X = [1 | 2],                           |         | 2.
-                                           |         | Expected: [term()]
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: [term()]
     X.                                     |         |
                                            |         |
 -spec comp01(term(), term()) -> boolean(). |         |
@@ -595,8 +595,8 @@ comp01(X, Y) -> X < Y.                     | OK      |
                                            |         |
 -spec comp01_neg(term(), term()) -> pid(). |         |
 comp01_neg(X, Y) -> X < Y.                 | ERROR   | _ < _.
-                                           |         | Expected: pid()
-                                           |         | Got     : boolean()
+                                           |         | Expression has type:   boolean()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec comp02(term(), term()) -> boolean(). |         |
 comp02(X, Y) ->                            | OK      |
@@ -607,8 +607,8 @@ comp02(X, Y) ->                            | OK      |
 comp02_neg(X, Y) ->                        | ERROR   |
     Res = X < Y,                           |         |
     Res.                                   |         | Res.
-                                           |         | Expected: pid()
-                                           |         | Got     : boolean()
+                                           |         | Expression has type:   boolean()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec send01(pid() | port(), term()) ->    |         |
     term().                                |         |
@@ -624,8 +624,8 @@ send01(Where, What) ->                     | OK      |
     pid().                                 |         |
 send03_neg(Where, What) ->                 | ERROR   |
     Where ! What.                          |         | _ ! _.
-                                           |         | Expected: pid()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid()
                                            |         |
 -record(str_box, {str :: string()}).       |         |
                                            |         |
@@ -636,16 +636,16 @@ mk_str_box(Str) -> #str_box{str = Str}.    | OK      |
     (atom()) -> #str_box{}.                |         |
 mk_str_box_neg(Str) ->                     | ERROR   |
     #str_box{str = Str}.                   |         | Str.
-                                           |         | Expected: string()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: string()
                                            |         |
 -spec mk_str_box() -> #str_box{}.          |         |
 mk_str_box() -> #str_box{str = "Str"}.     | OK      |
                                            |         |
 -spec string_neg() -> atom().              |         |
 string_neg() -> "str".                     | ERROR   | string_lit.
-                                           |         | Expected: atom()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: atom()
                                            |         |
 % this is not very correct                 |         |
 % since binary_to_list returns [byte()].   |         |
@@ -671,8 +671,8 @@ str_pat(SB = "some_string") -> SB.         | OK      |
 atom_not_string_neg() ->                   | ERROR   |
     Atom = "atom",                         |         |
     Atom.                                  |         | Atom.
-                                           |         | Expected: atom()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec ans(Atoms, Numbers) -> ANs           |         |
     when                                   |         |
@@ -690,16 +690,16 @@ ans(Atoms, Numbers) ->                     | OK      |
     ANs :: [AN].                           |         |
 ans_neg(Atoms, Numbers) ->                 | ERROR   |
     Atoms ++ Numbers.                      |         | _ ++ _.
-                                           |         | Expected: [atom() | number()]
-                                           |         | Got     : [atom() | binary()]
+                                           |         | Expression has type:   [atom() | binary()]
+                                           |         | Context expected type: [atom() | number()]
                                            |         | 
-                                           |         |   [atom() | binary()] is not a subtype of [atom() | number()]
+                                           |         |   [atom() | binary()] is not compatible with [atom() | number()]
                                            |         |   because
-                                           |         |   atom() | binary() is not a subtype of atom() | number()
+                                           |         |   atom() | binary() is not compatible with atom() | number()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom() | number()
+                                           |         |   binary() is not compatible with atom() | number()
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()
                                            |         |
 -spec ans2(Atoms, [binary()]) -> ANs       |         |
     when                                   |         |
@@ -720,16 +720,16 @@ ans3(Atoms, Anys) ->                       | OK      |
     Atoms :: [atom()].                     |         |
 ans3_neg(Atoms, Anys) ->                   | ERROR   |
     Atoms -- Anys.                         |         | Anys.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec ans4_neg(term(), Atoms) -> Atoms     |         |
     when                                   |         |
     Atoms :: [atom()].                     |         |
 ans4_neg(Anys, Atoms) ->                   | ERROR   |
     Anys ++ Atoms.                         |         | Anys.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec slice_tuple_atom                     |         |
     (tuple()) -> atom().                   |         |
@@ -742,20 +742,20 @@ slice_tuple_atom({_, El})                  |         |
     (tuple()) -> none().                   |         |
 slice_tuple_neg({_, El}) ->                | ERROR   |
     El.                                    |         | El.
-                                           |         | Expected: none()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: none()
                                            |         |
 -spec start([A]) -> [A].                   |         |
 start([] ++ X) -> X.                       | OK      |
                                            |         |
 -spec start_neg([A]) -> [[A]].             |         |
 start_neg([] ++ X) -> X.                   | ERROR   | X.
-                                           |         | Expected: [[A]]
-                                           |         | Got     : [A]
+                                           |         | Expression has type:   [A]
+                                           |         | Context expected type: [[A]]
                                            |         | 
-                                           |         |   [A] is not a subtype of [[A]]
+                                           |         |   [A] is not compatible with [[A]]
                                            |         |   because
-                                           |         |   A is not a subtype of [A]
+                                           |         |   A is not compatible with [A]
                                            |         |
 -spec ss                                   |         |
     (binary() | string()) -> string().     |         |
@@ -768,8 +768,8 @@ ss1("" ++ S) -> S.                         | OK      |
 -spec ss2_neg                              |         |
     ([atom() | char()]) -> string().       |         |
 ss2_neg("" ++ S) -> S.                     | ERROR   | S.
-                                           |         | Expected: string()
-                                           |         | Got     : [atom() | number()]
+                                           |         | Expression has type:   [atom() | number()]
+                                           |         | Context expected type: string()
                                            |         |
 -spec ss3                                  |         |
     (binary()) -> none().                  |         |
@@ -791,14 +791,14 @@ catch_env_neg_1(X) ->                      | ERROR   |
             X when is_number(X) -> X       |         |
         end),                              |         |
     X.                                     |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
                                            |         |
 -spec catch_env_neg_2(term()) -> number(). |         |
 catch_env_neg_2(X) ->                      | ERROR   |
     catch case X of                        |         | catch.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
             X when is_number(X) -> X       |         |
         end.                               |         |
                                            |         |
@@ -807,20 +807,20 @@ catch_env_neg_2(X) ->                      | ERROR   |
     integer() := integer()                 |         |
 }.                                         |         |
 badspec(_) -> ok.                          | ERROR   | 'ok'.
-                                           |         | Expected: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
                                            |         |
 -spec test86_neg() -> term().              |         |
 test86_neg() ->                            | ERROR   |
     catch lists:map({}, {}).               |         | {}.
-                                           |         | Expected: fun((A) -> B)
-                                           |         | Got     : {}
+                                           |         | Expression has type:   {}
+                                           |         | Context expected type: fun((A) -> B)
                                            |         |
 -spec test87_neg() -> term().              |         |
 test87_neg() ->                            | ERROR   |
     X = (catch lists:map({}, {})),         |         | {}.
-                                           |         | Expected: fun((A) -> B)
-                                           |         | Got     : {}
+                                           |         | Expression has type:   {}
+                                           |         | Context expected type: fun((A) -> B)
     X.                                     |         |
                                            |         |
 -spec test88_neg() -> term().              |         |
@@ -841,22 +841,22 @@ fun generics_with_unions:test_03_neg/3.    |         | Unbound var: generics_wit
 (number(), number()) -> pid().             |         |
 list_with_vars_neg(X, Y) ->                | ERROR   |
     [X, 1, 2, 3 | Y].                      |         | Y.
-                                           |         | Expected: [term()]
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec improper_list1                       |         |
     (number()) -> pid().                   |         |
 improper_list1(X) ->                       | ERROR   |
     [X, 1, 2, 3 | an_atom].                |         | 'an_atom'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'an_atom'
+                                           |         | Expression has type:   'an_atom'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec improper_list2                       |         |
     (number()) -> pid().                   |         |
 improper_list2(X) ->                       | ERROR   |
     Res = [X, 1, 2, 3 | an_atom],          |         | 'an_atom'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'an_atom'
+                                           |         | Expression has type:   'an_atom'
+                                           |         | Context expected type: [term()]
     Res.                                   |         |
                                            |         |
 -spec not_list1_neg(atom()) -> none().     |         |
@@ -906,13 +906,13 @@ test_flatten2() ->                         | OK      |
 test91_neg(None) ->                        | ERROR   |
     Res = {None, err},                     |         |
     Res.                                   |         | Res.
-                                           |         | Expected: {'ok', 'ok'}
-                                           |         | Got     : {none(), 'err'}
+                                           |         | Expression has type:   {none(), 'err'}
+                                           |         | Context expected type: {'ok', 'ok'}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {none(), 'err'} is not a subtype of {'ok', 'ok'}
+                                           |         |   {none(), 'err'} is not compatible with {'ok', 'ok'}
                                            |         |   because
-                                           |         |   'err' is not a subtype of 'ok'
+                                           |         |   'err' is not compatible with 'ok'
                                            |         |
                                            |         |
 -type stuff() :: stuff1 | stuff2.          |         |
@@ -924,16 +924,16 @@ test91_neg(None) ->                        | ERROR   |
 -spec v2_to_v1_neg(v2_op()) -> v1_op().    |         |
 v2_to_v1_neg(X) ->                         | ERROR   |
     X.                                     |         | X.
-                                           |         | Expected: v1_op()
-                                           |         | Got     : v2_op()
+                                           |         | Expression has type:   v2_op()
+                                           |         | Context expected type: v1_op()
                                            |         | 
-                                           |         |   v2_op() is not a subtype of v1_op()
+                                           |         |   v2_op() is not compatible with v1_op()
                                            |         |   because
-                                           |         |   'v2_op' | v1_op() is not a subtype of v1_op()
+                                           |         |   'v2_op' | v1_op() is not compatible with v1_op()
                                            |         |   because
-                                           |         |   'v2_op' | v1_op() is not a subtype of 'v1_op1' | 'v1_op2' | stuff() | v0_op()
+                                           |         |   'v2_op' | v1_op() is not compatible with 'v1_op1' | 'v1_op2' | stuff() | v0_op()
                                            |         |   because
-                                           |         |   'v2_op' is not a subtype of 'v1_op1' | 'v1_op2' | stuff() | v0_op()
+                                           |         |   'v2_op' is not compatible with 'v1_op1' | 'v1_op2' | stuff() | v0_op()
 -opaque o() :: {ok}.                       |         |
                                            |         |
 -record(rec, {}).                          |         |
@@ -993,14 +993,14 @@ use_opaque_w_bad_arg_neg(X) ->             | NO SPEC |
 -type set() :: [].                         |         |
 -spec names(set()) -> sets:set().          |         |
 names(X) -> X.                             | ERROR   | X.
-                                           |         | Expected: sets:set()
-                                           |         | Got     : misc:set()
+                                           |         | Expression has type:   misc:set()
+                                           |         | Context expected type: sets:set()
                                            |         | 
-                                           |         |   misc:set() is not a subtype of sets:set()
+                                           |         |   misc:set() is not compatible with sets:set()
                                            |         |   because
-                                           |         |   [] is not a subtype of sets:set()
+                                           |         |   [] is not compatible with sets:set()
                                            |         |   because
-                                           |         |   [] is not a subtype of sets:set(term())
+                                           |         |   [] is not compatible with sets:set(term())
                                            |         |
 -spec use_abs(integer()) -> integer().     |         |
 use_abs(I) -> abs(I).                      | OK      |
@@ -1054,13 +1054,13 @@ module_ty_7() ->                           | OK      |
     {ok, module(), pid()}.                 |         |
 module_ty_8_neg() ->                       | ERROR   |
     {ok, lists, 1.0}.                      |         | {'ok', 'lists', float_lit}.
-                                           |         | Expected: {'ok', atom(), pid()}
-                                           |         | Got     : {'ok', 'lists', number()}
+                                           |         | Expression has type:   {'ok', 'lists', number()}
+                                           |         | Context expected type: {'ok', atom(), pid()}
                                            |         | 
                                            |         |   at tuple index 3:
-                                           |         |   {'ok', 'lists', number()} is not a subtype of {'ok', atom(), pid()}
+                                           |         |   {'ok', 'lists', number()} is not compatible with {'ok', atom(), pid()}
                                            |         |   because
-                                           |         |   number() is not a subtype of pid()
+                                           |         |   number() is not compatible with pid()
                                            |         |
 -spec module_ty_9_neg() ->                 |         |
     {ok, module()}.                        |         |
@@ -1071,8 +1071,8 @@ module_ty_9_neg() ->                       | OK      |
     wrong_ret.                             |         |
 module_ty_10_neg(Mod) ->                   | ERROR   |
     Mod.                                   |         | Mod.
-                                           |         | Expected: 'wrong_ret'
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: 'wrong_ret'
                                            |         |
 % accepted because `node()` is             |         |
 % an alias for atom()                      |         |
@@ -1088,8 +1088,8 @@ arity_1(Arity) ->                          | OK      |
 -spec arity_2_neg(arity()) -> pid().       |         |
 arity_2_neg(Arity) ->                      | ERROR   |
     Arity.                                 |         | Arity.
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec module_1(module()) -> atom().        |         |
 module_1(Mod) ->                           | OK      |
@@ -1102,8 +1102,8 @@ node_1(Node) ->                            | OK      |
 -spec node_2_neg(node()) -> pid().         |         |
 node_2_neg(Node) ->                        | ERROR   |
     Node.                                  |         | Node.
-                                           |         | Expected: pid()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: pid()
                                            |         |
 -type tab() :: atom() | reference().       |         |
                                            |         |
@@ -1146,12 +1146,12 @@ foldl_ets_gen3(_, T) -> T.                 | OK      |
 -spec iovec_neg()                          |         |
     -> erlang:iovec().                     |         |
 iovec_neg() -> {<<>>}.                     | ERROR   | {<<..>>}.
-                                           |         | Expected: erlang:iovec()
-                                           |         | Got     : {binary()}
+                                           |         | Expression has type:   {binary()}
+                                           |         | Context expected type: erlang:iovec()
                                            |         | 
-                                           |         |   {binary()} is not a subtype of erlang:iovec()
+                                           |         |   {binary()} is not compatible with erlang:iovec()
                                            |         |   because
-                                           |         |   {binary()} is not a subtype of [binary()]
+                                           |         |   {binary()} is not compatible with [binary()]
                                            |         |
 -spec repeated_vars() -> ok.               |         |
 repeated_vars() ->                         | OK      |
@@ -1172,8 +1172,8 @@ empty_string() -> "".                      | OK      |
 -spec n_a_neg(erlang:number())             |         |
     -> erlang:atom().                      |         |
 n_a_neg(N) -> N.                           | ERROR   | N.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 % -- types from erlang --                  |         |
                                            |         |
@@ -1190,26 +1190,26 @@ my_priorities_neg() ->                     | ERROR   |
     MyPriorities =                         |         |
         ['MS', 'MM', 'MA', 'EE', 'GE'],    |         |
     MyPriorities.                          |         | MyPriorities.
-                                           |         | Expected: [erlang:priority_level()]
-                                           |         | Got     : ['MS' | 'MM' | 'MA' | 'EE' | 'GE']
+                                           |         | Expression has type:   ['MS' | 'MM' | 'MA' | 'EE' | 'GE']
+                                           |         | Context expected type: [erlang:priority_level()]
                                            |         | 
-                                           |         |   ['MS' | 'MM' | 'MA' | 'EE' | 'GE'] is not a subtype of [erlang:priority_level()]
+                                           |         |   ['MS' | 'MM' | 'MA' | 'EE' | 'GE'] is not compatible with [erlang:priority_level()]
                                            |         |   because
-                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not a subtype of erlang:priority_level()
+                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not compatible with erlang:priority_level()
                                            |         |   because
-                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not a subtype of 'low' | 'normal' | 'high' | 'max'
+                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not compatible with 'low' | 'normal' | 'high' | 'max'
                                            |         |
 -spec timestamp_neg(                       |         |
     erlang:timestamp()                     |         |
 ) -> atom().                               |         |
 timestamp_neg(X) ->                        | ERROR   |
     X.                                     |         | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : erlang:timestamp()
+                                           |         | Expression has type:   erlang:timestamp()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   erlang:timestamp() is not a subtype of atom()
+                                           |         |   erlang:timestamp() is not compatible with atom()
                                            |         |   because
-                                           |         |   {number(), number(), number()} is not a subtype of atom()
+                                           |         |   {number(), number(), number()} is not compatible with atom()
                                            |         |
 -spec orelse1(boolean(), pid())            |         |
         -> true | pid().                   |         |
@@ -1226,8 +1226,8 @@ orelse2(Flag, Pid) ->                      | OK      |
         -> true | pid().                   |         |
 orelse3_neg(Flag, Pid) ->                  | ERROR   |
     Res = (Flag orelse Pid),               |         | Flag.
-                                           |         | Expected: boolean()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: boolean()
     Res.                                   |         |
                                            |         |
 -spec orelse4(                             |         |

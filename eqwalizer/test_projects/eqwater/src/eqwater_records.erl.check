@@ -33,27 +33,27 @@ id3_neg(#rec1{id = Id, name = Name})       | ERROR   |
   when length(Name) == 0 ->                |         |
   Id;                                      |         |
 id3_neg(Id) -> Id.                         |         | Id.
-                                           |         | Expected: number()
-                                           |         | Got     : user()
+                                           |         | Expression has type:   user()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   user() is not a subtype of number()
+                                           |         |   user() is not compatible with number()
                                            |         |   because
-                                           |         |   #rec1{} | number() is not a subtype of number()
+                                           |         |   #rec1{} | number() is not compatible with number()
                                            |         |   because
-                                           |         |   #rec1{} is not a subtype of number()
+                                           |         |   #rec1{} is not compatible with number()
                                            |         |
 -spec id4_neg(user()) -> integer().        |         |
 id4_neg(#rec1{id = Id, name = ""}) ->      | ERROR   |
   Id;                                      |         |
 id4_neg(Id) -> Id.                         |         | Id.
-                                           |         | Expected: number()
-                                           |         | Got     : user()
+                                           |         | Expression has type:   user()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   user() is not a subtype of number()
+                                           |         |   user() is not compatible with number()
                                            |         |   because
-                                           |         |   #rec1{} | number() is not a subtype of number()
+                                           |         |   #rec1{} | number() is not compatible with number()
                                            |         |   because
-                                           |         |   #rec1{} is not a subtype of number()
+                                           |         |   #rec1{} is not compatible with number()
                                            |         |
 -spec id5_neg(string(), user())            |         |
       -> integer().                        |         |
@@ -61,14 +61,14 @@ id5_neg(Name, User) ->                     | ERROR   |
   case User of                             |         |
     #rec1{id = Id, name = Name} -> Id;     |         |
     Id -> Id                               |         | Id.
-                                           |         | Expected: number()
-                                           |         | Got     : user()
+                                           |         | Expression has type:   user()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   user() is not a subtype of number()
+                                           |         |   user() is not compatible with number()
                                            |         |   because
-                                           |         |   #rec1{} | number() is not a subtype of number()
+                                           |         |   #rec1{} | number() is not compatible with number()
                                            |         |   because
-                                           |         |   #rec1{} is not a subtype of number()
+                                           |         |   #rec1{} is not compatible with number()
   end.                                     |         |
                                            |         |
 -spec id6(#rec1{} | version3())            |         |
@@ -128,15 +128,15 @@ normalize(Pair) -> Pair.                   |         |
 normalize_neg1({R = #rec2{}, R}) ->        | ERROR   |
   {R, R};                                  |         |
 normalize_neg1(Pair) -> Pair.              |         | Pair.
-                                           |         | Expected: {#rec1{}, #rec2{}}
-                                           |         | Got     : {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}}
+                                           |         | Expression has type:   {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}}
+                                           |         | Context expected type: {#rec1{}, #rec2{}}
                                            |         | 
-                                           |         |   {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}} is not a subtype of {#rec1{}, #rec2{}}
+                                           |         |   {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}} is not compatible with {#rec1{}, #rec2{}}
                                            |         |   because
                                            |         |   at tuple index 1:
-                                           |         |   {#rec2{}, #rec1{}} is not a subtype of {#rec1{}, #rec2{}}
+                                           |         |   {#rec2{}, #rec1{}} is not compatible with {#rec1{}, #rec2{}}
                                            |         |   because
-                                           |         |   #rec2{} is not a subtype of #rec1{}
+                                           |         |   #rec2{} is not compatible with #rec1{}
                                            |         |
 -spec normalize_neg2(                      |         |
     {#rec1{}, #rec2{}} |                   |         |
@@ -146,12 +146,12 @@ normalize_neg2(                            | ERROR   |
     {R2 = #rec2{id = I},                   |         |
      R1 = #rec1{id = I}}) -> {R1, R2};     |         |
 normalize_neg2(Pair) -> Pair.              |         | Pair.
-                                           |         | Expected: {#rec1{}, #rec2{}}
-                                           |         | Got     : {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}}
+                                           |         | Expression has type:   {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}}
+                                           |         | Context expected type: {#rec1{}, #rec2{}}
                                            |         | 
-                                           |         |   {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}} is not a subtype of {#rec1{}, #rec2{}}
+                                           |         |   {#rec1{}, #rec2{}} | {#rec2{}, #rec1{}} is not compatible with {#rec1{}, #rec2{}}
                                            |         |   because
                                            |         |   at tuple index 1:
-                                           |         |   {#rec2{}, #rec1{}} is not a subtype of {#rec1{}, #rec2{}}
+                                           |         |   {#rec2{}, #rec1{}} is not compatible with {#rec1{}, #rec2{}}
                                            |         |   because
-                                           |         |   #rec2{} is not a subtype of #rec1{}
+                                           |         |   #rec2{} is not compatible with #rec1{}

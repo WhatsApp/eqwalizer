@@ -49,15 +49,15 @@ reveal_type3(BT) ->                        |         |
 no_cast() ->                               | ERROR   |
     Key = get(key),                        |         |
     Key.                                   |         | Key.
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec cast1() -> atom().                   |         |
 cast1() ->                                 | ERROR   |
     Key = get(key),                        |         |
     Key.                                   |         | Key.
-                                           |         | Expected: atom()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec reveal_none(none()) -> none().       |         |
 reveal_none(X) ->                          | ERROR   |

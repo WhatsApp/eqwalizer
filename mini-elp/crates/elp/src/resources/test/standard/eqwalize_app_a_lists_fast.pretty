@@ -1,10 +1,10 @@
-error: expected_subtype
+error: incompatible_types
     ┌─ app_a/src/app_a_lists.erl:581:5
     │
 581 │     flatmap(fun thing_to_list/1, List).
     │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ flatmap(thing_to_list/1, List).
-Expected: string()
-Got     : [term()]
+Expression has type:   [term()]
+Context expected type: string()
 
 
 error: recursive_constraint
@@ -28,47 +28,47 @@ error: recursive_constraint
     │                             ^^^^^^^^ Recursive constraint: DeepList
 
 
-error: expected_subtype
+error: incompatible_types
      ┌─ app_a/src/app_a_lists.erl:1119:36
      │
 1119 │    lists:reverse(umerge3_1(L1, [H2 | H3], T2, H2, [], T3, H3), []).
      │                                    ^^^^^ H3.
-Expected: [term()]
-Got     : term()
+Expression has type:   term()
+Context expected type: [term()]
 
 
-error: expected_subtype
+error: incompatible_types
      ┌─ app_a/src/app_a_lists.erl:1310:5
      │
 1310 │     filtermap(F, L).
      │     ^^^^^^^^^^^^^^^
      │     │
      │     filtermap(eqwalizer:dynamic_cast(F), L).
-Expected: [T | X]
-Got     : [term()]
+Expression has type:   [term()]
+Context expected type: [T | X]
 
      │     
 
-  [term()] is not a subtype of [T | X]
+  [term()] is not compatible with [T | X]
   because
-  term() is not a subtype of T | X
+  term() is not compatible with T | X
   because
-  term() is not a subtype of T
+  term() is not compatible with T
 
-error: expected_subtype
+error: incompatible_types
      ┌─ app_a/src/app_a_lists.erl:1310:15
      │
 1310 │     filtermap(F, L).
      │               ^
      │               │
      │               F.
-Expected: fun((term()) -> boolean() | {'true', term()})
-Got     : fun((T) -> boolean() | {'true', X})
+Expression has type:   fun((T) -> boolean() | {'true', X})
+Context expected type: fun((term()) -> boolean() | {'true', term()})
 
      │               
 
-  fun((T) -> boolean() | {'true', X}) is not a subtype of fun((term()) -> boolean() | {'true', term()})
+  fun((T) -> boolean() | {'true', X}) is not compatible with fun((term()) -> boolean() | {'true', term()})
   because
-  term() is not a subtype of T
+  term() is not compatible with T
 
 7 ERRORS

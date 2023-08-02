@@ -12,49 +12,49 @@ expect_none(None) -> None.                 | OK      |
                                            |         |
 as_map1(#{id := Id}) ->                    | ERROR   |
   expect_none({Id}).                       |         | {Id}.
-                                           |         | Expected: none()
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: none()
                                            |         |
 as_map2(M) ->                              | ERROR   |
   Res = maps:map(                          |         |
     fun(_K, V) -> {V} end, M               |         |
   ),                                       |         |
   expect_none(Res).                        |         | Res.
-                                           |         | Expected: none()
-                                           |         | Got     : #D{dynamic() => {dynamic()}}
+                                           |         | Expression has type:   #D{dynamic() => {dynamic()}}
+                                           |         | Context expected type: none()
                                            |         |
 as_map3(M) ->                              | ERROR   |
   Id = maps:get(id, M),                    |         |
   expect_none({Id}).                       |         | {Id}.
-                                           |         | Expected: none()
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: none()
                                            |         |
 as_map4(M) ->                              | ERROR   |
   Res = M#{id => 1},                       |         |
   expect_none({Res}).                      |         | {Res}.
-                                           |         | Expected: none()
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: none()
                                            |         |
 as_list([H | T]) ->                        | ERROR   |
   Res = {H, T},                            |         |
   expect_none(Res).                        |         | Res.
-                                           |         | Expected: none()
-                                           |         | Got     : {dynamic(), [dynamic()]}
+                                           |         | Expression has type:   {dynamic(), [dynamic()]}
+                                           |         | Context expected type: none()
                                            |         |
 as_tuple({E1, _}) ->                       | ERROR   |
   Res = {E1},                              |         |
   expect_none(Res).                        |         | Res.
-                                           |         | Expected: none()
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: none()
                                            |         |
 -record(rec, {id :: number()}).            |         |
                                            |         |
 get_id_neg1(Rec) ->                        | ERROR   |
   atom_to_binary(Rec#rec.id).              |         | ...#rec.id.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 get_id_neg2(#rec{id = Id}) ->              | ERROR   |
   atom_to_binary(Id).                      |         | Id.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()

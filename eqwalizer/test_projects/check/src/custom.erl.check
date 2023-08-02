@@ -19,8 +19,8 @@ map_get_2_1(K, M) ->                       | OK      |
 ) -> atom().                               |         |
 map_get_2_2_neg(K, M) ->                   | ERROR   |
     maps:get(K, M).                        |         | maps:get(K, M).
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec map_get_2_3(                         |         |
     #{a => atom(), n => number()}          |         |
@@ -41,8 +41,8 @@ map_get_2_4(K, M) ->                       | OK      |
 map_get_2_5_neg(K, M) ->                   | ERROR   |
     Res = maps:get(K, M),                  |         |
     Res.                                   |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec map_get_2_6(                         |         |
     #{a => atom(), n => number()}          |         |
@@ -69,16 +69,16 @@ map_get_2_6_2(M) ->                        | OK      |
 ) -> term().                               |         |
 map_get_2_7_neg(M) ->                      | ERROR   |
     get(a, M).                             |         | M.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: #D{term() => term()}
                                            |         |
 -spec map_get_2_8_neg(                     |         |
     term()                                 |         |
 ) -> term().                               |         |
 map_get_2_8_neg(M) ->                      | ERROR   |
     Res = maps:get(a, M),                  |         | M.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: #D{term() => term()}
     Res.                                   |         |
                                            |         |
 -spec map_get_2_9_neg(                     |         |
@@ -86,16 +86,16 @@ map_get_2_8_neg(M) ->                      | ERROR   |
 ) -> term().                               |         |
 map_get_2_9_neg(M) ->                      | ERROR   |
     maps:get(a, M, false).                 |         | M.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: #D{term() => term()}
                                            |         |
 -spec map_get_2_10_neg(                    |         |
     term()                                 |         |
 ) -> term().                               |         |
 map_get_2_10_neg(M) ->                     | ERROR   |
     Res = maps:get(a, M, false),           |         | M.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: #D{term() => term()}
     Res.                                   |         |
                                            |         |
 -spec map_get_2_11(                        |         |
@@ -116,12 +116,12 @@ map_get_2_12(K, M) ->                      | OK      |
 ) -> atom().                               |         |
 map_get_2_13_neg(K, M) ->                  | ERROR   |
     maps:get(K, M, 0).                     |         | maps:get(K, M, 0).
-                                           |         | Expected: atom()
-                                           |         | Got     : atom() | number()
+                                           |         | Expression has type:   atom() | number()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   atom() | number() is not a subtype of atom()
+                                           |         |   atom() | number() is not compatible with atom()
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec map_get_2_14_neg(                    |         |
     pid(), #{pid() => atom()}              |         |
@@ -129,27 +129,27 @@ map_get_2_13_neg(K, M) ->                  | ERROR   |
 map_get_2_14_neg(K, M) ->                  | ERROR   |
     Res = maps:get(K, M, 0),               |         |
     Res.                                   |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : atom() | number()
+                                           |         | Expression has type:   atom() | number()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   atom() | number() is not a subtype of atom()
+                                           |         |   atom() | number() is not compatible with atom()
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec map_get_3_15(                        |         |
     #{a => atom(), n => number()}          |         |
 ) -> {atom(), number()}.                   |         |
 map_get_3_15(M) ->                         | ERROR   |
     {                                      |         | {maps:get('a', M, 'undefined'), maps:get('n', M, 'undefined')}.
-                                           |         | Expected: {atom(), number()}
-                                           |         | Got     : {atom(), number() | 'undefined'}
+                                           |         | Expression has type:   {atom(), number() | 'undefined'}
+                                           |         | Context expected type: {atom(), number()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {atom(), number() | 'undefined'} is not a subtype of {atom(), number()}
+                                           |         |   {atom(), number() | 'undefined'} is not compatible with {atom(), number()}
                                            |         |   because
-                                           |         |   number() | 'undefined' is not a subtype of number()
+                                           |         |   number() | 'undefined' is not compatible with number()
                                            |         |   because
-                                           |         |   'undefined' is not a subtype of number()
+                                           |         |   'undefined' is not compatible with number()
         maps:get(a, M, undefined),         |         |
         maps:get(n, M, undefined)          |         |
     }.                                     |         |
@@ -229,8 +229,8 @@ keysearch_2() ->                           | OK      |
 keysearch_3_neg() ->                       | ERROR   |
     Res = lists:keysearch(a, 1, [#{}]),    |         |
     Res.                                   |         | Res.
-                                           |         | Expected: 'nok'
-                                           |         | Got     : {'value', #S{}} | 'false'
+                                           |         | Expression has type:   {'value', #S{}} | 'false'
+                                           |         | Context expected type: 'nok'
                                            |         |
 -spec keysearch_4() ->                     |         |
     false | {value, #rec{}}.               |         |
@@ -285,8 +285,8 @@ maps_filter_2_3_neg() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     maps:filter(                           |         |
         fun (_, _) -> self() end,          |         | erlang:self().
-                                           |         | Expected: boolean()
-                                           |         | Got     : pid()
+                                           |         | Expression has type:   pid()
+                                           |         | Context expected type: boolean()
         M                                  |         |
     ).                                     |         |
                                            |         |
@@ -298,12 +298,12 @@ maps_filter_2_4_wip() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     F = fun (K, V) -> K =:= V end,         |         |
     maps:filter(F, M).                     |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> boolean())
-                                           |         | Got     : fun((none(), none()) -> term())
+                                           |         | Expression has type:   fun((none(), none()) -> term())
+                                           |         | Context expected type: fun((number(), 'a' | 'b') -> boolean())
                                            |         | 
-                                           |         |   fun((none(), none()) -> term()) is not a subtype of fun((number(), 'a' | 'b') -> boolean())
+                                           |         |   fun((none(), none()) -> term()) is not compatible with fun((number(), 'a' | 'b') -> boolean())
                                            |         |   because
-                                           |         |   term() is not a subtype of boolean()
+                                           |         |   term() is not compatible with boolean()
                                            |         |
                                            |         |
 -spec maps_filter_2_5_neg()                |         |
@@ -312,8 +312,8 @@ maps_filter_2_5_neg() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     F = fun self/0,                        |         |
     maps:filter(F, M).                     |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> boolean())
-                                           |         | Got     : fun(() -> pid())
+                                           |         | Expression has type:   fun(() -> pid())
+                                           |         | Context expected type: fun((number(), 'a' | 'b') -> boolean())
                                            |         |
 -spec maps_filter_2_6_neg()                |         |
         -> #{number() => atom()}.          |         |
@@ -321,8 +321,8 @@ maps_filter_2_6_neg() ->                   | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     F = fun lists:filter/2,                |         |
     maps:filter(F, M).                     |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> boolean()) with 0 type parameters
-                                           |         | Got     : fun((fun((T) -> boolean()), [T]) -> [T]) with 1 type parameter
+                                           |         | Expression has type:   fun((fun((T) -> boolean()), [T]) -> [T]) with 1 type parameter
+                                           |         | Context expected type: fun((number(), 'a' | 'b') -> boolean()) with 0 type parameters
                                            |         |
 -spec maps_filter_2_7(                     |         |
     #{K => V}                              |         |
@@ -347,12 +347,12 @@ maps_filter_2_9_neg(B, M) ->               | ERROR   |
             false -> a                     |         |
         end,                               |         |
     maps:filter(fun erlang:'=:='/2, X).    |         | X.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : #D{K => V} | 'a'
+                                           |         | Expression has type:   #D{K => V} | 'a'
+                                           |         | Context expected type: #D{term() => term()}
                                            |         | 
-                                           |         |   #D{K => V} | 'a' is not a subtype of #D{term() => term()}
+                                           |         |   #D{K => V} | 'a' is not compatible with #D{term() => term()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of #D{term() => term()}
+                                           |         |   'a' is not compatible with #D{term() => term()}
                                            |         |
 -spec maps_filter_2_8()                    |         |
         -> #{a => a, b => b}.              |         |
@@ -365,8 +365,8 @@ maps_filter_2_8() ->                       | OK      |
 maps_filter_2_10_neg() ->                  | ERROR   |
     F = fun erlang:'=:='/2,                |         |
     maps:filter(F, non_kv),                |         | 'non_kv'.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : 'non_kv'
+                                           |         | Expression has type:   'non_kv'
+                                           |         | Context expected type: #D{term() => term()}
     nok.                                   |         |
                                            |         |
 -spec map_filter_empty(Pred) -> Map when   |         |
@@ -396,12 +396,12 @@ maps_map_2_2() ->                          | OK      |
 maps_map_2_3_neg() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     maps:map(                              |         | maps:map(fun, M).
-                                           |         | Expected: #D{number() => boolean()}
-                                           |         | Got     : #D{number() => pid()}
+                                           |         | Expression has type:   #D{number() => pid()}
+                                           |         | Context expected type: #D{number() => boolean()}
                                            |         | 
-                                           |         |   #D{number() => pid()} is not a subtype of #D{number() => boolean()}
+                                           |         |   #D{number() => pid()} is not compatible with #D{number() => boolean()}
                                            |         |   because
-                                           |         |   pid() is not a subtype of boolean()
+                                           |         |   pid() is not compatible with boolean()
         fun (_, _) -> self() end,          |         |
         M                                  |         |
     ).                                     |         |
@@ -414,12 +414,12 @@ maps_map_2_4_wip() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     F = fun (K, V) -> K =:= V end,         |         |
     maps:map(F, M).                        |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> term())
-                                           |         | Got     : fun((none(), none()) -> term())
+                                           |         | Expression has type:   fun((none(), none()) -> term())
+                                           |         | Context expected type: fun((number(), 'a' | 'b') -> term())
                                            |         | 
-                                           |         |   fun((none(), none()) -> term()) is not a subtype of fun((number(), 'a' | 'b') -> term())
+                                           |         |   fun((none(), none()) -> term()) is not compatible with fun((number(), 'a' | 'b') -> term())
                                            |         |   because
-                                           |         |   number() is not a subtype of none()
+                                           |         |   number() is not compatible with none()
                                            |         |
                                            |         |
 -spec maps_map_2_5_neg()                   |         |
@@ -428,8 +428,8 @@ maps_map_2_5_neg() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     F = fun self/0,                        |         |
     maps:map(F, M).                        |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> term())
-                                           |         | Got     : fun(() -> pid())
+                                           |         | Expression has type:   fun(() -> pid())
+                                           |         | Context expected type: fun((number(), 'a' | 'b') -> term())
                                            |         |
 -spec maps_map_2_6_neg()                   |         |
         -> #{number() => boolean()}.       |         |
@@ -437,8 +437,8 @@ maps_map_2_6_neg() ->                      | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     F = fun lists:map/2,                   |         |
     maps:map(F, M).                        |         | F.
-                                           |         | Expected: fun((number(), 'a' | 'b') -> term()) with 0 type parameters
-                                           |         | Got     : fun((fun((A) -> B), [A]) -> [B]) with 2 type parameters
+                                           |         | Expression has type:   fun((fun((A) -> B), [A]) -> [B]) with 2 type parameters
+                                           |         | Context expected type: fun((number(), 'a' | 'b') -> term()) with 0 type parameters
                                            |         |
 -spec maps_map_2_7(                        |         |
     #{K => term()}                         |         |
@@ -455,16 +455,16 @@ maps_map_2_9_neg() ->                      | ERROR   |
     M = #{a => a, b => b},                 |         |
     F = fun erlang:'=:='/2,                |         |
     maps:map(F, M).                        |         | maps:map(F, M).
-                                           |         | Expected: shape map #S{a => 'a', b => 'b'}
-                                           |         | Got     : dict  map #D{atom() => boolean()}
+                                           |         | Expression has type:   dict  map #D{atom() => boolean()}
+                                           |         | Context expected type: shape map #S{a => 'a', b => 'b'}
                                            |         |
 -spec maps_map_2_10_neg()                  |         |
         -> nok.                            |         |
 maps_map_2_10_neg() ->                     | ERROR   |
     F = fun erlang:'=:='/2,                |         |
     maps:map(F, non_kv),                   |         | 'non_kv'.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : 'non_kv'
+                                           |         | Expression has type:   'non_kv'
+                                           |         | Context expected type: #D{term() => term()}
     nok.                                   |         |
                                            |         |
 -spec maps_fold_3_1()                      |         |
@@ -492,14 +492,14 @@ maps_fold_3_3_neg() ->                     | ERROR   |
     M = #{1 => a, 2 => b},                 |         |
     maps:fold(                             |         |
         fun (_, _, Acc) -> [Acc] end,      |         | [Acc].
-                                           |         | Expected: [[[]]]
-                                           |         | Got     : [[[[]]]]
+                                           |         | Expression has type:   [[[[]]]]
+                                           |         | Context expected type: [[[]]]
                                            |         | 
-                                           |         |   [[[[]]]] is not a subtype of [[[]]]
+                                           |         |   [[[[]]]] is not compatible with [[[]]]
                                            |         |   because
-                                           |         |   [[[]]] is not a subtype of [[]]
+                                           |         |   [[[]]] is not compatible with [[]]
                                            |         |   because
-                                           |         |   [[]] is not a subtype of []
+                                           |         |   [[]] is not compatible with []
         [],                                |         |
         M                                  |         |
     ).                                     |         |
@@ -510,8 +510,8 @@ maps_fold_3_5_neg() ->                     | ERROR   |
         fun (_, _, Acc) -> Acc end,        |         |
         [],                                |         |
         non_kv                             |         | 'non_kv'.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : 'non_kv'
+                                           |         | Expression has type:   'non_kv'
+                                           |         | Context expected type: #D{term() => term()}
     ).                                     |         |
                                            |         |
 -spec maps_fold_3_6(none()) ->             |         |
@@ -535,12 +535,12 @@ maps_fold_3_7(None) ->                     | OK      |
     (#{atom => atom()}) -> atom().         |         |
 maps_fold_4_neg(M) ->                      | ERROR   |
     maps:fold(                             |         | maps:fold(fun, [], M).
-                                           |         | Expected: atom()
-                                           |         | Got     : [] | atom()
+                                           |         | Expression has type:   [] | atom()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   [] | atom() is not a subtype of atom()
+                                           |         |   [] | atom() is not compatible with atom()
                                            |         |   because
-                                           |         |   [] is not a subtype of atom()
+                                           |         |   [] is not compatible with atom()
         fun (_K, A, _Acc) -> A end,        |         |
         [],                                |         |
         M                                  |         |
@@ -564,8 +564,8 @@ maps_fold_3_8() ->                         | OK      |
 maps_fold_3_9_neg() ->                     | ERROR   |
     maps:fold(                             |         |
         fun folder_bad/3,                  |         | folder_bad/3.
-                                           |         | Expected: fun((number(), 'a', []) -> term()) with 0 type parameters
-                                           |         | Got     : fun((term(), term(), Acc) -> [Acc]) with 1 type parameter
+                                           |         | Expression has type:   fun((term(), term(), Acc) -> [Acc]) with 1 type parameter
+                                           |         | Context expected type: fun((number(), 'a', []) -> term()) with 0 type parameters
         [],                                |         |
         #{1 => a}                          |         |
     ).                                     |         |
@@ -601,16 +601,16 @@ maps_fold_4_2(M) ->                        | OK      |
 -spec maps_fold_4_3_neg(#{atom() => {b, bi……         |
 maps_fold_4_3_neg(M) ->                    | ERROR   |
     maps:fold(                             |         | maps:fold(fun, [], M).
-                                           |         | Expected: [binary()] | [number()] | [atom()]
-                                           |         | Got     : [number() | binary() | atom()]
+                                           |         | Expression has type:   [number() | binary() | atom()]
+                                           |         | Context expected type: [binary()] | [number()] | [atom()]
                                            |         | 
-                                           |         |   [number() | binary() | atom()] is not a subtype of [binary()] | [number()] | [atom()]
+                                           |         |   [number() | binary() | atom()] is not compatible with [binary()] | [number()] | [atom()]
                                            |         |   because
-                                           |         |   [number() | binary() | atom()] is not a subtype of [binary()]
+                                           |         |   [number() | binary() | atom()] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   number() | binary() | atom() is not a subtype of binary()
+                                           |         |   number() | binary() | atom() is not compatible with binary()
                                            |         |   because
-                                           |         |   number() is not a subtype of binary()
+                                           |         |   number() is not compatible with binary()
         fun                                |         |
             (_K, {i, I}, Acc) ->           |         |
                 [I | Acc];                 |         |
@@ -642,14 +642,14 @@ lists_filtermap_2() ->                     | OK      |
 lists_filtermap_2_neg() ->                 | ERROR   |
     lists:filtermap(                       |         |
         fun erlang:binary_to_list/1,       |         | erlang:binary_to_list/1.
-                                           |         | Expected: fun((number()) -> boolean() | {'true', term()})
-                                           |         | Got     : fun((binary()) -> [number()])
+                                           |         | Expression has type:   fun((binary()) -> [number()])
+                                           |         | Context expected type: fun((number()) -> boolean() | {'true', term()})
                                            |         | 
-                                           |         |   fun((binary()) -> [number()]) is not a subtype of fun((number()) -> boolean() | {'true', term()})
+                                           |         |   fun((binary()) -> [number()]) is not compatible with fun((number()) -> boolean() | {'true', term()})
                                            |         |   because
-                                           |         |   [number()] is not a subtype of boolean() | {'true', term()}
+                                           |         |   [number()] is not compatible with boolean() | {'true', term()}
                                            |         |   because
-                                           |         |   [number()] is not a subtype of boolean()
+                                           |         |   [number()] is not compatible with boolean()
         [1, 2, 3]                          |         |
     ).                                     |         |
                                            |         |
@@ -668,12 +668,12 @@ lists_filtermap_4_neg() ->                 | ERROR   |
         fun (1) -> {true, a};              |         |
             (2) -> true;                   |         |
             (3) -> wrong_ret end,          |         | 'wrong_ret'.
-                                           |         | Expected: boolean() | {'true', term()}
-                                           |         | Got     : 'wrong_ret'
+                                           |         | Expression has type:   'wrong_ret'
+                                           |         | Context expected type: boolean() | {'true', term()}
                                            |         | 
-                                           |         |   'wrong_ret' is not a subtype of boolean() | {'true', term()}
+                                           |         |   'wrong_ret' is not compatible with boolean() | {'true', term()}
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean()
+                                           |         |   'wrong_ret' is not compatible with boolean()
         [1, 2, 3]                          |         |
     ),                                     |         |
     nok.                                   |         |
@@ -684,8 +684,8 @@ lists_filtermap_5_neg() ->                 | ERROR   |
         fun (1) -> {true, a};              |         |
             (2) -> true end,               |         |
         not_a_list                         |         | 'not_a_list'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'not_a_list'
+                                           |         | Expression has type:   'not_a_list'
+                                           |         | Context expected type: [term()]
     ),                                     |         |
     nok.                                   |         |
                                            |         |
@@ -728,14 +728,14 @@ lists_filtermap_8_neg() ->                 | ERROR   |
                            wrong_ret       |         |
                    end,                    |         |
                 Res                        |         | Res.
-                                           |         | Expected: boolean() | {'true', term()}
-                                           |         | Got     : {'true', 'a'} | 'wrong_ret'
+                                           |         | Expression has type:   {'true', 'a'} | 'wrong_ret'
+                                           |         | Context expected type: boolean() | {'true', term()}
                                            |         | 
-                                           |         |   {'true', 'a'} | 'wrong_ret' is not a subtype of boolean() | {'true', term()}
+                                           |         |   {'true', 'a'} | 'wrong_ret' is not compatible with boolean() | {'true', term()}
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean() | {'true', term()}
+                                           |         |   'wrong_ret' is not compatible with boolean() | {'true', term()}
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean()
+                                           |         |   'wrong_ret' is not compatible with boolean()
         end,                               |         |
         [1, 2, 3]                          |         |
     ),                                     |         |
@@ -772,16 +772,16 @@ queue_filter_3() ->                        | OK      |
 queue_filter_4_neg() ->                    | ERROR   |
     queue:filter(                          |         |
         fun (a) -> [a];                    |         | fun.
-                                           |         | Expected: fun(('a' | 'b') -> boolean() | ['a' | 'b'])
-                                           |         | Got     : fun(('a' | 'b') -> ['a'] | 'true' | 'wrong_ret')
+                                           |         | Expression has type:   fun(('a' | 'b') -> ['a'] | 'true' | 'wrong_ret')
+                                           |         | Context expected type: fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         | 
-                                           |         |   fun(('a' | 'b') -> ['a'] | 'true' | 'wrong_ret') is not a subtype of fun(('a' | 'b') -> boolean() | ['a' | 'b'])
+                                           |         |   fun(('a' | 'b') -> ['a'] | 'true' | 'wrong_ret') is not compatible with fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         |   because
-                                           |         |   ['a'] | 'true' | 'wrong_ret' is not a subtype of boolean() | ['a' | 'b']
+                                           |         |   ['a'] | 'true' | 'wrong_ret' is not compatible with boolean() | ['a' | 'b']
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean() | ['a' | 'b']
+                                           |         |   'wrong_ret' is not compatible with boolean() | ['a' | 'b']
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean()
+                                           |         |   'wrong_ret' is not compatible with boolean()
             (b) -> true;                   |         |
             (c) -> wrong_ret end,          |         |
         ab_queue()                         |         |
@@ -794,8 +794,8 @@ queue_filter_5_neg() ->                    | ERROR   |
         fun (1) -> {true, a};              |         |
             (2) -> true end,               |         |
         not_a_queue                        |         | 'not_a_queue'.
-                                           |         | Expected: queue:queue(Item)
-                                           |         | Got     : 'not_a_queue'
+                                           |         | Expression has type:   'not_a_queue'
+                                           |         | Context expected type: queue:queue(Item)
     ),                                     |         |
     nok.                                   |         |
                                            |         |
@@ -815,16 +815,16 @@ queue_filter_6_neg() ->                    | ERROR   |
 queue_filter_7_neg() ->                    | ERROR   |
     queue:filter(                          |         |
         fun (1) -> {true, a};              |         | fun.
-                                           |         | Expected: fun(('a' | 'b') -> boolean() | ['a' | 'b'])
-                                           |         | Got     : fun(('a' | 'b') -> {'true', 'a'} | ['a'] | 'false')
+                                           |         | Expression has type:   fun(('a' | 'b') -> {'true', 'a'} | ['a'] | 'false')
+                                           |         | Context expected type: fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         | 
-                                           |         |   fun(('a' | 'b') -> {'true', 'a'} | ['a'] | 'false') is not a subtype of fun(('a' | 'b') -> boolean() | ['a' | 'b'])
+                                           |         |   fun(('a' | 'b') -> {'true', 'a'} | ['a'] | 'false') is not compatible with fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         |   because
-                                           |         |   {'true', 'a'} | ['a'] | 'false' is not a subtype of boolean() | ['a' | 'b']
+                                           |         |   {'true', 'a'} | ['a'] | 'false' is not compatible with boolean() | ['a' | 'b']
                                            |         |   because
-                                           |         |   {'true', 'a'} is not a subtype of boolean() | ['a' | 'b']
+                                           |         |   {'true', 'a'} is not compatible with boolean() | ['a' | 'b']
                                            |         |   because
-                                           |         |   {'true', 'a'} is not a subtype of boolean()
+                                           |         |   {'true', 'a'} is not compatible with boolean()
             (X) -> case X of               |         |
                        true ->             |         |
                            [a];            |         |
@@ -841,16 +841,16 @@ queue_filter_7_neg() ->                    | ERROR   |
 queue_filter_8_neg() ->                    | ERROR   |
     queue:filter(                          |         |
         fun (a) -> [a];                    |         | fun.
-                                           |         | Expected: fun(('a' | 'b') -> boolean() | ['a' | 'b'])
-                                           |         | Got     : fun(('a' | 'b') -> ['a'] | 'wrong_ret')
+                                           |         | Expression has type:   fun(('a' | 'b') -> ['a'] | 'wrong_ret')
+                                           |         | Context expected type: fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         | 
-                                           |         |   fun(('a' | 'b') -> ['a'] | 'wrong_ret') is not a subtype of fun(('a' | 'b') -> boolean() | ['a' | 'b'])
+                                           |         |   fun(('a' | 'b') -> ['a'] | 'wrong_ret') is not compatible with fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         |   because
-                                           |         |   ['a'] | 'wrong_ret' is not a subtype of boolean() | ['a' | 'b']
+                                           |         |   ['a'] | 'wrong_ret' is not compatible with boolean() | ['a' | 'b']
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean() | ['a' | 'b']
+                                           |         |   'wrong_ret' is not compatible with boolean() | ['a' | 'b']
                                            |         |   because
-                                           |         |   'wrong_ret' is not a subtype of boolean()
+                                           |         |   'wrong_ret' is not compatible with boolean()
             (X) ->                         |         |
                 Res = case X of            |         |
                           true ->          |         |
@@ -869,14 +869,14 @@ queue_filter_8_neg() ->                    | ERROR   |
 queue_filter_9_neg() ->                    | ERROR   |
     queue:filter(                          |         |
         fun list_to_atom/1,                |         | erlang:list_to_atom/1.
-                                           |         | Expected: fun((none()) -> boolean() | [none()])
-                                           |         | Got     : fun((string()) -> atom())
+                                           |         | Expression has type:   fun((string()) -> atom())
+                                           |         | Context expected type: fun((none()) -> boolean() | [none()])
                                            |         | 
-                                           |         |   fun((string()) -> atom()) is not a subtype of fun((none()) -> boolean() | [none()])
+                                           |         |   fun((string()) -> atom()) is not compatible with fun((none()) -> boolean() | [none()])
                                            |         |   because
-                                           |         |   atom() is not a subtype of boolean() | [none()]
+                                           |         |   atom() is not compatible with boolean() | [none()]
                                            |         |   because
-                                           |         |   atom() is not a subtype of boolean()
+                                           |         |   atom() is not compatible with boolean()
         ab_queue()                         |         |
     ),                                     |         |
     nok.                                   |         |
@@ -886,12 +886,12 @@ queue_filter_9_neg() ->                    | ERROR   |
 queue_filter_10_neg() ->                   | ERROR   |
     queue:filter(                          |         |
         fun atom_to_list/1,                |         | erlang:atom_to_list/1.
-                                           |         | Expected: fun((atom()) -> boolean() | [atom()])
-                                           |         | Got     : fun((atom()) -> string())
+                                           |         | Expression has type:   fun((atom()) -> string())
+                                           |         | Context expected type: fun((atom()) -> boolean() | [atom()])
                                            |         | 
-                                           |         |   fun((atom()) -> string()) is not a subtype of fun((atom()) -> boolean() | [atom()])
+                                           |         |   fun((atom()) -> string()) is not compatible with fun((atom()) -> boolean() | [atom()])
                                            |         |   because
-                                           |         |   string() is not a subtype of boolean() | [atom()]
+                                           |         |   string() is not compatible with boolean() | [atom()]
         ab_queue()                         |         |
     ),                                     |         |
     nok.                                   |         |
@@ -901,12 +901,12 @@ queue_filter_10_neg() ->                   | ERROR   |
 queue_filter_11_neg() ->                   | ERROR   |
     queue:filter(                          |         |
         fun atom_to_list/1,                |         | erlang:atom_to_list/1.
-                                           |         | Expected: fun((atom()) -> boolean() | [atom()])
-                                           |         | Got     : fun((atom()) -> string())
+                                           |         | Expression has type:   fun((atom()) -> string())
+                                           |         | Context expected type: fun((atom()) -> boolean() | [atom()])
                                            |         | 
-                                           |         |   fun((atom()) -> string()) is not a subtype of fun((atom()) -> boolean() | [atom()])
+                                           |         |   fun((atom()) -> string()) is not compatible with fun((atom()) -> boolean() | [atom()])
                                            |         |   because
-                                           |         |   string() is not a subtype of boolean() | [atom()]
+                                           |         |   string() is not compatible with boolean() | [atom()]
         ab_queue()                         |         |
     ),                                     |         |
     nok.                                   |         |
@@ -917,12 +917,12 @@ queue_filter_11_neg() ->                   | ERROR   |
 queue_filter_12_neg(Q) ->                  | ERROR   |
     queue:filter(                          |         |
         fun atom_to_list/1,                |         | erlang:atom_to_list/1.
-                                           |         | Expected: fun((atom()) -> boolean() | [atom()])
-                                           |         | Got     : fun((atom()) -> string())
+                                           |         | Expression has type:   fun((atom()) -> string())
+                                           |         | Context expected type: fun((atom()) -> boolean() | [atom()])
                                            |         | 
-                                           |         |   fun((atom()) -> string()) is not a subtype of fun((atom()) -> boolean() | [atom()])
+                                           |         |   fun((atom()) -> string()) is not compatible with fun((atom()) -> boolean() | [atom()])
                                            |         |   because
-                                           |         |   string() is not a subtype of boolean() | [atom()]
+                                           |         |   string() is not compatible with boolean() | [atom()]
         Q                                  |         |
     ),                                     |         |
     ok.                                    |         |
@@ -931,12 +931,12 @@ queue_filter_12_neg(Q) ->                  | ERROR   |
 queue_filter_13_neg(Q) ->                  | ERROR   |
     queue:filter(                          |         |
         fun atom_to_list/1,                |         | erlang:atom_to_list/1.
-                                           |         | Expected: fun((atom()) -> boolean() | [atom()])
-                                           |         | Got     : fun((atom()) -> string())
+                                           |         | Expression has type:   fun((atom()) -> string())
+                                           |         | Context expected type: fun((atom()) -> boolean() | [atom()])
                                            |         | 
-                                           |         |   fun((atom()) -> string()) is not a subtype of fun((atom()) -> boolean() | [atom()])
+                                           |         |   fun((atom()) -> string()) is not compatible with fun((atom()) -> boolean() | [atom()])
                                            |         |   because
-                                           |         |   string() is not a subtype of boolean() | [atom()]
+                                           |         |   string() is not compatible with boolean() | [atom()]
         Q                                  |         |
     ),                                     |         |
     ok.                                    |         |
@@ -968,8 +968,8 @@ keystore_4_neg() ->                        | ERROR   |
         a, 1,                              |         |
         [{foo, b}, {c, d}],                |         |
         non_tuple                          |         | 'non_tuple'.
-                                           |         | Expected: tuple()
-                                           |         | Got     : 'non_tuple'
+                                           |         | Expression has type:   'non_tuple'
+                                           |         | Context expected type: tuple()
     ).                                     |         |
                                            |         |
 -spec keystore_5_neg() -> nok.             |         |
@@ -980,12 +980,12 @@ keystore_5_neg() ->                        | ERROR   |
     lists:keystore(                        |         |
         a, 1,                              |         |
         [non_tuple],                       |         | ['non_tuple'].
-                                           |         | Expected: [tuple()]
-                                           |         | Got     : ['non_tuple']
+                                           |         | Expression has type:   ['non_tuple']
+                                           |         | Context expected type: [tuple()]
                                            |         | 
-                                           |         |   ['non_tuple'] is not a subtype of [tuple()]
+                                           |         |   ['non_tuple'] is not compatible with [tuple()]
                                            |         |   because
-                                           |         |   'non_tuple' is not a subtype of tuple()
+                                           |         |   'non_tuple' is not compatible with tuple()
         {replacement}                      |         |
     ).                                     |         |
                                            |         |
@@ -995,8 +995,8 @@ keystore_6_neg() ->                        | ERROR   |
     lists:keystore(                        |         |
         a, 1,                              |         |
         non_list,                          |         | 'non_list'.
-                                           |         | Expected: [tuple()]
-                                           |         | Got     : 'non_list'
+                                           |         | Expression has type:   'non_list'
+                                           |         | Context expected type: [tuple()]
         {replacement}                      |         |
     ).                                     |         |
                                            |         |
@@ -1031,22 +1031,22 @@ keytake_3_1(X) ->                          | OK      |
 -spec keytake_3_2_neg() -> nok.            |         |
 keytake_3_2_neg() ->                       | ERROR   |
     lists:keytake(a, 1, non_tup),          |         | 'non_tup'.
-                                           |         | Expected: [Tuple]
-                                           |         | Got     : 'non_tup'
+                                           |         | Expression has type:   'non_tup'
+                                           |         | Context expected type: [Tuple]
     nok.                                   |         |
                                            |         |
 -spec keytake_3_3_neg() -> nok.            |         |
 keytake_3_3_neg() ->                       | ERROR   |
     lists:keytake(a, 1, non_list),         |         | 'non_list'.
-                                           |         | Expected: [Tuple]
-                                           |         | Got     : 'non_list'
+                                           |         | Expression has type:   'non_list'
+                                           |         | Context expected type: [Tuple]
     nok.                                   |         |
                                            |         |
 -spec keytake_3_4_neg() -> nok.            |         |
 keytake_3_4_neg() ->                       | ERROR   |
     lists:keytake(a, non_num, []),         |         | 'non_num'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'non_num'
+                                           |         | Expression has type:   'non_num'
+                                           |         | Context expected type: number()
     nok.                                   |         |
                                            |         |
 -spec sum_1() -> integer().                |         |
@@ -1064,20 +1064,20 @@ sum_3() ->                                 | OK      |
 -spec sum_4_neg() -> integer().            |         |
 sum_4_neg() ->                             | ERROR   |
     lists:sum([a, 1]).                     |         | ['a', 1].
-                                           |         | Expected: [number()]
-                                           |         | Got     : ['a' | number()]
+                                           |         | Expression has type:   ['a' | number()]
+                                           |         | Context expected type: [number()]
                                            |         | 
-                                           |         |   ['a' | number()] is not a subtype of [number()]
+                                           |         |   ['a' | number()] is not compatible with [number()]
                                            |         |   because
-                                           |         |   'a' | number() is not a subtype of number()
+                                           |         |   'a' | number() is not compatible with number()
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 -spec sum_5_neg() -> integer().            |         |
 sum_5_neg() ->                             | ERROR   |
     lists:sum(not_a_list).                 |         | 'not_a_list'.
-                                           |         | Expected: [number()]
-                                           |         | Got     : 'not_a_list'
+                                           |         | Expression has type:   'not_a_list'
+                                           |         | Context expected type: [number()]
                                            |         |
 -spec max_1() -> integer().                |         |
 max_1() ->                                 | OK      |
@@ -1098,8 +1098,8 @@ max_4() ->                                 | OK      |
 -spec max_5_neg() -> integer().            |         |
 max_5_neg() ->                             | ERROR   |
     lists:max(not_a_list).                 |         | 'not_a_list'.
-                                           |         | Expected: [T]
-                                           |         | Got     : 'not_a_list'
+                                           |         | Expression has type:   'not_a_list'
+                                           |         | Context expected type: [T]
                                            |         |
 -spec min_1() -> integer().                |         |
 min_1() ->                                 | OK      |
@@ -1120,8 +1120,8 @@ min_4() ->                                 | OK      |
 -spec min_5_neg() -> integer().            |         |
 min_5_neg() ->                             | ERROR   |
     lists:min(not_a_list).                 |         | 'not_a_list'.
-                                           |         | Expected: [T]
-                                           |         | Got     : 'not_a_list'
+                                           |         | Expression has type:   'not_a_list'
+                                           |         | Context expected type: [T]
                                            |         |
 -spec test_find_shape(#{k := v}) -> v.     |         |
 test_find_shape(M) ->                      | OK      |
@@ -1140,201 +1140,201 @@ test_find_dict(M) ->                       | OK      |
         pid() | undefined.                 |         |
 'test_plists_get_value/2'(L) ->            | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
-                                           |         | Expected: pid() | 'undefined'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid() | 'undefined'
                                            |         | 
-                                           |         |   term() is not a subtype of pid() | 'undefined'
+                                           |         |   term() is not compatible with pid() | 'undefined'
                                            |         |   because
-                                           |         |   term() is not a subtype of pid()
+                                           |         |   term() is not compatible with pid()
                                            |         |
 -spec 'test_plists_get_value/2_overlap'(   |         |
     plist({k, v}, pid())) ->               |         |
     pid() | undefined | v.                 |         |
 'test_plists_get_value/2_overlap'(L) ->    | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
-                                           |         | Expected: pid() | 'undefined' | 'v'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid() | 'undefined' | 'v'
                                            |         | 
-                                           |         |   term() is not a subtype of pid() | 'undefined' | 'v'
+                                           |         |   term() is not compatible with pid() | 'undefined' | 'v'
                                            |         |   because
-                                           |         |   term() is not a subtype of pid()
+                                           |         |   term() is not compatible with pid()
                                            |         |
 -spec 'test_plists_get_value/2_neg'(       |         |
     plist(atom(), pid())) -> pid().        |         |
 'test_plists_get_value/2_neg'(L) ->        | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
-                                           |         | Expected: pid()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec 'test_plists_get_value/3'(           |         |
     plist(reference(), pid())) ->          |         |
         pid() | integer().                 |         |
 'test_plists_get_value/3'(L) ->            | ERROR   |
     proplists:get_value(k, L, 3).          |         | proplists:get_value('k', L, 3).
-                                           |         | Expected: pid() | number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: pid() | number()
                                            |         | 
-                                           |         |   term() is not a subtype of pid() | number()
+                                           |         |   term() is not compatible with pid() | number()
                                            |         |   because
-                                           |         |   term() is not a subtype of pid()
+                                           |         |   term() is not compatible with pid()
                                            |         |
 -spec 'test_plists_get_value/3_overlap'(   |         |
     plist({k, v1}, v2)) ->                 |         |
     v1 | v2 | my_default.                  |         |
 'test_plists_get_value/3_overlap'(L) ->    | ERROR   |
     proplists:get_value(k, L, my_default). |         | proplists:get_value('k', L, 'my_default').
-                                           |         | Expected: 'v1' | 'v2' | 'my_default'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'v1' | 'v2' | 'my_default'
                                            |         | 
-                                           |         |   term() is not a subtype of 'v1' | 'v2' | 'my_default'
+                                           |         |   term() is not compatible with 'v1' | 'v2' | 'my_default'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'v1'
+                                           |         |   term() is not compatible with 'v1'
                                            |         |
 -spec 'test_plists_get_value/3_neg'(       |         |
     plist(number(), v)) ->                 |         |
     v.                                     |         |
 'test_plists_get_value/3_neg'(L) ->        | ERROR   |
     proplists:get_value(k, L, my_default). |         | proplists:get_value('k', L, 'my_default').
-                                           |         | Expected: 'v'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'v'
                                            |         |
 -spec 'test_plists_get_value/2_2_neg'()    |         |
         -> term().                         |         |
 'test_plists_get_value/2_2_neg'() ->       | ERROR   |
     proplists:get_value(k, b).             |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec 'test_plists_get_value/2_3'()        |         |
         -> default.                        |         |
 'test_plists_get_value/2_3'() ->           | ERROR   |
     proplists:get_value(k, []).            |         | proplists:get_value('k', []).
-                                           |         | Expected: 'default'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'default'
                                            |         |
 -spec 'test_plists_get_value/3_2'()        |         |
         -> my_default.                     |         |
 'test_plists_get_value/3_2'() ->           | ERROR   |
 proplists:get_value(k, [], my_default).    |         | proplists:get_value('k', [], 'my_default').
-                                           |         | Expected: 'my_default'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'my_default'
                                            |         |
 -spec 'test_plists_get_value/3_2_neg'()    |         |
         -> term().                         |         |
 'test_plists_get_value/3_2_neg'() ->       | ERROR   |
     proplists:get_value(k, b, my_default). |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_get_bool1_neg            |         |
     (plist(a, b)) -> true.                 |         |
 test_plists_get_bool1_neg(L) ->            | ERROR   |
     proplists:get_bool(b, L).              |         | proplists:get_bool('b', L).
-                                           |         | Expected: 'true'
-                                           |         | Got     : boolean()
+                                           |         | Expression has type:   boolean()
+                                           |         | Context expected type: 'true'
                                            |         |
 -spec test_plists_get_all_values(          |         |
     plist(integer(), pid())) ->            |         |
     [pid() | default].                     |         |
 test_plists_get_all_values(L) ->           | ERROR   |
     proplists:get_all_values(k, L).        |         | proplists:get_all_values('k', L).
-                                           |         | Expected: [pid() | 'default']
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: [pid() | 'default']
                                            |         | 
-                                           |         |   [term()] is not a subtype of [pid() | 'default']
+                                           |         |   [term()] is not compatible with [pid() | 'default']
                                            |         |   because
-                                           |         |   term() is not a subtype of pid() | 'default'
+                                           |         |   term() is not compatible with pid() | 'default'
                                            |         |   because
-                                           |         |   term() is not a subtype of pid()
+                                           |         |   term() is not compatible with pid()
                                            |         |
 -spec test_plists_get_all_values2(         |         |
     plist({k, v}, pid())) ->               |         |
     [pid() | default | v].                 |         |
 test_plists_get_all_values2(L) ->          | ERROR   |
     proplists:get_all_values(k, L).        |         | proplists:get_all_values('k', L).
-                                           |         | Expected: [pid() | 'default' | 'v']
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: [pid() | 'default' | 'v']
                                            |         | 
-                                           |         |   [term()] is not a subtype of [pid() | 'default' | 'v']
+                                           |         |   [term()] is not compatible with [pid() | 'default' | 'v']
                                            |         |   because
-                                           |         |   term() is not a subtype of pid() | 'default' | 'v'
+                                           |         |   term() is not compatible with pid() | 'default' | 'v'
                                            |         |   because
-                                           |         |   term() is not a subtype of pid()
+                                           |         |   term() is not compatible with pid()
                                            |         |
 -spec test_plists_get_all_values3(         |         |
     plist(atom(), pid())) -> [pid()].      |         |
 test_plists_get_all_values3(L) ->          | ERROR   |
     proplists:get_all_values(k, L).        |         | proplists:get_all_values('k', L).
-                                           |         | Expected: [pid()]
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: [pid()]
                                            |         | 
-                                           |         |   [term()] is not a subtype of [pid()]
+                                           |         |   [term()] is not compatible with [pid()]
                                            |         |   because
-                                           |         |   term() is not a subtype of pid()
+                                           |         |   term() is not compatible with pid()
                                            |         |
 -spec test_plists_get_all_values4()        |         |
         -> [].                             |         |
 test_plists_get_all_values4() ->           | ERROR   |
     proplists:get_all_values(k, []).       |         | proplists:get_all_values('k', []).
-                                           |         | Expected: []
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: []
                                            |         |
 -spec test_plists_get_all_values5_neg()    |         |
         -> [].                             |         |
 test_plists_get_all_values5_neg() ->       | ERROR   |
     proplists:get_all_values(k, b).        |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_get_bool2_neg()          |         |
         -> term().                         |         |
 test_plists_get_bool2_neg() ->             | ERROR   |
     proplists:get_bool(b, b).              |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_get_keys1_neg            |         |
     ([a | b | {c, {d, d}}]) -> [c].        |         |
 test_plists_get_keys1_neg(L) ->            | ERROR   |
     proplists:get_keys(L).                 |         | proplists:get_keys(L).
-                                           |         | Expected: ['c']
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: ['c']
                                            |         | 
-                                           |         |   [term()] is not a subtype of ['c']
+                                           |         |   [term()] is not compatible with ['c']
                                            |         |   because
-                                           |         |   term() is not a subtype of 'c'
+                                           |         |   term() is not compatible with 'c'
                                            |         |
 -spec test_plists_get_keys2                |         |
     ([a | b | {c, {d, d}}]) ->             |         |
         [a | b | c].                       |         |
 test_plists_get_keys2(L) ->                | ERROR   |
     proplists:get_keys(L).                 |         | proplists:get_keys(L).
-                                           |         | Expected: ['a' | 'b' | 'c']
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: ['a' | 'b' | 'c']
                                            |         | 
-                                           |         |   [term()] is not a subtype of ['a' | 'b' | 'c']
+                                           |         |   [term()] is not compatible with ['a' | 'b' | 'c']
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a' | 'b' | 'c'
+                                           |         |   term() is not compatible with 'a' | 'b' | 'c'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a'
+                                           |         |   term() is not compatible with 'a'
                                            |         |
 -spec test_plists_get_keys3_neg()          |         |
         -> term().                         |         |
 test_plists_get_keys3_neg() ->             | ERROR   |
     proplists:get_keys(a).                 |         | 'a'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_get_keys4()              |         |
         -> [a].                            |         |
 test_plists_get_keys4() ->                 | ERROR   |
     proplists:get_keys(                    |         | proplists:get_keys([{'a', 'b', 'c'}]).
-                                           |         | Expected: ['a']
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: ['a']
                                            |         | 
-                                           |         |   [term()] is not a subtype of ['a']
+                                           |         |   [term()] is not compatible with ['a']
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a'
+                                           |         |   term() is not compatible with 'a'
         [{a, b, c}]                        |         |
     ).                                     |         |
                                            |         |
@@ -1343,67 +1343,67 @@ test_plists_get_keys4() ->                 | ERROR   |
     a | pid().                             |         |
 test_plists_get_values1(L) ->              | ERROR   |
     proplists:get_value(k, L).             |         | proplists:get_value('k', L).
-                                           |         | Expected: 'a' | pid()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'a' | pid()
                                            |         | 
-                                           |         |   term() is not a subtype of 'a' | pid()
+                                           |         |   term() is not compatible with 'a' | pid()
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a'
+                                           |         |   term() is not compatible with 'a'
                                            |         |
 -spec test_plists_get_values2_neg() ->     |         |
     a | pid().                             |         |
 test_plists_get_values2_neg() ->           | ERROR   |
     proplists:get_value(k, b).             |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_lookup1_neg()            |         |
     -> {b, true}.                          |         |
 test_plists_lookup1_neg() ->               | ERROR   |
 proplists:lookup(self(), [a, {b, true}]).  |         | proplists:lookup(erlang:self(), ['a', {'b', 'true'}]).
-                                           |         | Expected: {'b', 'true'}
-                                           |         | Got     : 'none' | tuple()
+                                           |         | Expression has type:   'none' | tuple()
+                                           |         | Context expected type: {'b', 'true'}
                                            |         |
 -spec test_plists_lookup2_neg() -> term(). |         |
 test_plists_lookup2_neg() ->               | ERROR   |
     proplists:lookup(a, b).                |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_lookup3()                |         |
         -> none | {a, true} | {b, true}.   |         |
 test_plists_lookup3() ->                   | ERROR   |
 proplists:lookup(self(), [a, {b, true}]).  |         | proplists:lookup(erlang:self(), ['a', {'b', 'true'}]).
-                                           |         | Expected: 'none' | {'a', 'true'} | {'b', 'true'}
-                                           |         | Got     : 'none' | tuple()
+                                           |         | Expression has type:   'none' | tuple()
+                                           |         | Context expected type: 'none' | {'a', 'true'} | {'b', 'true'}
                                            |         | 
-                                           |         |   'none' | tuple() is not a subtype of 'none' | {'a', 'true'} | {'b', 'true'}
+                                           |         |   'none' | tuple() is not compatible with 'none' | {'a', 'true'} | {'b', 'true'}
                                            |         |   because
-                                           |         |   tuple() is not a subtype of 'none' | {'a', 'true'} | {'b', 'true'}
+                                           |         |   tuple() is not compatible with 'none' | {'a', 'true'} | {'b', 'true'}
                                            |         |   because
-                                           |         |   tuple() is not a subtype of 'none'
+                                           |         |   tuple() is not compatible with 'none'
                                            |         |
 -spec test_plists_lookup4()                |         |
         -> none.                           |         |
 test_plists_lookup4() ->                   | ERROR   |
     proplists:lookup(k, []).               |         | proplists:lookup('k', []).
-                                           |         | Expected: 'none'
-                                           |         | Got     : 'none' | tuple()
+                                           |         | Expression has type:   'none' | tuple()
+                                           |         | Context expected type: 'none'
                                            |         | 
-                                           |         |   'none' | tuple() is not a subtype of 'none'
+                                           |         |   'none' | tuple() is not compatible with 'none'
                                            |         |   because
-                                           |         |   tuple() is not a subtype of 'none'
+                                           |         |   tuple() is not compatible with 'none'
                                            |         |
 -spec test_plists_lookup_all1_neg()        |         |
         -> [{b, true}].                    |         |
 test_plists_lookup_all1_neg() ->           | ERROR   |
     proplists:lookup_all(                  |         | proplists:lookup_all(erlang:self(), ['a', {'b', 'true'}]).
-                                           |         | Expected: [{'b', 'true'}]
-                                           |         | Got     : [tuple()]
+                                           |         | Expression has type:   [tuple()]
+                                           |         | Context expected type: [{'b', 'true'}]
                                            |         | 
-                                           |         |   [tuple()] is not a subtype of [{'b', 'true'}]
+                                           |         |   [tuple()] is not compatible with [{'b', 'true'}]
                                            |         |   because
-                                           |         |   tuple() is not a subtype of {'b', 'true'}
+                                           |         |   tuple() is not compatible with {'b', 'true'}
         self(),                            |         |
         [a, {b, true}]                     |         |
     ).                                     |         |
@@ -1412,21 +1412,21 @@ test_plists_lookup_all1_neg() ->           | ERROR   |
         -> term().                         |         |
 test_plists_lookup_all2_neg() ->           | ERROR   |
     proplists:lookup_all(a, b).            |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_lookup_all3()            |         |
         -> [{a, true} | {b, true}].        |         |
 test_plists_lookup_all3() ->               | ERROR   |
     proplists:lookup_all(                  |         | proplists:lookup_all(erlang:self(), ['a', {'b', 'true'}]).
-                                           |         | Expected: [{'a', 'true'} | {'b', 'true'}]
-                                           |         | Got     : [tuple()]
+                                           |         | Expression has type:   [tuple()]
+                                           |         | Context expected type: [{'a', 'true'} | {'b', 'true'}]
                                            |         | 
-                                           |         |   [tuple()] is not a subtype of [{'a', 'true'} | {'b', 'true'}]
+                                           |         |   [tuple()] is not compatible with [{'a', 'true'} | {'b', 'true'}]
                                            |         |   because
-                                           |         |   tuple() is not a subtype of {'a', 'true'} | {'b', 'true'}
+                                           |         |   tuple() is not compatible with {'a', 'true'} | {'b', 'true'}
                                            |         |   because
-                                           |         |   tuple() is not a subtype of {'a', 'true'}
+                                           |         |   tuple() is not compatible with {'a', 'true'}
         self(),                            |         |
         [a, {b, true}]                     |         |
     ).                                     |         |
@@ -1435,8 +1435,8 @@ test_plists_lookup_all3() ->               | ERROR   |
         -> [].                             |         |
 test_plists_lookup_all4() ->               | ERROR   |
     proplists:lookup_all(                  |         | proplists:lookup_all(erlang:self(), []).
-                                           |         | Expected: []
-                                           |         | Got     : [tuple()]
+                                           |         | Expression has type:   [tuple()]
+                                           |         | Context expected type: []
         self(),                            |         |
         []                                 |         |
     ).                                     |         |
@@ -1463,14 +1463,14 @@ test_plists_is_defined3() ->               | OK      |
     boolean().                             |         |
 test_plists_is_defined4_neg() ->           | ERROR   |
     proplists:is_defined(self(), b).       |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_delete1_neg() -> term(). |         |
 test_plists_delete1_neg() ->               | ERROR   |
     proplists:delete(k, b).                |         | 'b'.
-                                           |         | Expected: [A]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [A]
                                            |         |
 -spec test_plists_delete2() -> [].         |         |
 test_plists_delete2() ->                   | OK      |
@@ -1487,36 +1487,36 @@ test_plists_delete3(L) ->                  | OK      |
 ) -> {[plist(a, b)], plist(a, b)}.         |         |
 test_plists_split1(L, Ks) ->               | ERROR   |
     proplists:split(L, Ks).                |         | proplists:split(L, Ks).
-                                           |         | Expected: {[plist('a', 'b')], plist('a', 'b')}
-                                           |         | Got     : {[[term()]], [term()]}
+                                           |         | Expression has type:   {[[term()]], [term()]}
+                                           |         | Context expected type: {[plist('a', 'b')], plist('a', 'b')}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {[[term()]], [term()]} is not a subtype of {[plist('a', 'b')], plist('a', 'b')}
+                                           |         |   {[[term()]], [term()]} is not compatible with {[plist('a', 'b')], plist('a', 'b')}
                                            |         |   because
-                                           |         |   [[term()]] is not a subtype of [plist('a', 'b')]
+                                           |         |   [[term()]] is not compatible with [plist('a', 'b')]
                                            |         |   because
-                                           |         |   [term()] is not a subtype of plist('a', 'b')
+                                           |         |   [term()] is not compatible with plist('a', 'b')
                                            |         |   because
-                                           |         |   [term()] is not a subtype of ['a' | {'a', 'b'}]
+                                           |         |   [term()] is not compatible with ['a' | {'a', 'b'}]
                                            |         |
 -spec test_plists_split2_neg() -> term().  |         |
 test_plists_split2_neg() ->                | ERROR   |
     proplists:split(b, []).                |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_split3_neg() -> term().  |         |
 test_plists_split3_neg() ->                | ERROR   |
     proplists:split([], b).                |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_to_map1_neg()            |         |
     -> term().                             |         |
 test_plists_to_map1_neg() ->               | ERROR   |
     proplists:to_map(b).                   |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test_plists_to_map2_neg()            |         |
         -> term().                         |         |
@@ -1527,46 +1527,46 @@ test_plists_to_map2_neg() ->               | OK      |
         -> #{a |d => b | pid()}.           |         |
 test_plists_to_map3_neg() ->               | ERROR   |
     proplists:to_map(                      |         | proplists:to_map([{'a', 'b'}, 'c', {'d', erlang:self()}]).
-                                           |         | Expected: #D{'a' | 'd' => 'b' | pid()}
-                                           |         | Got     : #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Context expected type: #D{'a' | 'd' => 'b' | pid()}
                                            |         | 
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not a subtype of #D{'a' | 'd' => 'b' | pid()}
+                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with #D{'a' | 'd' => 'b' | pid()}
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of 'a' | 'd'
+                                           |         |   eqwalizer:dynamic() is not compatible with 'a' | 'd'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a' | 'd'
+                                           |         |   term() is not compatible with 'a' | 'd'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a'
+                                           |         |   term() is not compatible with 'a'
         [{a, b}, c, {d, self()}]).         |         |
                                            |         |
 -spec test_plists_to_map4()                |         |
     -> #{a | c |d => b | true | pid()}.    |         |
 test_plists_to_map4() ->                   | ERROR   |
     proplists:to_map(                      |         | proplists:to_map([{'a', 'b'}, 'c', {'d', erlang:self()}]).
-                                           |         | Expected: #D{'a' | 'c' | 'd' => 'b' | 'true' | pid()}
-                                           |         | Got     : #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Context expected type: #D{'a' | 'c' | 'd' => 'b' | 'true' | pid()}
                                            |         | 
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not a subtype of #D{'a' | 'c' | 'd' => 'b' | 'true' | pid()}
+                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with #D{'a' | 'c' | 'd' => 'b' | 'true' | pid()}
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of 'a' | 'c' | 'd'
+                                           |         |   eqwalizer:dynamic() is not compatible with 'a' | 'c' | 'd'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a' | 'c' | 'd'
+                                           |         |   term() is not compatible with 'a' | 'c' | 'd'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'a'
+                                           |         |   term() is not compatible with 'a'
         [{a, b}, c, {d, self()}]).         |         |
                                            |         |
 -spec test_plists_to_map5()                |         |
         -> #{none() => none()}.            |         |
 test_plists_to_map5() ->                   | ERROR   |
     proplists:to_map([]).                  |         | proplists:to_map([]).
-                                           |         | Expected: #D{none() => none()}
-                                           |         | Got     : #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Context expected type: #D{none() => none()}
                                            |         | 
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not a subtype of #D{none() => none()}
+                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with #D{none() => none()}
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of none()
+                                           |         |   eqwalizer:dynamic() is not compatible with none()
                                            |         |   because
-                                           |         |   term() is not a subtype of none()
+                                           |         |   term() is not compatible with none()
                                            |         |
 -spec test_plists_from_map1() ->           |         |
     plist(a | pid(), b | true).            |         |
@@ -1579,41 +1579,41 @@ test_plists_from_map1() ->                 | OK      |
     term().                                |         |
 test_plists_from_map2_neg() ->             | ERROR   |
     proplists:from_map(b).                 |         | 'b'.
-                                           |         | Expected: #D{K => V}
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: #D{K => V}
                                            |         |
 -spec 'test_plists_get_value/2_4'()        |         |
         -> true | undefined.               |         |
 'test_plists_get_value/2_4'() ->           | ERROR   |
     proplists:get_value(a, [a]).           |         | proplists:get_value('a', ['a']).
-                                           |         | Expected: 'true' | 'undefined'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'true' | 'undefined'
                                            |         | 
-                                           |         |   term() is not a subtype of 'true' | 'undefined'
+                                           |         |   term() is not compatible with 'true' | 'undefined'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'true'
+                                           |         |   term() is not compatible with 'true'
                                            |         |
 -spec 'test_plists_get_value/2_5'          |         |
     (atom()) -> true | undefined.          |         |
 'test_plists_get_value/2_5'(X) ->          | ERROR   |
     proplists:get_value(X, [a]).           |         | proplists:get_value(X, ['a']).
-                                           |         | Expected: 'true' | 'undefined'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'true' | 'undefined'
                                            |         | 
-                                           |         |   term() is not a subtype of 'true' | 'undefined'
+                                           |         |   term() is not compatible with 'true' | 'undefined'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'true'
+                                           |         |   term() is not compatible with 'true'
                                            |         |
 -spec 'test_plists_get_value/3_3'()        |         |
         -> true | b.                       |         |
 'test_plists_get_value/3_3'() ->           | ERROR   |
     proplists:get_value(a, [a], b).        |         | proplists:get_value('a', ['a'], 'b').
-                                           |         | Expected: 'true' | 'b'
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: 'true' | 'b'
                                            |         | 
-                                           |         |   term() is not a subtype of 'true' | 'b'
+                                           |         |   term() is not compatible with 'true' | 'b'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'true'
+                                           |         |   term() is not compatible with 'true'
                                            |         |
 -spec app_env1_strict() -> number().       |         |
 app_env1_strict() ->                       | ERROR   |
@@ -1621,12 +1621,12 @@ app_env1_strict() ->                       | ERROR   |
     case Res of                            |         |
         undefined -> 0;                    |         |
         {ok, N} -> N                       |         | N.
-                                           |         | Expected: number()
-                                           |         | Got     : eqwalizer:dynamic()
+                                           |         | Expression has type:   eqwalizer:dynamic()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   eqwalizer:dynamic() is not a subtype of number()
+                                           |         |   eqwalizer:dynamic() is not compatible with number()
                                            |         |   because
-                                           |         |   term() is not a subtype of number()
+                                           |         |   term() is not compatible with number()
     end.                                   |         |
                                            |         |
 -spec app_env2_strict() -> number().       |         |
@@ -1635,12 +1635,12 @@ app_env2_strict() ->                       | ERROR   |
     case Res of                            |         |
         undefined -> 0;                    |         |
         {ok, N} -> N                       |         | N.
-                                           |         | Expected: number()
-                                           |         | Got     : eqwalizer:dynamic()
+                                           |         | Expression has type:   eqwalizer:dynamic()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   eqwalizer:dynamic() is not a subtype of number()
+                                           |         |   eqwalizer:dynamic() is not compatible with number()
                                            |         |   because
-                                           |         |   term() is not a subtype of number()
+                                           |         |   term() is not compatible with number()
     end.                                   |         |
                                            |         |
 -spec app_env3_strict() -> number().       |         |
@@ -1649,12 +1649,12 @@ app_env3_strict() ->                       | ERROR   |
     K = key,                               |         |
     U = undefined,                         |         |
     application:get_env(A, K, U).          |         | application:get_env(A, K, U).
-                                           |         | Expected: number()
-                                           |         | Got     : eqwalizer:dynamic()
+                                           |         | Expression has type:   eqwalizer:dynamic()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   eqwalizer:dynamic() is not a subtype of number()
+                                           |         |   eqwalizer:dynamic() is not compatible with number()
                                            |         |   because
-                                           |         |   term() is not a subtype of number()
+                                           |         |   term() is not compatible with number()
                                            |         |
 -spec flatten1_strict() -> [atom()].       |         |
 flatten1_strict() ->                       | OK      |
@@ -1671,20 +1671,20 @@ flatten2_strict() ->                       | OK      |
 file_consult_neg1() ->                     | ERROR   |
     {ok, Res} = file:consult(some_file),   |         |
     Res.                                   |         | Res.
-                                           |         | Expected: ['anything']
-                                           |         | Got     : [eqwalizer:dynamic()]
+                                           |         | Expression has type:   [eqwalizer:dynamic()]
+                                           |         | Context expected type: ['anything']
                                            |         | 
-                                           |         |   [eqwalizer:dynamic()] is not a subtype of ['anything']
+                                           |         |   [eqwalizer:dynamic()] is not compatible with ['anything']
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of 'anything'
+                                           |         |   eqwalizer:dynamic() is not compatible with 'anything'
                                            |         |   because
-                                           |         |   term() is not a subtype of 'anything'
+                                           |         |   term() is not compatible with 'anything'
                                            |         |
 -spec file_consult_neg2() -> nok.          |         |
 file_consult_neg2() ->                     | ERROR   |
     file:consult(some_file).               |         | file:consult('some_file').
-                                           |         | Expected: 'nok'
-                                           |         | Got     : {'ok', [eqwalizer:dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
+                                           |         | Expression has type:   {'ok', [eqwalizer:dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
+                                           |         | Context expected type: 'nok'
                                            |         |
 -spec keysort() -> [{a | b, c | d}].       |         |
 keysort() ->                               | OK      |
@@ -1697,18 +1697,18 @@ keysort2() ->                              | OK      |
 -spec keysort3_neg() -> none().            |         |
 keysort3_neg() ->                          | ERROR   |
     lists:keysort(2, [{a, c}, {b, d}]).    |         | lists:keysort(2, [{'a', 'c'}, {'b', 'd'}]).
-                                           |         | Expected: none()
-                                           |         | Got     : [{'a', 'c'} | {'b', 'd'}]
+                                           |         | Expression has type:   [{'a', 'c'} | {'b', 'd'}]
+                                           |         | Context expected type: none()
                                            |         |
 -spec keysort4_neg() -> none().            |         |
 keysort4_neg() ->                          | ERROR   |
     lists:keysort(1, [3]).                 |         | [3].
-                                           |         | Expected: [tuple()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [tuple()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [tuple()]
+                                           |         |   [number()] is not compatible with [tuple()]
                                            |         |   because
-                                           |         |   number() is not a subtype of tuple()
+                                           |         |   number() is not compatible with tuple()
                                            |         |
 -spec gb_sets() -> gb_sets:set(number()).  |         |
 gb_sets() ->                               | OK      |
@@ -1725,14 +1725,14 @@ filtermap_none() ->                        | OK      |
     [integer()].                           |         |
 filtermap_neg() ->                         | ERROR   |
     lists:filtermap(                       |         | lists:filtermap(fun, [1, 2, 3, 4]).
-                                           |         | Expected: [number()]
-                                           |         | Got     : [string() | number()]
+                                           |         | Expression has type:   [string() | number()]
+                                           |         | Context expected type: [number()]
                                            |         | 
-                                           |         |   [string() | number()] is not a subtype of [number()]
+                                           |         |   [string() | number()] is not compatible with [number()]
                                            |         |   because
-                                           |         |   string() | number() is not a subtype of number()
+                                           |         |   string() | number() is not compatible with number()
                                            |         |   because
-                                           |         |   string() is not a subtype of number()
+                                           |         |   string() is not compatible with number()
         fun(X) when X div 2 =:= 0 ->       |         |
             {true, integer_to_list(X)};    |         |
         (X) ->                             |         |
@@ -1767,8 +1767,8 @@ min2(X, Y) ->                              | OK      |
     none().                                |         |
 min3_neg(X, Y) ->                          | ERROR   |
     erlang:min(X, Y).                      |         | erlang:min(X, Y).
-                                           |         | Expected: none()
-                                           |         | Got     : atom() | number()
+                                           |         | Expression has type:   atom() | number()
+                                           |         | Context expected type: none()
                                            |         |
 -spec max1(integer(), integer()) ->        |         |
     integer().                             |         |
@@ -1784,8 +1784,8 @@ max2(X, Y) ->                              | OK      |
     none().                                |         |
 max3_neg(X, Y) ->                          | ERROR   |
     erlang:max(X, Y).                      |         | erlang:max(X, Y).
-                                           |         | Expected: none()
-                                           |         | Got     : atom() | number()
+                                           |         | Expression has type:   atom() | number()
+                                           |         | Context expected type: none()
                                            |         |
 -spec abs1(neg_integer()) ->               |         |
     non_neg_integer().                     |         |
@@ -1812,8 +1812,8 @@ abs5(N) ->                                 | OK      |
 -spec abs6_neg(a) -> number().             |         |
 abs6_neg(Atom) ->                          | ERROR   |
     abs(Atom).                             |         | Atom.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec seq3_1_wip_neg() ->                  |         |
     [non_neg_integer()].                   |         |
@@ -1827,18 +1827,18 @@ seq3_3() -> lists:seq(1, 2, 1).            | OK      |
                                            |         |
 -spec seq3_4_wip_neg() -> [integer()].     |         |
 seq3_4_wip_neg() -> lists:seq(a, 2, 1).    | ERROR   | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec seq3_5_neg() -> [integer()].         |         |
 seq3_5_neg() -> lists:seq(1, a, 1).        | ERROR   | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec seq3_6_neg() -> [integer()].         |         |
 seq3_6_neg() -> lists:seq(1, 2, a).        | ERROR   | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec seq3_7(pos_integer(),                |         |
     pos_integer()                          |         |
@@ -1867,13 +1867,13 @@ seq2_3() -> lists:seq(1, 2).               | OK      |
                                            |         |
 -spec seq2_4_wip_neg() -> [integer()].     |         |
 seq2_4_wip_neg() -> lists:seq(a, 2).       | ERROR   | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec seq2_5_neg() -> [integer()].         |         |
 seq2_5_neg() -> lists:seq(1, a).           | ERROR   | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         |
 -spec seq2_6(pos_integer(),                |         |
     pos_integer()                          |         |
@@ -1923,8 +1923,8 @@ tc1() ->                                   | OK      |
 -spec tc1_neg() -> pid().                  |         |
 tc1_neg() ->                               | ERROR   |
     timer:tc(                              |         | timer:tc(fun).
-                                           |         | Expected: pid()
-                                           |         | Got     : {number(), 'err'}
+                                           |         | Expression has type:   {number(), 'err'}
+                                           |         | Context expected type: pid()
         fun() ->                           |         |
             err                            |         |
         end                                |         |
@@ -1934,41 +1934,41 @@ tc1_neg() ->                               | ERROR   |
     [{whatev} | {2}].                      |         |
 ets_lookup_1_neg(Any) ->                   | ERROR   |
     ets:lookup(tab, Any).                  |         | ets:lookup('tab', Any).
-                                           |         | Expected: [{'whatev'} | {number()}]
-                                           |         | Got     : [eqwalizer:dynamic()]
+                                           |         | Expression has type:   [eqwalizer:dynamic()]
+                                           |         | Context expected type: [{'whatev'} | {number()}]
                                            |         | 
-                                           |         |   [eqwalizer:dynamic()] is not a subtype of [{'whatev'} | {number()}]
+                                           |         |   [eqwalizer:dynamic()] is not compatible with [{'whatev'} | {number()}]
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of {'whatev'} | {number()}
+                                           |         |   eqwalizer:dynamic() is not compatible with {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   term() is not a subtype of {'whatev'} | {number()}
+                                           |         |   term() is not compatible with {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   term() is not a subtype of {'whatev'}
+                                           |         |   term() is not compatible with {'whatev'}
                                            |         |
 -spec ets_lookup_2_neg(term()) -> pid().   |         |
 ets_lookup_2_neg(Any) ->                   | ERROR   |
     ets:lookup(tab, Any).                  |         | ets:lookup('tab', Any).
-                                           |         | Expected: pid()
-                                           |         | Got     : [eqwalizer:dynamic()]
+                                           |         | Expression has type:   [eqwalizer:dynamic()]
+                                           |         | Context expected type: pid()
                                            |         |
 -spec ets_lookup_3_neg(term()) -> pid().   |         |
 ets_lookup_3_neg(Any) ->                   | ERROR   |
     ets:lookup("not atom", Any).           |         | string_lit.
-                                           |         | Expected: ets:tab()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: ets:tab()
                                            |         |
 -spec ets_lookup_4_neg(term()) ->          |         |
     [tuple()].                             |         |
 ets_lookup_4_neg(Any) ->                   | ERROR   |
     ets:lookup(tab, Any).                  |         | ets:lookup('tab', Any).
-                                           |         | Expected: [tuple()]
-                                           |         | Got     : [eqwalizer:dynamic()]
+                                           |         | Expression has type:   [eqwalizer:dynamic()]
+                                           |         | Context expected type: [tuple()]
                                            |         | 
-                                           |         |   [eqwalizer:dynamic()] is not a subtype of [tuple()]
+                                           |         |   [eqwalizer:dynamic()] is not compatible with [tuple()]
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of tuple()
+                                           |         |   eqwalizer:dynamic() is not compatible with tuple()
                                            |         |   because
-                                           |         |   term() is not a subtype of tuple()
+                                           |         |   term() is not compatible with tuple()
                                            |         |
 -spec ets_lookup_5(term()) ->              |         |
     [term()].                              |         |
@@ -1979,35 +1979,35 @@ ets_lookup_5(Any) ->                       | OK      |
     [tuple()].                             |         |
 ets_tab2list_1_neg(Atom) ->                | ERROR   |
     ets:tab2list(Atom).                    |         | ets:tab2list(Atom).
-                                           |         | Expected: [tuple()]
-                                           |         | Got     : [eqwalizer:dynamic()]
+                                           |         | Expression has type:   [eqwalizer:dynamic()]
+                                           |         | Context expected type: [tuple()]
                                            |         | 
-                                           |         |   [eqwalizer:dynamic()] is not a subtype of [tuple()]
+                                           |         |   [eqwalizer:dynamic()] is not compatible with [tuple()]
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of tuple()
+                                           |         |   eqwalizer:dynamic() is not compatible with tuple()
                                            |         |   because
-                                           |         |   term() is not a subtype of tuple()
+                                           |         |   term() is not compatible with tuple()
                                            |         |
 -spec ets_tab2list_2_neg(atom()) ->        |         |
     [{whatev} | {2}].                      |         |
 ets_tab2list_2_neg(Atom) ->                | ERROR   |
     ets:tab2list(Atom).                    |         | ets:tab2list(Atom).
-                                           |         | Expected: [{'whatev'} | {number()}]
-                                           |         | Got     : [eqwalizer:dynamic()]
+                                           |         | Expression has type:   [eqwalizer:dynamic()]
+                                           |         | Context expected type: [{'whatev'} | {number()}]
                                            |         | 
-                                           |         |   [eqwalizer:dynamic()] is not a subtype of [{'whatev'} | {number()}]
+                                           |         |   [eqwalizer:dynamic()] is not compatible with [{'whatev'} | {number()}]
                                            |         |   because
-                                           |         |   eqwalizer:dynamic() is not a subtype of {'whatev'} | {number()}
+                                           |         |   eqwalizer:dynamic() is not compatible with {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   term() is not a subtype of {'whatev'} | {number()}
+                                           |         |   term() is not compatible with {'whatev'} | {number()}
                                            |         |   because
-                                           |         |   term() is not a subtype of {'whatev'}
+                                           |         |   term() is not compatible with {'whatev'}
                                            |         |
 -spec ets_tab2list_3_neg() -> term().      |         |
 ets_tab2list_3_neg() ->                    | ERROR   |
     ets:tab2list("not atom").              |         | string_lit.
-                                           |         | Expected: ets:tab()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: ets:tab()
                                            |         |
 -spec ets_tab2list_4(atom()) ->            |         |
     [term()].                              |         |
@@ -2047,8 +2047,8 @@ flatten2_strict4(L) ->                     | OK      |
 -spec flatten2_strict5_neg() -> term().    |         |
 flatten2_strict5_neg() ->                  | ERROR   |
     lists:flatten([], 1).                  |         | 1.
-                                           |         | Expected: [term()]
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: [term()]
                                            |         |
 -type reclist(A) :: [A | reclist(A)].      |         |
 -spec flatten1_strict4(reclist(A))         |         |
@@ -2058,8 +2058,8 @@ flatten1_strict4(L) -> lists:flatten(L).   | OK      |
 -spec flatten1_strict5_neg() -> term().    |         |
 flatten1_strict5_neg() ->                  | ERROR   |
     lists:flatten(3).                      |         | 3.
-                                           |         | Expected: [term()]
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: [term()]
                                            |         |
 -type reclist2() :: [nil] | [reclist2()].  |         |
 -spec flatten_reclist2                     |         |
@@ -2073,17 +2073,17 @@ flatten_reclist2(RL) ->                    | OK      |
     -> [{A,B}].                            |         |
 flatten_reclist3_neg(X)                    | ERROR   |
     -> lists:flatten(X).                   |         | lists:flatten(X).
-                                           |         | Expected: [{A, B}]
-                                           |         | Got     : [{A, B} | {B, A}]
+                                           |         | Expression has type:   [{A, B} | {B, A}]
+                                           |         | Context expected type: [{A, B}]
                                            |         | 
-                                           |         |   [{A, B} | {B, A}] is not a subtype of [{A, B}]
+                                           |         |   [{A, B} | {B, A}] is not compatible with [{A, B}]
                                            |         |   because
-                                           |         |   {A, B} | {B, A} is not a subtype of {A, B}
+                                           |         |   {A, B} | {B, A} is not compatible with {A, B}
                                            |         |   because
                                            |         |   at tuple index 1:
-                                           |         |   {B, A} is not a subtype of {A, B}
+                                           |         |   {B, A} is not compatible with {A, B}
                                            |         |   because
-                                           |         |   B is not a subtype of A
+                                           |         |   B is not compatible with A
                                            |         |
 -spec union(T, U) -> T | U.                |         |
 union(T, _) -> T.                          | OK      |
@@ -2117,8 +2117,8 @@ maps_without_4(Atom) ->                    | OK      |
 ) -> #{b => atom()}.                       |         |
 maps_without_5_neg(Atom, DOrE) ->          | ERROR   |
     maps:without(                          |         | maps:without(['a', 'c', DOrE], #{..}).
-                                           |         | Expected: #S{b => atom()}
-                                           |         | Got     : #S{a => 'ka', b => atom(), c => pid(), d => 'kd'}
+                                           |         | Expression has type:   #S{a => 'ka', b => atom(), c => pid(), d => 'kd'}
+                                           |         | Context expected type: #S{b => atom()}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -2140,14 +2140,14 @@ maps_without_5_neg(Atom, DOrE) ->          | ERROR   |
 -spec maps_without_6_neg() -> term().      |         |
 maps_without_6_neg() ->                    | ERROR   |
     maps:without(non_list, #{}).           |         | 'non_list'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'non_list'
+                                           |         | Expression has type:   'non_list'
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec maps_without_7_neg() -> term().      |         |
 maps_without_7_neg() ->                    | ERROR   |
     maps:without([], non_map).             |         | 'non_map'.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : 'non_map'
+                                           |         | Expression has type:   'non_map'
+                                           |         | Context expected type: #D{term() => term()}
                                            |         |
 -spec maps_without_8(term()) ->            |         |
     #{atom() => ka | pid()}.               |         |
@@ -2193,8 +2193,8 @@ maps_without_12_neg(None) ->               | OK      |
 ) -> #{b := pid()}.                        |         |
 maps_without_13(Keys) ->                   | ERROR   |
     maps:without(                          |         | maps:without(Keys, #{..}).
-                                           |         | Expected: #S{b := pid()}
-                                           |         | Got     : #S{a => pid(), b => pid()}
+                                           |         | Expression has type:   #S{a => pid(), b => pid()}
+                                           |         | Context expected type: #S{b := pid()}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -2212,8 +2212,8 @@ maps_without_13(Keys) ->                   | ERROR   |
 maps_without_14_neg() ->                   | ERROR   |
     maps:without(                          |         |
         [a | improper_tail],               |         | 'improper_tail'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'improper_tail'
+                                           |         | Expression has type:   'improper_tail'
+                                           |         | Context expected type: [term()]
         #{a => self(), b => self()}        |         |
     ).                                     |         |
                                            |         |
@@ -2224,8 +2224,8 @@ maps_without_14_neg() ->                   | ERROR   |
 maps_without_15_neg() ->                   | ERROR   |
     Keys = [a, b],                         |         |
     maps:without(                          |         | maps:without(Keys, #{..}).
-                                           |         | Expected: #S{b := pid()}
-                                           |         | Got     : #S{a => 'ka', b => pid()}
+                                           |         | Expression has type:   #S{a => 'ka', b => pid()}
+                                           |         | Context expected type: #S{b := pid()}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -2251,8 +2251,8 @@ maps_without_16(M) ->                      | OK      |
     ) -> #{c := atom()}.                   |         |
 maps_without_17_neg(M) ->                  | ERROR   |
     maps:without([a, b], M).               |         | maps:without(['a', 'b'], M).
-                                           |         | Expected: #S{c := atom()}
-                                           |         | Got     : #S{c := 'cv', d := 'dv'} | #S{c := 'cv', e => 'ev'}
+                                           |         | Expression has type:   #S{c := 'cv', d := 'dv'} | #S{c := 'cv', e => 'ev'}
+                                           |         | Context expected type: #S{c := atom()}
                                            |         |
 -spec maps_without_18                      |         |
     (#{a := av, b := bv})                  |         |
@@ -2339,15 +2339,15 @@ maps_find_3_neg(M) ->                      | ERROR   |
     {ok, A} = maps:find(a, M),             |         |
     {ok, N} = maps:find(n, M),             |         |
     {A, N}.                                |         | {A, N}.
-                                           |         | Expected: {atom(), number()}
-                                           |         | Got     : {atom(), number() | pid()}
+                                           |         | Expression has type:   {atom(), number() | pid()}
+                                           |         | Context expected type: {atom(), number()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {atom(), number() | pid()} is not a subtype of {atom(), number()}
+                                           |         |   {atom(), number() | pid()} is not compatible with {atom(), number()}
                                            |         |   because
-                                           |         |   number() | pid() is not a subtype of number()
+                                           |         |   number() | pid() is not compatible with number()
                                            |         |   because
-                                           |         |   pid() is not a subtype of number()
+                                           |         |   pid() is not compatible with number()
                                            |         |
 -spec maps_find_4(                         |         |
     term(), #{a => atom(), n => number()}  |         |
@@ -2426,40 +2426,40 @@ list_flatten_nil_3() ->                    | OK      |
     file:filename().                       |         |
 filename_join_1_1_wip() ->                 | ERROR   |
     filename:join(["server", "erl"]).      |         | filename:join([string_lit, string_lit]).
-                                           |         | Expected: file:filename()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: file:filename()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of file:filename()
+                                           |         |   file:filename_all() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of file:filename()
+                                           |         |   string() | binary() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of string()
+                                           |         |   string() | binary() is not compatible with string()
                                            |         |
 -spec filename_join_1_1_neg() ->           |         |
     file:filename().                       |         |
 filename_join_1_1_neg() ->                 | ERROR   |
     filename:join(["server", <<>>]).       |         | filename:join([string_lit, <<..>>]).
-                                           |         | Expected: file:filename()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: file:filename()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of file:filename()
+                                           |         |   file:filename_all() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of file:filename()
+                                           |         |   string() | binary() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of string()
+                                           |         |   string() | binary() is not compatible with string()
                                            |         |
 -spec filename_join_1_2_neg() ->           |         |
     file:filename().                       |         |
 filename_join_1_2_neg() ->                 | ERROR   |
     filename:join([<<>>, ""]).             |         | filename:join([<<..>>, string_lit]).
-                                           |         | Expected: file:filename()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: file:filename()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of file:filename()
+                                           |         |   file:filename_all() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of file:filename()
+                                           |         |   string() | binary() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of string()
+                                           |         |   string() | binary() is not compatible with string()
                                            |         |
 -spec filename_join_1_3() ->               |         |
     file:filename_all().                   |         |
@@ -2475,14 +2475,14 @@ filename_join_1_4() ->                     | OK      |
     binary().                              |         |
 filename_join_1_5() ->                     | ERROR   |
     filename:join([<<>>, <<>>]).           |         | filename:join([<<..>>, <<..>>]).
-                                           |         | Expected: binary()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of binary()
+                                           |         |   file:filename_all() is not compatible with binary()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of binary()
+                                           |         |   string() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   string() is not a subtype of binary()
+                                           |         |   string() is not compatible with binary()
                                            |         |
 -spec filename_join_1_6() ->               |         |
     file:filename_all().                   |         |
@@ -2498,55 +2498,55 @@ filename_join_1_7() ->                     | OK      |
     file:filename_all().                   |         |
 filename_join_1_8_neg() ->                 | ERROR   |
     filename:join([<<>>, self()]).         |         | [<<..>>, erlang:self()].
-                                           |         | Expected: [file:name_all()]
-                                           |         | Got     : [binary() | pid()]
+                                           |         | Expression has type:   [binary() | pid()]
+                                           |         | Context expected type: [file:name_all()]
                                            |         | 
-                                           |         |   [binary() | pid()] is not a subtype of [file:name_all()]
+                                           |         |   [binary() | pid()] is not compatible with [file:name_all()]
                                            |         |   because
-                                           |         |   binary() | pid() is not a subtype of file:name_all()
+                                           |         |   binary() | pid() is not compatible with file:name_all()
                                            |         |   because
-                                           |         |   binary() | pid() is not a subtype of string() | atom() | file:deep_list() | binary()
+                                           |         |   binary() | pid() is not compatible with string() | atom() | file:deep_list() | binary()
                                            |         |   because
-                                           |         |   pid() is not a subtype of string() | atom() | file:deep_list() | binary()
+                                           |         |   pid() is not compatible with string() | atom() | file:deep_list() | binary()
                                            |         |
 -spec filename_join_2_1_wip() ->           |         |
     file:filename().                       |         |
 filename_join_2_1_wip() ->                 | ERROR   |
     filename:join("server", "erl").        |         | filename:join(string_lit, string_lit).
-                                           |         | Expected: file:filename()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: file:filename()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of file:filename()
+                                           |         |   file:filename_all() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of file:filename()
+                                           |         |   string() | binary() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of string()
+                                           |         |   string() | binary() is not compatible with string()
                                            |         |
 -spec filename_join_2_1_neg() ->           |         |
     file:filename().                       |         |
 filename_join_2_1_neg() ->                 | ERROR   |
     filename:join("server", <<>>).         |         | filename:join(string_lit, <<..>>).
-                                           |         | Expected: file:filename()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: file:filename()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of file:filename()
+                                           |         |   file:filename_all() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of file:filename()
+                                           |         |   string() | binary() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of string()
+                                           |         |   string() | binary() is not compatible with string()
                                            |         |
 -spec filename_join_2_2_neg() ->           |         |
     file:filename().                       |         |
 filename_join_2_2_neg() ->                 | ERROR   |
     filename:join(<<>>, "").               |         | filename:join(<<..>>, string_lit).
-                                           |         | Expected: file:filename()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: file:filename()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of file:filename()
+                                           |         |   file:filename_all() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of file:filename()
+                                           |         |   string() | binary() is not compatible with file:filename()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of string()
+                                           |         |   string() | binary() is not compatible with string()
                                            |         |
 -spec filename_join_2_3() ->               |         |
     file:filename_all().                   |         |
@@ -2562,14 +2562,14 @@ filename_join_2_4() ->                     | OK      |
     binary().                              |         |
 filename_join_2_6_neg() ->                 | ERROR   |
     filename:join(atom, <<>>).             |         | filename:join('atom', <<..>>).
-                                           |         | Expected: binary()
-                                           |         | Got     : file:filename_all()
+                                           |         | Expression has type:   file:filename_all()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   file:filename_all() is not a subtype of binary()
+                                           |         |   file:filename_all() is not compatible with binary()
                                            |         |   because
-                                           |         |   string() | binary() is not a subtype of binary()
+                                           |         |   string() | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   string() is not a subtype of binary()
+                                           |         |   string() is not compatible with binary()
                                            |         |
 -spec filename_join_2_7() ->               |         |
     file:filename_all().                   |         |
@@ -2580,14 +2580,14 @@ filename_join_2_7() ->                     | OK      |
     file:filename_all().                   |         |
 filename_join_2_8_neg() ->                 | ERROR   |
     filename:join(<<>>, self()).           |         | erlang:self().
-                                           |         | Expected: file:name_all()
-                                           |         | Got     : pid()
+                                           |         | Expression has type:   pid()
+                                           |         | Context expected type: file:name_all()
                                            |         | 
-                                           |         |   pid() is not a subtype of file:name_all()
+                                           |         |   pid() is not compatible with file:name_all()
                                            |         |   because
-                                           |         |   pid() is not a subtype of string() | atom() | file:deep_list() | binary()
+                                           |         |   pid() is not compatible with string() | atom() | file:deep_list() | binary()
                                            |         |   because
-                                           |         |   pid() is not a subtype of string()
+                                           |         |   pid() is not compatible with string()
                                            |         |
 -spec my_filter1(atom() | char())          |         |
         -> [char()].                       |         |
@@ -2617,14 +2617,14 @@ queue_filter_20(Q) ->                      | OK      |
 ) -> queue:queue(char()).                  |         |
 queue_filter_21_neg(Q) ->                  | ERROR   |
     queue:filter(                          |         | queue:filter(my_filter1/1, Q).
-                                           |         | Expected: queue:queue(number())
-                                           |         | Got     : queue:queue(atom() | number())
+                                           |         | Expression has type:   queue:queue(atom() | number())
+                                           |         | Context expected type: queue:queue(number())
                                            |         | 
-                                           |         |   queue:queue(atom() | number()) is not a subtype of queue:queue(number())
+                                           |         |   queue:queue(atom() | number()) is not compatible with queue:queue(number())
                                            |         |   because
-                                           |         |   atom() | number() is not a subtype of number()
+                                           |         |   atom() | number() is not compatible with number()
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
         fun my_filter1/1,                  |         |
         Q                                  |         |
     ).                                     |         |
@@ -2666,14 +2666,14 @@ maps_put2(B) ->                            | ERROR   |
             false -> M2                    |         |
         end,                               |         |
     M3.                                    |         | M3.
-                                           |         | Expected: state1()
-                                           |         | Got     : #S{count := number(), module := 'foo'} | #S{module := 'foo'}
+                                           |         | Expression has type:   #S{count := number(), module := 'foo'} | #S{module := 'foo'}
+                                           |         | Context expected type: state1()
                                            |         | 
-                                           |         |   #S{count := number(), module := 'foo'} | #S{module := 'foo'} is not a subtype of state1()
+                                           |         |   #S{count := number(), module := 'foo'} | #S{module := 'foo'} is not compatible with state1()
                                            |         |   because
-                                           |         |   #S{count := number(), module := 'foo'} | #S{module := 'foo'} is not a subtype of #S{count := number(), module := atom()}
+                                           |         |   #S{count := number(), module := 'foo'} | #S{module := 'foo'} is not compatible with #S{count := number(), module := atom()}
                                            |         |   because
-                                           |         |   #S{module := 'foo'} is not a subtype of #S{count := number(), module := atom()}
+                                           |         |   #S{module := 'foo'} is not compatible with #S{count := number(), module := atom()}
                                            |         |   These associations do not match:
                                            |         | 
                                            |         |   #S{
@@ -2712,8 +2712,8 @@ sum_numbers2_neg(M) ->                     | ERROR   |
     maps:fold(                             |         |
         fun (Atom, _Num, Sum) ->           |         |
             Atom + Sum                     |         | Atom.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
         end,                               |         |
         0,                                 |         |
         M                                  |         |
@@ -2758,16 +2758,16 @@ file_open3_neg(Modes) ->                   | ERROR   |
     {ok, Device} =                         |         |
         file:open("/file", Modes),         |         |
     Device.                                |         | Device.
-                                           |         | Expected: file:fd()
-                                           |         | Got     : file:io_device()
+                                           |         | Expression has type:   file:io_device()
+                                           |         | Context expected type: file:fd()
                                            |         | 
-                                           |         |   file:io_device() is not a subtype of file:fd()
+                                           |         |   file:io_device() is not compatible with file:fd()
                                            |         |   because
-                                           |         |   pid() | file:fd() is not a subtype of file:fd()
+                                           |         |   pid() | file:fd() is not compatible with file:fd()
                                            |         |   because
-                                           |         |   pid() | file:fd() is not a subtype of #file_descriptor{}
+                                           |         |   pid() | file:fd() is not compatible with #file_descriptor{}
                                            |         |   because
-                                           |         |   pid() is not a subtype of #file_descriptor{}
+                                           |         |   pid() is not compatible with #file_descriptor{}
                                            |         |
 -spec file_open5_neg                       |         |
     (file:mode()) -> file:fd().            |         |
@@ -2775,16 +2775,16 @@ file_open5_neg(Mode) ->                    | ERROR   |
     {ok, Device} =                         |         |
         file:open("/file", [Mode]),        |         |
     Device.                                |         | Device.
-                                           |         | Expected: file:fd()
-                                           |         | Got     : file:io_device()
+                                           |         | Expression has type:   file:io_device()
+                                           |         | Context expected type: file:fd()
                                            |         | 
-                                           |         |   file:io_device() is not a subtype of file:fd()
+                                           |         |   file:io_device() is not compatible with file:fd()
                                            |         |   because
-                                           |         |   pid() | file:fd() is not a subtype of file:fd()
+                                           |         |   pid() | file:fd() is not compatible with file:fd()
                                            |         |   because
-                                           |         |   pid() | file:fd() is not a subtype of #file_descriptor{}
+                                           |         |   pid() | file:fd() is not compatible with #file_descriptor{}
                                            |         |   because
-                                           |         |   pid() is not a subtype of #file_descriptor{}
+                                           |         |   pid() is not compatible with #file_descriptor{}
                                            |         |
 -spec maps_remove1(                        |         |
     #{a := integer()}                      |         |
@@ -2804,8 +2804,8 @@ maps_remove2(M) ->                         | OK      |
 ) -> #{a := integer()}.                    |         |
 maps_remove3_neg(A, M) ->                  | ERROR   |
     maps:remove(A, M).                     |         | maps:remove(A, M).
-                                           |         | Expected: shape map #S{a := number()}
-                                           |         | Got     : dict  map #D{atom() => number()}
+                                           |         | Expression has type:   dict  map #D{atom() => number()}
+                                           |         | Context expected type: shape map #S{a := number()}
                                            |         |
 -spec maps_remove4(                        |         |
     #{a := integer(), b := atom()} |       |         |
@@ -2847,8 +2847,8 @@ maps_filtermap_2(M) ->                     | OK      |
 ) -> #{a := atom(), b := binary()}.        |         |
 maps_filtermap_3_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         | maps:filtermap(fun, M).
-                                           |         | Expected: #S{a := atom(), b := binary()}
-                                           |         | Got     : #S{a => atom() | binary(), b => atom() | binary(), c => atom() | binary()}
+                                           |         | Expression has type:   #S{a => atom() | binary(), b => atom() | binary(), c => atom() | binary()}
+                                           |         | Context expected type: #S{a := atom(), b := binary()}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -2881,12 +2881,12 @@ maps_filtermap_4(M) ->                     | OK      |
 ) -> #{atom() => atom()}.                  |         |
 maps_filtermap_5_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         | maps:filtermap(fun, M).
-                                           |         | Expected: #D{atom() => atom()}
-                                           |         | Got     : #D{atom() => binary()}
+                                           |         | Expression has type:   #D{atom() => binary()}
+                                           |         | Context expected type: #D{atom() => atom()}
                                            |         | 
-                                           |         |   #D{atom() => binary()} is not a subtype of #D{atom() => atom()}
+                                           |         |   #D{atom() => binary()} is not compatible with #D{atom() => atom()}
                                            |         |   because
-                                           |         |   binary() is not a subtype of atom()
+                                           |         |   binary() is not compatible with atom()
         fun (_, V) ->                      |         |
             {true, atom_to_binary(V)}      |         |
         end,                               |         |
@@ -2899,12 +2899,12 @@ maps_filtermap_5_neg(M) ->                 | ERROR   |
 maps_filtermap_6_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         |
         fun (_, _) -> err end,             |         | 'err'.
-                                           |         | Expected: boolean() | {'true', term()}
-                                           |         | Got     : 'err'
+                                           |         | Expression has type:   'err'
+                                           |         | Context expected type: boolean() | {'true', term()}
                                            |         | 
-                                           |         |   'err' is not a subtype of boolean() | {'true', term()}
+                                           |         |   'err' is not compatible with boolean() | {'true', term()}
                                            |         |   because
-                                           |         |   'err' is not a subtype of boolean()
+                                           |         |   'err' is not compatible with boolean()
         M                                  |         |
     ).                                     |         |
                                            |         |
@@ -2914,8 +2914,8 @@ maps_filtermap_6_neg(M) ->                 | ERROR   |
 maps_filtermap_7_neg(M) ->                 | ERROR   |
     maps:filtermap(                        |         |
         fun (_, V) -> {true, atom_to_binar……         | V.
-                                           |         | Expected: atom()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: atom()
         M                                  |         |
     ).                                     |         |
                                            |         |
@@ -2930,35 +2930,35 @@ re_replace_2(Subj) ->                      | OK      |
 -spec re_replace_3_neg(iodata()) -> string……         |
 re_replace_3_neg(Subj) ->                  | ERROR   |
     re:replace(Subj, "+", "-", [{return, b……         | re:replace(Subj, string_lit, string_lit, [{'return', 'binary'}]).
-                                           |         | Expected: string()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: string()
                                            |         |
 -spec re_replace_4_neg(iodata()) -> binary……         |
 re_replace_4_neg(Subj) ->                  | ERROR   |
     re:replace(Subj, "+", "-", [{return, l……         | re:replace(Subj, string_lit, string_lit, [{'return', 'list'}]).
-                                           |         | Expected: binary()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: binary()
                                            |         |
 -spec re_replace_5_neg(atom()) -> binary()……         |
 re_replace_5_neg(Subj) ->                  | ERROR   |
     Res = re:replace(Subj, "+", "-", [{ret……         | Subj.
-                                           |         | Expected: iodata() | unicode:charlist()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: iodata() | unicode:charlist()
                                            |         | 
-                                           |         |   atom() is not a subtype of iodata() | unicode:charlist()
+                                           |         |   atom() is not compatible with iodata() | unicode:charlist()
                                            |         |   because
-                                           |         |   atom() is not a subtype of iodata()
+                                           |         |   atom() is not compatible with iodata()
     Res.                                   |         |
                                            |         |
 -spec re_replace_6_neg(iodata()) -> term()……         |
 re_replace_6_neg(Subj) ->                  | ERROR   |
     Res = re:replace(Subj, "+", "-", [{ret……         | [{'return', 'something'}].
-                                           |         | Expected: [{'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored']
-                                           |         | Got     : [{'return', 'something'}]
+                                           |         | Expression has type:   [{'return', 'something'}]
+                                           |         | Context expected type: [{'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored']
                                            |         | 
-                                           |         |   [{'return', 'something'}] is not a subtype of [{'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored']
+                                           |         |   [{'return', 'something'}] is not compatible with [{'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored']
                                            |         |   because
-                                           |         |   {'return', 'something'} is not a subtype of {'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored'
+                                           |         |   {'return', 'something'} is not compatible with {'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored'
                                            |         |   because
-                                           |         |   {'return', 'something'} is not a subtype of 'noteol'
+                                           |         |   {'return', 'something'} is not compatible with 'noteol'
     Res.                                   |         |

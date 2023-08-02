@@ -37,8 +37,8 @@ n_lambda_3_neg(A) ->                       | ERROR   |
     fun Loop(N) ->                         |         |
       case N >= 10 of                      |         |
         true -> A + 1;                     |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
         false -> Loop(N + 1)               |         |
       end                                  |         |
     end,                                   |         |
@@ -72,8 +72,8 @@ lambda_app() ->                            | OK      |
   fun ((string()) -> string()).            |         |
 ex1_neg() ->                               | ERROR   |
   fun(X) -> X + 1 end.                     |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : string()
+                                           |         | Expression has type:   string()
+                                           |         | Context expected type: number()
                                            |         |
 -spec ex2() ->                             |         |
   fun((term()) -> term()) |                |         |

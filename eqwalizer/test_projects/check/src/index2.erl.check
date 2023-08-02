@@ -19,5 +19,5 @@
 }.                                         |         |
 foo(X) ->                                  | ERROR   |
   X#rec.field.                             |         | ...#rec.field.
-                                           |         | Expected: {ty_a(), index1:ty_a(), index1:rec()}
-                                           |         | Got     : [atom()]
+                                           |         | Expression has type:   [atom()]
+                                           |         | Context expected type: {ty_a(), index1:ty_a(), index1:rec()}

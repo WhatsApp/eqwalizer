@@ -1,28 +1,28 @@
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:14:5
    │
 14 │     ?OK.
    │     ^^^ 'error'.
-Expected: 'ok'
-Got     : 'error'
+Expression has type:   'error'
+Context expected type: 'ok'
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:18:5
    │
 18 │     error.
    │     ^^^^^ 'error'.
-Expected: 'ok'
-Got     : 'error'
+Expression has type:   'error'
+Context expected type: 'ok'
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:22:13
    │
 22 │     _ = 3 * an_atom, ok.
    │             ^^^^^^^ 'an_atom'.
-Expected: number()
-Got     : 'an_atom'
+Expression has type:   'an_atom'
+Context expected type: number()
 
 
 error: redundant_fixme
@@ -32,15 +32,15 @@ error: redundant_fixme
    │     ^^^^^^^^^^^^^^^^^ redundant fixme
 
 
-error: expected_subtype
+error: incompatible_types
    ┌─ app_a/src/app_a.erl:82:5
    │
 82 │     X.
    │     ^
    │     │
    │     X.
-Expected: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
-Got     : #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
+Expression has type:   #S{k_extra => term(), k_ok => term(), k_req1 => term(), k_req2 => term(), k_wrong1 => pid(), k_wrong2 => pid()}
+Context expected type: #S{k_ok => term(), k_req1 := atom(), k_req2 := atom(), k_req3 := atom(), k_wrong1 => atom(), k_wrong2 => atom()}
 
    │     
 
@@ -56,48 +56,48 @@ These associations do not match:
      ...
   }
 
-error: expected_subtype
+error: incompatible_types
     ┌─ app_a/src/app_a.erl:106:5
     │
 106 │     X.
     │     ^
     │     │
     │     X.
-Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
-Got     : id(#S{a := 'va', b := #S{c := #S{d => atom()}}})
+Expression has type:   id(#S{a := 'va', b := #S{c := #S{d => atom()}}})
+Context expected type: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
 
     │     
 
-  id(#S{a := 'va', b := #S{c := #S{d => atom()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  id(#S{a := 'va', b := #S{c := #S{d => atom()}}}) is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'b':
-  #S{a := 'va', b := #S{c := #S{d => atom()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  #S{a := 'va', b := #S{c := #S{d => atom()}}} is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'c':
-  #S{c := #S{d => atom()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  #S{c := #S{d => atom()}} is not compatible with #S{c := id(#S{d := atom(), e := atom()})}
   because
-  #S{d => atom()} is not a subtype of id(#S{d := atom(), e := atom()})
+  #S{d => atom()} is not compatible with id(#S{d := atom(), e := atom()})
 
-error: expected_subtype
+error: incompatible_types
     ┌─ app_a/src/app_a.erl:129:5
     │
 129 │     X.
     │     ^
     │     │
     │     X.
-Expected: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
-Got     : id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}})
+Expression has type:   id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}})
+Context expected type: #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
 
     │     
 
-  id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}}) is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  id(#S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}}) is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'b':
-  #S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}} is not a subtype of #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
+  #S{a := 'va', b := #S{c := #S{d := pid(), e := pid()}}} is not compatible with #S{a := 'va', b := #S{c := id(#S{d := atom(), e := atom()})}}
   because
   at shape key 'c':
-  #S{c := #S{d := pid(), e := pid()}} is not a subtype of #S{c := id(#S{d := atom(), e := atom()})}
+  #S{c := #S{d := pid(), e := pid()}} is not compatible with #S{c := id(#S{d := atom(), e := atom()})}
   because
-  #S{d := pid(), e := pid()} is not a subtype of id(#S{d := atom(), e := atom()})
+  #S{d := pid(), e := pid()} is not compatible with id(#S{d := atom(), e := atom()})
 
 7 ERRORS

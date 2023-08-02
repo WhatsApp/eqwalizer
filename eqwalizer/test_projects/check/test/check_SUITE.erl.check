@@ -11,5 +11,5 @@ pass() -> ok.                              | OK      |
                                            |         |
 -spec fail() -> pid().                     |         |
 fail() -> wrong_ret.                       | ERROR   | 'wrong_ret'.
-                                           |         | Expected: pid()
-                                           |         | Got     : 'wrong_ret'
+                                           |         | Expression has type:   'wrong_ret'
+                                           |         | Context expected type: pid()

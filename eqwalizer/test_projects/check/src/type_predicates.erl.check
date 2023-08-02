@@ -100,15 +100,15 @@ as_rec1a(R)                                |         |
     (#rec1{} | #rec2{}) -> #rec1{}.        |         |
 as_rec1_neg(R)                             | ERROR   |
     when is_record(R, rec2) -> R.          |         | R.
-                                           |         | Expected: #rec1{}
-                                           |         | Got     : #rec2{}
+                                           |         | Expression has type:   #rec2{}
+                                           |         | Context expected type: #rec1{}
                                            |         |
 -spec as_rec1a_neg                         |         |
     (#rec1{} | #rec2{}) -> #rec1{}.        |         |
 as_rec1a_neg(R)                            | ERROR   |
     when is_record(R, rec2, 1) -> R.       |         | R.
-                                           |         | Expected: #rec1{}
-                                           |         | Got     : #rec2{}
+                                           |         | Expression has type:   #rec2{}
+                                           |         | Context expected type: #rec1{}
                                            |         |
 -spec any_fun_x(term()) -> fun().          |         |
 any_fun_x(F) when is_function(F, 2) -> F;  | OK      |
@@ -147,11 +147,11 @@ as_fs(F) when is_function(F, 2) ->         |         |
 -spec as_f0_neg(term(), term()) -> fs().   |         |
 as_f0_neg(F, A)                            | ERROR   |
     when is_function(F, A) -> #f0{f = F}.  |         | F.
-                                           |         | Expected: fun(() -> term())
-                                           |         | Got     : fun()
+                                           |         | Expression has type:   fun()
+                                           |         | Context expected type: fun(() -> term())
                                            |         |
 -spec as_f1_neg(term()) -> #f1{}.          |         |
 as_f1_neg(F)                               | ERROR   |
     when is_function(F, 2) -> #f1{f = F}.  |         | F.
-                                           |         | Expected: fun((term()) -> term())
-                                           |         | Got     : fun((term(), term()) -> term())
+                                           |         | Expression has type:   fun((term(), term()) -> term())
+                                           |         | Context expected type: fun((term()) -> term())

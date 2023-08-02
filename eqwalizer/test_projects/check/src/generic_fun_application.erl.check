@@ -25,8 +25,8 @@ test00_pos() -> fapply(fun id_num/1, 1).   | OK      |
 % gradualizer (unsound) accepts this       |         |
 -spec test01_neg(atom()) -> pid().         |         |
 test01_neg(X) -> fapply(fun id/1, X).      | ERROR   | fapply(id/1, X).
-                                           |         | Expected: pid()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: pid()
                                            |         |
 % TRacket rejects this, msg is interesting |         |
 % TypeScript (expressive) accepts this     |         |
@@ -38,44 +38,44 @@ test02() -> fapply(fun id/1, 1).           | OK      |
 -spec test03_neg() -> ok.                  |         |
 test03_neg() ->                            | ERROR   |
     lmap(fun atom_to_pid/1, [2, 4]).       |         | [2, 4].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   [number()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 % `mapl/2` is data-first                   |         |
 -spec test03b_neg() -> ok.                 |         |
 test03b_neg() ->                           | ERROR   |
     mapl([2, 4], fun atom_to_pid/1).       |         | atom_to_pid/1.
-                                           |         | Expected: fun((number()) -> B)
-                                           |         | Got     : fun((atom()) -> pid())
+                                           |         | Expression has type:   fun((atom()) -> pid())
+                                           |         | Context expected type: fun((number()) -> B)
                                            |         | 
-                                           |         |   fun((atom()) -> pid()) is not a subtype of fun((number()) -> B)
+                                           |         |   fun((atom()) -> pid()) is not compatible with fun((number()) -> B)
                                            |         |   because
-                                           |         |   pid() is not a subtype of B
+                                           |         |   pid() is not compatible with B
                                            |         |
 -spec test04_neg() -> ok.                  |         |
 test04_neg() ->                            | ERROR   |
     X = lmap(fun atom_to_pid/1, [2, 4]),   |         | [2, 4].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   [number()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
     X.                                     |         |
                                            |         |
 -spec test04b_neg() -> ok.                 |         |
 test04b_neg() ->                           | ERROR   |
     X = mapl([2, 4], fun atom_to_pid/1),   |         | atom_to_pid/1.
-                                           |         | Expected: fun((number()) -> B)
-                                           |         | Got     : fun((atom()) -> pid())
+                                           |         | Expression has type:   fun((atom()) -> pid())
+                                           |         | Context expected type: fun((number()) -> B)
                                            |         | 
-                                           |         |   fun((atom()) -> pid()) is not a subtype of fun((number()) -> B)
+                                           |         |   fun((atom()) -> pid()) is not compatible with fun((number()) -> B)
                                            |         |   because
-                                           |         |   pid() is not a subtype of B
+                                           |         |   pid() is not compatible with B
     X.                                     |         |
                                            |         |
 -spec test05_pos(atom()) -> atom().        |         |
@@ -91,8 +91,8 @@ test07_pos() ->                            | OK      |
                                            |         |
 -spec test08_neg() -> h.                   |         |
 test08_neg() -> lhead(h).                  | ERROR   | 'h'.
-                                           |         | Expected: [LH]
-                                           |         | Got     : 'h'
+                                           |         | Expression has type:   'h'
+                                           |         | Context expected type: [LH]
                                            |         |
 -spec maptt(#{T => T}) -> T.               |         |
 maptt(_) -> throw(not_implemented).        | OK      |
@@ -106,8 +106,8 @@ test08_pos(M) -> maptt(M).                 | OK      |
     #{number() => number()}                |         |
 ) -> pid().                                |         |
 test09_neg(M) -> maptt(M).                 | ERROR   | maptt(M).
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec map_att(#{a => T}) -> T.             |         |
 map_att(M) -> maps:get(a, M).              | OK      |
@@ -123,8 +123,8 @@ test10_pos(M) ->                           | OK      |
 ) -> pid().                                |         |
 test11_neg(M) ->                           | ERROR   |
     map_att(M).                            |         | M.
-                                           |         | Expected: #S{a => T}
-                                           |         | Got     : #S{true => pid()}
+                                           |         | Expression has type:   #S{true => pid()}
+                                           |         | Context expected type: #S{a => T}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -136,18 +136,18 @@ test11_neg(M) ->                           | ERROR   |
 -spec test12_neg() -> pid().               |         |
 test12_neg() ->                            | ERROR   |
     map_att(3).                            |         | 3.
-                                           |         | Expected: #S{a => T}
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: #S{a => T}
                                            |         |
 -spec test13_neg() -> ok.                  |         |
 test13_neg() -> lmap({}, [2, 4]).          | ERROR   | {}.
-                                           |         | Expected: fun((A) -> B)
-                                           |         | Got     : {}
+                                           |         | Expression has type:   {}
+                                           |         | Context expected type: fun((A) -> B)
                                            |         |
 -spec test13b_neg() -> ok.                 |         |
 test13b_neg() -> mapl([2, 4], {}).         | ERROR   | {}.
-                                           |         | Expected: fun((number()) -> B)
-                                           |         | Got     : {}
+                                           |         | Expression has type:   {}
+                                           |         | Context expected type: fun((number()) -> B)
                                            |         |
 -spec test14_pos(                          |         |
     #{a => number()}                       |         |
@@ -162,12 +162,12 @@ test14_pos(Shape) ->                       | OK      |
 ) -> pid().                                |         |
 test15_neg(F, Shape) ->                    | ERROR   |
     F(Shape).                              |         | Shape.
-                                           |         | Expected: #D{atom() => T}
-                                           |         | Got     : #S{a => number()}
+                                           |         | Expression has type:   #S{a => number()}
+                                           |         | Context expected type: #D{atom() => T}
                                            |         | 
-                                           |         |   #S{a => number()} is not a subtype of #D{atom() => T}
+                                           |         |   #S{a => number()} is not compatible with #D{atom() => T}
                                            |         |   because
-                                           |         |   number() is not a subtype of T
+                                           |         |   number() is not compatible with T
                                            |         |
 -spec test16_neg(                          |         |
     fun(({X}) -> X),                       |         |
@@ -175,20 +175,20 @@ test15_neg(F, Shape) ->                    | ERROR   |
 ) -> false.                                |         |
 test16_neg(F, Tuple) ->                    | ERROR   |
     F(Tuple).                              |         | Tuple.
-                                           |         | Expected: {X}
-                                           |         | Got     : tuple()
+                                           |         | Expression has type:   tuple()
+                                           |         | Context expected type: {X}
                                            |         |
 -spec test17_neg(fun()) -> ok.             |         |
 test17_neg(F) ->                           | ERROR   |
     lmap(F, [2, 4]).                       |         | F.
-                                           |         | Expected: fun((A) -> B)
-                                           |         | Got     : fun()
+                                           |         | Expression has type:   fun()
+                                           |         | Context expected type: fun((A) -> B)
                                            |         |
 -spec test17b_neg(fun()) -> ok.            |         |
 test17b_neg(F) ->                          | ERROR   |
     mapl([2, 4], F).                       |         | F.
-                                           |         | Expected: fun((number()) -> B)
-                                           |         | Got     : fun()
+                                           |         | Expression has type:   fun()
+                                           |         | Context expected type: fun((number()) -> B)
                                            |         |
 -type kv(K, V) :: #{K => V}.               |         |
                                            |         |
@@ -199,12 +199,12 @@ test18_pos(K, V) ->                        | OK      |
 -spec test19_neg(a | b) -> a.              |         |
 test19_neg(AB) ->                          | ERROR   |
     ttt(AB, a).                            |         | ttt(AB, 'a').
-                                           |         | Expected: 'a'
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: 'a'
                                            |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   'a' | 'b' is not compatible with 'a'
                                            |         |   because
-                                           |         |   'b' is not a subtype of 'a'
+                                           |         |   'b' is not compatible with 'a'
                                            |         |
 % Gradualizer accepts this                 |         |
 % TypesScript rejects this                 |         |
@@ -218,8 +218,8 @@ test20_pos() ->                            | OK      |
 -spec test21_neg() -> pid().               |         |
 test21_neg() ->                            | ERROR   |
     ttt(a, b).                             |         | ttt('a', 'b').
-                                           |         | Expected: pid()
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: pid()
                                            |         |
 % All checkers tested accept this          |         |
 -spec test22_pos() -> a | b.               |         |
@@ -230,23 +230,23 @@ test22_pos() ->                            | OK      |
 -spec test23_neg() -> a.                   |         |
 test23_neg() ->                            | ERROR   |
     ttt(a, b).                             |         | ttt('a', 'b').
-                                           |         | Expected: 'a'
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: 'a'
                                            |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   'a' | 'b' is not compatible with 'a'
                                            |         |   because
-                                           |         |   'b' is not a subtype of 'a'
+                                           |         |   'b' is not compatible with 'a'
                                            |         |
 % Gradualizer (unsound) accepts this       |         |
 -spec test24_neg() -> b.                   |         |
 test24_neg() ->                            | ERROR   |
     ttt(a, b).                             |         | ttt('a', 'b').
-                                           |         | Expected: 'b'
-                                           |         | Got     : 'a' | 'b'
+                                           |         | Expression has type:   'a' | 'b'
+                                           |         | Context expected type: 'b'
                                            |         | 
-                                           |         |   'a' | 'b' is not a subtype of 'b'
+                                           |         |   'a' | 'b' is not compatible with 'b'
                                            |         |   because
-                                           |         |   'a' is not a subtype of 'b'
+                                           |         |   'a' is not compatible with 'b'
                                            |         |
 -spec test25_pos() -> term().              |         |
 test25_pos() ->                            | OK      |
@@ -333,8 +333,8 @@ test35_pos() ->                            | OK      |
                                            |         |
 -spec test36_neg(fun(({T}) -> U), T) -> U. |         |
 test36_neg(F, X) -> F(X).                  | ERROR   | X.
-                                           |         | Expected: {T}
-                                           |         | Got     : T
+                                           |         | Expression has type:   T
+                                           |         | Context expected type: {T}
                                            |         |
 -spec test38_pos(                          |         |
     fun((F) -> T),                         |         |
@@ -347,20 +347,20 @@ test38_pos(FT, F) -> FT(F).                | OK      |
     -> fun(() -> X).                       |         |
 test39_neg(F, _, _) ->                     | ERROR   |
     fun0_id(F).                            |         | fun0_id(F).
-                                           |         | Expected: fun(() -> X)
-                                           |         | Got     : fun(() -> A)
+                                           |         | Expression has type:   fun(() -> A)
+                                           |         | Context expected type: fun(() -> X)
                                            |         | 
-                                           |         |   fun(() -> A) is not a subtype of fun(() -> X)
+                                           |         |   fun(() -> A) is not compatible with fun(() -> X)
                                            |         |   because
-                                           |         |   A is not a subtype of X
+                                           |         |   A is not compatible with X
                                            |         |
 -spec test40_neg                           |         |
     (fun((A) -> B), {A, B},  {X, Y})       |         |
     -> fun((X) -> Y).                      |         |
 test40_neg(F, _, _) ->                     | ERROR   |
     fun0_id(F).                            |         | F.
-                                           |         | Expected: fun(() -> X)
-                                           |         | Got     : fun((A) -> B)
+                                           |         | Expression has type:   fun((A) -> B)
+                                           |         | Context expected type: fun(() -> X)
                                            |         |
 -spec test41_neg() -> atom().              |         |
 test41_neg() ->                            | OK      |
@@ -373,12 +373,12 @@ last_shall_be_first_neg                    | ERROR   |
 (First, Last, Last) ->                     |         |
     X = second_among_equals(First, Last),  |         |
     X.                                     |         | X.
-                                           |         | Expected: 'first'
-                                           |         | Got     : 'first' | Last
+                                           |         | Expression has type:   'first' | Last
+                                           |         | Context expected type: 'first'
                                            |         | 
-                                           |         |   'first' | Last is not a subtype of 'first'
+                                           |         |   'first' | Last is not compatible with 'first'
                                            |         |   because
-                                           |         |   Last is not a subtype of 'first'
+                                           |         |   Last is not compatible with 'first'
                                            |         |
 -spec                                      |         |
 atoms_shall_be_anything_neg                |         |
@@ -387,12 +387,12 @@ atoms_shall_be_anything_neg                | ERROR   |
 (Atom, Foo, _) ->                          |         |
     X = second_among_equals(Atom, Foo),    |         |
     X.                                     |         | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : atom() | T
+                                           |         | Expression has type:   atom() | T
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   atom() | T is not a subtype of atom()
+                                           |         |   atom() | T is not compatible with atom()
                                            |         |   because
-                                           |         |   T is not a subtype of atom()
+                                           |         |   T is not compatible with atom()
                                            |         |
  -spec fun1_id_pos                         |         |
  (fun((A) -> B)) -> fun((A) -> B).         |         |
@@ -419,13 +419,13 @@ shape_order_pos() ->                       | OK      |
 shape_order_neg() ->                       | ERROR   |
     Pid = erlang:self(),                   |         |
     expect_shape(                          |         | expect_shape(#{..}).
-                                           |         | Expected: {pid(), number()}
-                                           |         | Got     : {number(), pid()}
+                                           |         | Expression has type:   {number(), pid()}
+                                           |         | Context expected type: {pid(), number()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {number(), pid()} is not a subtype of {pid(), number()}
+                                           |         |   {number(), pid()} is not compatible with {pid(), number()}
                                            |         |   because
-                                           |         |   number() is not a subtype of pid()
+                                           |         |   number() is not compatible with pid()
         #{t => 1, u => Pid}                |         |
     ).                                     |         |
                                            |         |
@@ -434,8 +434,8 @@ shape_order_neg() ->                       | ERROR   |
     -> C.                                  |         |
 leak_c_neg(F, A, _B, _C) ->                | ERROR   |
     F(A).                                  |         | F(A).
-                                           |         | Expected: C
-                                           |         | Got     : B
+                                           |         | Expression has type:   B
+                                           |         | Context expected type: C
                                            |         |
 -spec exploit_leak_c_neg() -> expect_pid.  |         |
  exploit_leak_c_neg() ->                   | OK      |
@@ -452,8 +452,8 @@ test_fun_doubler1() ->                     | ERROR   |
     G = fun_doubler(                       |         |
         F,                                 |         |
         fun fun1_id_pos_a/1),              |         | Arg 1 of 'fun1_id_pos_a/1'.
-                                           |         | Expected: fun((A) -> A) with 0 type parameters
-                                           |         | Got     : fun((Z) -> Z) with 1 type parameter
+                                           |         | Expression has type:   fun((Z) -> Z) with 1 type parameter
+                                           |         | Context expected type: fun((A) -> A) with 0 type parameters
     X = (G(G))(fun id/1),                  |         |
     X(1).                                  |         |
                                            |         |
@@ -466,8 +466,8 @@ test_fun_doubler2() ->                     | ERROR   |
     G = fun_doubler(                       |         |
         F,                                 |         |
         fun fun1_id_pos_z/1),              |         | Arg 1 of 'fun1_id_pos_z/1'.
-                                           |         | Expected: fun((Z) -> Z) with 0 type parameters
-                                           |         | Got     : fun((Z) -> Z) with 1 type parameter
+                                           |         | Expression has type:   fun((Z) -> Z) with 1 type parameter
+                                           |         | Context expected type: fun((Z) -> Z) with 0 type parameters
     X = (G(G))(fun id/1),                  |         |
     X(1).                                  |         |
                                            |         |
@@ -542,8 +542,8 @@ shape_vars(_, _) -> ok.                    | OK      |
 -spec test_dict1(#{atom() => pid()}) ->    |         |
     ok.                                    |         |
 test_dict1(D) -> num_and_t(D, D).          | ERROR   | D.
-                                           |         | Expected: number()
-                                           |         | Got     : #D{atom() => pid()}
+                                           |         | Expression has type:   #D{atom() => pid()}
+                                           |         | Context expected type: number()
                                            |         |
 -spec dict_vars                            |         |
     (fun((#{{T} => T}) -> T), T)           |         |
@@ -553,19 +553,19 @@ dict_vars(_, _) -> ok.                     | OK      |
 -spec test_dict2(T) -> T.                  |         |
 test_dict2(T) ->                           | ERROR   |
     shape_vars(#{T => 3}, 3).              |         | #{..}.
-                                           |         | Expected: shape map #S{a := T}
-                                           |         | Got     : dict  map #D{T => number()}
+                                           |         | Expression has type:   dict  map #D{T => number()}
+                                           |         | Context expected type: shape map #S{a := T}
                                            |         |
 -spec test_dict3                           |         |
     (fun((#{a => 1}) -> 1), 1) -> ok.      |         |
 test_dict3(F, N) ->                        | ERROR   |
     dict_vars(F, N).                       |         | F.
-                                           |         | Expected: fun((#D{{T} => T}) -> T)
-                                           |         | Got     : fun((#S{a => number()}) -> number())
+                                           |         | Expression has type:   fun((#S{a => number()}) -> number())
+                                           |         | Context expected type: fun((#D{{T} => T}) -> T)
                                            |         | 
-                                           |         |   fun((#S{a => number()}) -> number()) is not a subtype of fun((#D{{T} => T}) -> T)
+                                           |         |   fun((#S{a => number()}) -> number()) is not compatible with fun((#D{{T} => T}) -> T)
                                            |         |   because
-                                           |         |   number() is not a subtype of T
+                                           |         |   number() is not compatible with T
                                            |         |
 -spec atat(atom()) -> atom().              |         |
 atat(X) -> X.                              | OK      |
@@ -591,12 +591,12 @@ test_aliases_pos(F) -> F.                  | OK      |
      fun((a) -> b)                         |         |
 ) -> fun((a) -> c).                        |         |
 test_aliases_neg(F) -> F.                  | ERROR   | F.
-                                           |         | Expected: fun(('a') -> 'c')
-                                           |         | Got     : fun(('a') -> 'b')
+                                           |         | Expression has type:   fun(('a') -> 'b')
+                                           |         | Context expected type: fun(('a') -> 'c')
                                            |         | 
-                                           |         |   fun(('a') -> 'b') is not a subtype of fun(('a') -> 'c')
+                                           |         |   fun(('a') -> 'b') is not compatible with fun(('a') -> 'c')
                                            |         |   because
-                                           |         |   'b' is not a subtype of 'c'
+                                           |         |   'b' is not compatible with 'c'
                                            |         |
 -spec takesShape1(#{a := T}) -> T.         |         |
 takesShape1(#{a := X}) -> X.               | OK      |
@@ -604,8 +604,8 @@ takesShape1(#{a := X}) -> X.               | OK      |
 -spec shapes_neg() -> nok.                 |         |
 shapes_neg() ->                            | ERROR   |
     takesShape1(#{}).                      |         | #{..}.
-                                           |         | Expected: #S{a := T}
-                                           |         | Got     : #S{}
+                                           |         | Expression has type:   #S{}
+                                           |         | Context expected type: #S{a := T}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -634,8 +634,8 @@ test_to_from_neg() ->                      | OK      |
     number()                               |         |
 ) -> number().                             |         |
 test_quanitifer_scope_neg(F, X) -> F(X).   | ERROR   | X.
-                                           |         | Expected: T
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: T
                                            |         |
 -spec val_ty(                              |         |
     #{number() => T}                       |         |
@@ -687,16 +687,16 @@ test_contravariant_3(X) ->                 | OK      |
 ) -> contravar(contravar(a)).              |         |
 test_contravariant_4_neg(X) ->             | ERROR   |
     X.                                     |         | X.
-                                           |         | Expected: contravar(contravar('a'))
-                                           |         | Got     : contravar(contravar('a' | 'b'))
+                                           |         | Expression has type:   contravar(contravar('a' | 'b'))
+                                           |         | Context expected type: contravar(contravar('a'))
                                            |         | 
-                                           |         |   contravar(contravar('a' | 'b')) is not a subtype of contravar(contravar('a'))
+                                           |         |   contravar(contravar('a' | 'b')) is not compatible with contravar(contravar('a'))
                                            |         |   because
-                                           |         |   fun((contravar('a' | 'b')) -> 'ok') is not a subtype of contravar(contravar('a'))
+                                           |         |   fun((contravar('a' | 'b')) -> 'ok') is not compatible with contravar(contravar('a'))
                                            |         |   because
-                                           |         |   fun((contravar('a' | 'b')) -> 'ok') is not a subtype of fun((contravar('a')) -> 'ok')
+                                           |         |   fun((contravar('a' | 'b')) -> 'ok') is not compatible with fun((contravar('a')) -> 'ok')
                                            |         |   because
-                                           |         |   contravar('a') is not a subtype of contravar('a' | 'b')
+                                           |         |   contravar('a') is not compatible with contravar('a' | 'b')
                                            |         |
 -spec test_contravariant_5(                |         |
     contravar(contravar(a))                |         |
@@ -709,30 +709,30 @@ test_contravariant_5(X) ->                 | OK      |
 test_invariant_neg() ->                    | ERROR   |
     X = invariant(a),                      |         |
     X.                                     |         | X.
-                                           |         | Expected: fun((atom()) -> atom())
-                                           |         | Got     : invar('a')
+                                           |         | Expression has type:   invar('a')
+                                           |         | Context expected type: fun((atom()) -> atom())
                                            |         | 
-                                           |         |   invar('a') is not a subtype of fun((atom()) -> atom())
+                                           |         |   invar('a') is not compatible with fun((atom()) -> atom())
                                            |         |   because
-                                           |         |   fun(('a') -> 'a') is not a subtype of fun((atom()) -> atom())
+                                           |         |   fun(('a') -> 'a') is not compatible with fun((atom()) -> atom())
                                            |         |   because
-                                           |         |   atom() is not a subtype of 'a'
+                                           |         |   atom() is not compatible with 'a'
                                            |         |
 -spec test_invariant_neg_2() ->            |         |
     invar(atom()).                         |         |
 test_invariant_neg_2() ->                  | ERROR   |
     X = invariant(a),                      |         |
     X.                                     |         | X.
-                                           |         | Expected: invar(atom())
-                                           |         | Got     : invar('a')
+                                           |         | Expression has type:   invar('a')
+                                           |         | Context expected type: invar(atom())
                                            |         | 
-                                           |         |   invar('a') is not a subtype of invar(atom())
+                                           |         |   invar('a') is not compatible with invar(atom())
                                            |         |   because
-                                           |         |   fun(('a') -> 'a') is not a subtype of invar(atom())
+                                           |         |   fun(('a') -> 'a') is not compatible with invar(atom())
                                            |         |   because
-                                           |         |   fun(('a') -> 'a') is not a subtype of fun((atom()) -> atom())
+                                           |         |   fun(('a') -> 'a') is not compatible with fun((atom()) -> atom())
                                            |         |   because
-                                           |         |   atom() is not a subtype of 'a'
+                                           |         |   atom() is not compatible with 'a'
                                            |         |
 -spec test_invariant_pos_1(term()) ->      |         |
     fun((term()) -> term()).               |         |
@@ -749,12 +749,12 @@ test_invariant_pos_2() ->                  | OK      |
     invar(a).                              |         |
 test_invariant_pos_3() ->                  | ERROR   |
     a.                                     |         | 'a'.
-                                           |         | Expected: invar('a')
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: invar('a')
                                            |         | 
-                                           |         |   'a' is not a subtype of invar('a')
+                                           |         |   'a' is not compatible with invar('a')
                                            |         |   because
-                                           |         |   'a' is not a subtype of fun(('a') -> 'a')
+                                           |         |   'a' is not compatible with fun(('a') -> 'a')
                                            |         |
 -spec arg_eqv(                             |         |
     fun((T) -> pid()),                     |         |
@@ -858,8 +858,8 @@ shape_width_neg() ->                       | ERROR   |
     Pid = erlang:self(),                   |         |
     expect_shape(                          |         |
         #{u => 1, t => Pid, extra => 3}    |         | #{..}.
-                                           |         | Expected: #S{t := T, u := U}
-                                           |         | Got     : #S{extra := number(), t := pid(), u := number()}
+                                           |         | Expression has type:   #S{extra := number(), t := pid(), u := number()}
+                                           |         | Context expected type: #S{t := T, u := U}
                                            |         | 
                                            |         | These associations do not match:
                                            |         | 
@@ -904,8 +904,8 @@ apply2(F, X, Y) -> F(X, Y).                | OK      |
                                            |         |
 -spec test_apply2() -> number().           |         |
 test_apply2() -> apply2(fun tat/2, 1, 1).  | ERROR   | Arg 2 of 'tat/2'.
-                                           |         | Expected: 'a'
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: 'a'
                                            |         |
 -spec invar(T, T) -> fun((T) -> T).        |         |
 invar(_T, U) ->                            | OK      |
@@ -924,14 +924,14 @@ test_invar2(AB) ->                         | OK      |
     fun((a | b) -> a | b).                 |         |
 test_invar3_neg() ->                       | ERROR   |
     invar(a, a).                           |         | invar('a', 'a').
-                                           |         | Expected: fun(('a' | 'b') -> 'a' | 'b')
-                                           |         | Got     : fun(('a') -> 'a')
+                                           |         | Expression has type:   fun(('a') -> 'a')
+                                           |         | Context expected type: fun(('a' | 'b') -> 'a' | 'b')
                                            |         | 
-                                           |         |   fun(('a') -> 'a') is not a subtype of fun(('a' | 'b') -> 'a' | 'b')
+                                           |         |   fun(('a') -> 'a') is not compatible with fun(('a' | 'b') -> 'a' | 'b')
                                            |         |   because
-                                           |         |   'a' | 'b' is not a subtype of 'a'
+                                           |         |   'a' | 'b' is not compatible with 'a'
                                            |         |   because
-                                           |         |   'b' is not a subtype of 'a'
+                                           |         |   'b' is not compatible with 'a'
                                            |         |
 -spec fun_with_tuple                       |         |
     (tuple(), [A]) -> {tuple(), [A]}.      |         |
@@ -945,6 +945,6 @@ use_fun_with_tuple_1() ->                  | OK      |
 -spec use_fun_with_tuple_2_neg() -> ok.    |         |
 use_fun_with_tuple_2_neg() ->              | ERROR   |
     _ = fun_with_tuple({a, b}, {}),        |         | {}.
-                                           |         | Expected: [A]
-                                           |         | Got     : {}
+                                           |         | Expression has type:   {}
+                                           |         | Context expected type: [A]
     ok.                                    |         |

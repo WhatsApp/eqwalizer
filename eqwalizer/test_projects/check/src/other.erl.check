@@ -46,12 +46,12 @@ get_inter2() ->                            | ERROR   |
 -spec any_as_metadata_neg(term()) ->       |         |
     logger:metadata().                     |         |
 any_as_metadata_neg(M) -> M.               | ERROR   | M.
-                                           |         | Expected: logger:metadata()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: logger:metadata()
                                            |         | 
-                                           |         |   term() is not a subtype of logger:metadata()
+                                           |         |   term() is not compatible with logger:metadata()
                                            |         |   because
-                                           |         |   term() is not a subtype of #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |   term() is not compatible with #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
                                            |         |
 -spec elab_var_scope(term()) -> term().    |         |
 elab_var_scope(_) ->                       | OK      |

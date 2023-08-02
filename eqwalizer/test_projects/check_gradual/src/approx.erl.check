@@ -34,8 +34,8 @@ use_unspecced1(Arg) ->                     | OK      |
 report_later_error() ->                    | ERROR   |
     X = unspecced1(bar),                   |         |
     {X, X}.                                |         | {X, X}.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : {dynamic(), dynamic()}
+                                           |         | Expression has type:   {dynamic(), dynamic()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -type trans_invalid() ::                   | INVALID |
 generics_with_unions:type_var_from_nowhere……         | Unknown id: generics_with_unions:type_var_from_nowhere/0
@@ -75,12 +75,12 @@ test_opaque_as_fun_neg(X) -> X(ok).        | ERROR   | X.
 union_list_1(S, Dyn) ->                    | ERROR   |
   [_H, Dyn2] = [S, Dyn],                   |         |
   Dyn2.                                    |         | Dyn2.
-                                           |         | Expected: 'anything'
-                                           |         | Got     : string() | dynamic()
+                                           |         | Expression has type:   string() | dynamic()
+                                           |         | Context expected type: 'anything'
                                            |         | 
-                                           |         |   string() | dynamic() is not a subtype of 'anything'
+                                           |         |   string() | dynamic() is not compatible with 'anything'
                                            |         |   because
-                                           |         |   string() is not a subtype of 'anything'
+                                           |         |   string() is not compatible with 'anything'
                                            |         |
 -spec dyn_union_1(                         |         |
     none(), eqwalizer:dynamic()            |         |

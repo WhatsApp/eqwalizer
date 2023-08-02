@@ -26,12 +26,12 @@ test01(L) ->                               | OK      |
     [atom()].                              |         |
 test02_neg(L) ->                           | ERROR   |
     [N || {_, N} <- L].                    |         | [ || ].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   [number()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec test03                               |         |
     ([{atom()} | {atom(), number()}]) ->   |         |
@@ -44,8 +44,8 @@ test03(L) ->                               | OK      |
 -spec test04_neg(term()) -> [term()].      |         |
 test04_neg(L) ->                           | ERROR   |
     [X || X <- L].                         |         | L.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test05(binary()) -> [number()].      |         |
 test05(B) ->                               | OK      |
@@ -54,8 +54,8 @@ test05(B) ->                               | OK      |
 -spec test06_neg(binary()) -> list(term())……         |
 test06_neg(B) ->                           | ERROR   |
     << Y || <<Y>> <= B >>.                 |         | << || >>.
-                                           |         | Expected: [term()]
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test07(list(binary())) -> binary().  |         |
 test07(LB) ->                              | OK      |
@@ -64,14 +64,14 @@ test07(LB) ->                              | OK      |
 -spec test08_neg(binary()) -> binary().    |         |
 test08_neg(B) ->                           | ERROR   |
     << Y || Y <- B >>.                     |         | B.
-                                           |         | Expected: [term()]
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec test09_neg(list(binary())) -> binary……         |
 test09_neg(LB) ->                          | ERROR   |
     << Y || <<Y>> <= LB >>.                |         | LB.
-                                           |         | Expected: binary()
-                                           |         | Got     : [binary()]
+                                           |         | Expression has type:   [binary()]
+                                           |         | Context expected type: binary()
                                            |         |
 -spec test10(binary()) -> [number()].      |         |
 test10(LB) ->                              | OK      |
@@ -80,24 +80,24 @@ test10(LB) ->                              | OK      |
 -spec test11_neg(binary()) -> [binary()].  |         |
 test11_neg(LB) ->                          | ERROR   |
     [ Y || <<Y>> <= LB ].                  |         | [ || ].
-                                           |         | Expected: [binary()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [binary()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [binary()]
+                                           |         |   [number()] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   number() is not a subtype of binary()
+                                           |         |   number() is not compatible with binary()
                                            |         |
 -spec test12(binary()) -> [binary()].      |         |
 test12(LB) ->                              | ERROR   |
     << Y || <<Y>> <= LB >>.                |         | << || >>.
-                                           |         | Expected: [binary()]
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: [binary()]
                                            |         |
 -spec test13_neg(binary()) -> binary().    |         |
 test13_neg(LB) ->                          | ERROR   |
     << Y || <<Y>> <= LB >>.                |         | Y.
-                                           |         | Expected: binary()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: binary()
                                            |         |
 -spec test14(binary()) -> binary().        |         |
 test14(LB) ->                              | OK      |
@@ -112,8 +112,8 @@ test15_neg(LB) ->                          | OK      |
 -spec test16_neg(term()) -> [term()].      |         |
 test16_neg(L) ->                           | ERROR   |
     Res = [X || X <- L],                   |         | L.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
     Res.                                   |         |
                                            |         |
 -spec test17(binary()) -> [number()].      |         |
@@ -124,8 +124,8 @@ test17(LB) ->                              | OK      |
 -spec test18_neg(boolean()) -> [boolean()]……         |
 test18_neg(L) ->                           | ERROR   |
     Res = [X || X <- L, X],                |         | L.
-                                           |         | Expected: [term()]
-                                           |         | Got     : boolean()
+                                           |         | Expression has type:   boolean()
+                                           |         | Context expected type: [term()]
     Res.                                   |         |
                                            |         |
 -spec test19([boolean()]) -> [binary()].   |         |
@@ -142,15 +142,15 @@ test20(LB) ->                              | OK      |
 -spec test21_neg(list(binary())) -> binary……         |
 test21_neg(LB) ->                          | ERROR   |
     Res = << Y || <<Y>> <= LB >>,          |         | LB.
-                                           |         | Expected: binary()
-                                           |         | Got     : [binary()]
+                                           |         | Expression has type:   [binary()]
+                                           |         | Context expected type: binary()
     Res.                                   |         |
                                            |         |
 -spec test22_neg(binary()) -> binary().    |         |
 test22_neg(B) ->                           | ERROR   |
     Res = << Y || Y <- B >>,               |         | B.
-                                           |         | Expected: [term()]
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: [term()]
     Res.                                   |         |
                                            |         |
 -spec test23([binary()]) -> binary().      |         |
@@ -186,30 +186,30 @@ test27(X) ->                               | OK      |
 -spec test28(none()) -> number().          |         |
 test28(X) ->                               | ERROR   |
     << Y ||                                |         | << || >>.
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
         <<Y>> <= X >>.                     |         |
                                            |         |
 -spec test29(none()) -> number().          |         |
 test29(X) ->                               | ERROR   |
     Res = << Y ||                          |         | Y.
-                                           |         | Expected: binary()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: binary()
         <<Y>> <= X >>,                     |         |
     Res.                                   |         |
                                            |         |
 -spec test30(none()) -> binary().          |         |
 test30(X) ->                               | ERROR   |
     << Y ||                                |         | Y.
-                                           |         | Expected: binary()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: binary()
         <<Y>> <= X >>.                     |         |
                                            |         |
 -spec test31(none()) -> binary().          |         |
 test31(X) ->                               | ERROR   |
     Res = << Y ||                          |         | Y.
-                                           |         | Expected: binary()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: binary()
         <<Y>> <= X >>,                     |         |
     Res.                                   |         |
                                            |         |
@@ -222,12 +222,12 @@ test32(L) ->                               | OK      |
 test33_neg(L) ->                           | ERROR   |
     Res = [X || X <- L, is_atom(X)],       |         |
     Res.                                   |         | Res.
-                                           |         | Expected: [binary()]
-                                           |         | Got     : [atom()]
+                                           |         | Expression has type:   [atom()]
+                                           |         | Context expected type: [binary()]
                                            |         | 
-                                           |         |   [atom()] is not a subtype of [binary()]
+                                           |         |   [atom()] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   atom() is not a subtype of binary()
+                                           |         |   atom() is not compatible with binary()
                                            |         |
 -spec convert_data(binary())               |         |
         -> [integer()].                    |         |
@@ -270,23 +270,23 @@ test35(L) ->                               | OK      |
 -spec test36_neg([term()]) -> [false].     |         |
 test36_neg(L) ->                           | ERROR   |
     [X || X <- L, X].                      |         | [ || ].
-                                           |         | Expected: ['false']
-                                           |         | Got     : ['true']
+                                           |         | Expression has type:   ['true']
+                                           |         | Context expected type: ['false']
                                            |         | 
-                                           |         |   ['true'] is not a subtype of ['false']
+                                           |         |   ['true'] is not compatible with ['false']
                                            |         |   because
-                                           |         |   'true' is not a subtype of 'false'
+                                           |         |   'true' is not compatible with 'false'
                                            |         |
 -spec test37_neg([term()]) -> [false].     |         |
 test37_neg(L) ->                           | ERROR   |
     Res = [X || X <- L, X],                |         |
     Res.                                   |         | Res.
-                                           |         | Expected: ['false']
-                                           |         | Got     : ['true']
+                                           |         | Expression has type:   ['true']
+                                           |         | Context expected type: ['false']
                                            |         | 
-                                           |         |   ['true'] is not a subtype of ['false']
+                                           |         |   ['true'] is not compatible with ['false']
                                            |         |   because
-                                           |         |   'true' is not a subtype of 'false'
+                                           |         |   'true' is not compatible with 'false'
                                            |         |
 -spec test38(binary()) -> [].              |         |
 test38(B) ->                               | OK      |
@@ -295,12 +295,12 @@ test38(B) ->                               | OK      |
 -spec test39_neg(binary()) -> [atom()].    |         |
 test39_neg(B) ->                           | ERROR   |
     [Y || <<Y>> <= B, is_integer(Y) ].     |         | [ || ].
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [number()]
+                                           |         | Expression has type:   [number()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [number()] is not a subtype of [atom()]
+                                           |         |   [number()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -record(rec1, {                            |         |
     b :: undefined | binary(),             |         |
@@ -329,14 +329,14 @@ gen3() ->                                  | OK      |
 test40_neg() ->                            | ERROR   |
     Res = [X || X <- gen1()],              |         |
     Res.                                   |         | Res.
-                                           |         | Expected: [binary()]
-                                           |         | Got     : [binary() | 'undefined']
+                                           |         | Expression has type:   [binary() | 'undefined']
+                                           |         | Context expected type: [binary()]
                                            |         | 
-                                           |         |   [binary() | 'undefined'] is not a subtype of [binary()]
+                                           |         |   [binary() | 'undefined'] is not compatible with [binary()]
                                            |         |   because
-                                           |         |   binary() | 'undefined' is not a subtype of binary()
+                                           |         |   binary() | 'undefined' is not compatible with binary()
                                            |         |   because
-                                           |         |   'undefined' is not a subtype of binary()
+                                           |         |   'undefined' is not compatible with binary()
                                            |         |
 -spec test41() -> [binary()].              |         |
 test41() ->                                | OK      |
@@ -399,16 +399,16 @@ test48() ->                                | ERROR   |
             is_record(Rec, rec2)           |         |
     ],                                     |         |
     Res.                                   |         | Res.
-                                           |         | Expected: [#rec1{} | #rec2{}]
-                                           |         | Got     : [#rec1{} | #rec2{} | binary()]
+                                           |         | Expression has type:   [#rec1{} | #rec2{} | binary()]
+                                           |         | Context expected type: [#rec1{} | #rec2{}]
                                            |         | 
-                                           |         |   [#rec1{} | #rec2{} | binary()] is not a subtype of [#rec1{} | #rec2{}]
+                                           |         |   [#rec1{} | #rec2{} | binary()] is not compatible with [#rec1{} | #rec2{}]
                                            |         |   because
-                                           |         |   #rec1{} | #rec2{} | binary() is not a subtype of #rec1{} | #rec2{}
+                                           |         |   #rec1{} | #rec2{} | binary() is not compatible with #rec1{} | #rec2{}
                                            |         |   because
-                                           |         |   binary() is not a subtype of #rec1{} | #rec2{}
+                                           |         |   binary() is not compatible with #rec1{} | #rec2{}
                                            |         |   because
-                                           |         |   binary() is not a subtype of #rec1{}
+                                           |         |   binary() is not compatible with #rec1{}
                                            |         |
 -spec modules1                             |         |
     (unicode:chardata())                   |         |

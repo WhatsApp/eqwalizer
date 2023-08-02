@@ -21,12 +21,12 @@ b_to_n(true) ->                            |         |
   number().                                |         |
 b_to_n1(true) ->                           | ERROR   |
   true;                                    |         | 'true'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'true'
+                                           |         | Expression has type:   'true'
+                                           |         | Context expected type: number()
 b_to_n1(false) ->                          |         |
   false.                                   |         | 'false'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'false'
+                                           |         | Expression has type:   'false'
+                                           |         | Context expected type: number()
                                            |         |
 -spec b_to_n2(boolean()) ->                |         |
   number().                                |         |
@@ -34,69 +34,69 @@ b_to_n2(true) ->                           | ERROR   |
   1;                                       |         |
 b_to_n2(A) ->                              |         |
   A.                                       |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'false' | none()
+                                           |         | Expression has type:   'false' | none()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   'false' | none() is not a subtype of number()
+                                           |         |   'false' | none() is not compatible with number()
                                            |         |   because
-                                           |         |   'false' is not a subtype of number()
+                                           |         |   'false' is not compatible with number()
                                            |         |
 -spec b_to_n3(boolean()) ->                |         |
   number().                                |         |
 b_to_n3(true) ->                           | ERROR   |
   true;                                    |         | 'true'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'true'
+                                           |         | Expression has type:   'true'
+                                           |         | Context expected type: number()
 b_to_n3(A) ->                              |         |
   A.                                       |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : 'false' | none()
+                                           |         | Expression has type:   'false' | none()
+                                           |         | Context expected type: number()
                                            |         | 
-                                           |         |   'false' | none() is not a subtype of number()
+                                           |         |   'false' | none() is not compatible with number()
                                            |         |   because
-                                           |         |   'false' is not a subtype of number()
+                                           |         |   'false' is not compatible with number()
                                            |         |
 -spec opacity_tolerance                    |         |
     (atom(), misc:o()) -> atom().          |         |
 opacity_tolerance(a, _) ->                 | ERROR   |
   1;                                       |         | 1.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 opacity_tolerance(b, _) ->                 |         |
   2;                                       |         | 2.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 opacity_tolerance(_, {_}) ->               |         |
   3;                                       |         | 3.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 opacity_tolerance(c, _) ->                 |         |
   4.                                       |         | 4.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec too_many_errors                      |         |
     (atom()) -> atom().                    |         |
 too_many_errors(a) ->                      | ERROR   |
   1;                                       |         | 1.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(b) ->                      |         |
   2;                                       |         | 2.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(c) ->                      |         |
   3;                                       |         | 3.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(d) ->                      |         |
   4;                                       |         | 4.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(e) ->                      |         |
   5;                                       |         | 5.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(f) ->                      |         |
   6;                                       |         |
 too_many_errors(g) ->                      |         |
@@ -112,14 +112,14 @@ too_many_errors(j) ->                      |         |
     (number()) -> number().                |         |
 visible_cast(N) ->                         | ERROR   |
   erlang:atom_to_binary(                   |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(b_to_n(eqwalizer:dynamic_cast(N)))).
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
     b_to_n(                                |         | b_to_n(eqwalizer:dynamic_cast(N)).
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
       N                                    |         | N.
-                                           |         | Expected: boolean()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: boolean()
     )                                      |         |
   ).                                       |         |
                                            |         |
@@ -133,8 +133,8 @@ expected_fun(F) ->                         | ERROR   |
                                            |         | Expected fun type with arity 0
                                            |         | Got: term()
   {X, Y}.                                  |         | {X, Y}.
-                                           |         | Expected: number()
-                                           |         | Got     : {dynamic(), dynamic()}
+                                           |         | Expression has type:   {dynamic(), dynamic()}
+                                           |         | Context expected type: number()
                                            |         |
 -spec lambda_arity([number()], atom()) ->  |         |
   number().                                |         |
@@ -143,11 +143,11 @@ lambda_arity(Ns, A) ->                     | ERROR   |
                                            |         | fun with arity 2 used as fun with 1 arguments
   Y =                                      |         |
     X +                                    |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: number()
       A,                                   |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   Y.                                       |         |
                                            |         |
 %% SUBTLE/INTERESTING CASES %%             |         |
@@ -159,29 +159,29 @@ lambda_arity(Ns, A) ->                     | ERROR   |
 lists_append(M1, M2) ->                    | ERROR   |
   Res = lists:append(                      |         |
     M1,                                    |         | M1.
-                                           |         | Expected: [T]
-                                           |         | Got     : #D{dynamic() => dynamic()}
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
+                                           |         | Context expected type: [T]
     M2                                     |         | M2.
-                                           |         | Expected: [dynamic()]
-                                           |         | Got     : #D{dynamic() => dynamic()}
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
+                                           |         | Context expected type: [dynamic()]
   ),                                       |         |
   Res.                                     |         | Res.
-                                           |         | Expected: #D{dynamic() => dynamic()}
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: #D{dynamic() => dynamic()}
                                            |         |
 -spec maps_update1                         |         |
     (term(), atom(), atom()) -> atom().    |         |
 maps_update1(M, K, V) ->                   | ERROR   |
   M1 = M#{                                 |         | M.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: #D{term() => term()}
     K :=                                   |         |
       V +                                  |         | V.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
         V},                                |         | V.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   M1.                                      |         |
                                            |         |
 % Similar                                  |         |
@@ -189,15 +189,15 @@ maps_update1(M, K, V) ->                   | ERROR   |
     (term(), atom(), atom()) -> atom().    |         |
 maps_update2(M, K, V) ->                   | ERROR   |
   M1 = M#{                                 |         | M.
-                                           |         | Expected: #D{term() => term()}
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: #D{term() => term()}
     K =>                                   |         |
     V +                                    |         | V.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
       V},                                  |         | V.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   M1.                                      |         |
                                            |         |
 % Similar                                  |         |
@@ -207,15 +207,15 @@ lists_flatten(L1, L2) ->                   | ERROR   |
   Res =                                    |         |
     lists:flatten(                         |         |
       L1,                                  |         | L1.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
       L2                                   |         | L2.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
     ),                                     |         |
   Res.                                     |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: atom()
                                            |         |
 %% Code coverage                           |         |
                                            |         |
@@ -225,14 +225,14 @@ block(X, Y) ->                             | ERROR   |
   begin                                    |         |
     Z =                                    |         |
       X +                                  |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
         Y,                                 |         | Y.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()
     Z                                      |         | Z.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
   end.                                     |         |
                                            |         |
 -spec cons                                 |         |
@@ -240,21 +240,21 @@ block(X, Y) ->                             | ERROR   |
 cons(H, T) ->                              | ERROR   |
   Res = lists:append(                      |         |
     [H |                                   |         | T.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
       T],                                  |         |
     [T |                                   |         | H.
-                                           |         | Expected: [term()]
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: [term()]
       H]                                   |         |
   ),                                       |         |
   Res.                                     |         | Res.
-                                           |         | Expected: [atom()]
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: [atom()]
                                            |         | 
-                                           |         |   [term()] is not a subtype of [atom()]
+                                           |         |   [term()] is not compatible with [atom()]
                                            |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         |   term() is not compatible with atom()
                                            |         |
 -spec 'case'                               |         |
     (boolean(), atom()) -> number().       |         |
@@ -263,11 +263,11 @@ cons(H, T) ->                              | ERROR   |
                                            |         | Expected fun type with arity 0
                                            |         | Got: boolean()
     true -> A + 1;                         |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
     false -> A - 1                         |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   end.                                     |         |
                                            |         |
 -spec 'if'                                 |         |
@@ -275,11 +275,11 @@ cons(H, T) ->                              | ERROR   |
 'if'(F, A) ->                              | ERROR   |
   if                                       |         |
     F -> A + 1;                            |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
     true -> A - 1                          |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   end.                                     |         |
                                            |         |
 -spec dyn_call                             |         |
@@ -287,98 +287,98 @@ cons(H, T) ->                              | ERROR   |
 dyn_call(M, F) ->                          | ERROR   |
   M:F(                                     |         |
     F + 1,                                 |         | F.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
     -M                                     |         | M.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   ).                                       |         |
                                            |         |
 -spec comprehensions1() -> ok.             |         |
 comprehensions1() ->                       | ERROR   |
   [X ||                                    |         | [ || ].
-                                           |         | Expected: 'ok'
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: 'ok'
     X <- #{                                |         | #{..}.
-                                           |         | Expected: [term()]
-                                           |         | Got     : #S{a := 'b', c := number()}
+                                           |         | Expression has type:   #S{a := 'b', c := number()}
+                                           |         | Context expected type: [term()]
       a => b,                              |         |
       c => d + 1                           |         | 'd'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'd'
+                                           |         | Expression has type:   'd'
+                                           |         | Context expected type: number()
     },                                     |         |
     atom_to_binary(                        |         |
       {X}                                  |         | {X}.
-                                           |         | Expected: atom()
-                                           |         | Got     : {dynamic()}
+                                           |         | Expression has type:   {dynamic()}
+                                           |         | Context expected type: atom()
     )].                                    |         |
                                            |         |
 -spec comprehensions2([term()]) -> ok.     |         |
 comprehensions2(L) ->                      | ERROR   |
   Res = [                                  |         |
     atom_to_binary(Y) ||                   |         | Y.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
     <<Y>> <= L                             |         | L.
-                                           |         | Expected: binary()
-                                           |         | Got     : [term()]
+                                           |         | Expression has type:   [term()]
+                                           |         | Context expected type: binary()
   ],                                       |         |
   Res.                                     |         | Res.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : [binary()]
+                                           |         | Expression has type:   [binary()]
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec comprehensions3(binary()) -> ok.     |         |
 comprehensions3(B) ->                      | ERROR   |
   Res =                                    |         |
     <<Y || Y <-                            |         |
       B                                    |         | B.
-                                           |         | Expected: [term()]
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: [term()]
     >>,                                    |         |
   Res.                                     |         | Res.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec maps(map()) ->                       |         |
   ok.                                      |         |
 maps(M) ->                                 | ERROR   |
   M1 = M                                   |         |
     #{id := a + 1},                        |         | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
   M2 = M                                   |         |
     #{id := b + 2},                        |         | 'b'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: number()
   M1 + M2.                                 |         | M1.
-                                           |         | Expected: number()
-                                           |         | Got     : #D{dynamic() | 'id' => dynamic() | number()}
+                                           |         | Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}
+                                           |         | Context expected type: number()
                                            |         | ---
                                            |         | M2.
-                                           |         | Expected: number()
-                                           |         | Got     : #D{dynamic() | 'id' => dynamic() | number()}
+                                           |         | Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}
+                                           |         | Context expected type: number()
                                            |         | ---
                                            |         | _ + _.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec binary1(atom(), atom()) -> atom().   |         |
 binary1(A, S) ->                           | ERROR   |
   B = <<                                   |         |
     A:                                     |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
     S                                      |         | S.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
   >>,                                      |         |
   B + 1.                                   |         | B.
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
                                            |         | ---
                                            |         | _ + _.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec 'catch'(atom()) -> atom().           |         |
 'catch'(F) ->                              | ERROR   |
@@ -398,16 +398,16 @@ try1(A) ->                                 | ERROR   |
     []                                     |         |
   after                                    |         |
     1 + a                                  |         | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
   end,                                     |         |
   Res.                                     |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : dynamic() | []
+                                           |         | Expression has type:   dynamic() | []
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   dynamic() | [] is not a subtype of atom()
+                                           |         |   dynamic() | [] is not compatible with atom()
                                            |         |   because
-                                           |         |   [] is not a subtype of atom()
+                                           |         |   [] is not compatible with atom()
                                            |         |
 -spec try2(atom()) -> atom().              |         |
 try2(A) ->                                 | ERROR   |
@@ -418,18 +418,18 @@ try2(A) ->                                 | ERROR   |
         of                                 |         |
           {_} ->                           |         |
             A + 1                          |         | A.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
         catch _ ->                         |         |
           []                               |         |
         after                              |         |
           1 + a                            |         | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
         end,                               |         |
   Res.                                     |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : number() | []
+                                           |         | Expression has type:   number() | []
+                                           |         | Context expected type: atom()
                                            |         |
 -record(rec, {                             |         |
   id :: integer(),                         |         |
@@ -440,37 +440,37 @@ try2(A) ->                                 | ERROR   |
 rec1(Pid, Id) ->                           | ERROR   |
   Res = #rec{                              |         |
     id = Pid,                              |         | Pid.
-                                           |         | Expected: number()
-                                           |         | Got     : pid()
+                                           |         | Expression has type:   pid()
+                                           |         | Context expected type: number()
     pid = Id                               |         | Id.
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()
   },                                       |         |
   Res.                                     |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : #rec{}
+                                           |         | Expression has type:   #rec{}
+                                           |         | Context expected type: atom()
                                            |         |
 -spec rec2(#rec{}, integer()) -> pid().    |         |
 rec2(Rec, Id) ->                           | ERROR   |
   Res = Rec#rec{                           |         |
     pid = Id                               |         | Id.
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()
   },                                       |         |
   Res#rec.id.                              |         | ...#rec.id.
-                                           |         | Expected: pid()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: pid()
                                            |         |
 -spec rec3() -> atom().                    |         |
 rec3() ->                                  | ERROR   |
   Res = #rec{                              |         |
     _ = <<>>                               |         | <<..>>.
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
   },                                       |         |
   Res.                                     |         | Res.
-                                           |         | Expected: atom()
-                                           |         | Got     : #rec{}
+                                           |         | Expression has type:   #rec{}
+                                           |         | Context expected type: atom()
                                            |         |
 -spec receive1()                           |         |
       -> number().                         |         |
@@ -478,23 +478,23 @@ receive1() ->                              | ERROR   |
   receive                                  |         |
     {N} ->                                 |         |
       atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(_ ++ _)).
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
         [N]                                |         | _ ++ _.
-                                           |         | Expected: atom()
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: atom()
           ++ a                             |         | 'a'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: [term()]
       );                                   |         |
     N ->                                   |         |
       atom_to_binary(                      |         |
         <<N>>                              |         | <<..>>.
-                                           |         | Expected: [term()]
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: [term()]
           ++ b                             |         | 'b'.
-                                           |         | Expected: [term()]
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: [term()]
       )                                    |         |
   end.                                     |         |
                                            |         |
@@ -504,35 +504,35 @@ receive2() ->                              | ERROR   |
   receive                                  |         |
     {N} ->                                 |         |
       atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast([N])).
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
         [N]                                |         | [N].
-                                           |         | Expected: atom()
-                                           |         | Got     : [dynamic()]
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: atom()
       );                                   |         |
     N ->                                   |         |
       atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(<<..>>)).
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
         <<N>>                              |         | <<..>>.
-                                           |         | Expected: atom()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: atom()
       )                                    |         |
   after 10 ->                              |         |
     []                                     |         | [].
-                                           |         | Expected: number()
-                                           |         | Got     : []
+                                           |         | Expression has type:   []
+                                           |         | Context expected type: number()
   end.                                     |         |
                                            |         |
 -spec same_line() -> number().             |         |
 same_line() ->                             | ERROR   |
   a + b.                                   |         | 'a'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number()
                                            |         | ---
                                            |         | 'b'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'b'
+                                           |         | Expression has type:   'b'
+                                           |         | Context expected type: number()
                                            |         |
 % eqwalizer:ignore                         |         |
 -type loop() :: loop().                    |         |
@@ -556,8 +556,8 @@ fixmes_neg(Atom) ->                        | ERROR   |
   % eqwalizer:fixme                        |         |
   _ = Atom + 2,                            |         |
   error.                                   |         | 'error'.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : 'error'
+                                           |         | Expression has type:   'error'
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec redundant_fixme() -> ok.             |         |
 redundant_fixme() ->                       | OK      |
@@ -575,5 +575,5 @@ map_pair(_, _) -> error(unimplemented).    | OK      |
 -spec apply_map([{atom(), term()}]) -> [{a……         |
 apply_map(L) ->                            | ERROR   |
     map_pair(L, fun make_pair/2).          |         | Arg 2 of 'make_pair/2'.
-                                           |         | Expected: number()
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: number()

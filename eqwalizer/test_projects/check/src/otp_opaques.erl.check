@@ -16,12 +16,12 @@ to_gb_set1(Atoms) ->                       | OK      |
     gb_sets:set(number()).                 |         |
 to_gb_set2_neg(Atoms) ->                   | ERROR   |
     gb_sets:from_list(Atoms).              |         | gb_sets:from_list(Atoms).
-                                           |         | Expected: gb_sets:set(number())
-                                           |         | Got     : gb_sets:set(atom())
+                                           |         | Expression has type:   gb_sets:set(atom())
+                                           |         | Context expected type: gb_sets:set(number())
                                            |         | 
-                                           |         |   gb_sets:set(atom()) is not a subtype of gb_sets:set(number())
+                                           |         |   gb_sets:set(atom()) is not compatible with gb_sets:set(number())
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec to_gb_set3([A]) ->                   |         |
     gb_sets:set(A).                        |         |
@@ -46,12 +46,12 @@ uniques2_neg(Elems) ->                     | ERROR   |
     Set = gb_sets:from_list(Elems),        |         |
     List = gb_sets:to_list(Set),           |         |
     List.                                  |         | List.
-                                           |         | Expected: [A]
-                                           |         | Got     : [[A]]
+                                           |         | Expression has type:   [[A]]
+                                           |         | Context expected type: [A]
                                            |         | 
-                                           |         |   [[A]] is not a subtype of [A]
+                                           |         |   [[A]] is not compatible with [A]
                                            |         |   because
-                                           |         |   [A] is not a subtype of A
+                                           |         |   [A] is not compatible with A
                                            |         |
 %% "Proper" version                        |         |
 -spec union(Set1, Set2) -> Set3            |         |
@@ -104,32 +104,32 @@ test1() ->                                 | OK      |
 test2() ->                                 | ERROR   |
     case rand:uniform(2) of                |         |
         1 -> gb_sets:new();                |         | gb_sets:new().
-                                           |         | Expected: {term(), term()} | 'a'
-                                           |         | Got     : gb_sets:set(none())
+                                           |         | Expression has type:   gb_sets:set(none())
+                                           |         | Context expected type: {term(), term()} | 'a'
                                            |         | 
-                                           |         |   gb_sets:set(none()) is not a subtype of {term(), term()} | 'a'
+                                           |         |   gb_sets:set(none()) is not compatible with {term(), term()} | 'a'
                                            |         |   because
-                                           |         |   gb_sets:set(none()) is not a subtype of {term(), term()}
+                                           |         |   gb_sets:set(none()) is not compatible with {term(), term()}
         2 -> a                             |         |
     end.                                   |         |
                                            |         |
 -spec test3_neg(maps:iterator(k, v)) ->    |         |
     sets:set(a).                           |         |
 test3_neg(X) -> X.                         | ERROR   | X.
-                                           |         | Expected: sets:set('a')
-                                           |         | Got     : maps:iterator('k', 'v')
+                                           |         | Expression has type:   maps:iterator('k', 'v')
+                                           |         | Context expected type: sets:set('a')
                                            |         |
 -spec ts(T, sets:set(a)) -> T.             |         |
 ts(X, X) -> X.                             | ERROR   | X.
-                                           |         | Expected: T
-                                           |         | Got     : sets:set('a')
+                                           |         | Expression has type:   sets:set('a')
+                                           |         | Context expected type: T
                                            |         |
 -spec test4_neg(maps:iterator(k, v))       |         |
         -> nok.                            |         |
 test4_neg(X) ->                            | ERROR   |
     ts(X, X),                              |         | X.
-                                           |         | Expected: sets:set('a')
-                                           |         | Got     : maps:iterator('k', 'v')
+                                           |         | Expression has type:   maps:iterator('k', 'v')
+                                           |         | Context expected type: sets:set('a')
     nok.                                   |         |
                                            |         |
 % We skip unions in opacity                |         |

@@ -49,8 +49,8 @@
   49 unboxL_neg(BA = #box_a{}) -> unbox_a(BA);  | ERROR   |
   50 unboxL_neg(BB = #box_b{}) -> unbox_b(BB);  |         |
   51 unboxL_neg(BN = #box_n{}) -> unbox_a(BN).  |         | BN.
-                                                |         | Expected: #box_a{}
-                                                |         | Got     : #box_n{}
+                                                |         | Expression has type:   #box_n{}
+                                                |         | Context expected type: #box_a{}
   52                                            |         |
   53 -spec unboxR(box()) -> abn().              |         |
   54 unboxR(#box_a{} = BA) -> unbox_a(BA);      | OK      |
@@ -61,6 +61,6 @@
   59 unboxR_neg(#box_a{} = BA) -> unbox_a(BA);  | ERROR   |
   60 unboxR_neg(#box_b{} = BB) -> unbox_b(BB);  |         |
   61 unboxR_neg(#box_n{} = BN) -> unbox_b(BN).  |         | BN.
-                                                |         | Expected: #box_b{}
-                                                |         | Got     : #box_n{}
+                                                |         | Expression has type:   #box_n{}
+                                                |         | Context expected type: #box_b{}
 

@@ -28,8 +28,8 @@ mk_rec1_pos() -> #rec1{}.                  | OK      |
                                            |         |
 -spec mk_rec1_neg() -> #rec1{}.            |         |
 mk_rec1_neg() -> #rec2{}.                  | ERROR   | #rec2{...}.
-                                           |         | Expected: #rec1{}
-                                           |         | Got     : #rec2{}
+                                           |         | Expression has type:   #rec2{}
+                                           |         | Context expected type: #rec1{}
                                            |         |
 -spec mk_rec1a_pos() -> #rec1{}.           |         |
 mk_rec1a_pos() ->                          | OK      |
@@ -40,8 +40,8 @@ mk_rec1a_pos() ->                          | OK      |
 mk_rec1a_neg() ->                          | ERROR   |
     R = #rec2{},                           |         |
     R.                                     |         | R.
-                                           |         | Expected: #rec1{}
-                                           |         | Got     : #rec2{}
+                                           |         | Expression has type:   #rec2{}
+                                           |         | Context expected type: #rec1{}
                                            |         |
 -spec mk_rec_pos(atom()) ->                |         |
     #rec1{} | #rec2{}.                     |         |
@@ -52,12 +52,12 @@ mk_rec_pos(rec2) -> #rec2{}.               |         |
     #rec1{} | #rec3{}.                     |         |
 mk_rec_neg(rec1) -> #rec1{};               | ERROR   |
 mk_rec_neg(rec2) -> #rec2{}.               |         | #rec2{...}.
-                                           |         | Expected: #rec1{} | #rec3{}
-                                           |         | Got     : #rec2{}
+                                           |         | Expression has type:   #rec2{}
+                                           |         | Context expected type: #rec1{} | #rec3{}
                                            |         | 
-                                           |         |   #rec2{} is not a subtype of #rec1{} | #rec3{}
+                                           |         |   #rec2{} is not compatible with #rec1{} | #rec3{}
                                            |         |   because
-                                           |         |   #rec2{} is not a subtype of #rec1{}
+                                           |         |   #rec2{} is not compatible with #rec1{}
                                            |         |
 -spec mk_foo_pos() -> #foo{}.              |         |
 mk_foo_pos() ->                            | OK      |
@@ -82,8 +82,8 @@ fix_foo1_pos(Foo) ->                       | OK      |
 -spec fix_foo_neg(#foo{}) -> #foo{}.       |         |
 fix_foo_neg(Foo) ->                        | ERROR   |
     Foo#foo_def{name = default, id = 0}.   |         | ...#foo_def{...}.
-                                           |         | Expected: #foo{}
-                                           |         | Got     : #foo_def{}
+                                           |         | Expression has type:   #foo_def{}
+                                           |         | Context expected type: #foo{}
                                            |         |
 -spec index1_pos() -> integer().           |         |
 index1_pos() ->                            | OK      |
@@ -97,15 +97,15 @@ index2_pos() ->                            | OK      |
 -spec index1_neg() -> atom().              |         |
 index1_neg() ->                            | ERROR   |
     #foo.name.                             |         | #foo.name.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec index2_neg() -> atom().              |         |
 index2_neg() ->                            | ERROR   |
     Index = #foo.name,                     |         |
     Index.                                 |         | Index.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec select1_pos(#foo{}) -> integer().    |         |
 select1_pos(Foo) ->                        | OK      |
@@ -119,15 +119,15 @@ select2_pos(Foo) ->                        | OK      |
 -spec select1_neg(#foo{}) -> integer().    |         |
 select1_neg(Foo) ->                        | ERROR   |
     Foo#foo.name.                          |         | ...#foo.name.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -spec select2_neg(#foo{}) -> integer().    |         |
 select2_neg(Foo) ->                        | ERROR   |
     Id = Foo#foo.name,                     |         |
     Id.                                    |         | Id.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -spec rec_index_pat_pos(term())            |         |
     -> integer().                          |         |
@@ -136,8 +136,8 @@ rec_index_pat_pos(#foo.id = I) -> I.       | OK      |
 -spec rec_index_pat_neg(term())            |         |
         -> atom().                         |         |
 rec_index_pat_neg(#foo.id = I) -> I.       | ERROR   | I.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec rec_pat_pos(term())                  |         |
         -> {integer(), atom()}.            |         |
@@ -148,13 +148,13 @@ rec_pat_pos(#foo{id = I, name = N}) ->     | OK      |
         -> {integer(), atom()}.            |         |
 rec_pat_neg(#foo{id = I, name = N}) ->     | ERROR   |
     {N, I}.                                |         | {N, I}.
-                                           |         | Expected: {number(), atom()}
-                                           |         | Got     : {atom(), number()}
+                                           |         | Expression has type:   {atom(), number()}
+                                           |         | Context expected type: {number(), atom()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {atom(), number()} is not a subtype of {number(), atom()}
+                                           |         |   {atom(), number()} is not compatible with {number(), atom()}
                                            |         |   because
-                                           |         |   atom() is not a subtype of number()
+                                           |         |   atom() is not compatible with number()
                                            |         |
 -spec pat_fields(#any_foo{}) ->            |         |
     {#foo{}, #foo{}}.                      |         |
@@ -183,8 +183,8 @@ rec_guard3_pos(Foo, X)                     | OK      |
         -> atom().                         |         |
 rec_guard4_neg(Foo, X)                     | ERROR   |
     when Foo == #foo_def{id = X} -> X.     |         | X.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -record(rec_a, { field :: number() }).     |         |
 -record(rec_b, { field :: #rec_a{} }).     |         |
@@ -198,8 +198,8 @@ record_in_record(X) ->                     | OK      |
     (#rec_b{}) -> atom().                  |         |
 record_in_record_neg(X) ->                 | ERROR   |
     (X#rec_b.field)#rec_a.field.           |         | ...#rec_a.field.
-                                           |         | Expected: atom()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 % iodata() type is WIP                     |         |
 -record(iodata_box, {iod :: iodata()}).    |         |
@@ -207,8 +207,8 @@ record_in_record_neg(X) ->                 | ERROR   |
 -spec use_iodata_box() -> term().          |         |
 use_iodata_box() ->                        | ERROR   |
     #iodata_box{iod = 's'}.                |         | 's'.
-                                           |         | Expected: iodata()
-                                           |         | Got     : 's'
+                                           |         | Expression has type:   's'
+                                           |         | Context expected type: iodata()
                                            |         |
 -record(mrec, {                            |         |
     id1 :: integer(),                      |         |
@@ -224,8 +224,8 @@ field_gen_mk() ->                          | OK      |
 -spec field_gen_mk_neg() -> #mrec{}.       |         |
 field_gen_mk_neg() ->                      | ERROR   |
     #mrec{id1 = 1, name1 = n, _ = ok}.     |         | 'ok'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'ok'
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: number()
                                            |         |
 -spec field_gen_pat(term())                |         |
         -> atom().                         |         |
@@ -254,25 +254,25 @@ field_gen_pat_neg(                         | OK      |
 -spec mk_int_box_1_neg() -> int_box().     |         |
 mk_int_box_1_neg() ->                      | ERROR   |
     #any_box{inner = ok}.                  |         | #any_box{...}.
-                                           |         | Expected: int_box()
-                                           |         | Got     : #any_box{inner :: 'ok'}
+                                           |         | Expression has type:   #any_box{inner :: 'ok'}
+                                           |         | Context expected type: int_box()
                                            |         | 
-                                           |         |   #any_box{inner :: 'ok'} is not a subtype of int_box()
+                                           |         |   #any_box{inner :: 'ok'} is not compatible with int_box()
                                            |         |   because
-                                           |         |   #any_box{inner :: 'ok'} is not a subtype of #any_box{inner :: number()}
+                                           |         |   #any_box{inner :: 'ok'} is not compatible with #any_box{inner :: number()}
                                            |         |   because
-                                           |         |   'ok' is not a subtype of number()
+                                           |         |   'ok' is not compatible with number()
                                            |         |
 -spec mk_int_box_2_neg() -> IB when        |         |
     IB :: #any_box{inner :: integer()}.    |         |
 mk_int_box_2_neg() ->                      | ERROR   |
     #any_box{inner = ok}.                  |         | #any_box{...}.
-                                           |         | Expected: #any_box{inner :: number()}
-                                           |         | Got     : #any_box{inner :: 'ok'}
+                                           |         | Expression has type:   #any_box{inner :: 'ok'}
+                                           |         | Context expected type: #any_box{inner :: number()}
                                            |         | 
-                                           |         |   #any_box{inner :: 'ok'} is not a subtype of #any_box{inner :: number()}
+                                           |         |   #any_box{inner :: 'ok'} is not compatible with #any_box{inner :: number()}
                                            |         |   because
-                                           |         |   'ok' is not a subtype of number()
+                                           |         |   'ok' is not compatible with number()
                                            |         |
 -type box2(T) :: #any_box{inner :: T}.     |         |
                                            |         |
@@ -333,36 +333,36 @@ test_int_bool_box() ->                     | OK      |
     -> only_atom_box().                    |         |
 test_int_bool_box_neg() ->                 | ERROR   |
     #int_bool_box{inner = a}.              |         | 'a'.
-                                           |         | Expected: number() | boolean()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number() | boolean()
                                            |         | 
-                                           |         |   'a' is not a subtype of number() | boolean()
+                                           |         |   'a' is not compatible with number() | boolean()
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 -spec test_int_bool_box_gen_neg()          |         |
     -> only_atom_box().                    |         |
 test_int_bool_box_gen_neg() ->             | ERROR   |
     #int_bool_box{_ = a}.                  |         | 'a'.
-                                           |         | Expected: number() | boolean()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number() | boolean()
                                            |         | 
-                                           |         |   'a' is not a subtype of number() | boolean()
+                                           |         |   'a' is not compatible with number() | boolean()
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 -spec test_int_bool_box_default_neg()      |         |
     -> only_int_box().                     |         |
 test_int_bool_box_default_neg() ->         | ERROR   |
     #int_bool_box{}.                       |         | #int_bool_box{...}.
-                                           |         | Expected: only_int_box()
-                                           |         | Got     : #int_bool_box{inner :: 'true'}
+                                           |         | Expression has type:   #int_bool_box{inner :: 'true'}
+                                           |         | Context expected type: only_int_box()
                                            |         | 
-                                           |         |   #int_bool_box{inner :: 'true'} is not a subtype of only_int_box()
+                                           |         |   #int_bool_box{inner :: 'true'} is not compatible with only_int_box()
                                            |         |   because
-                                           |         |   #int_bool_box{inner :: 'true'} is not a subtype of #int_bool_box{inner :: number()}
+                                           |         |   #int_bool_box{inner :: 'true'} is not compatible with #int_bool_box{inner :: number()}
                                            |         |   because
-                                           |         |   'true' is not a subtype of number()
+                                           |         |   'true' is not compatible with number()
                                            |         |
 -spec test_int_bool_box_default()          |         |
     -> only_bool_box().                    |         |
@@ -379,72 +379,72 @@ test_rec_update(B) ->                      | OK      |
     -> only_atom_box().                    |         |
 test_rec_update_neg(B) ->                  | ERROR   |
     B#int_bool_box{inner = a}.             |         | 'a'.
-                                           |         | Expected: number() | boolean()
-                                           |         | Got     : 'a'
+                                           |         | Expression has type:   'a'
+                                           |         | Context expected type: number() | boolean()
                                            |         | 
-                                           |         |   'a' is not a subtype of number() | boolean()
+                                           |         |   'a' is not compatible with number() | boolean()
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 -spec test_rec_update_02_neg               |         |
     (only_bool_box())                      |         |
     -> only_bool_box().                    |         |
 test_rec_update_02_neg(B) ->               | ERROR   |
     B#int_bool_box{inner = 4}.             |         | ...#int_bool_box{...}.
-                                           |         | Expected: only_bool_box()
-                                           |         | Got     : #int_bool_box{inner :: number()}
+                                           |         | Expression has type:   #int_bool_box{inner :: number()}
+                                           |         | Context expected type: only_bool_box()
                                            |         | 
-                                           |         |   #int_bool_box{inner :: number()} is not a subtype of only_bool_box()
+                                           |         |   #int_bool_box{inner :: number()} is not compatible with only_bool_box()
                                            |         |   because
-                                           |         |   #int_bool_box{inner :: number()} is not a subtype of #int_bool_box{inner :: boolean()}
+                                           |         |   #int_bool_box{inner :: number()} is not compatible with #int_bool_box{inner :: boolean()}
                                            |         |   because
-                                           |         |   number() is not a subtype of boolean()
+                                           |         |   number() is not compatible with boolean()
                                            |         |
 -spec select_bad_neg(only_int_box())       |         |
     -> integer().                          |         |
 select_bad_neg(R) ->                       | ERROR   |
     R#any_box.inner.                       |         | R.
-                                           |         | Expected: #any_box{}
-                                           |         | Got     : only_int_box()
+                                           |         | Expression has type:   only_int_box()
+                                           |         | Context expected type: #any_box{}
                                            |         | 
-                                           |         |   only_int_box() is not a subtype of #any_box{}
+                                           |         |   only_int_box() is not compatible with #any_box{}
                                            |         |   because
-                                           |         |   #int_bool_box{inner :: number()} is not a subtype of #any_box{}
+                                           |         |   #int_bool_box{inner :: number()} is not compatible with #any_box{}
                                            |         |
 -spec test_select_neg(only_int_box())      |         |
     -> boolean().                          |         |
 test_select_neg(R) ->                      | ERROR   |
     R#int_bool_box.inner.                  |         | ...#int_bool_box.inner.
-                                           |         | Expected: boolean()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec test_tuple_record_neg()              |         |
     -> #int_bool_box{}.                    |         |
 test_tuple_record_neg() ->                 | ERROR   |
     {int_bool_box, a}.                     |         | {'int_bool_box', 'a'}.
-                                           |         | Expected: #int_bool_box{}
-                                           |         | Got     : {'int_bool_box', 'a'}
+                                           |         | Expression has type:   {'int_bool_box', 'a'}
+                                           |         | Context expected type: #int_bool_box{}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'int_bool_box', 'a'} is not a subtype of {'int_bool_box', number() | boolean()}
+                                           |         |   {'int_bool_box', 'a'} is not compatible with {'int_bool_box', number() | boolean()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of number() | boolean()
+                                           |         |   'a' is not compatible with number() | boolean()
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 -spec test_tuple_record_02_neg()           |         |
     -> only_int_box().                     |         |
 test_tuple_record_02_neg() ->              | ERROR   |
     {int_bool_box, a}.                     |         | {'int_bool_box', 'a'}.
-                                           |         | Expected: only_int_box()
-                                           |         | Got     : {'int_bool_box', 'a'}
+                                           |         | Expression has type:   {'int_bool_box', 'a'}
+                                           |         | Context expected type: only_int_box()
                                            |         | 
-                                           |         |   {'int_bool_box', 'a'} is not a subtype of only_int_box()
+                                           |         |   {'int_bool_box', 'a'} is not compatible with only_int_box()
                                            |         |   because
                                            |         |   at tuple index 2:
-                                           |         |   {'int_bool_box', 'a'} is not a subtype of {'int_bool_box', number()}
+                                           |         |   {'int_bool_box', 'a'} is not compatible with {'int_bool_box', number()}
                                            |         |   because
-                                           |         |   'a' is not a subtype of number()
+                                           |         |   'a' is not compatible with number()
                                            |         |
 -spec test_tuple_select                    |         |
     ({int_bool_box, boolean()})            |         |
@@ -463,17 +463,17 @@ test_select_union(R) ->                    | OK      |
     -> true.                               |         |
 test_select_union_neg(R) ->                | ERROR   |
     R#int_bool_box.inner.                  |         | ...#int_bool_box.inner.
-                                           |         | Expected: 'true'
-                                           |         | Got     : boolean() | 'true'
+                                           |         | Expression has type:   boolean() | 'true'
+                                           |         | Context expected type: 'true'
                                            |         | 
-                                           |         |   boolean() | 'true' is not a subtype of 'true'
+                                           |         |   boolean() | 'true' is not compatible with 'true'
                                            |         |   because
-                                           |         |   boolean() is not a subtype of 'true'
+                                           |         |   boolean() is not compatible with 'true'
                                            |         |
 -record(bad_default, {                     |         |
     inner = true :: integer()              |         | 'true'.
-                                           |         | Expected: number()
-                                           |         | Got     : 'true'
+                                           |         | Expression has type:   'true'
+                                           |         | Context expected type: number()
 }).                                        |         |
                                            |         |
 -spec test_bad_default_neg()               |         |
@@ -485,25 +485,25 @@ test_bad_default_neg() ->                  | ERROR   |
     -> only_int_box().                     |         |
 test_rec_to_refined_neg() ->               | ERROR   |
     #bad_default{inner = 42}.              |         | #bad_default{...}.
-                                           |         | Expected: only_int_box()
-                                           |         | Got     : #bad_default{}
+                                           |         | Expression has type:   #bad_default{}
+                                           |         | Context expected type: only_int_box()
                                            |         | 
-                                           |         |   #bad_default{} is not a subtype of only_int_box()
+                                           |         |   #bad_default{} is not compatible with only_int_box()
                                            |         |   because
-                                           |         |   #bad_default{} is not a subtype of #int_bool_box{inner :: number()}
+                                           |         |   #bad_default{} is not compatible with #int_bool_box{inner :: number()}
                                            |         |
 -spec test_tuple_select_neg                |         |
     ({int_bool_box, integer()})            |         |
     -> integer().                          |         |
 test_tuple_select_neg(R) ->                | ERROR   |
     R#bad_default.inner.                   |         | R.
-                                           |         | Expected: #bad_default{}
-                                           |         | Got     : {'int_bool_box', number()}
+                                           |         | Expression has type:   {'int_bool_box', number()}
+                                           |         | Context expected type: #bad_default{}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {'int_bool_box', number()} is not a subtype of {'bad_default', number()}
+                                           |         |   {'int_bool_box', number()} is not compatible with {'bad_default', number()}
                                            |         |   because
-                                           |         |   'int_bool_box' is not a subtype of 'bad_default'
+                                           |         |   'int_bool_box' is not compatible with 'bad_default'
                                            |         |
 -record(refined_two_fields, {              |         |
     inner :: eqwalizer:refinable(term()),  |         |
@@ -520,12 +520,12 @@ test_select_other(R) ->                    | OK      |
     (#refined_two_fields{})                |         |
     -> #refined_two_fields{inner :: intege……         |
 test_subtype_refine_neg(R) -> R.           | ERROR   | R.
-                                           |         | Expected: #refined_two_fields{inner :: number()}
-                                           |         | Got     : #refined_two_fields{}
+                                           |         | Expression has type:   #refined_two_fields{}
+                                           |         | Context expected type: #refined_two_fields{inner :: number()}
                                            |         | 
-                                           |         |   #refined_two_fields{} is not a subtype of #refined_two_fields{inner :: number()}
+                                           |         |   #refined_two_fields{} is not compatible with #refined_two_fields{inner :: number()}
                                            |         |   because
-                                           |         |   term() is not a subtype of number()
+                                           |         |   term() is not compatible with number()
                                            |         |
 -spec test_subtype_union_refine            |         |
     ({refined_two_fields, integer() | bool……         |
@@ -540,8 +540,8 @@ test_unrec_neg() ->                        | ERROR   |
             [Name]                         |         |
     end,                                   |         |
     lists:nth(1, L) * 3.                   |         | lists:nth(1, L).
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -record(recurd, {rec :: #recurd{}}).       |         |
                                            |         |
@@ -621,12 +621,12 @@ atomize2(Rec) ->                           |         |
 ) -> atom().                               |         |
 atomize3({B, _, _}) ->                     | ERROR   |
     binary_to_atom(B);                     |         | B.
-                                           |         | Expected: binary()
-                                           |         | Got     : 'my_record' | binary()
+                                           |         | Expression has type:   'my_record' | binary()
+                                           |         | Context expected type: binary()
                                            |         | 
-                                           |         |   'my_record' | binary() is not a subtype of binary()
+                                           |         |   'my_record' | binary() is not compatible with binary()
                                            |         |   because
-                                           |         |   'my_record' is not a subtype of binary()
+                                           |         |   'my_record' is not compatible with binary()
 atomize3(Rec) ->                           |         |
     misc:atomize(Rec).                     |         |
                                            |         |
@@ -677,8 +677,8 @@ narrow4({X, X}) -> {X#two_ref.a, X#two_ref…… OK      |
                                            |         |
 -spec narrow5_neg({two_ref1(), two_ref3()}……         |
 narrow5_neg({X, X}) -> X.                  | ERROR   | X.
-                                           |         | Expected: 'ok'
-                                           |         | Got     : #two_ref{b :: boolean(), a :: atom()}
+                                           |         | Expression has type:   #two_ref{b :: boolean(), a :: atom()}
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec narrow6(two_ref1() | two_ref2()) -> ……         |
 narrow6(R = #two_ref{a = _, b = _}) -> R.  | OK      |
@@ -692,12 +692,12 @@ un_foo() ->                                | ERROR   |
     Rec = mk_foo(),                        |         |
     #foo{id = Id} = Rec,                   |         |
     Id.                                    |         | Id.
-                                           |         | Expected: atom()
-                                           |         | Got     : number() | none()
+                                           |         | Expression has type:   number() | none()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   number() | none() is not a subtype of atom()
+                                           |         |   number() | none() is not compatible with atom()
                                            |         |   because
-                                           |         |   number() is not a subtype of atom()
+                                           |         |   number() is not compatible with atom()
                                            |         |
 -spec mk_two_ref() -> #two_ref{} | none(). |         |
 mk_two_ref() ->                            | OK      |
@@ -707,21 +707,21 @@ mk_two_ref() ->                            | OK      |
 un_two_ref1() ->                           | ERROR   |
     Rec = mk_two_ref(),                    |         |
     Rec#two_ref.a.                         |         | ...#two_ref.a.
-                                           |         | Expected: atom()
-                                           |         | Got     : term() | none()
+                                           |         | Expression has type:   term() | none()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   term() | none() is not a subtype of atom()
+                                           |         |   term() | none() is not compatible with atom()
                                            |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         |   term() is not compatible with atom()
                                            |         |
 -spec un_two_ref2() -> atom().             |         |
 un_two_ref2() ->                           | ERROR   |
     Rec = mk_two_ref(),                    |         |
     #two_ref{a = A} = Rec,                 |         |
     A.                                     |         | A.
-                                           |         | Expected: atom()
-                                           |         | Got     : term() | none()
+                                           |         | Expression has type:   term() | none()
+                                           |         | Context expected type: atom()
                                            |         | 
-                                           |         |   term() | none() is not a subtype of atom()
+                                           |         |   term() | none() is not compatible with atom()
                                            |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         |   term() is not compatible with atom()

@@ -29,8 +29,8 @@
 foo(X) ->                                  | ERROR   |
   _ = X#rec.field,                         |         |
   _ = X#rec{field = 3},                    |         | 3.
-                                           |         | Expected: [number()]
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: [number()]
   _ = #rec{},                              |         |
   % note: we don't index headers           |         |
   _ = #header_rec{},                       |         |

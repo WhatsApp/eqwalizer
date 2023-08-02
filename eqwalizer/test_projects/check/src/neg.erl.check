@@ -11,42 +11,42 @@
 %% https://git.io/JLjXd                    |         |
 -spec foo(A) -> A.                         |         |
 foo(X) -> {X, X}.                          | ERROR   | {X, X}.
-                                           |         | Expected: A
-                                           |         | Got     : {A, A}
+                                           |         | Expression has type:   {A, A}
+                                           |         | Context expected type: A
                                            |         |
 -spec atom_id_e(atom()) -> number().       |         |
 atom_id_e(X) ->                            | ERROR   |
     X.                                     |         | X.
-                                           |         | Expected: number()
-                                           |         | Got     : atom()
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -spec foo(term(), A) -> A.                 |         |
 foo(X, _) -> X.                            | ERROR   | X.
-                                           |         | Expected: A
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: A
                                            |         |
 -spec match(term()) -> {atom(), atom()}.   |         |
 match(X) ->                                | ERROR   |
     {ok, _} = X.                           |         | match_expr.
-                                           |         | Expected: {atom(), atom()}
-                                           |         | Got     : {'ok', term()}
+                                           |         | Expression has type:   {'ok', term()}
+                                           |         | Context expected type: {atom(), atom()}
                                            |         | 
                                            |         |   at tuple index 2:
-                                           |         |   {'ok', term()} is not a subtype of {atom(), atom()}
+                                           |         |   {'ok', term()} is not compatible with {atom(), atom()}
                                            |         |   because
-                                           |         |   term() is not a subtype of atom()
+                                           |         |   term() is not compatible with atom()
                                            |         |
 -spec concat1() -> list().                 |         |
 concat1() -> [1] ++ 1.                     | ERROR   | 1.
-                                           |         | Expected: [term()]
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec concat2(X, X) -> list().             |         |
 concat2(X, X) -> [1] ++ X.                 | ERROR   | X.
-                                           |         | Expected: [term()]
-                                           |         | Got     : X
+                                           |         | Expression has type:   X
+                                           |         | Context expected type: [term()]
                                            |         |
 -spec concat3(X, X) -> list().             |         |
 concat3(X, X) -> [1] ++ X.                 | ERROR   | X.
-                                           |         | Expected: [term()]
-                                           |         | Got     : X
+                                           |         | Expression has type:   X
+                                           |         | Context expected type: [term()]

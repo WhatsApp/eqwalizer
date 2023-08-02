@@ -176,8 +176,8 @@ search(_Pred, []) ->                       |         |
                                            |         |
 -spec refine01(A, _B) -> A.                |         |
 refine01(X, X) -> X.                       | ERROR   | X.
-                                           |         | Expected: A
-                                           |         | Got     : _B
+                                           |         | Expression has type:   _B
+                                           |         | Context expected type: A
                                            |         |
 -spec refine02(_A, B) -> B.                |         |
 refine02(X, X) -> X.                       | OK      |
@@ -186,8 +186,8 @@ refine02(X, X) -> X.                       | OK      |
     term().                                |         |
 refine03(X, X, _) ->                       | ERROR   |
     [Elem || Elem <- X].                   |         | X.
-                                           |         | Expected: [term()]
-                                           |         | Got     : B
+                                           |         | Expression has type:   B
+                                           |         | Context expected type: [term()]
                                            |         |
 % adapted from wa_lists.erl                |         |
 -spec uniquify(List1) -> List2 when        |         |
@@ -220,23 +220,23 @@ select_tagged(T) -> select(T, 0, <<>>).    | OK      |
     (extended) -> binary().                |         |
 select_tagged_neg1(T) ->                   | ERROR   |
   select(T, <<>>, 0).                      |         | select(T, <<..>>, 0).
-                                           |         | Expected: number()
-                                           |         | Got     : binary()
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
                                            |         |
 -spec select_tagged_neg2                   |         |
     (normal) -> integer();                 |         |
     (extended) -> binary().                |         |
 select_tagged_neg2(T) ->                   | ERROR   |
   select(T, 0, 0).                         |         | select(T, 0, 0).
-                                           |         | Expected: binary()
-                                           |         | Got     : number()
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: binary()
                                            |         |
 -spec unwrap                               |         |
     (undefined, Default) -> Default;       |         |
     (Value, _) -> Value.                   |         |
 unwrap(undefined, Default) -> Default;     | ERROR   | Default.
-                                           |         | Expected: Value
-                                           |         | Got     : term()
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: Value
 unwrap(Value, _)                           |         |
   when Value =/= undefined ->              |         |
   Value.                                   |         |
