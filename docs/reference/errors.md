@@ -2,12 +2,13 @@
 
 This page references all eqWAlizer errors.
 
-### expected_subtype
+### incompatible_types
 
-This error indicates that eqWAlizer got a different type than what it was
-expecting. This can have several reasons.
+This error indicates that eqWAlizer detected an expression whose type is
+incompatible with the context it is used in. This can have several
+reasons.
 
-#### Types don't match at all
+#### Types don't match a spec at all
 
 This is the most basic case, types that don't match at all:
 
@@ -16,11 +17,14 @@ This is the most basic case, types that don't match at all:
 test_neg() ->
 "oops". % Error
 
-%  string_lit. Expected: number(), Got: string()
+%  string_lit.
+%  Expression has type:   string()
+%  Context expected type: number()
 ```
 
-eqWAlizer shows the position of the error (a string literal), what type it
-was expecting, and what type it got.
+eqWAlizer shows the position of the error (a string literal), what type
+it deduced for the problematic expression, and what type the context
+was expecting.
 
 In the example above, the error can be fixed by changing the spec to say the
 function returns `string()` or changing the code to return a `number()`–
@@ -64,11 +68,12 @@ foo(A) ->
     A + 2.
 ```
 
-#### Types matching partially
+#### Types partially compatible
 
-In more complicated cases, types may match only partially. In such cases,
-eqWAlizer will help make the error message actionable by showing how the
-type it got differs from the expected type:
+In more complicated cases, the type of an expression may be only partially
+compatible with the expected type. In such cases, eqWAlizer will help make
+the error message actionable by showing how the type of the expression
+is incompatible with the expected type:
 
 ```Erlang
 -spec test_neg() -> {ok, pid()}.
@@ -78,9 +83,12 @@ test_neg() ->
        2 -> {error, got_two}
    end.
 
-% {error, got_two}. Expected: {'ok', pid()}, Got: {'error', 'got_two'}
-% {'error', 'got_two'} is not a subtype of {'ok', pid()} because
-% 'error' is not a subtype of 'ok'.
+% {error, got_two}.
+% Expression has type:   {'error', 'got_two'}
+% Context expected type: {'ok', pid()}
+%
+% {'error', 'got_two'} is incompatible with {'ok', pid()} because
+% 'error' is incompatible with 'ok'.
 ```
 
 #### Ill-typed application
@@ -94,7 +102,9 @@ when a function is called with the wrong argument type:
     test_neg() ->
     list_to_atom(bad). % Error
 
-% bad. Expected: string(), Got: 'bad'
+% bad.
+% Expression has type:   'bad'
+% Context expected type: string()
 ```
 
 
@@ -107,7 +117,9 @@ shape map is expected:
 -spec test_neg(atom()) -> #{a := v}.
     test_neg(Atom) -> #{Atom => v}.
 
-% #{..}. Expected: shape map #S{'a' := v}, Got: dict map #D{atom() => v}
+% #{..}.
+% Expression has type:   dict map #D{atom() => v}
+% Context expected type: shape map #S{'a' := v}
 ```
 
 In this case, either the return type must be modified, or the argument must be
@@ -270,8 +282,8 @@ compatible with the type defined in the [behaviour](https://www.erlang.org/doc/d
 
 ### incorrect_return_type_in_cb_implementation
 
-This error indicates that the return type for the function is not a subtype
-of the return type expected by the [behaviour](https://www.erlang.org/doc/design_principles/des_princ.html#behaviours).
+This error indicates that the return type for the function is incompatible
+with the return type expected by the [behaviour](https://www.erlang.org/doc/design_principles/des_princ.html#behaviours).
 
 
 ### cannot_locate_source

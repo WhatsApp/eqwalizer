@@ -15,7 +15,8 @@ in gradual mode, "slips through the fingers" of the type-checker. It is similar 
 [any in TypeScript](https://www.typescriptlang.org/docs/handbook/basic-types.html#any),
 [dynamic in Hack](https://docs.hhvm.com/hack/built-in-types/dynamic),
 [untyped in Sorbet](https://sorbet.org/docs/untyped).
-Formally, in gradual mode, `dynamic()` is both a subtype and a supertype of every type. This
+Formally, in gradual mode, `dynamic()` is compatible with every type (and, conversely,
+every type is compatible with `dynamic()`). This
 means that a function that expects an argument of type `dynamic()` can be used with any
 value, and a result of type `dynamic()` can be used anywhere.
 
@@ -39,8 +40,8 @@ following function:
 dyn_to_int(X) -> X.
 ```
 This function is accepted by eqWAlizer in gradual mode: `X` is of type `eqwalizer:dynamic()`
-which, in gradual mode, is a subtype of every type, in particular `integer()`. However, in
-strict mode, `X` is considered to be of type `term()` which is not a subtype of `integer()`.
+which, in gradual mode, is compatible with every type, in particular `integer()`. However, in
+strict mode, `X` is considered to be of type `term()` which is not compatible with `integer()`.
 
 The type `eqwalizer:dynamic()` is provided in the module `eqwalizer.erl`, which should be
 made available during analysis. This module is present in the open-source library
