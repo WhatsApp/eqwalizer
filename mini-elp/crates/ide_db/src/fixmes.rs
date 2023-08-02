@@ -15,10 +15,11 @@ use crate::LineIndex;
 struct Fixme {
     comment_range: TextRange,
     suppression_range: TextRange,
+    is_ignore: bool,
 }
 
 // serialize as:
-// {FixmeCommentStart, FixmeCommentEnd, SuppressionRangeStart, SuppressionRangeEnd}
+// {FixmeCommentStart, FixmeCommentEnd, SuppressionRangeStart, SuppressionRangeEnd, IsIgnore}
 impl Into<eetf::Term> for Fixme {
     fn into(self) -> eetf::Term {
         let to_term = |n: TextSize| -> eetf::Term {
@@ -34,6 +35,10 @@ impl Into<eetf::Term> for Fixme {
             to_term(self.comment_range.end()),
             to_term(self.suppression_range.start()),
             to_term(self.suppression_range.end()),
+            eetf::Atom {
+                name: self.is_ignore.to_string(),
+            }
+            .into(),
         ])
         .into()
     }
@@ -47,8 +52,8 @@ pub fn fixmes_eetf(line_index: &LineIndex, file_text: &str) -> eetf::Term {
 
 fn collect_fixmes(line_index: &LineIndex, file_text: &str) -> Vec<Fixme> {
     let mut fixmes = Vec::new();
-    let pats = vec!["% eqwalizer:fixme", "% eqwalizer:ignore"];
-    for pat in pats {
+    let pats = vec![("% eqwalizer:fixme", false), ("% eqwalizer:ignore", true)];
+    for (pat, is_ignore) in pats {
         let len = pat.len();
         for (i, _) in file_text.match_indices(pat) {
             let start = TextSize::from(i as u32);
@@ -70,6 +75,7 @@ fn collect_fixmes(line_index: &LineIndex, file_text: &str) -> Vec<Fixme> {
                 fixmes.push(Fixme {
                     comment_range,
                     suppression_range,
+                    is_ignore,
                 });
             }
         }

@@ -89,10 +89,19 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(List(EAtom("attribute"), EPos(pos), EAtom("elp_metadata"), proplist: EList)) =>
         proplist.elems.collectFirst { case ETuple(List(EAtom("eqwalizer_fixmes"), EList(rawFixmes, _improper_tail))) =>
           val fixmes = rawFixmes.map {
-            case ETuple(List(ELong(commentStart), ELong(commentEnd), ELong(suppressionStart), ELong(suppressionEnd))) =>
+            case ETuple(
+                  List(
+                    ELong(commentStart),
+                    ELong(commentEnd),
+                    ELong(suppressionStart),
+                    ELong(suppressionEnd),
+                    EAtom(ignore),
+                  )
+                ) =>
               val comment = TextRange(commentStart.toInt, commentEnd.toInt)
               val suppression = TextRange(suppressionStart.toInt, suppressionEnd.toInt)
-              Fixme(comment, suppression)
+              val isIgnore = ignore == "true"
+              Fixme(comment, suppression, isIgnore)
             case _ =>
               throw new IllegalStateException()
           }

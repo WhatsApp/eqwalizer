@@ -28,7 +28,7 @@ object Forms {
   case class ExportType(types: List[Id])(val pos: Pos) extends ExternalForm with InternalForm
   case class FunDecl(id: Id, clauses: List[Clause])(val pos: Pos) extends ExternalForm with InternalForm
   case class File(file: String, start: Int)(val pos: Pos) extends ExternalForm with InternalForm
-  case class Fixme(comment: TextRange, suppression: TextRange)
+  case class Fixme(comment: TextRange, suppression: TextRange, isIgnore: Boolean)
   case class ElpMetadata(fixmes: List[Fixme])(val pos: Pos) extends ExternalForm with InternalForm
   case class Behaviour(name: String)(val pos: Pos) extends ExternalForm with InternalForm
   case class EqwalizerNowarnFunction(id: Id)(val pos: Pos) extends ExternalForm with InternalForm
