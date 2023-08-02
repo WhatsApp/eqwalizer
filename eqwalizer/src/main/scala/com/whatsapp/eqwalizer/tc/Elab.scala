@@ -59,6 +59,28 @@ final class Elab(pipelineContext: PipelineContext) {
     (tys, envAcc)
   }
 
+  private def elabMaybeBody(body: Body, env: Env): (Type, Env) = {
+    var envAcc = env
+    var tyAcc: Type = NoneType
+    var lastTy: Type = NoneType
+    val exprs = body.exprs
+    for (expr <- exprs) {
+      expr match {
+        case MaybeMatch(mPat, mExp) =>
+          val (mType, env1) = elabExpr(mExp, envAcc)
+          val (patTy, env2) = elabPat.elabPat(mPat, mType, env1)
+          tyAcc = subtype.join(tyAcc, mType)
+          lastTy = patTy
+          envAcc = env2
+        case _ =>
+          val (expTy, env1) = elabExpr(expr, envAcc)
+          lastTy = expTy
+          envAcc = env1
+      }
+    }
+    (subtype.join(tyAcc, lastTy), env)
+  }
+
   def elabExpr(expr: Expr, env: Env): (Type, Env) =
     expr match {
       case Var(v) =>
@@ -491,6 +513,16 @@ final class Elab(pipelineContext: PipelineContext) {
           resT = narrow.adjustMapType(resT, keyT, valT)
         }
         (resT, envAcc)
+      case MaybeMatch(mPat, mExp) =>
+        val (mType, env1) = elabExpr(mExp, env)
+        elabPat.elabPat(mPat, mType, env1)
+      case Maybe(body) =>
+        elabMaybeBody(body, env)
+      case MaybeElse(body, elseClauses) =>
+        val (bodyType, _) = elabBody(body, env)
+        val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+        val (ts, _) = elseClauses.map(elabClause(_, List(argType), env, Set.empty)).unzip
+        (subtype.join(bodyType :: ts), env)
     }
 
   def elabBinaryElem(elem: BinaryElem, env: Env): (Type, Env) = {

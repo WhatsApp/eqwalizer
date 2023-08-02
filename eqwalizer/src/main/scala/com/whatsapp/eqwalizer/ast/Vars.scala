@@ -134,6 +134,12 @@ object Vars {
       kvs.flatMap(kv => List(kv._1, kv._2)).flatMap(exprVars).toSet
     case MapUpdate(m, kvs) =>
       exprVars(m) ++ kvs.flatMap(kv => List(kv._1, kv._2)).flatMap(exprVars)
+    case MaybeMatch(pat, arg) =>
+      patVars(pat) ++ exprVars(arg)
+    case Maybe(_) =>
+      Set.empty
+    case MaybeElse(_, _) =>
+      Set.empty
   }
 
   private def fieldVars(recordField: RecordField): Set[String] =

@@ -500,6 +500,26 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         StringLit(emptyString)(p)
       case ETuple(List(EAtom("remote"), EPos(p), mod, name)) =>
         DynRemoteFun(convertExp(mod), convertExp(name))(p)
+      case ETuple(List(EAtom("maybe"), EPos(p), EList(exprs, None))) =>
+        Maybe(Body(exprs.map(convertExp)))(p)
+      case ETuple(
+            List(
+              EAtom("maybe"),
+              EPos(p),
+              EList(exprs, None),
+              ETuple(List(EAtom("else"), EPos(_), EList(clauses, None))),
+            )
+          ) =>
+        MaybeElse(Body(exprs.map(convertExp)), clauses.map(convertClause))(p)
+      case ETuple(
+            List(
+              EAtom("maybe_match"),
+              EPos(p),
+              exp1,
+              exp2,
+            )
+          ) =>
+        MaybeMatch(convertPat(exp1), convertExp(exp2))(p)
       case _ => throw new IllegalStateException()
     }
 

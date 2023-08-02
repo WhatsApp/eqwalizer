@@ -63,6 +63,10 @@ object Exprs {
   case class Receive(clauses: List[Clause])(val pos: Pos) extends Expr
   case class ReceiveWithTimeout(clauses: List[Clause], timeout: Expr, timeoutBody: Body)(val pos: Pos) extends Expr
 
+  case class Maybe(body: Body)(val pos: Pos) extends Expr
+  case class MaybeElse(body: Body, elseClauses: List[Clause])(val pos: Pos) extends Expr
+  case class MaybeMatch(pat: Pat, arg: Expr)(val pos: Pos) extends Expr
+
   case class RecordCreate(recName: String, fields: List[RecordField])(val pos: Pos) extends Expr
   case class RecordUpdate(expr: Expr, recName: String, fields: List[RecordFieldNamed])(val pos: Pos) extends Expr
   case class RecordSelect(expr: Expr, recName: String, fieldName: String)(val pos: Pos) extends Expr

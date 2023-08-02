@@ -228,5 +228,11 @@ object Show {
       "#{..}"
     case MapUpdate(_, _) =>
       "..#{..}"
+    case MaybeMatch(_, _) =>
+      "_ ?= _"
+    case Maybe(_) =>
+      "maybe .."
+    case MaybeElse(_, _) =>
+      "maybe .. else .."
   }
 }

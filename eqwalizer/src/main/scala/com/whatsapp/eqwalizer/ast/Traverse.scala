@@ -224,6 +224,20 @@ class Traverse(val listener: AstListener) {
         traverseExpr(kv._2)
       }
       listener.exitExpr(gmu)
+    case t @ Maybe(body) =>
+      listener.enterExpr(t)
+      body.exprs.foreach(traverseExpr)
+      listener.exitExpr(t)
+    case t @ MaybeElse(body, elseClauses) =>
+      listener.enterExpr(t)
+      body.exprs.foreach(traverseExpr)
+      elseClauses.foreach(traverseClause)
+      listener.exitExpr(t)
+    case t @ MaybeMatch(pat, arg) =>
+      listener.enterExpr(t)
+      traversePat(pat)
+      traverseExpr(arg)
+      listener.exitExpr(t)
   }
 
   private def traversePat(pat: Pat): Unit = pat match {

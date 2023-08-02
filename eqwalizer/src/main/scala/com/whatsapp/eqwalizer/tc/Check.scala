@@ -66,6 +66,30 @@ final class Check(pipelineContext: PipelineContext) {
     checkExpr(exprs.last, resTy, envAcc)
   }
 
+  private def checkMaybeBody(body: Body, resTy: Type, env: Env): Env = {
+    var envAcc = env
+    var lastTy: Type = NoneType
+    val exprs = body.exprs
+    for (expr <- exprs) {
+      expr match {
+        case MaybeMatch(mPat, mExp) =>
+          val (mType, env1) = elab.elabExpr(mExp, envAcc)
+          if (!subtype.subType(mType, resTy))
+            throw ExpectedSubtype(mExp.pos, mExp, expected = resTy, got = mType)
+          val (patTy, env2) = elabPat.elabPat(mPat, mType, env1)
+          lastTy = patTy
+          envAcc = env2
+        case _ =>
+          val (exprTy, env1) = elab.elabExpr(expr, envAcc)
+          lastTy = exprTy
+          envAcc = env1
+      }
+    }
+    if (!subtype.subType(lastTy, resTy))
+      throw ExpectedSubtype(exprs.last.pos, exprs.last, expected = resTy, got = lastTy)
+    env
+  }
+
   private def checkClause(
       clause: Clause,
       argTys: List[Type],
@@ -413,6 +437,18 @@ final class Check(pipelineContext: PipelineContext) {
             throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = indT)
           else
             env
+        case MaybeMatch(mPat, mExp) =>
+          val (mType, env1) = elab.elabExpr(mExp, env)
+          val (t2, env2) = elabPat.elabPat(mPat, mType, env1)
+          if (subtype.subType(t2, resTy)) env2
+          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = t2)
+        case Maybe(body) =>
+          checkMaybeBody(body, resTy, env)
+        case MaybeElse(body, elseClauses) =>
+          checkBody(body, resTy, env)
+          val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+          elseClauses.foreach(checkClause(_, List(argType), resTy, env, Set.empty))
+          env
         case _: MapCreate | _: MapUpdate | _: Cons =>
           // delegating this stuff to elaborate for now
           val (t1, env1) = elab.elabExpr(expr, env)

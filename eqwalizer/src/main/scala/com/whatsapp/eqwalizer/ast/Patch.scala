@@ -84,6 +84,12 @@ class Patch(erroneousExpr: Expr) {
           MapCreate(kvs.map(patchKV))(e.pos)
         case MapUpdate(map, kvs) =>
           MapUpdate(patchExpr(map), kvs.map(patchKV))(e.pos)
+        case MaybeMatch(pat, exp) =>
+          MaybeMatch(pat, patchExpr(exp))(e.pos)
+        case Maybe(body) =>
+          Maybe(patchBody(body))(e.pos)
+        case MaybeElse(body, elseClauses) =>
+          MaybeElse(patchBody(body), elseClauses.map(patchClause))(e.pos)
         // The erroneous expr may be a variable introduced by eta-expansion of a functional argument,
         // in which case e == erroneousExpr will never match and the expr will not be patched.
         // The case below is a good enough heuristic to detect such cases.
