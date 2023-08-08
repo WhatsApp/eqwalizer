@@ -656,8 +656,9 @@ final class Elab(pipelineContext: PipelineContext) {
         if (!subtype.subType(gT, anyMap)) {
           throw ExpectedSubtype(gExpr.pos, gExpr, expected = anyMap, got = gT)
         }
-        val kT = narrow.getKeyType(gT)
-        val vT = narrow.getValType(gT)
+        val mapT = narrow.asMapType(gT)
+        val kT = narrow.getKeyType(mapT)
+        val vT = narrow.getValType(mapT)
         val (_, kPatEnv) = elabPat.elabPat(gkPat, kT, gEnv)
         val (_, vPatEnv) = elabPat.elabPat(gvPat, vT, kPatEnv)
         envAcc = vPatEnv
