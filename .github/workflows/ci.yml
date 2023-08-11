@@ -4,7 +4,7 @@ jobs:
     name: Linux CI (OTP ${{matrix.otp}})
     strategy:
       matrix:
-        otp: ['26.0', '25.3', '24.3']
+        otp: ['26.0', '25.3']
     steps:
       - name: Checkout
         uses: "actions/checkout@v3"
@@ -58,7 +58,7 @@ jobs:
     name: MacOS CI (${{matrix.brew_erlang}})
     strategy:
       matrix:
-        brew_erlang: ['erlang@25', 'erlang@24']
+        brew_erlang: ['erlang@26', 'erlang@25']
     steps:
       - name: Checkout
         uses: "actions/checkout@v3"
