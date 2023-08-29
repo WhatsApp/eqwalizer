@@ -30,7 +30,7 @@ use crate::reporting;
 use crate::reporting::ParseDiagnostic;
 use crate::util;
 
-pub fn parse_all(args: &ParseAll, out: &mut impl std::io::Write) -> Result<()> {
+pub fn parse_all(args: &ParseAll, out: &mut impl std::io::Write) -> Result<i32> {
     let profile = args.profile.clone().map(Profile).unwrap_or_default();
     let loaded = load_rebar::load_project_at(&args.project, &profile)?;
     fs::create_dir_all(&args.to)?;
@@ -46,7 +46,7 @@ pub fn parse_all(args: &ParseAll, out: &mut impl std::io::Write) -> Result<()> {
         )
         .unwrap();
     }
-    Ok(())
+    Ok(0)
 }
 
 pub fn do_parse_all(
