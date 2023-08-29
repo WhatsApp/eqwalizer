@@ -38,12 +38,13 @@ fn main() {
     process::exit(code);
 }
 
-fn handle_res(result: Result<()>, stderr: &mut impl std::io::Write) -> i32 {
-    if let Err(err) = result {
-        writeln!(stderr, "{:#}", err).unwrap();
-        101
-    } else {
-        0
+fn handle_res(result: Result<i32>, stderr: &mut impl std::io::Write) -> i32 {
+    match result {
+        Ok(code) => code,
+        Err(err) => {
+            writeln!(stderr, "{:#}", err).unwrap();
+            101
+        }
     }
 }
 
@@ -51,25 +52,27 @@ fn try_main(
     out: &mut impl WriteColor,
     err: &mut impl std::io::Write,
     os_args: Vec<OsString>,
-) -> Result<()> {
+) -> Result<i32> {
     let args = args::Args::parse(os_args)?;
 
-    match args.command {
+    let exit_code = match args.command {
         args::Command::ParseAll(args) => parse_server_cli::parse_all(&args, out)?,
         args::Command::Eqwalize(args) => eqwalizer_cli::eqwalize_module(&args, out)?,
         args::Command::EqwalizeAll(args) => eqwalizer_cli::eqwalize_all(&args, out)?,
         args::Command::EqwalizeApp(args) => eqwalizer_cli::eqwalize_app(&args, out)?,
         args::Command::Version => {
             writeln!(out, "elp {}", env!("CARGO_PKG_VERSION"))?;
+            0
         }
         args::Command::Help => {
             writeln!(err, "{}", args::HELP)?;
+            0
         }
-    }
+    };
 
     log::logger().flush();
 
-    Ok(())
+    Ok(exit_code)
 }
 
 // To run the tests
@@ -152,13 +155,13 @@ mod tests {
 
         let (stdout, stderr, code) = elp(args_vec!["eqwalize", "--project", project_path, module]);
         match code {
-            0 => {
-                expected.assert_eq(&stdout);
-                assert!(stderr.is_empty())
-            }
-            _ => {
+            101 => {
                 expected.assert_eq(&stderr);
                 assert!(stdout.is_empty());
+            }
+            _ => {
+                expected.assert_eq(&stdout);
+                assert!(stderr.is_empty())
             }
         }
         Ok(())
@@ -293,10 +296,12 @@ mod tests {
         };
         let args = [args, args_vec!["--project", project_path]].concat();
         let (stdout, stderr, code) = elp(args);
-        assert_eq!(
-            code, 0,
+        assert!(
+            code != 101,
             "failed with exit code: {}\nstdout:\n{}\nstderr:\n{}",
-            code, stdout, stderr
+            code,
+            stdout,
+            stderr
         );
         expected.assert_eq(&stdout);
         assert!(

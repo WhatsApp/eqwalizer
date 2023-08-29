@@ -36,7 +36,7 @@ struct EqwalizerInternalArgs<'a> {
     strict: bool,
 }
 
-pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> {
+pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<i32> {
     let loaded = &match args.project.extension() {
         None => {
             let profile = args.profile.clone().map(Profile).unwrap_or_default();
@@ -67,7 +67,7 @@ pub fn eqwalize_module(args: &Eqwalize, mut out: impl WriteColor) -> Result<()> 
     })
 }
 
-pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> {
+pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<i32> {
     let loaded = &match args.project.extension() {
         None => {
             let profile = args.profile.clone().map(Profile).unwrap_or_default();
@@ -108,7 +108,7 @@ pub fn eqwalize_all(args: &EqwalizeAll, mut out: impl WriteColor) -> Result<()> 
     })
 }
 
-pub fn eqwalize_app(args: &EqwalizeApp, mut out: impl WriteColor) -> Result<()> {
+pub fn eqwalize_app(args: &EqwalizeApp, mut out: impl WriteColor) -> Result<i32> {
     let loaded = &match args.project.extension() {
         None => {
             let profile = args.profile.clone().map(Profile).unwrap_or_default();
@@ -159,7 +159,7 @@ fn eqwalize(
         fast,
         strict,
     }: EqwalizerInternalArgs,
-) -> Result<()> {
+) -> Result<i32> {
     let format = elp_parse_server::Format::OffsetEtf;
 
     if !fast {
@@ -181,7 +181,11 @@ fn eqwalize(
                 reporter.write_eqwalizer_diagnostics(file_id, diagnostics)?;
             }
             reporter.write_error_count()?;
-            Ok(())
+            if diagnostics_by_module.is_empty() {
+                Ok(0)
+            } else {
+                Ok(1)
+            }
         }
         EqwalizerDiagnostics::NoAst { module } => {
             if let Some(file_id) = analysis.module_file_id(loaded.project_id, module) {
@@ -190,7 +194,7 @@ fn eqwalize(
                 // The cached parse errors must be non-empty otherwise we wouldn't have `NoAst`
                 assert!(!parse_diagnostics.is_empty());
                 reporter.write_parse_diagnostics(&parse_diagnostics)?;
-                Ok(())
+                Ok(1)
             } else {
                 bail!(
                     "Could not type-check because module {} was not found",
