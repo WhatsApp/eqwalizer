@@ -67,68 +67,6 @@ jobs:
           asset_name: elp-linux.tar.gz
           asset_path: elp-linux.tar.gz
           upload_url: "${{ steps.get_release_url.outputs.upload_url }}"
-  linux-release-otp-23:
-    needs:
-      - linux-release-otp-25
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: "actions/checkout@v3"
-      - name: Set up GraalVM
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '17'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install musl-tools for rust toolchain
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: musl-tools
-          version: 1.0
-      - name: Set up rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          target: x86_64-unknown-linux-musl
-      - name: Install OTP
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: '23.3'
-          install-rebar: false
-          install-hex: false
-      - name: Install rebar3
-        run: "curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3 && chmod +x rebar3"
-      - name: "add rebar3 to path"
-        run: 'echo "$GITHUB_WORKSPACE/rebar3" >> $GITHUB_PATH'
-      - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v3"
-        with:
-          name: eqwalizer.jar
-          path: eqwalizer/target/scala-2.13
-      - name: Download eqwalizer binary
-        uses: "actions/download-artifact@v3"
-        with:
-          name: eqwalizer
-          path: eqwalizer
-      - name: Test elp
-        run: "cd mini-elp && cargo test --workspace --target x86_64-unknown-linux-musl"
-      - name: Assemble elp
-        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release --target x86_64-unknown-linux-musl"
-      - name: Make elp-linux-otp-23.tar.gz
-        run: 'tar -zcvf elp-linux-otp-23.tar.gz -C mini-elp/target/x86_64-unknown-linux-musl/release/ elp'
-      - env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        id: get_release_url
-        name: Get release url
-        uses: "bruceadams/get-release@v1.3.2"
-      - env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        name: Upload release elp-linux-otp-23.tar.gz
-        uses: "actions/upload-release-asset@v1.0.2"
-        with:
-          asset_content_type: application/octet-stream
-          asset_name: elp-linux-otp-23.tar.gz
-          asset_path: elp-linux-otp-23.tar.gz
-          upload_url: "${{ steps.get_release_url.outputs.upload_url }}"
   macos-release-otp-25:
     needs:
       - linux-release-otp-25
@@ -174,52 +112,6 @@ jobs:
           asset_content_type: application/octet-stream
           asset_name: elp-macos.tar.gz
           asset_path: elp-macos.tar.gz
-          upload_url: "${{ steps.get_release_url.outputs.upload_url }}"
-  macos-release-otp-23:
-    needs:
-      - linux-release-otp-25
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: "actions/checkout@v3"
-      - name: Set up GraalVM
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '17'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install erlang
-        run: brew install erlang@23
-      - name: Install rebar3
-        run: "mkdir rebar3 && curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3/rebar3 && chmod +x rebar3/rebar3"
-      - name: Set up rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-      - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v3"
-        with:
-          name: eqwalizer.jar
-          path: eqwalizer/target/scala-2.13
-      - name: Assemble eqwalizer binary
-        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
-      - name: Test elp
-        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/erlang@23/bin:$PATH ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo test --workspace"
-      - name: Assemble elp
-        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/erlang@23/bin:$PATH ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release"
-      - name: Make elp-macos-otp-23.tar.gz
-        run: 'tar -zcvf elp-macos-otp-23.tar.gz -C mini-elp/target/release/ elp'
-      - env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        id: get_release_url
-        name: Get release url
-        uses: "bruceadams/get-release@v1.3.2"
-      - env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        name: Upload release elp-macos-otp-23.tar.gz
-        uses: "actions/upload-release-asset@v1.0.2"
-        with:
-          asset_content_type: application/octet-stream
-          asset_name: elp-macos-otp-23.tar.gz
-          asset_path: elp-macos-otp-23.tar.gz
           upload_url: "${{ steps.get_release_url.outputs.upload_url }}"
 name: eqWAlizer release
 on:
