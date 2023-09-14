@@ -154,13 +154,13 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
         else stacks.find(_.nonEmpty).getOrElse(Nil)
       case (_, ut: UnionType) =>
         val tys2 = util.flattenUnions(ut)
-        var firstMismatch: List[Detail] = null
-        for (ty2 <- tys2) {
-          val mismatch = recur(t1, ty2)
-          if (mismatch.isEmpty) return Nil
-          else if (firstMismatch == null) firstMismatch = mismatch
+        if (subtype.subType(t1, ut))
+          return Nil
+        findCandidateInTys(t1, tys2) match {
+          case Left(candidate) => recur(t1, candidate)
+          case Right(reason) =>
+            Detail(t1, t2, None, Some(reason)) :: stack0
         }
-        firstMismatch
       case (AtomLitType(_), AtomType) => Nil
       case (TupleType(_), AnyTupleType) =>
         Nil
@@ -279,6 +279,27 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
         Nil
       case _ =>
         stack
+    }
+  }
+
+  private def findCandidateInTys(ty: Type, tys: List[Type]): Either[Type, String] = {
+    ty match {
+      case TupleType(argTys) =>
+        val arity = argTys.length
+        val filteredByArity = tys.filter {
+          case TupleType(argTys2) => argTys2.length == arity
+          case AnyTupleType | _: RemoteType | _: UnionType | _: RecordType | _: RefinedRecordType => true
+          case _                                                                                  => false
+        }
+        if (filteredByArity.isEmpty)
+          return Right(s"expected union does not contain any tuple type of size ${arity}")
+        val filteredByHeadType = filteredByArity.find {
+          case TupleType(argTys2) => subtype.subType(argTys.head, argTys2.head)
+          case _                  => false
+        }
+        Left(filteredByHeadType.getOrElse(filteredByArity.head))
+      case _ =>
+        Left(tys.head)
     }
   }
 }

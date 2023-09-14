@@ -99,7 +99,10 @@ double_andalso_neg(N, A) ->                | ERROR   |
                                            |         |   because
                                            |         |   {number(), atom()} is not compatible with 'false' | {atom(), number()}
                                            |         |   because
-                                           |         |   {number(), atom()} is not compatible with 'false'
+                                           |         |   at tuple index 1:
+                                           |         |   {number(), atom()} is not compatible with {atom(), number()}
+                                           |         |   because
+                                           |         |   number() is not compatible with atom()
     andalso is_atom(A)                     |         |
     andalso {N, A}.                        |         |
                                            |         |

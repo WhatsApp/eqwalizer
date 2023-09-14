@@ -2960,5 +2960,8 @@ re_replace_6_neg(Subj) ->                  | ERROR   |
                                            |         |   because
                                            |         |   {'return', 'something'} is not compatible with {'newline', 'cr' | 'lf' | 'any' | 'crlf' | 'anycrlf'} | 'notempty_atstart' | 'noteol' | 'bsr_unicode' | 'notbol' | 'global' | {'match_limit_recursion', number()} | 'bsr_anycrlf' | re:compile_option() | {'match_limit', number()} | {'offset', number()} | 'notempty' | {'return', 'iodata' | 'list' | 'binary'} | 'anchored'
                                            |         |   because
-                                           |         |   {'return', 'something'} is not compatible with 'noteol'
+                                           |         |   at tuple index 2:
+                                           |         |   {'return', 'something'} is not compatible with {'return', 'iodata' | 'list' | 'binary'}
+                                           |         |   because
+                                           |         |   'something' is not compatible with 'iodata' | 'list' | 'binary'
     Res.                                   |         |

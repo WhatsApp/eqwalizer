@@ -129,10 +129,12 @@ wrap3_neg(X) ->                            | ERROR   |
                                            |         | 
                                            |         |   {'p', none() | pid() | reference()} is not compatible with {'a', atom()} | {'p', pid()}
                                            |         |   because
-                                           |         |   at tuple index 1:
-                                           |         |   {'p', none() | pid() | reference()} is not compatible with {'a', atom()}
+                                           |         |   at tuple index 2:
+                                           |         |   {'p', none() | pid() | reference()} is not compatible with {'p', pid()}
                                            |         |   because
-                                           |         |   'p' is not compatible with 'a'
+                                           |         |   none() | pid() | reference() is not compatible with pid()
+                                           |         |   because
+                                           |         |   reference() is not compatible with pid()
   end.                                     |         |
                                            |         |
 -spec wrap4(                               |         |

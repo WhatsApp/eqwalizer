@@ -131,6 +131,7 @@ subtype_p1_neg(C) -> C.                    | ERROR   | C.
                                            |         |   'nil' | {'a', atom(), pchainA(atom())} is not compatible with 'nil' | {'a', pchainAB(atom())} | {'b', pchainAB(atom())}
                                            |         |   because
                                            |         |   {'a', atom(), pchainA(atom())} is not compatible with 'nil' | {'a', pchainAB(atom())} | {'b', pchainAB(atom())}
+                                           |         |   expected union does not contain any tuple type of size 3
                                            |         |
 %%                                         |         |
                                            |         |
