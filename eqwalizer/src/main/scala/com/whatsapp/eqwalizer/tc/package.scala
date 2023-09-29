@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.Types.Type
-import com.whatsapp.eqwalizer.ast.Vars
+import com.whatsapp.eqwalizer.ast.{TypeInfo, Vars}
 import com.whatsapp.eqwalizer.tc.generics.{Constraints, Variance}
 
 package object tc {
@@ -63,5 +63,7 @@ package object tc {
       new Variance(this)
     val checkRedundantGuards: Boolean =
       options.checkRedundantGuards.getOrElse(config.checkRedundantGuards)
+    val typeInfo: TypeInfo =
+      new TypeInfo(this)
   }
 }

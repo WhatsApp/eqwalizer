@@ -24,6 +24,7 @@ final class Check(pipelineContext: PipelineContext) {
   private lazy val util = pipelineContext.util
   private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
+  private lazy val typeInfo = pipelineContext.typeInfo
   lazy val freshen = new TypeVars.VarFreshener().freshen _
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
@@ -101,6 +102,8 @@ final class Check(pipelineContext: PipelineContext) {
     val env1 = util.enterScope(env0, patVars)
     // see D29637051 for why we elabGuard twice
     val env2 = elabGuard.elabGuards(clause.guards, env1)
+    // Erase type info from first elaboration
+    typeInfo.clear(clause.pos)
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
     val env5 = checkBody(clause.body, resTy, env4)
@@ -116,6 +119,8 @@ final class Check(pipelineContext: PipelineContext) {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env, patVars)
     val env2 = elabGuard.elabGuards(clause.guards, env1)
+    // Erase type info from first elaboration
+    typeInfo.clear(clause.pos)
     val (patTys, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val reachable = !patTys.exists(subtype.isNoneType)
     if (reachable) {
@@ -125,12 +130,13 @@ final class Check(pipelineContext: PipelineContext) {
     }
   }
 
-  def checkExpr(expr: Expr, resTy: Type, env: Env): Env =
+  def checkExpr(expr: Expr, resTy: Type, env: Env): Env = {
     if (subtype.subType(AnyType, resTy)) elab.elabExpr(expr, env)._2
     else
       expr match {
         case Var(v) =>
           val vt = env.getOrElse(v, throw UnboundVar(expr.pos, v))
+          typeInfo.add(expr.pos, vt)
           if (subtype.subType(vt, resTy)) env
           else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = vt)
         case AtomLit(a) =>
@@ -457,6 +463,7 @@ final class Check(pipelineContext: PipelineContext) {
           else
             env1
       }
+  }
 
   private def lambdaArity(lambda: Lambda): Int = lambda.clauses.head.pats.size
 

@@ -19,6 +19,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
   private lazy val util = pipelineContext.util
   private lazy val subtype = pipelineContext.subtype
   private lazy val occurrence = pipelineContext.occurrence
+  private lazy val typeInfo = pipelineContext.typeInfo
 
   private val elabPredicateType1: PartialFunction[String, Type] = {
     case "is_atom"      => AtomType
@@ -73,6 +74,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
           v,
           AnyType,
         )
+        typeInfo.add(test.pos, ty)
         (ty, env)
       case TestAtom(lit) =>
         (AtomLitType(lit), env)
@@ -201,6 +203,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
           case None =>
             upper
         }
+        typeInfo.add(test.pos, testType)
         env + (v -> testType)
       case _ => elabTestT(test, upper, env)
     }
@@ -214,6 +217,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
             narrow.meet(vt, upper)
           case None => upper
         }
+        typeInfo.add(test.pos, testType)
         env + (v -> testType)
       case TestCall(Id(pred, 1), List(arg)) if upper == trueType && elabPredicateType1.isDefinedAt(pred) =>
         checkAndElabTestT(arg, elabPredicateType1(pred), env, test.pos)

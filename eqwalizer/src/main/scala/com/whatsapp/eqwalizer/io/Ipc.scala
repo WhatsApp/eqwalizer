@@ -5,6 +5,7 @@
  */
 
 package com.whatsapp.eqwalizer.io
+import com.whatsapp.eqwalizer.ast.TypeInfo
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
 object Ipc {
@@ -143,7 +144,8 @@ object Ipc {
         "tag" -> ujson.Str("Done"),
         "content" ->
           ujson.Obj(
-            "diagnostics" -> ELPDiagnostics.toJsonObj(diagnostics)
+            "diagnostics" -> ELPDiagnostics.toJsonObj(diagnostics),
+            "type_info" -> TypeInfo.toJson,
           ),
       )
     case EnteringModule(module) =>

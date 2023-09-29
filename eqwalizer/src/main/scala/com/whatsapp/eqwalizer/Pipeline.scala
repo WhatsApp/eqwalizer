@@ -120,6 +120,7 @@ object Pipeline {
               return FuncDecl(f.id, typeErrors.toList)(f.pos)
           }
       }
+    ctx.typeInfo.clear(f.pos)
     tolerantCheckFun(ctx, patched, spec, typeErrors)
   }
 

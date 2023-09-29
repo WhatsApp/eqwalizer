@@ -24,6 +24,7 @@ final class Elab(pipelineContext: PipelineContext) {
   private lazy val util = pipelineContext.util
   private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
+  private lazy val typeInfo = pipelineContext.typeInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def elabBody(body: Body, env: Env): (Type, Env) = {
@@ -42,6 +43,8 @@ final class Elab(pipelineContext: PipelineContext) {
     val env1 = util.enterScope(env0, patVars)
     // see D29637051 for why we elabGuard twice
     val env2 = elabGuard.elabGuards(clause.guards, env1)
+    // Erase type info from first elaboration
+    typeInfo.clear(clause.pos)
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
     val (eType, env5) = elabBody(clause.body, env4)
@@ -84,7 +87,9 @@ final class Elab(pipelineContext: PipelineContext) {
   def elabExpr(expr: Expr, env: Env): (Type, Env) =
     expr match {
       case Var(v) =>
-        (env.getOrElse(v, throw UnboundVar(expr.pos, v)), env)
+        val ty = env.getOrElse(v, throw UnboundVar(expr.pos, v))
+        typeInfo.add(expr.pos, ty)
+        (ty, env)
       case AtomLit(a) =>
         (AtomLitType(a), env)
       case FloatLit() =>

@@ -18,6 +18,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private lazy val util = pipelineContext.util
   private lazy val check = pipelineContext.check
+  private lazy val typeInfo = pipelineContext.typeInfo
 
   def elabPats(pats: List[Pat], tys: List[Type], env: Env): (List[Type], Env) = {
     var envAcc = env
@@ -32,12 +33,14 @@ final class ElabPat(pipelineContext: PipelineContext) {
   def elabPat(pat: Pat, t: Type, env: Env): (Type, Env) = {
     pat match {
       case PatWild() =>
+        typeInfo.add(pat.pos, t)
         (t, env)
       case PatVar(v) =>
         val patType = env.get(v) match {
           case Some(vt) => narrow.meet(t, vt)
           case None     => t
         }
+        typeInfo.add(pat.pos, patType)
         (patType, env + (v -> patType))
       case PatAtom(s) =>
         val patType = narrow.meet(t, AtomLitType(s))
