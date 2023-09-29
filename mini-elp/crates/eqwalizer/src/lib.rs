@@ -151,9 +151,9 @@ impl Eqwalizer {
         let mut cmd = self.cmd();
         cmd.arg("ipc");
         cmd.args(modules);
-        cmd.env("EQWALIZER_IPC", "true");
         let gradual_typing = if strict { "false" } else { "true" };
         cmd.env("EQWALIZER_GRADUAL_TYPING", gradual_typing);
+        cmd.env("EQWALIZER_MODE", "mini_elp");
         add_env(&mut cmd, build_info_path, None);
 
         let handle = &mut IpcHandle::from_command(&mut cmd)?;
@@ -208,6 +208,7 @@ impl Eqwalizer {
     ) -> Result<ExitStatus> {
         let mut cmd = self.cmd();
         cmd.args(args);
+        cmd.env("EQWALIZER_MODE", "mini_elp");
         add_env(&mut cmd, build_info_path, Some(elp_ast_dir));
         cmd.status()
             .with_context(|| "Error in eqwalizer passthrough")

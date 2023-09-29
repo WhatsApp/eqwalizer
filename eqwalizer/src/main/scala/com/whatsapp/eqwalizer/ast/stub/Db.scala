@@ -13,7 +13,7 @@ import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 import com.whatsapp.eqwalizer.ast.{App, ConvertAst, ExtModuleStub, Id}
 import com.whatsapp.eqwalizer.ast.Forms._
-import com.whatsapp.eqwalizer.config
+import com.whatsapp.eqwalizer.{Mode, config}
 import com.whatsapp.eqwalizer.io.BuildInfo.AppInfo
 import com.whatsapp.eqwalizer.io.{AstLoader, EData, Ipc}
 
@@ -101,14 +101,14 @@ private object Db {
     loadStubForms(module).map(loadExtModuleStub(_, module))
 
   def getAstStorage(module: String): Option[DbApi.AstStorage] = {
-    if (config.useIpc && config.useElpConvertedAst) {
+    if (config.useElp()) {
       Some(DbApi.AstJsonIpc(module))
     } else {
       getModuleApp(module).map { app =>
         if (fromBeam(module)) {
           val path = Paths.get(app.ebinDir, s"$module.beam")
           DbApi.AstBeam(path)
-        } else if (config.useIpc) {
+        } else if (config.mode != Mode.Standalone) {
           DbApi.AstEtfIpc(module)
         } else {
           val etf = Paths.get(config.astDir.get, s"$module.etf")
@@ -155,7 +155,7 @@ private object Db {
   def getExpandedModuleStub(module: String): Option[ModuleStub] =
     if (expandedModuleStubs.contains(module))
       expandedModuleStubs(module)
-    else if (config.useElpConvertedAst && config.useIpc) {
+    else if (config.useElp()) {
       val optStub =
         Ipc.getAstBytes(module, Ipc.ExpandedStub).map(readFromArray[ModuleStub](_))
       expandedModuleStubs.put(module, optStub)
@@ -170,7 +170,7 @@ private object Db {
   def getContractiveModuleStub(module: String): Option[ModuleStub] =
     if (contractiveModuleStubs.contains(module))
       contractiveModuleStubs(module)
-    else if (config.useElpConvertedAst && config.useIpc) {
+    else if (config.useElp()) {
       val optStub =
         Ipc.getAstBytes(module, Ipc.ContractiveStub).map(readFromArray[ModuleStub](_))
       contractiveModuleStubs.put(module, optStub)
@@ -184,7 +184,7 @@ private object Db {
   def getValidatedModuleStub(module: String): Option[ModuleStub] =
     if (validatedModuleStubs.contains(module))
       validatedModuleStubs(module)
-    else if (config.useElpConvertedAst && config.useIpc) {
+    else if (config.useElp()) {
       val optStub =
         Ipc.getAstBytes(module, Ipc.CovariantStub).map(readFromArray[ModuleStub](_))
       validatedModuleStubs.put(module, optStub)
@@ -201,7 +201,7 @@ private object Db {
     loadedModules.add(module)
     if (transValidStubs.contains(module))
       transValidStubs(module)
-    else if (config.useElpConvertedAst && config.useIpc) {
+    else if (config.useElp()) {
       val optStub =
         Ipc.getAstBytes(module, Ipc.TransitiveStub).map(readFromArray[ModuleStub](_))
       transValidStubs.put(module, optStub)

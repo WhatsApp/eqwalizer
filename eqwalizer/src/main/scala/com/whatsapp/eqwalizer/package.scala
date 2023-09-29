@@ -11,6 +11,31 @@ import com.whatsapp.eqwalizer.io.BuildInfo
 import com.whatsapp.eqwalizer.io.BuildInfo.AppInfo
 
 package object eqwalizer {
+  object Mode {
+    sealed trait Mode
+
+    case object Standalone extends Mode
+
+    case object Shell extends Mode
+
+    case object ElpCli extends Mode
+
+    case object ElpIde extends Mode
+
+    case object MiniElp extends Mode
+
+    def fromString(str: String): Option[Mode] = {
+      str match {
+        case "standalone" => Some(Standalone)
+        case "shell"      => Some(Shell)
+        case "elp_cli"    => Some(ElpCli)
+        case "elp_ide"    => Some(ElpIde)
+        case "mini_elp"   => Some(MiniElp)
+        case _            => None
+      }
+    }
+  }
+
   case class Config(
       otpLibRoot: String,
       sourceRoot: String,
@@ -22,17 +47,24 @@ package object eqwalizer {
       gradualTyping: Boolean,
       approximateComplexTypes: Boolean,
       eqwater: Boolean,
-      useIpc: Boolean,
-      useElpConvertedAst: Boolean,
-      elpShell: Boolean,
       tolerateErrors: Boolean,
       checkRedundantGuards: Boolean,
-  )
+      mode: Mode.Mode,
+  ) {
+    def useElp(): Boolean = {
+      mode match {
+        case Mode.Shell | Mode.ElpCli | Mode.ElpIde => true
+        case Mode.MiniElp | Mode.Standalone         => false
+      }
+    }
+  }
 
   lazy val config: Config = {
     val config = ConfigFactory.load().getConfig("eqwalizer")
     val buildInfoPath = config.getString("build_info")
     val buildInfo = BuildInfo.load(buildInfoPath)
+    val modeStr = config.getString("mode")
+    val mode = Mode.fromString(modeStr).getOrElse(throw new IllegalArgumentException(s"Unknown mode ${modeStr}"))
     Config(
       otpLibRoot = buildInfo.otpLibRoot,
       sourceRoot = buildInfo.sourceRoot,
@@ -44,11 +76,9 @@ package object eqwalizer {
       gradualTyping = config.getBoolean("gradual_typing"),
       approximateComplexTypes = config.getBoolean("approximate_complex_types"),
       eqwater = config.getBoolean("eqwater"),
-      useIpc = config.getBoolean("use_ipc"),
-      useElpConvertedAst = config.getBoolean("use_elp_converted_ast"),
-      elpShell = config.getBoolean("elp_shell"),
       tolerateErrors = config.getBoolean("tolerate_errors"),
       checkRedundantGuards = config.getBoolean("check_redundant_guards"),
+      mode,
     )
   }
 }

@@ -20,8 +20,8 @@ object Main {
 
     val cmd = args1(0)
     require(
-      !config.useIpc || cmd == "ipc",
-      s"env var EQWALIZER_IPC=true is only valid with the 'ipc' command but got command $cmd",
+      !(config.mode == Mode.Standalone && cmd == "ipc"),
+      s"'ipc' command can only be used by running eqWAlizer through ELP (got command $cmd)",
     )
 
     cmd match {
@@ -54,12 +54,12 @@ object Main {
   }
 
   def ipc(ipcArgs: Array[String]): Unit = {
-    if (!config.useIpc) {
-      throw new IllegalArgumentException(s"expected env var USE_EQWALIZER_IPC=1 to be set")
+    if (config.mode == Mode.Standalone) {
+      throw new IllegalArgumentException(s"eqWAlizer should be called from ELP to use IPC")
     }
     val modules = ipcArgs.tail
     val modulesAndStorages = modules.distinct.flatMap(m => DbApi.getAstStorage(m).map(m -> _))
-    if (config.elpShell) {
+    if (config.mode == Mode.Shell) {
       ELPDiagnostics.getDiagnosticsIpcShell(modulesAndStorages)
     } else {
       ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
