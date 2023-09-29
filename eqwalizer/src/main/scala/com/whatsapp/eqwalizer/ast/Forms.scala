@@ -41,12 +41,15 @@ object Forms {
   sealed trait Form
 
   sealed trait ExternalForm extends Form { val pos: Pos }
-  case class ExternalTypeDecl(id: Id, params: List[String], body: ExtType)(val pos: Pos) extends ExternalForm
-  case class ExternalOpaqueDecl(id: Id, params: List[String], body: ExtType)(val pos: Pos) extends ExternalForm
+  case class ExternalTypeDecl(id: Id, params: List[String], body: ExtType, file: Option[String])(val pos: Pos)
+      extends ExternalForm
+  case class ExternalOpaqueDecl(id: Id, params: List[String], body: ExtType, file: Option[String])(val pos: Pos)
+      extends ExternalForm
   case class ExternalFunSpec(id: Id, types: List[ConstrainedFunType])(val pos: Pos) extends ExternalForm
   case class ExternalCallback(id: Id, types: List[ConstrainedFunType])(val pos: Pos) extends ExternalForm
   case class ExternalOptionalCallbacks(ids: List[Id])(val pos: Pos) extends ExternalForm
-  case class ExternalRecDecl(name: String, fields: List[ExternalRecField])(val pos: Pos) extends ExternalForm
+  case class ExternalRecDecl(name: String, fields: List[ExternalRecField], file: Option[String])(val pos: Pos)
+      extends ExternalForm
   case class ExternalRecField(name: String, tp: Option[ExtType], defaultValue: Option[Expr])
 
   sealed trait InternalForm extends Form { val pos: Pos }
@@ -55,12 +58,19 @@ object Forms {
 
   // empty tys list is used to represent callback with an invalid type
   case class Callback(id: Id, tys: List[FunType])(val pos: Pos) extends InternalForm
-  case class RecDecl(name: String, fields: List[RecField], refinable: Boolean)(val pos: Pos) extends InternalForm
-  case class RecDeclTyped(name: String, fields: TreeSeqMap[String, RecFieldTyped], refinable: Boolean)
+  case class RecDecl(name: String, fields: List[RecField], refinable: Boolean, file: Option[String])(val pos: Pos)
+      extends InternalForm
+  case class RecDeclTyped(
+      name: String,
+      fields: TreeSeqMap[String, RecFieldTyped],
+      refinable: Boolean,
+      file: Option[String],
+  )
   case class RecField(name: String, tp: Option[Type], defaultValue: Option[Expr], refinable: Boolean)
   case class RecFieldTyped(name: String, tp: Type, defaultValue: Option[Expr], refinable: Boolean)
-  case class OpaqueTypeDecl(id: Id)(val pos: Pos) extends InternalForm
-  case class TypeDecl(id: Id, params: List[VarType], body: Type)(val pos: Pos) extends InternalForm
+  case class OpaqueTypeDecl(id: Id, file: Option[String])(val pos: Pos) extends InternalForm
+  case class TypeDecl(id: Id, params: List[VarType], body: Type, file: Option[String])(val pos: Pos)
+      extends InternalForm
 
   sealed trait InvalidForm extends InternalForm {
     val te: TypeError

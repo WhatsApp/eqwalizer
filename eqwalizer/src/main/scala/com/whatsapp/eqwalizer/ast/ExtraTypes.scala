@@ -16,7 +16,7 @@ object ExtraTypes {
     else TextRange.fake
 
   private val builtinDecls = builtinTypeAliasBodies.map { case (name, body) =>
-    TypeDecl(Id(name, 0), Nil, body)(fakePos)
+    TypeDecl(Id(name, 0), Nil, body, None)(fakePos)
   }.toList
 
   val typeDecls: Map[String, List[TypeDecl]] = Map(

@@ -41,10 +41,10 @@ class ConvertTypes(module: String) {
 
   def convertRecDecl(extRecDecl: ExternalRecDecl): InternalForm = {
     try {
-      val ExternalRecDecl(name, fields) = extRecDecl
+      val ExternalRecDecl(name, fields, file) = extRecDecl
       val fields1 = fields.map(convertRecField(_)(extRecDecl))
       val refinable = fields1.exists { case RecField(_, _, _, refinable) => refinable }
-      RecDecl(name, fields1, refinable)(extRecDecl.pos)
+      RecDecl(name, fields1, refinable, file)(extRecDecl.pos)
     } catch {
       case e: InvalidDiagnostics.Invalid =>
         InvalidConvertTypeInRecDecl(extRecDecl.name, e)(extRecDecl.pos)
@@ -66,21 +66,21 @@ class ConvertTypes(module: String) {
       val params = extDecl.params.zipWithIndex.map { case (n, i) => VarType(i)(n) }
       val sub = params.map(v => v.name -> v.n).toMap
       val body = convertType(sub, extDecl.body)(None)
-      TypeDecl(extDecl.id, params, body)(extDecl.pos)
+      TypeDecl(extDecl.id, params, body, extDecl.file)(extDecl.pos)
     } catch {
       case e: InvalidDiagnostics.Invalid =>
         InvalidTypeDecl(extDecl.id, e)(extDecl.pos)
     }
 
   def convertOpaqueDeclPublic(extDecl: ExternalOpaqueDecl): OpaqueTypeDecl =
-    OpaqueTypeDecl(extDecl.id)(extDecl.pos)
+    OpaqueTypeDecl(extDecl.id, extDecl.file)(extDecl.pos)
 
   def convertOpaquePrivate(extDecl: ExternalOpaqueDecl): InternalForm =
     try {
       val params = extDecl.params.zipWithIndex.map { case (n, i) => VarType(i)(n) }
       val sub = params.map(v => v.name -> v.n).toMap
       val body = convertType(sub, extDecl.body)(None)
-      TypeDecl(extDecl.id, params, body)(extDecl.pos)
+      TypeDecl(extDecl.id, params, body, extDecl.file)(extDecl.pos)
     } catch {
       case e: InvalidDiagnostics.Invalid =>
         InvalidTypeDecl(extDecl.id, e)(extDecl.pos)

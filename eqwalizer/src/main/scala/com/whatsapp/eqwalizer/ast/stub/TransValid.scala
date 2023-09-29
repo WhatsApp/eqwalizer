@@ -146,11 +146,11 @@ private class TransValid {
             case RidRef(rid) =>
               val id = Id(rid.name, rid.arity)
               cStub.types.get(id) match {
-                case Some(TypeDecl(_, _, body)) =>
+                case Some(TypeDecl(_, _, body, _)) =>
                   collectInvalidReferences(rid.module, body)
                 case None =>
                   cStub.privateOpaques.get(id) match {
-                    case Some(TypeDecl(_, _, body)) =>
+                    case Some(TypeDecl(_, _, body, _)) =>
                       collectInvalidReferences(rid.module, body)
                     case None =>
                       List(ref)
@@ -158,7 +158,7 @@ private class TransValid {
               }
             case RecRef(refModule, name) =>
               cStub.records.get(name) match {
-                case Some(RecDecl(_, fields, _)) =>
+                case Some(RecDecl(_, fields, _, _)) =>
                   fields.flatMap(_.tp).flatMap(collectInvalidReferences(refModule, _))
                 case None =>
                   List(ref)

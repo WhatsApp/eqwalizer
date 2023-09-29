@@ -17,6 +17,8 @@ import com.whatsapp.eqwalizer.io.EData._
 
 class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
 
+  private var curFile: Option[String] = None
+
   private val specifiers: Map[String, Specifier] =
     Map(
       "default" -> UnsignedIntegerSpecifier,
@@ -83,8 +85,9 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
       case ETuple(
             List(EAtom("attribute"), EPos(pos), EAtom("record"), ETuple(List(EAtom(name), EList(fields, None))))
           ) =>
-        Some(ExternalRecDecl(name, fields.map(recField))(pos))
+        Some(ExternalRecDecl(name, fields.map(recField), curFile)(pos))
       case ETuple(List(EAtom("attribute"), EPos(pos), EAtom("file"), ETuple(List(EString(file), ELine(start))))) =>
+        curFile = Some(file)
         Some(File(file, start)(pos))
       case ETuple(List(EAtom("attribute"), EPos(pos), EAtom("elp_metadata"), proplist: EList)) =>
         proplist.elems.collectFirst { case ETuple(List(EAtom("eqwalizer_fixmes"), EList(rawFixmes, _improper_tail))) =>
@@ -113,10 +116,10 @@ class ConvertAst(fromBeam: Boolean, noAutoImport: Set[Id] = Set.empty) {
         None
       case ETuple(List(EAtom("attribute"), EPos(p), EAtom("type"), ETuple(List(EAtom(n), body, EList(vs, None))))) =>
         val id = Id(n, vs.size)
-        Some(ExternalTypeDecl(id, vs.map(varString), convertType(body))(p))
+        Some(ExternalTypeDecl(id, vs.map(varString), convertType(body), curFile)(p))
       case ETuple(List(EAtom("attribute"), EPos(p), EAtom("opaque"), ETuple(List(EAtom(n), body, EList(vs, None))))) =>
         val id = Id(n, vs.size)
-        Some(ExternalOpaqueDecl(id, vs.map(varString), convertType(body))(p))
+        Some(ExternalOpaqueDecl(id, vs.map(varString), convertType(body), curFile)(p))
       case ETuple(List(EAtom("attribute"), EPos(pos), EAtom("spec"), ETuple(List(eFunId, EList(eTypeList, None))))) =>
         Some(ExternalFunSpec(convertIdInAttr(eFunId), eTypeList.map(convertFunSpecType))(pos))
       case ETuple(

@@ -34,7 +34,7 @@ class Util(pipelineContext: PipelineContext) {
         fields += f.name -> f
         refinable = refinable || f.refinable
       }
-      RecDeclTyped(rec.name, fields, refinable)
+      RecDeclTyped(rec.name, fields, refinable, rec.file)
     }
 
   def getRecord(module: String, name: String): Option[RecDeclTyped] = {
