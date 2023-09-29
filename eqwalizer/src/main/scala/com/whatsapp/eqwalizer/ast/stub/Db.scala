@@ -216,7 +216,7 @@ private object Db {
   }
 
   def fromBeam(module: String): Boolean =
-    ((otpModules(module) || depModules(module)) && !projectModules(module)) || !config.useElp
+    (otpModules(module) || depModules(module)) && !projectModules(module)
 
   def getLoadedModules(): Set[String] = {
     val set = loadedModules.toSet

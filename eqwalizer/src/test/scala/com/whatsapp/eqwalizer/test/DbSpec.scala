@@ -7,16 +7,13 @@
 package com.whatsapp.eqwalizer.test
 
 import com.whatsapp.eqwalizer.ast.stub.DbApi
-import com.whatsapp.eqwalizer.config
 
 import java.nio.file.Paths
 
 class DbSpec extends org.scalatest.funspec.AnyFunSpec {
   describe("module DB") {
     it("should locate ast files from test projects") {
-      val expPath =
-        if (config.useElp) "test_projects/.ast/misc.etf"
-        else "test_projects/_build/default/lib/check/ebin/misc.beam"
+      val expPath = "test_projects/.ast/misc.etf"
       val expAbsPath = Paths.get(expPath).toAbsolutePath.toString
       val actualAbsPath = DbApi.getAstStorage("misc").map {
         case DbApi.AstBeam(path)    => path.toAbsolutePath.toString
