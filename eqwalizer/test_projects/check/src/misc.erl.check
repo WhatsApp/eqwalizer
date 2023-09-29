@@ -1190,14 +1190,14 @@ my_priorities_neg() ->                     | ERROR   |
     MyPriorities =                         |         |
         ['MS', 'MM', 'MA', 'EE', 'GE'],    |         |
     MyPriorities.                          |         | MyPriorities.
-                                           |         | Expression has type:   ['MS' | 'MM' | 'MA' | 'EE' | 'GE']
+                                           |         | Expression has type:   ['MM' | 'MS' | 'EE' | 'MA' | 'GE']
                                            |         | Context expected type: [erlang:priority_level()]
                                            |         | 
-                                           |         |   ['MS' | 'MM' | 'MA' | 'EE' | 'GE'] is not compatible with [erlang:priority_level()]
+                                           |         |   ['MM' | 'MS' | 'EE' | 'MA' | 'GE'] is not compatible with [erlang:priority_level()]
                                            |         |   because
-                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not compatible with erlang:priority_level()
+                                           |         |   'MM' | 'MS' | 'EE' | 'MA' | 'GE' is not compatible with erlang:priority_level()
                                            |         |   because
-                                           |         |   'MS' | 'MM' | 'MA' | 'EE' | 'GE' is not compatible with 'low' | 'normal' | 'high' | 'max'
+                                           |         |   'MM' | 'MS' | 'EE' | 'MA' | 'GE' is not compatible with 'low' | 'normal' | 'high' | 'max'
                                            |         |
 -spec timestamp_neg(                       |         |
     erlang:timestamp()                     |         |

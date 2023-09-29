@@ -53,7 +53,7 @@ flatten1_gradual() ->                      | OK      |
 flatten1_gradual_neg() ->                  | ERROR   |
   In = [a, [b, c]],                        |         |
   lists:flatten(In).                       |         | lists:flatten(In).
-                                           |         | Expression has type:   ['a' | 'b' | 'c']
+                                           |         | Expression has type:   ['b' | 'c' | 'a']
                                            |         | Context expected type: atom()
                                            |         |
 -spec flatten2_gradual() -> [atom()].      |         |
@@ -67,7 +67,7 @@ flatten2_gradual_neg() ->                  | ERROR   |
   In = [a, [b, c]],                        |         |
   Tail = [x, y, z],                        |         |
   lists:flatten(In, Tail).                 |         | lists:flatten(In, Tail).
-                                           |         | Expression has type:   ['a' | 'b' | 'c' | 'x' | 'y' | 'z']
+                                           |         | Expression has type:   ['b' | 'a' | 'y' | 'z' | 'c' | 'x']
                                            |         | Context expected type: atom()
                                            |         |
 -spec file_consult() -> [anything].        |         |

@@ -78,10 +78,10 @@ catch_foo1_neg(X) ->                       | ERROR   |
             A:_  -> A                      |         |
         end,                               |         |
     Res.                                   |         | Res.
-                                           |         | Expression has type:   number() | 'error' | 'exit' | 'throw'
+                                           |         | Expression has type:   'error' | 'exit' | 'throw' | number()
                                            |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | 'error' | 'exit' | 'throw' is not compatible with number()
+                                           |         |   'error' | 'exit' | 'throw' | number() is not compatible with number()
                                            |         |   because
                                            |         |   'error' is not compatible with number()
                                            |         |

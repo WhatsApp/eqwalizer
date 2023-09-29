@@ -98,6 +98,6 @@ map_union_neg(#{ty := Ty, data := Data}) -…… ERROR   |
         {ok8, #{k81 := V1, k82 := V2, k83 ……         |
         {ok9, #{k91 := V1, k92 := V2, k93 ……         |
         V -> V                             |         | V.
-                                           |         | Expression has type:   {'ok4' | 'ok3' | 'ok8' | 'ok2' | 'ok9' | 'ok1' | 'ok6' | 'ok5' | 'ok7', map4() | map3() | map8() | map2() | map9() | map1() | map6() | map5() | map7()}
+                                           |         | Expression has type:   {'ok7' | 'ok2' | 'ok6' | 'ok1' | 'ok5' | 'ok8' | 'ok4' | 'ok9' | 'ok3', map3() | map5() | map2() | map9() | map1() | map7() | map6() | map8() | map4()}
                                            |         | Context expected type: 'ok'
     end.                                   |         |

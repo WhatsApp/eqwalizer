@@ -815,12 +815,12 @@ queue_filter_6_neg() ->                    | ERROR   |
 queue_filter_7_neg() ->                    | ERROR   |
     queue:filter(                          |         |
         fun (1) -> {true, a};              |         | fun.
-                                           |         | Expression has type:   fun(('a' | 'b') -> {'true', 'a'} | ['a'] | 'false')
+                                           |         | Expression has type:   fun(('a' | 'b') -> ['a'] | 'false' | {'true', 'a'})
                                            |         | Context expected type: fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         | 
-                                           |         |   fun(('a' | 'b') -> {'true', 'a'} | ['a'] | 'false') is not compatible with fun(('a' | 'b') -> boolean() | ['a' | 'b'])
+                                           |         |   fun(('a' | 'b') -> ['a'] | 'false' | {'true', 'a'}) is not compatible with fun(('a' | 'b') -> boolean() | ['a' | 'b'])
                                            |         |   because
-                                           |         |   {'true', 'a'} | ['a'] | 'false' is not compatible with boolean() | ['a' | 'b']
+                                           |         |   ['a'] | 'false' | {'true', 'a'} is not compatible with boolean() | ['a' | 'b']
                                            |         |   because
                                            |         |   {'true', 'a'} is not compatible with boolean() | ['a' | 'b']
                                            |         |   because

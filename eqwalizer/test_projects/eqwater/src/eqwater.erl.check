@@ -1382,10 +1382,10 @@ foo8_neg(Args) ->                          | ERROR   |
     case Args of                           |         |
         {_, Args} -> 1 + foo8_neg(Args);   |         |
         _ -> Args                          |         | Args.
-                                           |         | Expression has type:   {term(), my_list()} | none() | none() | number()
+                                           |         | Expression has type:   {term(), my_list()} | none() | number()
                                            |         | Context expected type: number()
                                            |         | 
-                                           |         |   {term(), my_list()} | none() | none() | number() is not compatible with number()
+                                           |         |   {term(), my_list()} | none() | number() is not compatible with number()
                                            |         |   because
                                            |         |   {term(), my_list()} is not compatible with number()
     end.                                   |         |

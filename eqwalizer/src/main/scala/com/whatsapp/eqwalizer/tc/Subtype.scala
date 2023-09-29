@@ -329,8 +329,16 @@ class Subtype(pipelineContext: PipelineContext) {
   def join(ts: Iterable[Type]): Type =
     ts.fold(NoneType)(join)
 
-  def join(t1: Type, t2: Type): Type =
+  def join(t1: Type, t2: Type): Type = {
     if (gradualSubType(t1, t2)) t2
     else if (gradualSubType(t2, t1)) t1
-    else UnionType(Set(t1, t2))
+    else {
+      (t1, t2) match {
+        case (UnionType(args1), UnionType(args2)) => UnionType(args1 ++ args2)
+        case (UnionType(args1), _)                => UnionType(args1 + t2)
+        case (_, UnionType(args2))                => UnionType(args2 + t1)
+        case (_, _)                               => UnionType(Set(t1, t2))
+      }
+    }
+  }
 }

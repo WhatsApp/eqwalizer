@@ -131,10 +131,10 @@ test_12_pos(FUnion) ->                     | ERROR   |
 test_12e_pos(FUnion) ->                    | ERROR   |
     Res = (FUnion)(a2),                    |         |
     Res.                                   |         | Res.
-                                           |         | Expression has type:   'r1' | 'r2' | 'r2' | 'r3'
+                                           |         | Expression has type:   'r1' | 'r2' | 'r3'
                                            |         | Context expected type: 'r1'
                                            |         | 
-                                           |         |   'r1' | 'r2' | 'r2' | 'r3' is not compatible with 'r1'
+                                           |         |   'r1' | 'r2' | 'r3' is not compatible with 'r1'
                                            |         |   because
                                            |         |   'r2' is not compatible with 'r1'
                                            |         |
