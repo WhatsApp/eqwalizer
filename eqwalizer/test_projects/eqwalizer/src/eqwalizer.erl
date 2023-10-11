@@ -21,6 +21,16 @@
 -type dynamic() :: term().
 
 %% @doc
+%% This type is a more precise version of dynamic/0, that introduces
+%% some degree of soundness while retaining the flexibility of dynamic/0.
+%% dynamic(T) is a subtype of everything, but a supertype of T
+%% (and its subtypes) only.
+%% It behaves as "T in, dynamic() out".
+%% For other tooling, dynamic(T) is defined as an alias to T.
+%% @end
+-type dynamic(T) :: T.
+
+%% @doc
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
 %% It communicates the intent: "I know that the value would be of the right type".
 %% @end

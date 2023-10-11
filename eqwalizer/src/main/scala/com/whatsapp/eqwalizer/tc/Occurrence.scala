@@ -639,6 +639,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case (_, DynamicType) =>
         Some(true)
 
+      case (BoundedDynamicType(bound), _) =>
+        overlap(bound, t2)
+      case (_, BoundedDynamicType(bound)) =>
+        overlap(t1, bound)
+
       case (VarType(_), _) =>
         Some(true)
 
@@ -1018,6 +1023,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
           .map(_.fields(fieldName).tp)
           .map(typePathRef(_, path1))
           .getOrElse(DynamicType)
+      case (BoundedDynamicType(bound), _) =>
+        BoundedDynamicType(typePathRef(bound, path))
       case (UnionType(ts), _) =>
         UnionType(ts.map(typePathRef(_, path)))
       case (TupleType(ts), TupleField(index, Some(arity)) :: path1) if ts.size == arity =>

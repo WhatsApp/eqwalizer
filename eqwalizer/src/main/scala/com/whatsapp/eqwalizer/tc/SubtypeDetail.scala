@@ -123,6 +123,11 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
       case (_, DynamicType) =>
         Nil
 
+      case (BoundedDynamicType(_), _) =>
+        Nil
+      case (_, BoundedDynamicType(bound)) =>
+        recur(t1, bound)
+
       case (RemoteType(rid, args), _) =>
         util.getTypeDeclBody(rid, args) match {
           case body @ OpaqueType(rid2, _) if rid2 == rid =>

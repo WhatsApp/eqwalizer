@@ -59,6 +59,14 @@ class Subtype(pipelineContext: PipelineContext) {
         subTypePol(t1, NoneType, seen)
       case (_, DynamicType) if v2 == + =>
         true
+      case (BoundedDynamicType(_), _) if v1 == - =>
+        true
+      case (BoundedDynamicType(bound), _) if v1 == + =>
+        subTypePol(bound, t2, seen)
+      case (_, BoundedDynamicType(_)) if v2 == - =>
+        subTypePol(t1, NoneType, seen)
+      case (_, BoundedDynamicType(bound)) if v2 == + =>
+        subTypePol(t1, bound, seen)
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
         containsType(t1, t2) || subTypePol(body, t2, seen + ((t1, v1) -> (t2, v2)))
@@ -226,6 +234,8 @@ class Subtype(pipelineContext: PipelineContext) {
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
         isNoneType(body, seen + t)
+      case BoundedDynamicType(bound) =>
+        isNoneType(bound, seen)
       case _ =>
         false
     })
@@ -282,6 +292,12 @@ class Subtype(pipelineContext: PipelineContext) {
         false
       case (DynamicType, _) if v1 == + =>
         subtypeTuple(AnyType, t2, proj, originalTuple, seen)
+      case (_, BoundedDynamicType(bound)) if v2 == + =>
+        subtypeTuple(t1, bound, proj, originalTuple, seen)
+      case (_, BoundedDynamicType(_)) if v2 == - =>
+        false
+      case (BoundedDynamicType(bound), _) if v1 == + =>
+        subtypeTuple(bound, t2, proj, originalTuple, seen)
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
         subtypeTuple(body, t2, proj, originalTuple, seen)

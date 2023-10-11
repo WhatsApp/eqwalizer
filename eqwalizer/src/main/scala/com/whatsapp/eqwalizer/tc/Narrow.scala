@@ -34,8 +34,18 @@ class Narrow(pipelineContext: PipelineContext) {
             val body = util.getTypeDeclBody(rid, args)
             meetAux(t1, body, seen + rid)
           }
+        case (BoundedDynamicType(b1), DynamicType) =>
+          BoundedDynamicType(b1)
+        case (DynamicType, BoundedDynamicType(b2)) =>
+          BoundedDynamicType(b2)
         case (DynamicType, _) => DynamicType
         case (_, DynamicType) => DynamicType
+        case (BoundedDynamicType(b1), BoundedDynamicType(b2)) =>
+          BoundedDynamicType(meetAux(b1, b2, seen))
+        case (BoundedDynamicType(b1), _) =>
+          BoundedDynamicType(meetAux(b1, t2, seen))
+        case (_, BoundedDynamicType(b2)) =>
+          BoundedDynamicType(meetAux(t1, b2, seen))
         // Composed "refinable" types - refining component by component
         case (UnionType(ty1s), _) => subtype.join(ty1s.map(meetAux(_, t2, seen)))
         case (_, UnionType(ty2s)) =>
@@ -113,10 +123,25 @@ class Narrow(pipelineContext: PipelineContext) {
       case ts  => Some(ListType(subtype.join(ts)))
     }
 
+  private def dynamicMap(t: Type): Type =
+    t match {
+      case DictMap(kType, vType) => DictMap(BoundedDynamicType(kType), BoundedDynamicType(vType))
+      case ShapeMap(props) =>
+        ShapeMap(props.map {
+          case OptProp(key, tp) => OptProp(key, BoundedDynamicType(tp))
+          case ReqProp(key, tp) => ReqProp(key, BoundedDynamicType(tp))
+        })
+      case UnionType(tys) => UnionType(tys.map(dynamicMap))
+      case NoneType       => NoneType
+      case _              => throw new IllegalStateException()
+    }
+
   def asMapType(t: Type): Type =
     t match {
       case DynamicType =>
         DictMap(DynamicType, DynamicType)
+      case BoundedDynamicType(bound) =>
+        dynamicMap(asMapType(bound))
       case AnyType | VarType(_) =>
         DictMap(AnyType, AnyType)
       case dictMap: DictMap =>
@@ -165,6 +190,8 @@ class Narrow(pipelineContext: PipelineContext) {
     t match {
       case DynamicType | DictMap(_, _) =>
         t
+      case BoundedDynamicType(bound) =>
+        BoundedDynamicType(withRequiredProp(k, bound))
       case ShapeMap(props) =>
         ShapeMap(props.map {
           case OptProp(`k`, v) =>
@@ -182,6 +209,8 @@ class Narrow(pipelineContext: PipelineContext) {
     t match {
       case DynamicType =>
         List(DynamicType)
+      case BoundedDynamicType(bound) =>
+        extractListElem(bound).map(BoundedDynamicType)
       case AnyType =>
         List(AnyType)
       case UnionType(tys) =>
@@ -209,6 +238,10 @@ class Narrow(pipelineContext: PipelineContext) {
   def asFunTypeAux(ty: Type, arity: Int): Option[List[FunType]] = ty match {
     case DynamicType =>
       Some(List(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)))
+    case BoundedDynamicType(bound) =>
+      asFunTypeAux(bound, arity).map(fts =>
+        fts.map(ft => FunType(ft.forall, ft.argTys.map(BoundedDynamicType), BoundedDynamicType(ft.resTy)))
+      )
     case AnyFunType if pipelineContext.gradualTyping =>
       Some(List(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)))
     case AnyArityFunType(resTy) if pipelineContext.gradualTyping =>
@@ -236,6 +269,10 @@ class Narrow(pipelineContext: PipelineContext) {
   def extractFunTypes(ty: Type, arity: Int): Set[FunType] = ty match {
     case DynamicType =>
       Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
+    case BoundedDynamicType(bound) =>
+      extractFunTypes(bound, arity).map(ft =>
+        FunType(ft.forall, ft.argTys.map(BoundedDynamicType), BoundedDynamicType(ft.resTy))
+      )
     case AnyFunType if pipelineContext.gradualTyping =>
       Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
     case AnyFunType =>
@@ -265,6 +302,8 @@ class Narrow(pipelineContext: PipelineContext) {
         List(TupleType(List.fill(arity)(AnyType)))
       case DynamicType =>
         List(TupleType(List.fill(arity)(DynamicType)))
+      case BoundedDynamicType(bound) =>
+        asTupleTypeAux(bound, arity).map(tt => TupleType(tt.argTys.map(BoundedDynamicType)))
       case AnyType | VarType(_) =>
         List(TupleType(List.fill(arity)(AnyType)))
       case r: RecordType if arity > 0 =>
@@ -332,6 +371,8 @@ class Narrow(pipelineContext: PipelineContext) {
     mapT match {
       case DynamicType =>
         DynamicType
+      case BoundedDynamicType(bound) =>
+        BoundedDynamicType(adjustMapType(bound, keyT, valT))
       case shapeMap: ShapeMap =>
         adjustShapeMap(shapeMap, keyT, valT)
       case dictMap: DictMap =>
@@ -351,6 +392,8 @@ class Narrow(pipelineContext: PipelineContext) {
     mapT match {
       case DynamicType =>
         DynamicType
+      case BoundedDynamicType(bound) =>
+        BoundedDynamicType(setAllFieldsOptional(bound, newValTy))
       case shapeMap: ShapeMap =>
         ShapeMap(shapeMap.props.map {
           case ReqProp(key, tp) => OptProp(key, newValTy.getOrElse(tp))
@@ -384,6 +427,8 @@ class Narrow(pipelineContext: PipelineContext) {
           .getOrElse(field.tp)
       case AnyTupleType | DynamicType | VarType(_) | OpaqueType(_, _) =>
         field.tp
+      case BoundedDynamicType(_) =>
+        BoundedDynamicType(field.tp)
       case RemoteType(id, argTys) =>
         getRecordField(recDecl, util.getTypeDeclBody(id, argTys), fieldName)
       case UnionType(argTys) =>

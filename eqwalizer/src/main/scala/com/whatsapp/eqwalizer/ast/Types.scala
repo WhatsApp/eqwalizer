@@ -43,6 +43,7 @@ object Types {
   case object AnyType extends Type
   case object AtomType extends Type
   case object DynamicType extends Type
+  case class BoundedDynamicType(bound: Type) extends Type
   case object NoneType extends Type
   case object PidType extends Type
   case object PortType extends Type

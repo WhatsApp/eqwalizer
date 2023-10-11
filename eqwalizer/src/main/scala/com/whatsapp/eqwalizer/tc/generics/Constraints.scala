@@ -113,6 +113,12 @@ class Constraints(pipelineContext: PipelineContext) {
           val solveFor = freeVars(upperBound).intersect(toSolve)
           val newConstraints = solveFor.map(n => (n, constraintLoc, Constraint(DynamicType, AnyType))).toVector
           state.copy(cs = constraints ++ newConstraints)
+        case (BoundedDynamicType(_), _) =>
+          val solveFor = freeVars(upperBound).intersect(toSolve)
+          val newConstraints = solveFor.map(n => (n, constraintLoc, Constraint(DynamicType, AnyType))).toVector
+          state.copy(cs = constraints ++ newConstraints)
+        case (_, BoundedDynamicType(bound)) =>
+          constrain(state, lowerBound, bound)
         // logic for recursive types is the same as in subtype.scala
         case (RemoteType(rid, args), _) =>
           val lower = util.getTypeDeclBody(rid, args)

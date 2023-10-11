@@ -54,6 +54,8 @@ object ElimTypeVars {
         DictMap(elim(kt), elim(vt))
       case ShapeMap(props) =>
         ShapeMap(props.map(elimVarsInProp(_, mode, vars)))
+      case BoundedDynamicType(bound) =>
+        BoundedDynamicType(elim(bound))
       case _ =>
         ty
     }

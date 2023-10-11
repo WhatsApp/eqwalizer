@@ -32,6 +32,7 @@ object Subst {
       case ShapeMap(props)                    => ShapeMap(props.map(substInProp(s, _)))
       case DictMap(kTy, vTy)                  => DictMap(sub(kTy), sub(vTy))
       case RefinedRecordType(recType, fields) => RefinedRecordType(recType, fields.map(f => f._1 -> sub(f._2)))
+      case BoundedDynamicType(bound)          => BoundedDynamicType(sub(bound))
       case _ =>
         t
     }

@@ -90,6 +90,8 @@ class Util(pipelineContext: PipelineContext) {
     remoteId match {
       case RemoteId("eqwalizer", "dynamic", 0) if pipelineContext.gradualTyping =>
         return DynamicType
+      case RemoteId("eqwalizer", "dynamic", 1) if pipelineContext.gradualTyping =>
+        return BoundedDynamicType(args.head)
       case _ =>
     }
     val id = Id(remoteId.name, remoteId.arity)
@@ -128,6 +130,7 @@ class Util(pipelineContext: PipelineContext) {
       isFunType(body, arity)
     case UnionType(tys) =>
       tys.forall(isFunType(_, arity))
-    case _ => false
+    case BoundedDynamicType(_) => true
+    case _                     => false
   }
 }

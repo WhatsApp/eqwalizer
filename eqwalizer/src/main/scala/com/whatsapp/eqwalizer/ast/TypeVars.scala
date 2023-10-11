@@ -45,6 +45,7 @@ object TypeVars {
     case DictMap(kType, vType)        => kType :: vType :: Nil
     case ListType(ty)                 => ty :: Nil
     case RefinedRecordType(_, fields) => fields.toList.map(_._2)
+    case BoundedDynamicType(bound)    => bound :: Nil
     case _                            => Nil
   }
 
