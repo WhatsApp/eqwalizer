@@ -28,6 +28,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val constraints = pipelineContext.constraints
   private lazy val occurrence = pipelineContext.occurrence
   private lazy val variance = pipelineContext.variance
+  private lazy val typeInfo = pipelineContext.typeInfo
   implicit val pipelineCtx = pipelineContext
 
   private type Var = Int
@@ -111,8 +112,10 @@ class ElabApply(pipelineContext: PipelineContext) {
       (cs1, subst1)
     }
 
+    typeInfo.setCollect(false)
     val (cs2, subst2) = inferenceRound(cs1, subst1)
     val (cs3, subst3) = inferenceRound(cs2, subst2)
+    typeInfo.setCollect(true)
 
     // Then we check the lambdas and use the inferred return types of the lambdas for a final round of constraint generation
 

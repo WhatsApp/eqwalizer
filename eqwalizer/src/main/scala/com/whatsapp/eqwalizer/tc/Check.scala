@@ -100,10 +100,10 @@ final class Check(pipelineContext: PipelineContext) {
   ): Env = {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env0, patVars)
+    typeInfo.setCollect(false)
     // see D29637051 for why we elabGuard twice
     val env2 = elabGuard.elabGuards(clause.guards, env1)
-    // Erase type info from first elaboration
-    typeInfo.clear(clause.pos)
+    typeInfo.setCollect(true)
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
     val env5 = checkBody(clause.body, resTy, env4)
@@ -118,9 +118,9 @@ final class Check(pipelineContext: PipelineContext) {
   ): Unit = {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env, patVars)
+    typeInfo.setCollect(false)
     val env2 = elabGuard.elabGuards(clause.guards, env1)
-    // Erase type info from first elaboration
-    typeInfo.clear(clause.pos)
+    typeInfo.setCollect(true)
     val (patTys, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val reachable = !patTys.exists(subtype.isNoneType)
     if (reachable) {

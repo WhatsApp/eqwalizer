@@ -42,9 +42,9 @@ final class Elab(pipelineContext: PipelineContext) {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env0, patVars)
     // see D29637051 for why we elabGuard twice
+    typeInfo.setCollect(false)
     val env2 = elabGuard.elabGuards(clause.guards, env1)
-    // Erase type info from first elaboration
-    typeInfo.clear(clause.pos)
+    typeInfo.setCollect(true)
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
     val (eType, env5) = elabBody(clause.body, env4)
