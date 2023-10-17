@@ -282,6 +282,8 @@ final class Check(pipelineContext: PipelineContext) {
         case Block(block) =>
           checkBody(block, resTy, env)
         case c: Case if Predicates.isCaseIf(c) =>
+          // Elaborate test expression to store its type info
+          val (_, _) = elab.elabExpr(c.expr, env)
           val ifExpr = Predicates.asIf(c)
           checkExpr(ifExpr, resTy, env)
         case c @ Case(sel, clauses) =>

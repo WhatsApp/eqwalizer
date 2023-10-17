@@ -258,6 +258,8 @@ final class Elab(pipelineContext: PipelineContext) {
       case Block(block) =>
         elabBody(block, env)
       case c: Case if Predicates.isCaseIf(c) =>
+        // Elaborate test expression to store its type info
+        val (_, _) = elabExpr(c.expr, env)
         val ifExpr = Predicates.asIf(c)
         elabExpr(ifExpr, env)
       case c @ Case(sel, clauses) =>
