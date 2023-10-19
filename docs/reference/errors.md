@@ -303,6 +303,12 @@ test() ->
     nonexistent:fooooon/9999. % Error
 ```
 
+### non_exported_id
+
+This error indicates that you're referencing a type ID that exists but is not exported.
+
+Export the type in the module it is declared in using `-export_type([...])` to fix this issue.
+
 
 ### recursive_constraint
 
