@@ -1003,3 +1003,8 @@ orelse5_neg(Validator) ->
         Validator =/= undefined
             orelse Validator(),
     Res.
+
+-spec non_exported_id(any_fun_type:f1()) -> any_fun_type:f1().
+non_exported_id(F) -> F.
+
+-type non_exported_id_t() :: any_fun_type:f1().

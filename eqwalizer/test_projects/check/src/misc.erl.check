@@ -1249,3 +1249,8 @@ orelse5_neg(Validator) ->                  | ERROR   |
                                            |         | Expected fun type with arity 0
                                            |         | Got: 'undefined'
     Res.                                   |         |
+                                           |         |
+-spec non_exported_id(any_fun_type:f1()) -……         |
+non_exported_id(F) -> F.                   | OK      |
+                                           |         |
+-type non_exported_id_t() :: any_fun_type:……         |
