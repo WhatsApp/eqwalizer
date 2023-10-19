@@ -1,4 +1,4 @@
-check/src/misc.erl:639
+check/src/misc.erl:640
 check/src/strict_complex_types.erl:10
 check_gradual/src/gradual_complex_types.erl:10
 debug/src/types1.erl:309

@@ -133,8 +133,10 @@ wrap4(X) ->
     false -> {a, X}
   end.
 
+-type child() :: undefined | pid().
+
 -spec wrap5(
-    supervisor:child() | restarting
+    child() | restarting
 ) -> {p, pid()} | undefined.
 wrap5(X) ->
   case is_pid(X) of

@@ -82,6 +82,8 @@ private object Db {
     mutable.Map.empty
   private val typeIds: mutable.Map[String, Set[Id]] =
     mutable.Map.empty
+  private val exportedTypeIds: mutable.Map[String, Set[Id]] =
+    mutable.Map.empty
   private val expandedModuleStubs: mutable.Map[String, Option[ModuleStub]] =
     mutable.Map.empty
   private val contractiveModuleStubs: mutable.Map[String, Option[ModuleStub]] =
@@ -125,19 +127,24 @@ private object Db {
       val res = getExtModuleStub(module) match {
         case Some(stub) =>
           var mTypeIds: Set[Id] = Set.empty
+          var mExportedIds: Set[Id] = Set.empty
           stub.forms.foreach {
             case f: ExternalTypeDecl =>
               mTypeIds += f.id
             case f: ExternalOpaqueDecl =>
               mTypeIds += f.id
+            case f: ExportType =>
+              mExportedIds ++= f.types
             case _ =>
               ()
           }
           typeIds.put(module, mTypeIds)
+          exportedTypeIds.put(module, mExportedIds)
           rawModuleStubs.put(module, stub)
           Some(stub)
         case None =>
           typeIds.put(module, Set.empty)
+          exportedTypeIds.put(module, Set.empty)
           None
       }
       res
@@ -151,6 +158,16 @@ private object Db {
         getRawModuleStub(module)
         typeIds(module)
     }
+
+  def getExportedTypeIds(module: String): Set[Id] = {
+    exportedTypeIds.get(module) match {
+      case Some(ids) =>
+        ids
+      case None =>
+        getRawModuleStub(module)
+        exportedTypeIds(module)
+    }
+  }
 
   def getExpandedModuleStub(module: String): Option[ModuleStub] =
     if (expandedModuleStubs.contains(module))

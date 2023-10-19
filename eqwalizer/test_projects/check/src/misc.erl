@@ -18,7 +18,8 @@
     o_cycle/0,
     x_cycle/0,
     int_result_o/0,
-    my_record_hidden/0
+    my_record_hidden/0,
+    rec_w_opaque_field/0
 ]).
 
 -record(my_record, {

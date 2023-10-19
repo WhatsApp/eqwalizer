@@ -17,6 +17,10 @@ object InvalidDiagnostics {
     val msg: String = s"Unknown id: $id"
     def errorName = "unknown_id"
   }
+  case class NonExportedId(pos: Pos, id: RemoteId) extends Invalid {
+    val msg: String = s"Type exists but is not exported: $id"
+    def errorName = "non_exported_id"
+  }
   case class RecursiveConstraint(pos: Pos, n: String) extends Invalid {
     val msg: String = s"Recursive constraint: $n"
     def errorName = "recursive_constraint"

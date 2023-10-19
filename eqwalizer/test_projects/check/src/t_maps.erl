@@ -7,6 +7,11 @@
 
 -compile([export_all, nowarn_export_all]).
 
+-export_type([
+    a/0,
+    n/0
+]).
+
 -type b() :: boolean().
 -type n() :: number().
 -type a() :: atom().

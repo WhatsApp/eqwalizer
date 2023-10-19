@@ -12,7 +12,7 @@
     uses_trans_unbound_var/2, mk_bad_rec/0
 ]).
 
--export_type([bad_opaque/0, rec_box/0, bad_ref/0]).
+-export_type([bad_opaque/0, rec_box/0, bad_ref/0, box/1]).
 
 -type bin_tree() ::
       {leaf, atom()}

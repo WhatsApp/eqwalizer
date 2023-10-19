@@ -18,7 +18,8 @@
     o_cycle/0,                             |         |
     x_cycle/0,                             |         |
     int_result_o/0,                        |         |
-    my_record_hidden/0                     |         |
+    my_record_hidden/0,                    |         |
+    rec_w_opaque_field/0                   |         |
 ]).                                        |         |
                                            |         |
 -record(my_record, {                       |         |
@@ -1250,7 +1251,9 @@ orelse5_neg(Validator) ->                  | ERROR   |
                                            |         | Got: 'undefined'
     Res.                                   |         |
                                            |         |
--spec non_exported_id(any_fun_type:f1()) -……         |
-non_exported_id(F) -> F.                   | OK      |
+-spec non_exported_id(any_fun_type:f1()) -…… INVALID | Type exists but is not exported: any_fun_type:f1/0
+
+non_exported_id(F) -> F.                   | NO SPEC |
                                            |         |
--type non_exported_id_t() :: any_fun_type:……         |
+-type non_exported_id_t() :: any_fun_type:…… INVALID | Type exists but is not exported: any_fun_type:f1/0
+

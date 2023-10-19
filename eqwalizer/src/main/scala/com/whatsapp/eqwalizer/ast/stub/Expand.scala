@@ -113,8 +113,11 @@ private class Expand(module: String) {
       case RemoteExtType(id, params) =>
         val localId = Id(id.name, id.arity)
         val isDefined = Db.getTypeIds(id.module)(localId)
+        val isExported = Db.getExportedTypeIds(id.module)(localId)
         if (!isDefined)
           throw InvalidDiagnostics.UnknownId(t.pos, id)
+        if (id.module != module && !isExported)
+          throw InvalidDiagnostics.NonExportedId(t.pos, id)
         val expandedParams = params.map(expand)
         RemoteExtType(id, expandedParams)(t.pos)
       case FunExtType(argTys, resTy) =>

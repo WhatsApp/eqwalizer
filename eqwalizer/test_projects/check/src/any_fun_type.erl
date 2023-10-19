@@ -7,6 +7,10 @@
 
 -compile([export_all, nowarn_export_all]).
 
+-export_type([
+    f0/0
+]).
+
 % fun() is like f0() | f1() | f3() ...
 -type f0() :: fun(() -> term()).
 -type f1() :: fun((term()) -> term()).

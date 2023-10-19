@@ -5,7 +5,7 @@
 
 -module(eqwalizer).
 
--export_type([dynamic/0, refinable/1]).
+-export_type([dynamic/0, dynamic/1, refinable/1]).
 -export([dynamic_cast/1, fix_me/1, reveal_type/1]).
 
 %% @doc

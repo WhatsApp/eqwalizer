@@ -7,6 +7,11 @@
 
 -compile([export_all, nowarn_export_all]).
 
+-export_type([
+    prop/2,
+    props/2
+]).
+
 -spec swap
     (atom()) -> binary();
     (binary()) -> atom().
