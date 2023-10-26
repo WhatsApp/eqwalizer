@@ -7,10 +7,10 @@
 package com.whatsapp.eqwalizer.tc
 
 import scala.annotation.tailrec
-import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, Lambda, NilLit}
+import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, IntLit, Lambda, NilLit}
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, UnboundVar, UnboundRecord}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundVar, UnboundRecord}
 import com.whatsapp.eqwalizer.ast.CompilerMacro
 
 class ElabApplyCustom(pipelineContext: PipelineContext) {
@@ -28,6 +28,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
 
   private lazy val custom: Set[RemoteId] =
     Set(
+      RemoteId("erlang", "element", 2),
       RemoteId("erlang", "map_get", 2),
       RemoteId("file", "open", 2),
       RemoteId("lists", "filtermap", 2),
@@ -295,6 +296,36 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val valTy = narrow.getValType(mapType)
             (valTy, env1)
         }
+
+      /*
+        `-spec element(N :: NumberType, Tup :: TupleType) -> Out`, where `Out` is:
+          - `Tup[N]` when `N` is an integer literal corresponding to a valid index
+          - Union of element types of `Tup` when `N` is not a literal
+          - An error otherwise (index out of bounds or unexpected type)
+       */
+      case RemoteId("erlang", "element", 2) =>
+        val List(index, tuple) = args
+        val List(indexTy, tupleTy) = argTys
+
+        def validate(): Unit = {
+          if (!subtype.subType(indexTy, NumberType))
+            throw ExpectedSubtype(index.pos, index, expected = NumberType, got = indexTy)
+          if (!subtype.subType(tupleTy, AnyTupleType))
+            throw ExpectedSubtype(tuple.pos, tuple, expected = AnyTupleType, got = tupleTy)
+        }
+        validate()
+
+        val elemTy = index match {
+          case IntLit(Some(n)) =>
+            narrow.getTupleElement(tupleTy, n) match {
+              case Right(elemTy) => elemTy
+              case Left(tupLen)  => throw IndexOutOfBounds(callPos, index, n, tupLen)
+            }
+          case _ =>
+            narrow.getAllTupleElements(tupleTy)
+        }
+
+        (elemTy, env1)
 
       case RemoteId("maps", "get", 3) =>
         val List(key, map, defaultVal) = args

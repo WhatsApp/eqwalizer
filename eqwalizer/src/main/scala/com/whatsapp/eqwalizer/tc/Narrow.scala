@@ -351,6 +351,104 @@ class Narrow(pipelineContext: PipelineContext) {
       case _ => List()
     }
 
+  /**
+  * Given a type (required to be a subtype of `AnyTupleType`) and an index, returns the type of the tuple element at
+  * the index wrapped in a `Right`. If the index can be possibly out of bounds (in at least one of the options in a
+  * union) the function returns `Left(tupLen)`, where `tupLen` is the minimum index value for which this operation would
+  * type check.
+  */
+  def getTupleElement(t: Type, idx: Int): Either[Int, Type] = t match {
+    case NoneType =>
+      Right(NoneType)
+    case DynamicType =>
+      Right(DynamicType)
+    case AnyTupleType if pipelineContext.gradualTyping =>
+      Right(DynamicType)
+    case AnyTupleType =>
+      Right(AnyType)
+    case BoundedDynamicType(t) if subtype.subType(t, AnyTupleType) =>
+      Right(BoundedDynamicType(getTupleElement(t, idx).getOrElse(NoneType)))
+    case BoundedDynamicType(t) =>
+      Right(BoundedDynamicType(NoneType))
+    case TupleType(elemTys) if idx >= 1 && idx <= elemTys.length =>
+      Right(elemTys(idx - 1))
+    case TupleType(elemTys) =>
+      Left(elemTys.length)
+    case r: RecordType =>
+      recordToTuple(r) match {
+        case Some(tupTy)                           => getTupleElement(tupTy, idx)
+        case None if pipelineContext.gradualTyping => Right(DynamicType)
+        case None                                  => Right(AnyType)
+      }
+    case r: RefinedRecordType =>
+      refinedRecordToTuple(r) match {
+        case Some(tupTy)                           => getTupleElement(tupTy, idx)
+        case None if pipelineContext.gradualTyping => Right(DynamicType)
+        case None                                  => Right(AnyType)
+      }
+    case UnionType(tys) =>
+      val res = tys.map(getTupleElement(_, idx)).foldLeft[Either[Int, Set[Type]]](Right(Set.empty)) {
+        case (Right(accTy), Right(elemTy)) => Right(accTy + elemTy)
+        case (Left(n1), Left(n2))          => Left(n1.min(n2))
+        case (Left(n1), _)                 => Left(n1)
+        case (_, Left(n2))                 => Left(n2)
+      }
+      res.map { optionTys => UnionType(util.flattenUnions(UnionType(optionTys)).toSet) }
+    case RemoteType(rid, args) =>
+      val body = util.getTypeDeclBody(rid, args)
+      getTupleElement(body, idx)
+    case _ =>
+      throw new IllegalStateException()
+  }
+
+  /**
+  * Given a type (required to be a subtype of `AnyTupleType`), returns the union of all its element types.
+  */
+  def getAllTupleElements(t: Type): Type = t match {
+    case NoneType =>
+      NoneType
+    case DynamicType =>
+      DynamicType
+    case AnyTupleType if pipelineContext.gradualTyping =>
+      DynamicType
+    case AnyTupleType =>
+      AnyType
+    case BoundedDynamicType(t) if subtype.subType(t, AnyTupleType) =>
+      BoundedDynamicType(getAllTupleElements(t))
+    case BoundedDynamicType(t) =>
+      BoundedDynamicType(NoneType)
+    case TupleType(elemTys) =>
+      UnionType(elemTys.toSet)
+    case r: RecordType =>
+      recordToTuple(r) match {
+        case Some(tupTy)                           => getAllTupleElements(tupTy)
+        case None if pipelineContext.gradualTyping => DynamicType
+        case None                                  => AnyType
+      }
+    case r: RefinedRecordType =>
+      refinedRecordToTuple(r) match {
+        case Some(tupTy)                           => getAllTupleElements(tupTy)
+        case None if pipelineContext.gradualTyping => DynamicType
+        case None                                  => AnyType
+      }
+    case UnionType(tys) =>
+      UnionType(util.flattenUnions(UnionType(tys.map(getAllTupleElements))).toSet)
+    case RemoteType(rid, args) =>
+      val body = util.getTypeDeclBody(rid, args)
+      getAllTupleElements(body)
+    case _ =>
+      throw new IllegalStateException()
+  }
+
+  private def recordToTuple(r: RecordType): Option[TupleType] =
+    refinedRecordToTuple(RefinedRecordType(r, Map()))
+
+  private def refinedRecordToTuple(r: RefinedRecordType): Option[TupleType] =
+    util.getRecord(r.recType.module, r.recType.name).map { recDecl =>
+      val elemTys = AtomLitType(r.recType.name) :: recDecl.fields.map(f => r.fields.getOrElse(f._1, f._2.tp)).toList
+      TupleType(elemTys)
+    }
+
   private def adjustShapeMap(t: ShapeMap, keyT: Type, valT: Type): Type =
     keyT match {
       case AtomLitType(key) =>

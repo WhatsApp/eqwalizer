@@ -8,6 +8,122 @@
 -import(maps, [get/2, get/3]).             |         |
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
+-record(foo, {                             |         |
+    a :: ok | error,                       |         |
+    b :: number(),                         |         |
+    c :: string()                          |         |
+}).                                        |         |
+                                           |         |
+% element/2 - basic examples               |         |
+                                           |         |
+-spec element_2_basic_1({atom(), number(),……         |
+element_2_basic_1(Tup) ->                  | OK      |
+    element(1, Tup).                       |         |
+                                           |         |
+-spec element_2_basic_2_neg({atom(), numbe……         |
+element_2_basic_2_neg(Tup) ->              | ERROR   |
+    element(4, Tup).                       |         | erlang:element(4, Tup).
+                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Context expected type: atom()
+                                           |         |
+-spec element_2_basic_3_neg({atom(), numbe……         |
+element_2_basic_3_neg(Tup) ->              | ERROR   |
+    element(42, Tup).                      |         | 42.
+                                           |         | Tried to access element 42 of a tuple with 3 elements
+                                           |         |
+% element/2 - union examples               |         |
+                                           |         |
+-spec element_2_union_1({atom(), number() ……         |
+element_2_union_1(Tup) ->                  | OK      |
+    element(2, Tup).                       |         |
+                                           |         |
+-spec element_2_union_2_neg({atom(), numbe……         |
+element_2_union_2_neg(Tup) ->              | ERROR   |
+    element(2, Tup).                       |         | erlang:element(2, Tup).
+                                           |         | Expression has type:   number() | string() | atom()
+                                           |         | Context expected type: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |
+-spec element_2_union_3_neg({atom(), strin……         |
+element_2_union_3_neg(Tup) ->              | ERROR   |
+    element(2, Tup).                       |         | Tup.
+                                           |         | Expression has type:   {atom(), string()} | [eqwalizer:dynamic()]
+                                           |         | Context expected type: tuple()
+                                           |         | 
+                                           |         |   {atom(), string()} | [eqwalizer:dynamic()] is not compatible with tuple()
+                                           |         |   because
+                                           |         |   [eqwalizer:dynamic()] is not compatible with tuple()
+                                           |         |
+-spec element_2_union_4_neg({c, d, e, f} |……         |
+element_2_union_4_neg(Tup) ->              | ERROR   |
+    element(42, Tup).                      |         | 42.
+                                           |         | Tried to access element 42 of a tuple with 2 elements
+                                           |         |
+% element/2 - dynamic index examples       |         |
+                                           |         |
+-spec element_2_dynindex_1_neg(pos_integer……         |
+element_2_dynindex_1_neg(N, Tup) ->        | ERROR   |
+    element(N, Tup).                       |         | erlang:element(N, Tup).
+                                           |         | Expression has type:   atom() | number() | string()
+                                           |         | Context expected type: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |
+-spec element_2_dynindex_2_neg(pos_integer……         |
+element_2_dynindex_2_neg(N, Tup) ->        | ERROR   |
+    element(N, Tup).                       |         | erlang:element(N, Tup).
+                                           |         | Expression has type:   atom() | number()
+                                           |         | Context expected type: atom()
+                                           |         | 
+                                           |         |   atom() | number() is not compatible with atom()
+                                           |         |   because
+                                           |         |   number() is not compatible with atom()
+                                           |         |
+% element/2 - tuple() examples             |         |
+                                           |         |
+-spec element_2_anytuple_1_neg(tuple()) ->……         |
+element_2_anytuple_1_neg(Tup) ->           | ERROR   |
+    element(1, Tup).                       |         | erlang:element(1, Tup).
+                                           |         | Expression has type:   term()
+                                           |         | Context expected type: atom()
+                                           |         |
+-spec element_2_anytuple_2_neg(tuple() | {……         |
+element_2_anytuple_2_neg(Tup) ->           | ERROR   |
+    element(1, Tup).                       |         | erlang:element(1, Tup).
+                                           |         | Expression has type:   term() | number()
+                                           |         | Context expected type: atom()
+                                           |         |
+% element/2 - record examples              |         |
+                                           |         |
+-spec element_2_record_1(#foo{}) -> foo.   |         |
+element_2_record_1(Rec) ->                 | OK      |
+    element(1, Rec).                       |         |
+                                           |         |
+-spec element_2_record_2(#foo{}) -> ok | e……         |
+element_2_record_2(Rec) ->                 | OK      |
+    element(2, Rec).                       |         |
+                                           |         |
+-spec element_2_record_3(#foo{}) -> ok.    |         |
+element_2_record_3(Rec) when Rec#foo.a =/=…… OK      |
+    element(2, Rec).                       |         |
+                                           |         |
+-spec element_2_record_4_neg(pos_integer()……         |
+element_2_record_4_neg(N, Rec) ->          | ERROR   |
+    element(N, Rec).                       |         | erlang:element(N, Rec).
+                                           |         | Expression has type:   'foo' | 'ok' | 'error' | number() | string()
+                                           |         | Context expected type: atom()
+                                           |         | 
+                                           |         |   'foo' | 'ok' | 'error' | number() | string() is not compatible with atom()
+                                           |         |   because
+                                           |         |   string() is not compatible with atom()
+                                           |         |
+% element/2 - none examples                |         |
+                                           |         |
+-spec element_2_none_1(none()) -> number()……         |
+element_2_none_1(Tup) ->                   | OK      |
+    element(42, Tup).                      |         |
+                                           |         |
+-spec element_2_none_2(pos_integer(), none……         |
+element_2_none_2(N, Tup) ->                | OK      |
+    element(N, Tup).                       |         |
+                                           |         |
 -spec map_get_2_1(                         |         |
     pid(), #{pid() => atom()}              |         |
 ) -> atom().                               |         |

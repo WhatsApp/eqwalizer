@@ -7,6 +7,33 @@
                                            |         |
 -compile([export_all, nowarn_export_all]). |         |
                                            |         |
+% element/2 - dynamic tuple examples       |         |
+                                           |         |
+-spec element_2_dynamic_1_print(eqwalizer:……         |
+element_2_dynamic_1_print(Tup) ->          | ERROR   |
+    eqwalizer:reveal_type(element(42, Tup)……         | dynamic()
+
+                                           |         |
+-spec element_2_dynamic_2_print(eqwalizer:……         |
+element_2_dynamic_2_print(Tup) ->          | ERROR   |
+    eqwalizer:reveal_type(element(2, Tup))……         | dynamic(atom())
+
+                                           |         |
+-spec element_2_dynamic_3_print(eqwalizer:……         |
+element_2_dynamic_3_print(Tup) ->          | ERROR   |
+    eqwalizer:reveal_type(element(1, Tup))……         | dynamic(number())
+
+                                           |         |
+-spec element_2_dynamic_4_print(eqwalizer:……         |
+element_2_dynamic_4_print(Tup) ->          | ERROR   |
+    eqwalizer:reveal_type(element(1, Tup))……         | dynamic(none())
+
+                                           |         |
+-spec element_2_dynamic_5_print(pos_intege……         |
+element_2_dynamic_5_print(N, Tup) ->       | ERROR   |
+    eqwalizer:reveal_type(element(N, Tup))……         | dynamic(number() | atom())
+
+                                           |         |
 -spec app_env1_gradual() -> number().      |         |
 app_env1_gradual() ->                      | OK      |
   Res = application:get_env(app1),         |         |

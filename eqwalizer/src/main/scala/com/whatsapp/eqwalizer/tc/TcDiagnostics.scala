@@ -56,6 +56,11 @@ object TcDiagnostics {
     def errorName = "fun_arity_mismatch"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
+  case class IndexOutOfBounds(pos: Pos, expr: Expr, index: Int, tupleArity: Int) extends TypeError {
+    override val msg: String = s"Tried to access element $index of a tuple with $tupleArity elements"
+    def errorName = "index_out_of_bounds"
+    override def erroneousExpr: Option[Expr] = Some(expr)
+  }
   case class NotSupportedLambdaInOverloadedCall(pos: Pos, expr: Expr) extends TypeError {
     override val msg: String = s"Lambdas are not allowed as args to overloaded functions"
     def errorName = "fun_in_overload_arg"

@@ -8,6 +8,92 @@
 -import(maps, [get/2, get/3]).
 -compile([export_all, nowarn_export_all]).
 
+-record(foo, {
+    a :: ok | error,
+    b :: number(),
+    c :: string()
+}).
+
+% element/2 - basic examples
+
+-spec element_2_basic_1({atom(), number(), string()}) -> atom().
+element_2_basic_1(Tup) ->
+    element(1, Tup).
+
+-spec element_2_basic_2_neg({atom(), number(), string(), map()}) -> atom().
+element_2_basic_2_neg(Tup) ->
+    element(4, Tup).
+
+-spec element_2_basic_3_neg({atom(), number(), string()}) -> atom().
+element_2_basic_3_neg(Tup) ->
+    element(42, Tup).
+
+% element/2 - union examples
+
+-spec element_2_union_1({atom(), number() | string()} | {number(), atom()}) -> number() | string() | atom().
+element_2_union_1(Tup) ->
+    element(2, Tup).
+
+-spec element_2_union_2_neg({atom(), number() | string()} | {number(), atom()}) -> map().
+element_2_union_2_neg(Tup) ->
+    element(2, Tup).
+
+-spec element_2_union_3_neg({atom(), string()} | list()) -> string().
+element_2_union_3_neg(Tup) ->
+    element(2, Tup).
+
+-spec element_2_union_4_neg({c, d, e, f} | {a, b} | {b, c, d}) -> atom().
+element_2_union_4_neg(Tup) ->
+    element(42, Tup).
+
+% element/2 - dynamic index examples
+
+-spec element_2_dynindex_1_neg(pos_integer(), {atom(), number(), string()}) -> map().
+element_2_dynindex_1_neg(N, Tup) ->
+    element(N, Tup).
+
+-spec element_2_dynindex_2_neg(pos_integer(), {atom(), atom()} | {atom(), atom(), number()}) -> atom().
+element_2_dynindex_2_neg(N, Tup) ->
+    element(N, Tup).
+
+% element/2 - tuple() examples
+
+-spec element_2_anytuple_1_neg(tuple()) -> atom().
+element_2_anytuple_1_neg(Tup) ->
+    element(1, Tup).
+
+-spec element_2_anytuple_2_neg(tuple() | {number(), atom()}) -> atom().
+element_2_anytuple_2_neg(Tup) ->
+    element(1, Tup).
+
+% element/2 - record examples
+
+-spec element_2_record_1(#foo{}) -> foo.
+element_2_record_1(Rec) ->
+    element(1, Rec).
+
+-spec element_2_record_2(#foo{}) -> ok | error.
+element_2_record_2(Rec) ->
+    element(2, Rec).
+
+-spec element_2_record_3(#foo{}) -> ok.
+element_2_record_3(Rec) when Rec#foo.a =/= error ->
+    element(2, Rec).
+
+-spec element_2_record_4_neg(pos_integer(), #foo{}) -> atom().
+element_2_record_4_neg(N, Rec) ->
+    element(N, Rec).
+
+% element/2 - none examples
+
+-spec element_2_none_1(none()) -> number().
+element_2_none_1(Tup) ->
+    element(42, Tup).
+
+-spec element_2_none_2(pos_integer(), none()) -> number().
+element_2_none_2(N, Tup) ->
+    element(N, Tup).
+
 -spec map_get_2_1(
     pid(), #{pid() => atom()}
 ) -> atom().
