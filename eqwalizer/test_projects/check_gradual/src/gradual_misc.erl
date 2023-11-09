@@ -40,3 +40,8 @@ fuzz02() ->
 -spec fuzz03(term()) -> ok.
 fuzz03([_ | {}]) -> 
     ok.
+
+-spec refine_tuple_neg(a | {b, c})
+    -> a | {none()}.
+refine_tuple_neg(T) when is_tuple(T) -> T;
+refine_tuple_neg(T) -> T.
