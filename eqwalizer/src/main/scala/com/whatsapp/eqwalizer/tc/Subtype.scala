@@ -141,21 +141,21 @@ class Subtype(pipelineContext: PipelineContext) {
                 subTypePol(recDecl.fields(fName).tp, fTy, seen)
             }
         }
-      case (AnyTupleType, TupleType(_)) if pipelineContext.gradualTyping =>
+      case (AnyTupleType, TupleType(_)) if pipelineContext.gradualTyping && v1 == - =>
         true
-      case (AnyTupleType, RecordType(_)) if pipelineContext.gradualTyping =>
+      case (AnyTupleType, RecordType(_)) if pipelineContext.gradualTyping && v1 == - =>
         true
-      case (AnyTupleType, RefinedRecordType(_, _)) if pipelineContext.gradualTyping =>
+      case (AnyTupleType, RefinedRecordType(_, _)) if pipelineContext.gradualTyping && v1 == - =>
         true
       case (FunType(_, _, _), AnyFunType) if pipelineContext.gradualTyping =>
         true
-      case (AnyFunType, FunType(_, _, _)) if pipelineContext.gradualTyping =>
+      case (AnyFunType, FunType(_, _, _)) if pipelineContext.gradualTyping && v1 == - =>
         true
       case (FunType(_, argTys, _), AnyFunType) =>
         argTys.forall(subTypePol(AnyType, _, seen))
       case (AnyArityFunType(_), AnyFunType) =>
         true
-      case (AnyFunType, AnyArityFunType(_)) if pipelineContext.gradualTyping =>
+      case (AnyFunType, AnyArityFunType(_)) if pipelineContext.gradualTyping && v1 == - =>
         true
       case (FunType(_, _, resTy1), AnyArityFunType(resTy2)) =>
         subTypePol(resTy1, resTy2, seen)

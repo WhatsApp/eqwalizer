@@ -47,5 +47,12 @@ fuzz03([_ | {}]) ->                        | OK      |
                                            |         |
 -spec refine_tuple_neg(a | {b, c})         |         |
     -> a | {none()}.                       |         |
-refine_tuple_neg(T) when is_tuple(T) -> T; | OK      |
+refine_tuple_neg(T) when is_tuple(T) -> T; | ERROR   | T.
+                                           |         | Expression has type:   none() | {'b', 'c'}
+                                           |         | Context expected type: 'a' | {none()}
+                                           |         | 
+                                           |         |   none() | {'b', 'c'} is not compatible with 'a' | {none()}
+                                           |         |   because
+                                           |         |   {'b', 'c'} is not compatible with 'a' | {none()}
+                                           |         |   expected union does not contain any tuple type of size 2
 refine_tuple_neg(T) -> T.                  |         |
