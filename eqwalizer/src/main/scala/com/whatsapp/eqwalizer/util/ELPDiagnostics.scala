@@ -28,7 +28,7 @@ object ELPDiagnostics {
   def getDiagnosticsString(module: String, astStorage: DbApi.AstStorage, options: Options = noOptions): String =
     toJsonObj(Map(module -> getDiagnostics(module, astStorage, options))).render(indent = 2)
 
-  def getDiagnosticsIpc(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit =
+  def getDiagnosticsIpcMiniElp(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit =
     try {
       val diagnosticsByModule = mutable.Map.empty[String, List[Error]]
       for { (module, astStorage) <- modulesAndStorages } {
@@ -44,7 +44,7 @@ object ELPDiagnostics {
       case Ipc.Terminated => ()
     }
 
-  def getDiagnosticsIpcShell(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit =
+  def getDiagnosticsIpc(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit =
     try {
       for { (module, astStorage) <- modulesAndStorages } {
         if (Ipc.shouldEqwalize(module)) {
