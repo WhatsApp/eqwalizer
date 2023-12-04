@@ -50,6 +50,7 @@ package object eqwalizer {
       tolerateErrors: Boolean,
       checkRedundantGuards: Boolean,
       mode: Mode.Mode,
+      errorDepth: Int,
   ) {
     def useElp(): Boolean = {
       mode match {
@@ -79,6 +80,7 @@ package object eqwalizer {
       tolerateErrors = config.getBoolean("tolerate_errors"),
       checkRedundantGuards = config.getBoolean("check_redundant_guards"),
       mode,
+      errorDepth = config.getInt("error_depth"),
     )
   }
 }

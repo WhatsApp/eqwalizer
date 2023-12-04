@@ -10,7 +10,6 @@ import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{RemoteId, Show, TypeVars}
 
 object SubtypeDetail {
-  private val maxDepth = 4
   lazy val nonVerboseRids = builtinTypes.keys.map(RemoteId("erlang", _, 0)).toSet
 
   private case class Detail(t1: Type, t2: Type, reasonPrefix: Option[String], reasonPostfix: Option[String])
@@ -83,7 +82,7 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
     }
 
   private def findSubtypeMismatch(t1: Type, t2: Type): List[Detail] =
-    findMismatchAux(t1, t2, Nil, Set.empty).reverse.take(maxDepth)
+    findMismatchAux(t1, t2, Nil, Set.empty).reverse.take(pipelineContext.errorDepth)
 
   // keep this function in sync with subtype.subtype
   // Main differences from subtype.subtype's cases:

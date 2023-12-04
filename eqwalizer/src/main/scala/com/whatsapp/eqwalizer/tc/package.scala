@@ -22,6 +22,7 @@ package object tc {
       tolerateErrors: Option[Boolean] = None,
       unlimitedRefinement: Option[Boolean] = None,
       checkRedundantGuards: Option[Boolean] = None,
+      errorDepth: Option[Int] = None,
   )
 
   val noOptions: Options = Options()
@@ -65,5 +66,7 @@ package object tc {
       options.checkRedundantGuards.getOrElse(config.checkRedundantGuards)
     val typeInfo: TypeInfo =
       new TypeInfo(this)
+    val errorDepth: Int =
+      options.errorDepth.getOrElse(config.errorDepth)
   }
 }
