@@ -85,7 +85,7 @@ app_build_opts(AppInfo) ->
     ErlOpts = rebar_opts:erl_opts(RebarOpts),
     ErlOptIncludes = proplists:get_all_values(i, ErlOpts),
     InclDirs =
-        [filename:join(AppDir, "include")] ++ [filename:absname(Dir) || Dir <- ErlOptIncludes],
+        [filename:absname(filename:join(AppDir, "include"))] ++ [filename:absname(Dir) || Dir <- ErlOptIncludes],
     PTrans = proplists:get_all_values(parse_transform, ErlOpts),
     Macros = macros(ErlOpts),
 
