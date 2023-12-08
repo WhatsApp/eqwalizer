@@ -504,3 +504,11 @@ trick_me(X, X) -> X.
 %%  new arguments...: ((List a))
 -type d_stream(Z) ::
   {chunk, d_stream([Z])}.
+
+-type invalid_ty() :: non_exist:invalid().
+
+-type invalid_rec() ::
+  invalid_ty() | invalid_transitive().
+
+-type invalid_transitive() ::
+  {a, invalid_rec()}.

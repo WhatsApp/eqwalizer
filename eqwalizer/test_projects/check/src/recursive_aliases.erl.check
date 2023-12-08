@@ -608,3 +608,13 @@ trick_me(X, X) -> X.                       | OK      |
 -type d_stream(Z) ::                       | INVALID | recursive type d_stream/1 is not productive
 
   {chunk, d_stream([Z])}.                  |         |
+                                           |         |
+-type invalid_ty() :: non_exist:invalid(). | INVALID | Unknown id: non_exist:invalid/0
+
+                                           |         |
+-type invalid_rec() ::                     | INVALID | invalid_rec/0 references type with invalid definition: invalid_ty/0
+
+  invalid_ty() | invalid_transitive().     |         |
+                                           |         |
+-type invalid_transitive() ::              |         |
+  {a, invalid_rec()}.                      |         |
