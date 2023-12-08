@@ -105,9 +105,15 @@ class Util(pipelineContext: PipelineContext) {
       .map(applyType)
       .getOrElse({
         if (pipelineContext.module == remoteId.module) {
-          applyType(DbApi.getPrivateOpaque(module, id).get)
+          // TODO: remove failsafe after T172093135
+          DbApi.getPrivateOpaque(module, id) match {
+            case Some(ty) => applyType(ty)
+            case None     => DynamicType
+          }
         } else {
-          assert(DbApi.getPrivateOpaque(remoteId.module, id).isDefined, s"could not find $remoteId from $module")
+          if (!DbApi.getPrivateOpaque(remoteId.module, id).isDefined) {
+            DynamicType
+          }
           OpaqueType(remoteId, args)
         }
       })

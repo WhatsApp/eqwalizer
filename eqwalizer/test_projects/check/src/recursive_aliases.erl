@@ -512,3 +512,7 @@ trick_me(X, X) -> X.
 
 -type invalid_transitive() ::
   {a, invalid_rec()}.
+
+-spec use_invalid
+  (invalid_transitive()) -> a.
+use_invalid({A, _}) -> A.
