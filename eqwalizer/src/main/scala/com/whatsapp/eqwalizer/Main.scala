@@ -27,7 +27,6 @@ object Main {
     cmd match {
       case "check" => check(args1, json)
       case "ipc"   => ipc(args1)
-      case "index" => gleanIndex(args)
       case _       => help()
     }
   }
@@ -66,14 +65,6 @@ object Main {
     }
   }
 
-  private def gleanIndex(args: Array[String]): Unit = {
-    val path = args.lift(1).getOrElse("")
-    val indexerClass = Class.forName("com.whatsapp.eqwalizer.custom.GleanIndexer")
-    val indexer = indexerClass.getConstructor(classOf[String]).newInstance(path)
-    indexerClass.getDeclaredMethod("printIndex").invoke(indexer)
-    ()
-  }
-
   private def help(): Unit =
     Console.print(helpText)
 
@@ -81,7 +72,6 @@ object Main {
     """com.whatsapp.eqwalizer.Main
       |usage:
       |    check <module_name>
-      |    index <module_name> <path from repo root to Erlang source directory>
       |""".stripMargin
     /* undocumented:
      * `stats <module_name>` # stats for powering dashboards

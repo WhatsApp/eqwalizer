@@ -1,4 +1,3 @@
 com.whatsapp.eqwalizer.Main
 usage:
     check <module_name>
-    index <module_name> <path from repo root to Erlang source directory>
