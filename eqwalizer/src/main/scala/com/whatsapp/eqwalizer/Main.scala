@@ -58,10 +58,10 @@ object Main {
     }
     val modules = ipcArgs.tail
     val modulesAndStorages = modules.distinct.flatMap(m => DbApi.getAstStorage(m).map(m -> _))
-    if (config.useElp()) {
-      ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
+    if (config.mode == Mode.Shell) {
+      ELPDiagnostics.getDiagnosticsIpcShell(modulesAndStorages)
     } else {
-      ELPDiagnostics.getDiagnosticsIpcMiniElp(modulesAndStorages)
+      ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
     }
   }
 
