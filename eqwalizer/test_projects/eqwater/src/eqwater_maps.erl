@@ -40,3 +40,11 @@ map_occ_06_neg(V) -> V.
     -> #{b := integer()}.
 map_occ_07_neg(#{a := _}) -> #{b => 0};
 map_occ_07_neg(M) -> M.
+
+-type foo() :: #{} | #{required := binary(), optional => binary()}.
+
+-spec add_optional(foo(), binary()) -> foo().
+add_optional(Foo = #{required := _R1}, Optional) ->
+  Foo#{optional => Optional};
+add_optional(Z, _) ->
+  Z.

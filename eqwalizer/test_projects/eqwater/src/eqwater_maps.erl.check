@@ -68,3 +68,26 @@ map_occ_07_neg(M) -> M.                    |         | M.
                                            |         | -    b := ...
                                            |         | +    c := ...
                                            |         |   }
+                                           |         |
+-type foo() :: #{} | #{required := binary(……         |
+                                           |         |
+-spec add_optional(foo(), binary()) -> foo……         |
+add_optional(Foo = #{required := _R1}, Opt…… ERROR   |
+  Foo#{optional => Optional};              |         | ..#{..}.
+                                           |         | Expression has type:   #S{optional := binary()} | #S{optional := binary(), required := binary()}
+                                           |         | Context expected type: foo()
+                                           |         | 
+                                           |         |   #S{optional := binary()} | #S{optional := binary(), required := binary()} is not compatible with foo()
+                                           |         |   because
+                                           |         |   #S{optional := binary()} | #S{optional := binary(), required := binary()} is not compatible with #S{} | #S{optional => binary(), required := binary()}
+                                           |         |   because
+                                           |         |   #S{optional := binary()} is not compatible with #S{} | #S{optional => binary(), required := binary()}
+                                           |         |   because
+                                           |         |   #S{optional := binary()} is not compatible with #S{}
+                                           |         |   These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | +    optional := ...
+                                           |         |   }
+add_optional(Z, _) ->                      |         |
+  Z.                                       |         |
