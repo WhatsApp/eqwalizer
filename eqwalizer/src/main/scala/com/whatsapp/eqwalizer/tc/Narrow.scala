@@ -192,7 +192,7 @@ class Narrow(pipelineContext: PipelineContext) {
         t
       case BoundedDynamicType(bound) =>
         BoundedDynamicType(withRequiredProp(k, bound))
-      case ShapeMap(props) =>
+      case ShapeMap(props) if props.exists(_.key == k) =>
         ShapeMap(props.map {
           case OptProp(`k`, v) =>
             ReqProp(k, v)
