@@ -162,7 +162,7 @@ class Narrow(pipelineContext: PipelineContext) {
     t match {
       case DictMap(kt, _) => kt
       case ShapeMap(Nil)  => NoneType
-      case ShapeMap(_)    => AtomType
+      case ShapeMap(kvs)  => UnionType(Set(kvs.map(kv => AtomLitType(kv.key)): _*))
       case UnionType(ts)  => subtype.join(ts.map(getKeyType))
       case NoneType       => NoneType
       case _              => throw new IllegalStateException()

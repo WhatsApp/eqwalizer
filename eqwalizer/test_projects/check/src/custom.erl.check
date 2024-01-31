@@ -571,7 +571,7 @@ maps_map_2_9_neg() ->                      | ERROR   |
     M = #{a => a, b => b},                 |         |
     F = fun erlang:'=:='/2,                |         |
     maps:map(F, M).                        |         | maps:map(F, M).
-                                           |         | Expression has type:   dict  map #D{atom() => boolean()}
+                                           |         | Expression has type:   dict  map #D{'a' | 'b' => boolean()}
                                            |         | Context expected type: shape map #S{a => 'a', b => 'b'}
                                            |         |
 -spec maps_map_2_10_neg()                  |         |
@@ -3083,15 +3083,9 @@ re_replace_6_neg(Subj) ->                  | ERROR   |
     Res.                                   |         |
                                            |         |
 -spec maps_fold_keys(#{a => atom(), b => a……         |
-maps_fold_keys(M) ->                       | ERROR   |
+maps_fold_keys(M) ->                       | OK      |
     maps:fold(                             |         |
-        fun(K, _V, Acc) -> process_key(K),……         | K.
-                                           |         | Expression has type:   atom()
-                                           |         | Context expected type: 'a' | 'b'
-                                           |         | 
-                                           |         |   atom() is not compatible with 'a' | 'b'
-                                           |         |   because
-                                           |         |   atom() is not compatible with 'a'
+        fun(K, _V, Acc) -> process_key(K),……         |
         ok,                                |         |
         M                                  |         |
     ).                                     |         |

@@ -550,15 +550,15 @@ shape_atom_key(K, Shape) ->                | OK      |
 shape_atom_key_neg(K, Shape) ->            | ERROR   |
     case Shape of                          |         |
         #{K := V} -> {K, V};               |         | {K, V}.
-                                           |         | Expression has type:   {atom(), a()}
+                                           |         | Expression has type:   {'a' | 'b', a()}
                                            |         | Context expected type: {n(), a()}
                                            |         | 
                                            |         |   at tuple index 1:
-                                           |         |   {atom(), a()} is not compatible with {n(), a()}
+                                           |         |   {'a' | 'b', a()} is not compatible with {n(), a()}
                                            |         |   because
-                                           |         |   atom() is not compatible with n()
+                                           |         |   'a' | 'b' is not compatible with n()
                                            |         |   because
-                                           |         |   atom() is not compatible with number()
+                                           |         |   'a' | 'b' is not compatible with number()
         _ -> {0, undef}                    |         |
     end.                                   |         |
                                            |         |
