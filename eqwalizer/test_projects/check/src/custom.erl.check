@@ -3081,3 +3081,20 @@ re_replace_6_neg(Subj) ->                  | ERROR   |
                                            |         |   because
                                            |         |   'something' is not compatible with 'iodata' | 'list' | 'binary'
     Res.                                   |         |
+                                           |         |
+-spec maps_fold_keys(#{a => atom(), b => a……         |
+maps_fold_keys(M) ->                       | ERROR   |
+    maps:fold(                             |         |
+        fun(K, _V, Acc) -> process_key(K),……         | K.
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: 'a' | 'b'
+                                           |         | 
+                                           |         |   atom() is not compatible with 'a' | 'b'
+                                           |         |   because
+                                           |         |   atom() is not compatible with 'a'
+        ok,                                |         |
+        M                                  |         |
+    ).                                     |         |
+                                           |         |
+-spec process_key(a | b) -> ok.            |         |
+process_key(_K) -> ok.                     | OK      |

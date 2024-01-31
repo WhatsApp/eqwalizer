@@ -2284,3 +2284,14 @@ re_replace_5_neg(Subj) ->
 re_replace_6_neg(Subj) ->
     Res = re:replace(Subj, "+", "-", [{return, something}]),
     Res.
+
+-spec maps_fold_keys(#{a => atom(), b => atom()}) -> ok.
+maps_fold_keys(M) ->
+    maps:fold(
+        fun(K, _V, Acc) -> process_key(K), Acc end,
+        ok,
+        M
+    ).
+
+-spec process_key(a | b) -> ok.
+process_key(_K) -> ok.
