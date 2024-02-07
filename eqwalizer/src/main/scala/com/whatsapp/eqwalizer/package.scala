@@ -22,15 +22,12 @@ package object eqwalizer {
 
     case object ElpIde extends Mode
 
-    case object MiniElp extends Mode
-
     def fromString(str: String): Option[Mode] = {
       str match {
         case "standalone" => Some(Standalone)
         case "shell"      => Some(Shell)
         case "elp_cli"    => Some(ElpCli)
         case "elp_ide"    => Some(ElpIde)
-        case "mini_elp"   => Some(MiniElp)
         case _            => None
       }
     }
@@ -55,7 +52,7 @@ package object eqwalizer {
     def useElp(): Boolean = {
       mode match {
         case Mode.Shell | Mode.ElpCli | Mode.ElpIde => true
-        case Mode.MiniElp | Mode.Standalone         => false
+        case Mode.Standalone                        => false
       }
     }
   }
