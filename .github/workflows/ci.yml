@@ -6,8 +6,13 @@ jobs:
       matrix:
         otp: ['26.0', '25.3']
     steps:
-      - name: Checkout
+      - name: Checkout eqWAlizer
         uses: "actions/checkout@v3"
+      - name: Checkout ELP
+        uses: "actions/checkout@v3"
+        with:
+          repository: WhatsApp/erlang-language-platform
+          path: elp
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
@@ -38,11 +43,13 @@ jobs:
       - name: Assemble eqwalizer binary
         run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
       - name: Test elp
-        run: "cd mini-elp && cargo test --workspace --target x86_64-unknown-linux-musl"
+        working-directory: elp
+        run: "cargo test --no-default-features --workspace --target x86_64-unknown-linux-musl"
       - name: Assemble elp
-        run: "export ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release --target x86_64-unknown-linux-musl"
+        working-directory: elp
+        run: "cargo build --release --target x86_64-unknown-linux-musl"
       - name: Add elp to path
-        run: 'echo "$GITHUB_WORKSPACE/mini-elp/target/x86_64-unknown-linux-musl/release" >> $GITHUB_PATH'
+        run: 'echo "$GITHUB_WORKSPACE/elp/target/x86_64-unknown-linux-musl/release" >> $GITHUB_PATH'
       - name: Test eqwalizer
         run: 'cd eqwalizer && sbt test'
       - name: Upload eqwalizer.jar
@@ -60,8 +67,13 @@ jobs:
       matrix:
         brew_erlang: ['erlang@26', 'erlang@25']
     steps:
-      - name: Checkout
+      - name: Checkout eqWAlizer
         uses: "actions/checkout@v3"
+      - name: Checkout ELP
+        uses: "actions/checkout@v3"
+        with:
+          repository: WhatsApp/erlang-language-platform
+          path: elp
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
@@ -82,9 +94,14 @@ jobs:
       - name: Assemble eqwalizer binary
         run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
       - name: Test elp
-        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/${{matrix.brew_erlang}}/bin:$PATH ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo test --workspace"
+        working-directory: elp
+        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/${{matrix.brew_erlang}}/bin:$PATH && cargo test --no-default-features --workspace"
       - name: Assemble elp
-        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/${{matrix.brew_erlang}}/bin:$PATH ELP_EQWALIZER_PATH=$GITHUB_WORKSPACE/eqwalizer/eqwalizer && cd mini-elp && cargo build --release"
+        working-directory: elp
+        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/${{matrix.brew_erlang}}/bin:$PATH && cargo build --release"
 name: eqWAlizer CI
 on:
   push: {}
+env:
+  EQWALIZER_DIR: ${{ github.workspace }}/eqwalizer
+  ELP_EQWALIZER_PATH: ${{ github.workspace }}/eqwalizer/eqwalizer
