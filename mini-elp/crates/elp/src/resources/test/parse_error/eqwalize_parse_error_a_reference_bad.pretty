@@ -1,6 +1,0 @@
-error: parse_error
-   ┌─ parse_error_a/src/parse_error_a_bad.erl:10:1
-   │
-10 │ foon() -> ok. % head-mismatch
-   │ ^^^^^^^^^^^^ head mismatch
-
