@@ -10,20 +10,17 @@ import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.Pos
 import com.whatsapp.eqwalizer.ast.Show.{show, showNotSubtype}
 import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
+import com.github.plokhotnyuk.jsoniter_scala.macros._
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object TcDiagnostics {
   case class TcDiagnostics(line: Int, msg: String)
 
-  trait TypeError extends Exception {
-    val pos: Pos
-    val msg: String
-    def explanation: Option[String] = None
-    def errorName: String // stable identifier for the class of error, to be used in metrics
-    def docURL: String = s"https://fb.me/eqwalizer_errors#$errorName"
-    def erroneousExpr: Option[Expr]
-  }
-  case class ExpectedSubtype(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit pipelineContext: PipelineContext)
-      extends TypeError {
+  sealed trait TypeError extends Diagnostic
+  case class ExpectedSubtype(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit
+      val pipelineContext: PipelineContext
+  ) extends TypeError {
     private val (showGot, showExpected) = showNotSubtype(got, expected)
     override lazy val msg: String =
       s"Expression has type:   $showGot\nContext expected type: $showExpected"
@@ -33,18 +30,19 @@ object TcDiagnostics {
     override lazy val explanation = pipelineContext.subtypeDetail.explain(expected = expected, got = got)
   }
   case class ExpectedFunType(pos: Pos, expr: Expr, expectedArity: Int, got: Type)(implicit
+      val
       pipelineContext: PipelineContext
   ) extends TypeError {
     val msg: String = s"Expected fun type with arity $expectedArity\nGot: ${show(got)}"
     def errorName = "expected_fun_type"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
-  case class NoDynamicRemoteFun(pos: Pos, expr: Expr)(implicit pipelineContext: PipelineContext) extends TypeError {
+  case class NoDynamicRemoteFun(pos: Pos, expr: Expr)(implicit val pipelineContext: PipelineContext) extends TypeError {
     val msg: String = s"Dynamic calls of unknown functions are not supported."
     def errorName = "dyn_remote_fun"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
-  case class NoSpecialType(pos: Pos, expr: Expr, argTys: List[Type])(implicit pipelineContext: PipelineContext)
+  case class NoSpecialType(pos: Pos, expr: Expr, argTys: List[Type])(implicit val pipelineContext: PipelineContext)
       extends TypeError {
     private val argTysString = argTys.map(show).mkString(", ")
     override val msg: String = s"Not enough info to branch. Arg types: $argTysString"
@@ -93,7 +91,7 @@ object TcDiagnostics {
     override def erroneousExpr: Option[Expr] = None
   }
   case class IncorrectCallbackReturn(behaviourName: String, callback: String, expected: Type, got: Type)(val pos: Pos)(
-      implicit pipelineContext: PipelineContext
+      implicit val pipelineContext: PipelineContext
   ) extends BehaviourError {
     override lazy val msg: String =
       s"Incorrect return type for implementation of $behaviourName:$callback. Expected: ${show(expected)}, Got: ${show(
@@ -111,7 +109,7 @@ object TcDiagnostics {
       paramIndex: Int,
       expected: Type,
       got: Type,
-  )(val pos: Pos)(implicit pipelineContext: PipelineContext)
+  )(val pos: Pos)(implicit val pipelineContext: PipelineContext)
       extends BehaviourError {
     override val msg: String =
       s"Parameter ${paramIndex + 1} in implementation of $behaviourName:$callback has no overlap with expected parameter type. Expected: ${show(expected)}, Got: ${show(got)}."
@@ -119,7 +117,7 @@ object TcDiagnostics {
     override def erroneousExpr: Option[Expr] = None
   }
   case class UnhandledOp(pos: Pos, op: String) extends IllegalStateException(s"Position: $pos, Unhandled op: $op")
-  case class RevealTypeHint(t: Type)(val pos: Pos)(implicit pipelineContext: PipelineContext) extends TypeError {
+  case class RevealTypeHint(t: Type)(val pos: Pos)(implicit val pipelineContext: PipelineContext) extends TypeError {
     private val typeS = show(t)
     override val errorName = "reveal_type"
     override val msg = typeS
@@ -136,6 +134,7 @@ object TcDiagnostics {
     override def erroneousExpr: Option[Expr] = None
   }
   case class RedundantGuard(pos: Pos, variable: String, test: Type, got: Type)(implicit
+      val
       pipelineContext: PipelineContext
   ) extends TypeError {
     override val msg: String =
@@ -143,11 +142,21 @@ object TcDiagnostics {
     def errorName = "redundant_guard"
     override def erroneousExpr: Option[Expr] = None
   }
-  case class AmbiguousUnion(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit pipelineContext: PipelineContext)
-      extends TypeError {
+  case class AmbiguousUnion(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit
+      val pipelineContext: PipelineContext
+  ) extends TypeError {
     override lazy val msg: String =
       s"Expression has type ${show(got)} which matches multiple generic types in ${show(expected)}"
     def errorName = "ambiguous_union"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
+
+  implicit val codec: JsonValueCodec[TypeError] = JsonCodecMaker.make(
+    CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
+      case "pos"                     => "location"
+      case "mod"                     => "module"
+      case s if !s.charAt(0).isUpper => JsonCodecMaker.enforce_snake_case(s)
+      case s                         => s
+    }
+  )
 }

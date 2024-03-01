@@ -73,7 +73,7 @@ object Forms {
       extends InternalForm
 
   sealed trait InvalidForm extends InternalForm {
-    val te: TypeError
+    val te: Invalid
   }
   case class InvalidTypeDecl(id: Id, te: Invalid)(val pos: Pos) extends InvalidForm
   case class InvalidFunSpec(id: Id, te: Invalid)(val pos: Pos) extends InvalidForm

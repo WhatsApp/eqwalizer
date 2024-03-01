@@ -12,7 +12,6 @@ import com.whatsapp.eqwalizer.ast.{Lines, Show}
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.ast.stub.DbApi.AstStorage
 import com.whatsapp.eqwalizer.tc.{Options, noOptions}
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.TypeError
 import com.whatsapp.eqwalizer.{Pipeline, config}
 
 case class TcDiagnosticsText(width: Int = config.codeWidth, lineNumbers: Boolean = true) {
@@ -45,7 +44,7 @@ case class TcDiagnosticsText(width: Int = config.codeWidth, lineNumbers: Boolean
       line: Int,
       text: String,
       status: Option[Status],
-      errors: List[TypeError],
+      errors: List[Diagnostic.Diagnostic],
   ) {
     def format(): String = {
       val lineNum =
@@ -57,7 +56,7 @@ case class TcDiagnosticsText(width: Int = config.codeWidth, lineNumbers: Boolean
         if (text.length <= width) text.padTo(width, ' ') ++ " |"
         else text.take(width) ++ "……"
       val diagText = status.map(_.msg).getOrElse("").colTrim(7)
-      def msg(err: TypeError): String = {
+      def msg(err: Diagnostic.Diagnostic): String = {
         val erroneousTxt = err.erroneousExpr match {
           case Some(expr) => s"${Show.show(expr)}.\n"
           case None       => ""
@@ -134,8 +133,11 @@ case class TcDiagnosticsText(width: Int = config.codeWidth, lineNumbers: Boolean
     diags.map { case (form, status) => Lines.asLine(form.pos, lineBreaks) -> status }
   }
 
-  private def errorDiags(errors: List[TypeError], lineBreaks: Array[Int]): Map[Int, List[TypeError]] = {
-    def line(te: TypeError): Int = Lines.asLine(te.pos, lineBreaks)
+  private def errorDiags(
+      errors: List[Diagnostic.Diagnostic],
+      lineBreaks: Array[Int],
+  ): Map[Int, List[Diagnostic.Diagnostic]] = {
+    def line(te: Diagnostic.Diagnostic): Int = Lines.asLine(te.pos, lineBreaks)
     errors.groupBy(line)
   }
 
