@@ -10,7 +10,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'true'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 473,
+                "end_byte": 477
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "true",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 473,
+                    "end_byte": 477
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "true"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -22,7 +59,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'false'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 499,
+                "end_byte": 504
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "false",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 499,
+                    "end_byte": 504
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "false"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -34,7 +108,51 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": "  'false' | none() is not compatible with number()\n  because\n  'false' is not compatible with number()"
+      "explanationOrNull": "  'false' | none() is not compatible with number()\n  because\n  'false' is not compatible with number()",
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 585,
+                "end_byte": 586
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 585,
+                    "end_byte": 586
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "UnionType": {
+                "tys": [
+                  {
+                    "AtomLitType": {
+                      "atom": "false"
+                    }
+                  },
+                  "NoneType"
+                ]
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -46,7 +164,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'true'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 648,
+                "end_byte": 652
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "true",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 648,
+                    "end_byte": 652
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "true"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -58,7 +213,51 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": "  'false' | none() is not compatible with number()\n  because\n  'false' is not compatible with number()"
+      "explanationOrNull": "  'false' | none() is not compatible with number()\n  because\n  'false' is not compatible with number()",
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 670,
+                "end_byte": 671
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 670,
+                    "end_byte": 671
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "UnionType": {
+                "tys": [
+                  {
+                    "AtomLitType": {
+                      "atom": "false"
+                    }
+                  },
+                  "NoneType"
+                ]
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -70,7 +269,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "1",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 761,
+                "end_byte": 762
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 1,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 761,
+                    "end_byte": 762
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -82,7 +314,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "2",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 793,
+                "end_byte": 794
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 2,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 793,
+                    "end_byte": 794
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -94,7 +359,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "3",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 827,
+                "end_byte": 828
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 3,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 827,
+                    "end_byte": 828
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -106,7 +404,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "4",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 859,
+                "end_byte": 860
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 4,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 859,
+                    "end_byte": 860
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -118,7 +449,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "1",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 933,
+                "end_byte": 934
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 1,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 933,
+                    "end_byte": 934
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -130,7 +494,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "2",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 960,
+                "end_byte": 961
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 2,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 960,
+                    "end_byte": 961
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -142,7 +539,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "3",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 987,
+                "end_byte": 988
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 3,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 987,
+                    "end_byte": 988
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -154,7 +584,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "4",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1014,
+                "end_byte": 1015
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 4,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1014,
+                    "end_byte": 1015
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -166,7 +629,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "5",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1041,
+                "end_byte": 1042
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 5,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1041,
+                    "end_byte": 1042
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -178,7 +674,104 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(b_to_n(eqwalizer:dynamic_cast(N))))",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1249,
+                "end_byte": 1301
+              }
+            },
+            "expr": {
+              "RemoteCall": {
+                "id": {
+                  "module": "erlang",
+                  "name": "atom_to_binary",
+                  "arity": 1
+                },
+                "args": [
+                  {
+                    "RemoteCall": {
+                      "id": {
+                        "module": "eqwalizer",
+                        "name": "dynamic_cast",
+                        "arity": 1
+                      },
+                      "args": [
+                        {
+                          "LocalCall": {
+                            "id": "b_to_n/1",
+                            "args": [
+                              {
+                                "RemoteCall": {
+                                  "id": {
+                                    "module": "eqwalizer",
+                                    "name": "dynamic_cast",
+                                    "arity": 1
+                                  },
+                                  "args": [
+                                    {
+                                      "Var": {
+                                        "n": "N",
+                                        "location": {
+                                          "TextRange": {
+                                            "start_byte": 1290,
+                                            "end_byte": 1291
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "location": {
+                                    "TextRange": {
+                                      "start_byte": 1290,
+                                      "end_byte": 1291
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 1276,
+                                "end_byte": 1297
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 1276,
+                          "end_byte": 1297
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1249,
+                    "end_byte": 1301
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -190,7 +783,70 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "b_to_n(eqwalizer:dynamic_cast(N))",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1276,
+                "end_byte": 1297
+              }
+            },
+            "expr": {
+              "LocalCall": {
+                "id": "b_to_n/1",
+                "args": [
+                  {
+                    "RemoteCall": {
+                      "id": {
+                        "module": "eqwalizer",
+                        "name": "dynamic_cast",
+                        "arity": 1
+                      },
+                      "args": [
+                        {
+                          "Var": {
+                            "n": "N",
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 1290,
+                                "end_byte": 1291
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 1290,
+                          "end_byte": 1291
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1276,
+                    "end_byte": 1297
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -202,7 +858,48 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "N",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1290,
+                "end_byte": 1291
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "N",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1290,
+                    "end_byte": 1291
+                  }
+                }
+              }
+            },
+            "expected": {
+              "RemoteType": {
+                "id": {
+                  "module": "erlang",
+                  "name": "boolean",
+                  "arity": 0
+                }
+              }
+            },
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -214,7 +911,40 @@
       "uri": "https://fb.me/eqwalizer_errors#expected_fun_type",
       "code": "expected_fun_type",
       "expressionOrNull": "F",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedFunType": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1370,
+                "end_byte": 1371
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "F",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1370,
+                    "end_byte": 1371
+                  }
+                }
+              }
+            },
+            "expected_arity": 0,
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -226,7 +956,40 @@
       "uri": "https://fb.me/eqwalizer_errors#expected_fun_type",
       "code": "expected_fun_type",
       "expressionOrNull": "F",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedFunType": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1381,
+                "end_byte": 1382
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "F",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1381,
+                    "end_byte": 1382
+                  }
+                }
+              }
+            },
+            "expected_arity": 0,
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -238,7 +1001,70 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "{X, Y}",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1388,
+                "end_byte": 1394
+              }
+            },
+            "expr": {
+              "Tuple": {
+                "elems": [
+                  {
+                    "Var": {
+                      "n": "X",
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 1389,
+                          "end_byte": 1390
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "Var": {
+                      "n": "Y",
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 1392,
+                          "end_byte": 1393
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1388,
+                    "end_byte": 1394
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "TupleType": {
+                "arg_tys": [
+                  "DynamicType",
+                  "DynamicType"
+                ]
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -250,7 +1076,80 @@
       "uri": "https://fb.me/eqwalizer_errors#fun_arity_mismatch",
       "code": "fun_arity_mismatch",
       "expressionOrNull": "fun",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "LambdaArityMismatch": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1490,
+                "end_byte": 1510
+              }
+            },
+            "expr": {
+              "Lambda": {
+                "clauses": [
+                  {
+                    "pats": [
+                      {
+                        "PatVar": {
+                          "n": "_X",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 1494,
+                              "end_byte": 1496
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "PatVar": {
+                          "n": "_Y",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 1498,
+                              "end_byte": 1500
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "body": {
+                      "exprs": [
+                        {
+                          "IntLit": {
+                            "value": 1,
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 1505,
+                                "end_byte": 1506
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 1493,
+                        "end_byte": 1506
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1490,
+                    "end_byte": 1510
+                  }
+                }
+              }
+            },
+            "lambda_arity": 2,
+            "args_arity": 1
+          }
+        }
+      }
     },
     {
       "range": {
@@ -262,7 +1161,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1527,
+                "end_byte": 1528
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "X",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1527,
+                    "end_byte": 1528
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -274,7 +1210,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1537,
+                "end_byte": 1538
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1537,
+                    "end_byte": 1538
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -286,7 +1255,70 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M1",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1741,
+                "end_byte": 1743
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M1",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1741,
+                    "end_byte": 1743
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": {
+                  "VarType": {
+                    "n": 3,
+                    "name": "T"
+                  }
+                }
+              }
+            },
+            "got": {
+              "DictMap": {
+                "k_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                },
+                "v_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                }
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -298,7 +1330,65 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M2",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1749,
+                "end_byte": 1751
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M2",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1749,
+                    "end_byte": 1751
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "got": {
+              "DictMap": {
+                "k_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                },
+                "v_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                }
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -310,7 +1400,65 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1759,
+                "end_byte": 1762
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1759,
+                    "end_byte": 1762
+                  }
+                }
+              }
+            },
+            "expected": {
+              "DictMap": {
+                "k_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                },
+                "v_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                }
+              }
+            },
+            "got": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -322,7 +1470,45 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1856,
+                "end_byte": 1857
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1856,
+                    "end_byte": 1857
+                  }
+                }
+              }
+            },
+            "expected": {
+              "DictMap": {
+                "k_type": "AnyType",
+                "v_type": "AnyType"
+              }
+            },
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -334,7 +1520,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "V",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1875,
+                "end_byte": 1876
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "V",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1875,
+                    "end_byte": 1876
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -346,7 +1565,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "V",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1887,
+                "end_byte": 1888
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "V",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1887,
+                    "end_byte": 1888
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -358,7 +1610,45 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1999,
+                "end_byte": 2000
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1999,
+                    "end_byte": 2000
+                  }
+                }
+              }
+            },
+            "expected": {
+              "DictMap": {
+                "k_type": "AnyType",
+                "v_type": "AnyType"
+              }
+            },
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -370,7 +1660,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "V",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2016,
+                "end_byte": 2017
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "V",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2016,
+                    "end_byte": 2017
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -382,7 +1705,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "V",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2026,
+                "end_byte": 2027
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "V",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2026,
+                    "end_byte": 2027
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -394,7 +1750,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "L1",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2156,
+                "end_byte": 2158
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "L1",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2156,
+                    "end_byte": 2158
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -406,7 +1799,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "L2",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2166,
+                "end_byte": 2168
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "L2",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2166,
+                    "end_byte": 2168
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -418,7 +1848,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2178,
+                "end_byte": 2181
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2178,
+                    "end_byte": 2181
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -430,7 +1897,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "X",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2282,
+                "end_byte": 2283
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "X",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2282,
+                    "end_byte": 2283
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -442,7 +1942,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Y",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2294,
+                "end_byte": 2295
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Y",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2294,
+                    "end_byte": 2295
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -454,7 +1987,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Z",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2301,
+                "end_byte": 2302
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Z",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2301,
+                    "end_byte": 2302
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -466,7 +2032,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "T",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2398,
+                "end_byte": 2408
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "T",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2398,
+                    "end_byte": 2408
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -478,7 +2081,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "H",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2417,
+                "end_byte": 2427
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "H",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2417,
+                    "end_byte": 2427
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -490,7 +2130,48 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": "  [term()] is not compatible with [atom()]\n  because\n  term() is not compatible with atom()"
+      "explanationOrNull": "  [term()] is not compatible with [atom()]\n  because\n  term() is not compatible with atom()",
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2435,
+                "end_byte": 2438
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2435,
+                    "end_byte": 2438
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AtomType"
+              }
+            },
+            "got": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -502,7 +2183,48 @@
       "uri": "https://fb.me/eqwalizer_errors#expected_fun_type",
       "code": "expected_fun_type",
       "expressionOrNull": "F",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedFunType": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2514,
+                "end_byte": 2515
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "F",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2514,
+                    "end_byte": 2515
+                  }
+                }
+              }
+            },
+            "expected_arity": 0,
+            "got": {
+              "RemoteType": {
+                "id": {
+                  "module": "erlang",
+                  "name": "boolean",
+                  "arity": 0
+                }
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -514,7 +2236,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2533,
+                "end_byte": 2534
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2533,
+                    "end_byte": 2534
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -526,7 +2281,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2553,
+                "end_byte": 2554
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2553,
+                    "end_byte": 2554
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -538,7 +2326,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2643,
+                "end_byte": 2644
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2643,
+                    "end_byte": 2644
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -550,7 +2371,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2662,
+                "end_byte": 2663
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2662,
+                    "end_byte": 2663
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -562,7 +2416,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "F",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2750,
+                "end_byte": 2751
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "F",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2750,
+                    "end_byte": 2751
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -574,7 +2461,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2762,
+                "end_byte": 2763
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2762,
+                    "end_byte": 2763
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -586,7 +2506,252 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "[ || ]",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2824,
+                "end_byte": 2916
+              }
+            },
+            "expr": {
+              "LComprehension": {
+                "template": {
+                  "Var": {
+                    "n": "X",
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 2825,
+                        "end_byte": 2826
+                      }
+                    }
+                  }
+                },
+                "qualifiers": [
+                  {
+                    "LGenerate": {
+                      "pat": {
+                        "PatVar": {
+                          "n": "X",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 2834,
+                              "end_byte": 2835
+                            }
+                          }
+                        }
+                      },
+                      "expr": {
+                        "RemoteCall": {
+                          "id": {
+                            "module": "eqwalizer",
+                            "name": "dynamic_cast",
+                            "arity": 1
+                          },
+                          "args": [
+                            {
+                              "MapCreate": {
+                                "kvs": [
+                                  [
+                                    {
+                                      "AtomLit": {
+                                        "s": "a",
+                                        "location": {
+                                          "TextRange": {
+                                            "start_byte": 2848,
+                                            "end_byte": 2849
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "AtomLit": {
+                                        "s": "b",
+                                        "location": {
+                                          "TextRange": {
+                                            "start_byte": 2853,
+                                            "end_byte": 2854
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  [
+                                    {
+                                      "AtomLit": {
+                                        "s": "c",
+                                        "location": {
+                                          "TextRange": {
+                                            "start_byte": 2862,
+                                            "end_byte": 2863
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "BinOp": {
+                                        "op": "+",
+                                        "arg_1": {
+                                          "RemoteCall": {
+                                            "id": {
+                                              "module": "eqwalizer",
+                                              "name": "dynamic_cast",
+                                              "arity": 1
+                                            },
+                                            "args": [
+                                              {
+                                                "AtomLit": {
+                                                  "s": "d",
+                                                  "location": {
+                                                    "TextRange": {
+                                                      "start_byte": 2867,
+                                                      "end_byte": 2868
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            ],
+                                            "location": {
+                                              "TextRange": {
+                                                "start_byte": 2867,
+                                                "end_byte": 2868
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "arg_2": {
+                                          "IntLit": {
+                                            "value": 1,
+                                            "location": {
+                                              "TextRange": {
+                                                "start_byte": 2871,
+                                                "end_byte": 2872
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "location": {
+                                          "TextRange": {
+                                            "start_byte": 2867,
+                                            "end_byte": 2872
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                ],
+                                "location": {
+                                  "TextRange": {
+                                    "start_byte": 2839,
+                                    "end_byte": 2878
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 2839,
+                              "end_byte": 2878
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "Filter": {
+                      "expr": {
+                        "RemoteCall": {
+                          "id": {
+                            "module": "erlang",
+                            "name": "atom_to_binary",
+                            "arity": 1
+                          },
+                          "args": [
+                            {
+                              "RemoteCall": {
+                                "id": {
+                                  "module": "eqwalizer",
+                                  "name": "dynamic_cast",
+                                  "arity": 1
+                                },
+                                "args": [
+                                  {
+                                    "Tuple": {
+                                      "elems": [
+                                        {
+                                          "Var": {
+                                            "n": "X",
+                                            "location": {
+                                              "TextRange": {
+                                                "start_byte": 2907,
+                                                "end_byte": 2908
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "location": {
+                                        "TextRange": {
+                                          "start_byte": 2906,
+                                          "end_byte": 2909
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "location": {
+                                  "TextRange": {
+                                    "start_byte": 2906,
+                                    "end_byte": 2909
+                                  }
+                                }
+                              }
+                            }
+                          ],
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 2884,
+                              "end_byte": 2915
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2824,
+                    "end_byte": 2916
+                  }
+                }
+              }
+            },
+            "expected": {
+              "AtomLitType": {
+                "atom": "ok"
+              }
+            },
+            "got": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -598,7 +2763,153 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "#{..}",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2839,
+                "end_byte": 2878
+              }
+            },
+            "expr": {
+              "MapCreate": {
+                "kvs": [
+                  [
+                    {
+                      "AtomLit": {
+                        "s": "a",
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 2848,
+                            "end_byte": 2849
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "AtomLit": {
+                        "s": "b",
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 2853,
+                            "end_byte": 2854
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  [
+                    {
+                      "AtomLit": {
+                        "s": "c",
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 2862,
+                            "end_byte": 2863
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "BinOp": {
+                        "op": "+",
+                        "arg_1": {
+                          "RemoteCall": {
+                            "id": {
+                              "module": "eqwalizer",
+                              "name": "dynamic_cast",
+                              "arity": 1
+                            },
+                            "args": [
+                              {
+                                "AtomLit": {
+                                  "s": "d",
+                                  "location": {
+                                    "TextRange": {
+                                      "start_byte": 2867,
+                                      "end_byte": 2868
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 2867,
+                                "end_byte": 2868
+                              }
+                            }
+                          }
+                        },
+                        "arg_2": {
+                          "IntLit": {
+                            "value": 1,
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 2871,
+                                "end_byte": 2872
+                              }
+                            }
+                          }
+                        },
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 2867,
+                            "end_byte": 2872
+                          }
+                        }
+                      }
+                    }
+                  ]
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2839,
+                    "end_byte": 2878
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": {
+              "ShapeMap": {
+                "props": [
+                  {
+                    "ReqProp": {
+                      "key": "a",
+                      "tp": {
+                        "AtomLitType": {
+                          "atom": "b"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "ReqProp": {
+                      "key": "c",
+                      "tp": "NumberType"
+                    }
+                  }
+                ]
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -610,7 +2921,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'d'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2867,
+                "end_byte": 2868
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "d",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2867,
+                    "end_byte": 2868
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "d"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -622,7 +2970,58 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "{X}",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 2906,
+                "end_byte": 2909
+              }
+            },
+            "expr": {
+              "Tuple": {
+                "elems": [
+                  {
+                    "Var": {
+                      "n": "X",
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 2907,
+                          "end_byte": 2908
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 2906,
+                    "end_byte": 2909
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "TupleType": {
+                "arg_tys": [
+                  "DynamicType"
+                ]
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -634,7 +3033,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Y",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3009,
+                "end_byte": 3010
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Y",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3009,
+                    "end_byte": 3010
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -646,7 +3078,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "L",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3028,
+                "end_byte": 3029
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "L",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3028,
+                    "end_byte": 3029
+                  }
+                }
+              }
+            },
+            "expected": "BinaryType",
+            "got": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -658,7 +3127,48 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3037,
+                "end_byte": 3040
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3037,
+                    "end_byte": 3040
+                  }
+                }
+              }
+            },
+            "expected": {
+              "AtomLitType": {
+                "atom": "ok"
+              }
+            },
+            "got": {
+              "ListType": {
+                "t": "BinaryType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -670,7 +3180,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "B",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3134,
+                "end_byte": 3135
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "B",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3134,
+                    "end_byte": 3135
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -682,7 +3229,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3146,
+                "end_byte": 3149
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3146,
+                    "end_byte": 3149
+                  }
+                }
+              }
+            },
+            "expected": {
+              "AtomLitType": {
+                "atom": "ok"
+              }
+            },
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -694,7 +3278,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'a'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3211,
+                "end_byte": 3212
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "a",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3211,
+                    "end_byte": 3212
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "a"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -706,7 +3327,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'b'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3240,
+                "end_byte": 3241
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "b",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3240,
+                    "end_byte": 3241
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "b"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -718,7 +3376,79 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M1",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3250,
+                "end_byte": 3252
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M1",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3250,
+                    "end_byte": 3252
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "DictMap": {
+                "k_type": {
+                  "UnionType": {
+                    "tys": [
+                      {
+                        "RemoteType": {
+                          "id": {
+                            "module": "eqwalizer",
+                            "name": "dynamic",
+                            "arity": 0
+                          }
+                        }
+                      },
+                      {
+                        "AtomLitType": {
+                          "atom": "id"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "v_type": {
+                  "UnionType": {
+                    "tys": [
+                      {
+                        "RemoteType": {
+                          "id": {
+                            "module": "eqwalizer",
+                            "name": "dynamic",
+                            "arity": 0
+                          }
+                        }
+                      },
+                      "NumberType"
+                    ]
+                  }
+                }
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -730,7 +3460,100 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "_ + _",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3250,
+                "end_byte": 3257
+              }
+            },
+            "expr": {
+              "BinOp": {
+                "op": "+",
+                "arg_1": {
+                  "RemoteCall": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic_cast",
+                      "arity": 1
+                    },
+                    "args": [
+                      {
+                        "Var": {
+                          "n": "M1",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 3250,
+                              "end_byte": 3252
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 3250,
+                        "end_byte": 3252
+                      }
+                    }
+                  }
+                },
+                "arg_2": {
+                  "RemoteCall": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic_cast",
+                      "arity": 1
+                    },
+                    "args": [
+                      {
+                        "Var": {
+                          "n": "M2",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 3255,
+                              "end_byte": 3257
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 3255,
+                        "end_byte": 3257
+                      }
+                    }
+                  }
+                },
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3250,
+                    "end_byte": 3257
+                  }
+                }
+              }
+            },
+            "expected": {
+              "AtomLitType": {
+                "atom": "ok"
+              }
+            },
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -742,7 +3565,79 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M2",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3255,
+                "end_byte": 3257
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M2",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3255,
+                    "end_byte": 3257
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "DictMap": {
+                "k_type": {
+                  "UnionType": {
+                    "tys": [
+                      {
+                        "RemoteType": {
+                          "id": {
+                            "module": "eqwalizer",
+                            "name": "dynamic",
+                            "arity": 0
+                          }
+                        }
+                      },
+                      {
+                        "AtomLitType": {
+                          "atom": "id"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "v_type": {
+                  "UnionType": {
+                    "tys": [
+                      {
+                        "RemoteType": {
+                          "id": {
+                            "module": "eqwalizer",
+                            "name": "dynamic",
+                            "arity": 0
+                          }
+                        }
+                      },
+                      "NumberType"
+                    ]
+                  }
+                }
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -754,7 +3649,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3331,
+                "end_byte": 3332
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3331,
+                    "end_byte": 3332
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -766,7 +3694,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "S",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3338,
+                "end_byte": 3339
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "S",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3338,
+                    "end_byte": 3339
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -778,7 +3739,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "B",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3348,
+                "end_byte": 3349
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "B",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3348,
+                    "end_byte": 3349
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -790,7 +3784,79 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "_ + _",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3348,
+                "end_byte": 3353
+              }
+            },
+            "expr": {
+              "BinOp": {
+                "op": "+",
+                "arg_1": {
+                  "RemoteCall": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic_cast",
+                      "arity": 1
+                    },
+                    "args": [
+                      {
+                        "Var": {
+                          "n": "B",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 3348,
+                              "end_byte": 3349
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 3348,
+                        "end_byte": 3349
+                      }
+                    }
+                  }
+                },
+                "arg_2": {
+                  "IntLit": {
+                    "value": 1,
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 3352,
+                        "end_byte": 3353
+                      }
+                    }
+                  }
+                },
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3348,
+                    "end_byte": 3353
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -802,7 +3868,40 @@
       "uri": "https://fb.me/eqwalizer_errors#expected_fun_type",
       "code": "expected_fun_type",
       "expressionOrNull": "F",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedFunType": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3421,
+                "end_byte": 3422
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "F",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3421,
+                    "end_byte": 3422
+                  }
+                }
+              }
+            },
+            "expected_arity": 0,
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -814,7 +3913,40 @@
       "uri": "https://fb.me/eqwalizer_errors#expected_fun_type",
       "code": "expected_fun_type",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedFunType": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3491,
+                "end_byte": 3492
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3491,
+                    "end_byte": 3492
+                  }
+                }
+              }
+            },
+            "expected_arity": 0,
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -826,7 +3958,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'a'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3531,
+                "end_byte": 3532
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "a",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3531,
+                    "end_byte": 3532
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "a"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -838,7 +4007,47 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": "  dynamic() | [] is not compatible with atom()\n  because\n  [] is not compatible with atom()"
+      "explanationOrNull": "  dynamic() | [] is not compatible with atom()\n  because\n  [] is not compatible with atom()",
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3542,
+                "end_byte": 3545
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3542,
+                    "end_byte": 3545
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "UnionType": {
+                "tys": [
+                  "DynamicType",
+                  "NilType"
+                ]
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -850,7 +4059,40 @@
       "uri": "https://fb.me/eqwalizer_errors#expected_fun_type",
       "code": "expected_fun_type",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedFunType": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3611,
+                "end_byte": 3612
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3611,
+                    "end_byte": 3612
+                  }
+                }
+              }
+            },
+            "expected_arity": 0,
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -862,7 +4104,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "A",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3655,
+                "end_byte": 3656
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "A",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3655,
+                    "end_byte": 3656
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AtomType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -874,7 +4149,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'a'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3721,
+                "end_byte": 3722
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "a",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3721,
+                    "end_byte": 3722
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "a"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -886,7 +4198,47 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3738,
+                "end_byte": 3741
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3738,
+                    "end_byte": 3741
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "UnionType": {
+                "tys": [
+                  "NumberType",
+                  "NilType"
+                ]
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -898,7 +4250,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Pid",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3878,
+                "end_byte": 3881
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Pid",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3878,
+                    "end_byte": 3881
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "PidType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -910,7 +4295,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Id",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3893,
+                "end_byte": 3895
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Id",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3893,
+                    "end_byte": 3895
+                  }
+                }
+              }
+            },
+            "expected": "PidType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -922,7 +4340,45 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3903,
+                "end_byte": 3906
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3903,
+                    "end_byte": 3906
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "RecordType": {
+                "name": "rec",
+                "module": "fault_tolerance"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -934,7 +4390,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Id",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 3993,
+                "end_byte": 3995
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Id",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 3993,
+                    "end_byte": 3995
+                  }
+                }
+              }
+            },
+            "expected": "PidType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -946,7 +4435,52 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "...#rec.id",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4003,
+                "end_byte": 4013
+              }
+            },
+            "expr": {
+              "RecordSelect": {
+                "expr": {
+                  "Var": {
+                    "n": "Res",
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4003,
+                        "end_byte": 4006
+                      }
+                    }
+                  }
+                },
+                "rec_name": "rec",
+                "field_name": "id",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4003,
+                    "end_byte": 4013
+                  }
+                }
+              }
+            },
+            "expected": "PidType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -958,7 +4492,39 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "<<..>>",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4072,
+                "end_byte": 4076
+              }
+            },
+            "expr": {
+              "Binary": {
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4072,
+                    "end_byte": 4076
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -970,7 +4536,45 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Res",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4084,
+                "end_byte": 4087
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Res",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4084,
+                    "end_byte": 4087
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "RecordType": {
+                "name": "rec",
+                "module": "fault_tolerance"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -982,7 +4586,133 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(_ ++ _))",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4167,
+                "end_byte": 4217
+              }
+            },
+            "expr": {
+              "RemoteCall": {
+                "id": {
+                  "module": "erlang",
+                  "name": "atom_to_binary",
+                  "arity": 1
+                },
+                "args": [
+                  {
+                    "RemoteCall": {
+                      "id": {
+                        "module": "eqwalizer",
+                        "name": "dynamic_cast",
+                        "arity": 1
+                      },
+                      "args": [
+                        {
+                          "BinOp": {
+                            "op": "++",
+                            "arg_1": {
+                              "Cons": {
+                                "h": {
+                                  "Var": {
+                                    "n": "N",
+                                    "location": {
+                                      "TextRange": {
+                                        "start_byte": 4192,
+                                        "end_byte": 4193
+                                      }
+                                    }
+                                  }
+                                },
+                                "t": {
+                                  "NilLit": {
+                                    "location": {
+                                      "TextRange": {
+                                        "start_byte": 4193,
+                                        "end_byte": 4194
+                                      }
+                                    }
+                                  }
+                                },
+                                "location": {
+                                  "TextRange": {
+                                    "start_byte": 4191,
+                                    "end_byte": 4194
+                                  }
+                                }
+                              }
+                            },
+                            "arg_2": {
+                              "RemoteCall": {
+                                "id": {
+                                  "module": "eqwalizer",
+                                  "name": "dynamic_cast",
+                                  "arity": 1
+                                },
+                                "args": [
+                                  {
+                                    "AtomLit": {
+                                      "s": "a",
+                                      "location": {
+                                        "TextRange": {
+                                          "start_byte": 4208,
+                                          "end_byte": 4209
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "location": {
+                                  "TextRange": {
+                                    "start_byte": 4208,
+                                    "end_byte": 4209
+                                  }
+                                }
+                              }
+                            },
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 4191,
+                                "end_byte": 4209
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 4191,
+                          "end_byte": 4209
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4167,
+                    "end_byte": 4217
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -994,7 +4724,103 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "_ ++ _",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4191,
+                "end_byte": 4209
+              }
+            },
+            "expr": {
+              "BinOp": {
+                "op": "++",
+                "arg_1": {
+                  "Cons": {
+                    "h": {
+                      "Var": {
+                        "n": "N",
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 4192,
+                            "end_byte": 4193
+                          }
+                        }
+                      }
+                    },
+                    "t": {
+                      "NilLit": {
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 4193,
+                            "end_byte": 4194
+                          }
+                        }
+                      }
+                    },
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4191,
+                        "end_byte": 4194
+                      }
+                    }
+                  }
+                },
+                "arg_2": {
+                  "RemoteCall": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic_cast",
+                      "arity": 1
+                    },
+                    "args": [
+                      {
+                        "AtomLit": {
+                          "s": "a",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4208,
+                              "end_byte": 4209
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4208,
+                        "end_byte": 4209
+                      }
+                    }
+                  }
+                },
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4191,
+                    "end_byte": 4209
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1006,7 +4832,48 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'a'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4208,
+                "end_byte": 4209
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "a",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4208,
+                    "end_byte": 4209
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": {
+              "AtomLitType": {
+                "atom": "a"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1018,7 +4885,65 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "<<..>>",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4258,
+                "end_byte": 4263
+              }
+            },
+            "expr": {
+              "Binary": {
+                "elems": [
+                  {
+                    "expr": {
+                      "Var": {
+                        "n": "N",
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 4260,
+                            "end_byte": 4261
+                          }
+                        }
+                      }
+                    },
+                    "specifier": "UnsignedIntegerSpecifier",
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4260,
+                        "end_byte": 4261
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4258,
+                    "end_byte": 4263
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1030,7 +4955,48 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'b'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4277,
+                "end_byte": 4278
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "b",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4277,
+                    "end_byte": 4278
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "AnyType"
+              }
+            },
+            "got": {
+              "AtomLitType": {
+                "atom": "b"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1042,7 +5008,94 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast([N]))",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4372,
+                "end_byte": 4407
+              }
+            },
+            "expr": {
+              "RemoteCall": {
+                "id": {
+                  "module": "erlang",
+                  "name": "atom_to_binary",
+                  "arity": 1
+                },
+                "args": [
+                  {
+                    "RemoteCall": {
+                      "id": {
+                        "module": "eqwalizer",
+                        "name": "dynamic_cast",
+                        "arity": 1
+                      },
+                      "args": [
+                        {
+                          "Cons": {
+                            "h": {
+                              "Var": {
+                                "n": "N",
+                                "location": {
+                                  "TextRange": {
+                                    "start_byte": 4397,
+                                    "end_byte": 4398
+                                  }
+                                }
+                              }
+                            },
+                            "t": {
+                              "NilLit": {
+                                "location": {
+                                  "TextRange": {
+                                    "start_byte": 4398,
+                                    "end_byte": 4399
+                                  }
+                                }
+                              }
+                            },
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 4396,
+                                "end_byte": 4399
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 4396,
+                          "end_byte": 4399
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4372,
+                    "end_byte": 4407
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1054,7 +5107,64 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "[N]",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4396,
+                "end_byte": 4399
+              }
+            },
+            "expr": {
+              "Cons": {
+                "h": {
+                  "Var": {
+                    "n": "N",
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4397,
+                        "end_byte": 4398
+                      }
+                    }
+                  }
+                },
+                "t": {
+                  "NilLit": {
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4398,
+                        "end_byte": 4399
+                      }
+                    }
+                  }
+                },
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4396,
+                    "end_byte": 4399
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1066,7 +5176,95 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(<<..>>))",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4424,
+                "end_byte": 4461
+              }
+            },
+            "expr": {
+              "RemoteCall": {
+                "id": {
+                  "module": "erlang",
+                  "name": "atom_to_binary",
+                  "arity": 1
+                },
+                "args": [
+                  {
+                    "RemoteCall": {
+                      "id": {
+                        "module": "eqwalizer",
+                        "name": "dynamic_cast",
+                        "arity": 1
+                      },
+                      "args": [
+                        {
+                          "Binary": {
+                            "elems": [
+                              {
+                                "expr": {
+                                  "Var": {
+                                    "n": "N",
+                                    "location": {
+                                      "TextRange": {
+                                        "start_byte": 4450,
+                                        "end_byte": 4451
+                                      }
+                                    }
+                                  }
+                                },
+                                "specifier": "UnsignedIntegerSpecifier",
+                                "location": {
+                                  "TextRange": {
+                                    "start_byte": 4450,
+                                    "end_byte": 4451
+                                  }
+                                }
+                              }
+                            ],
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 4448,
+                                "end_byte": 4453
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 4448,
+                          "end_byte": 4453
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4424,
+                    "end_byte": 4461
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1078,7 +5276,61 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "<<..>>",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4448,
+                "end_byte": 4453
+              }
+            },
+            "expr": {
+              "Binary": {
+                "elems": [
+                  {
+                    "expr": {
+                      "Var": {
+                        "n": "N",
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 4450,
+                            "end_byte": 4451
+                          }
+                        }
+                      }
+                    },
+                    "specifier": "UnsignedIntegerSpecifier",
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4450,
+                        "end_byte": 4451
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4448,
+                    "end_byte": 4453
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1090,7 +5342,39 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "[]",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4480,
+                "end_byte": 4482
+              }
+            },
+            "expr": {
+              "NilLit": {
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4480,
+                    "end_byte": 4482
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "NilType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1102,7 +5386,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'a'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4539,
+                "end_byte": 4540
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "a",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4539,
+                    "end_byte": 4540
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "a"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1114,7 +5435,44 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'b'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4543,
+                "end_byte": 4544
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "b",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4543,
+                    "end_byte": 4544
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": {
+              "AtomLitType": {
+                "atom": "b"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1126,7 +5484,23 @@
       "uri": "https://fb.me/eqwalizer_errors#reference_to_invalid_type",
       "code": "reference_to_invalid_type",
       "expressionOrNull": null,
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "InvalidForm": {
+          "TransitiveInvalid": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4591,
+                "end_byte": 4624
+              }
+            },
+            "name": "use_invalid/1",
+            "references": [
+              "loop/0"
+            ]
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1138,7 +5512,48 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "'error'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4907,
+                "end_byte": 4912
+              }
+            },
+            "expr": {
+              "AtomLit": {
+                "s": "error",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4907,
+                    "end_byte": 4912
+                  }
+                }
+              }
+            },
+            "expected": {
+              "AtomLitType": {
+                "atom": "ok"
+              }
+            },
+            "got": {
+              "AtomLitType": {
+                "atom": "error"
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1150,7 +5565,19 @@
       "uri": "https://fb.me/eqwalizer_errors#redundant_fixme",
       "code": "redundant_fixme",
       "expressionOrNull": null,
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "RedundantFixme": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4969,
+                "end_byte": 4986
+              }
+            }
+          }
+        }
+      }
     },
     {
       "range": {
@@ -1162,7 +5589,40 @@
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "Arg 2 of 'make_pair/2'",
-      "explanationOrNull": null
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 5297,
+                "end_byte": 5312
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "Arg 2 of 'make_pair/2'",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 5297,
+                    "end_byte": 5312
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "AnyType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

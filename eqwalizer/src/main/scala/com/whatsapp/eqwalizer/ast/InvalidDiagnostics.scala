@@ -8,6 +8,8 @@ package com.whatsapp.eqwalizer.ast
 
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
+import com.github.plokhotnyuk.jsoniter_scala.macros._
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object InvalidDiagnostics {
   sealed trait Invalid extends Diagnostic {
@@ -77,4 +79,13 @@ object InvalidDiagnostics {
     val msg = "Bad map key"
     def errorName = "bad_map_key"
   }
+
+  implicit val codec: JsonValueCodec[Invalid] = JsonCodecMaker.make(
+    CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
+      case "pos"                     => "location"
+      case "mod"                     => "module"
+      case s if !s.charAt(0).isUpper => JsonCodecMaker.enforce_snake_case(s)
+      case s                         => s
+    }
+  )
 }

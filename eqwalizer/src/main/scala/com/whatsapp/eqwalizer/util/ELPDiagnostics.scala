@@ -7,13 +7,15 @@
 package com.whatsapp.eqwalizer.util
 
 import scala.collection.mutable
-
 import com.whatsapp.eqwalizer.{Pipeline, ast}
 import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, InvalidForm, MisBehaviour}
+import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
 import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.io.Ipc
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.TypeError
 import com.whatsapp.eqwalizer.tc.{Options, noOptions}
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object ELPDiagnostics {
   case class Error(
@@ -23,6 +25,7 @@ object ELPDiagnostics {
       errorName: String,
       explanation: Option[String],
       shownExpression: Option[String],
+      diagnostic: Diagnostic.Diagnostic,
   )
 
   def getDiagnosticsString(module: String, astStorage: DbApi.AstStorage, options: Options = noOptions): String =
@@ -86,6 +89,7 @@ object ELPDiagnostics {
         te.errorName,
         explanation = te.explanation,
         shownExpression = te.erroneousExpr.map(Show.show),
+        diagnostic = te,
       )
     }
   }
@@ -111,6 +115,10 @@ object ELPDiagnostics {
           case Some(s) => ujson.Str(s)
           case None    => ujson.Null
         }
+        val diagnosticJson = e.diagnostic match {
+          case te: TypeError => ujson.Obj("TypeError" -> ujson.read(writeToString(te)))
+          case inv: Invalid  => ujson.Obj("InvalidForm" -> ujson.read(writeToString(inv)))
+        }
         ujson.Obj(
           "range" -> range,
           "lineAndCol" -> lineAndCol,
@@ -119,6 +127,7 @@ object ELPDiagnostics {
           "code" -> ujson.Str(e.errorName),
           "expressionOrNull" -> expressionOrNull,
           "explanationOrNull" -> explanationOrNull,
+          "diagnostic" -> diagnosticJson,
         )
       })
     })
