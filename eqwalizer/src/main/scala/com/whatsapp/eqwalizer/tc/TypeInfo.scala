@@ -4,13 +4,13 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
-package com.whatsapp.eqwalizer.ast
+package com.whatsapp.eqwalizer.tc
 
 import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 import com.whatsapp.eqwalizer.ast.Types.Type
+import com.whatsapp.eqwalizer.ast.{Pos, TextRange}
 import com.whatsapp.eqwalizer.{Mode, config}
-import com.whatsapp.eqwalizer.tc.PipelineContext
 
 import scala.collection.mutable
 

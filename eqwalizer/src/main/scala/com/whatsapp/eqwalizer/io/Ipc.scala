@@ -5,7 +5,8 @@
  */
 
 package com.whatsapp.eqwalizer.io
-import com.whatsapp.eqwalizer.ast.TypeInfo
+
+import com.whatsapp.eqwalizer.tc.TypeInfo
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
 object Ipc {
