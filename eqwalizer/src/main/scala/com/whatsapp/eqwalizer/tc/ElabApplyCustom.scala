@@ -288,11 +288,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         if (!subtype.subType(mapTy, anyMapTy))
           throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
         val mapType = narrow.asMapType(mapTy)
-        keyTy match {
-          case AtomLitType(key) =>
-            val valTy = narrow.getValType(key, mapType)
-            (valTy, env1)
-          case _ =>
+        val atomKeys = narrow.asAtomLits(keyTy)
+        atomKeys match {
+          case Some(atoms) =>
+            val valTys = atoms.map(narrow.getValType(_, mapType))
+            (subtype.join(valTys), env1)
+          case None =>
             val valTy = narrow.getValType(mapType)
             (valTy, env1)
         }
@@ -334,11 +335,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         if (!subtype.subType(mapTy, anyMapTy))
           throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
         val mapType = narrow.asMapType(mapTy)
-        keyTy match {
-          case AtomLitType(key) =>
-            val valTy = narrow.getValType(key, mapType)
-            (subtype.join(valTy, defaultValTy), env1)
-          case _ =>
+        val atomKeys = narrow.asAtomLits(keyTy)
+        atomKeys match {
+          case Some(atoms) =>
+            val valTys = atoms.map(narrow.getValType(_, mapType))
+            (subtype.join(valTys + defaultValTy), env1)
+          case None =>
             val valTy = narrow.getValType(mapType)
             (subtype.join(valTy, defaultValTy), env1)
         }

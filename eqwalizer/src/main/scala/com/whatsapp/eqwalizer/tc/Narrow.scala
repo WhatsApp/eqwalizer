@@ -538,4 +538,20 @@ class Narrow(pipelineContext: PipelineContext) {
         throw new IllegalStateException()
     }
   }
+
+  // Recursion is sound since we don't unfold under constructors
+  def asAtomLits(t: Type): Option[Set[String]] =
+    t match {
+      case AtomLitType(s) => Some(Set(s))
+      case BoundedDynamicType(bound) =>
+        asAtomLits(bound)
+      case UnionType(ts) =>
+        ts.foldLeft[Option[Set[String]]](Some(Set())) { (acc, ty) =>
+          acc.flatMap(atoms => asAtomLits(ty).map(atoms2 => atoms ++ atoms2))
+        }
+      case RemoteType(rid, args) =>
+        val body = util.getTypeDeclBody(rid, args)
+        asAtomLits(body)
+      case _ => None
+    }
 }
