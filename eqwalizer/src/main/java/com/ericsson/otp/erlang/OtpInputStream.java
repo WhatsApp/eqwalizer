@@ -41,7 +41,9 @@ public class OtpInputStream extends ByteArrayInputStream {
 
   private final int flags;
 
-  /** @param buf */
+  /**
+   * @param buf
+   */
   public OtpInputStream(final byte[] buf) {
     this(buf, 0);
   }
