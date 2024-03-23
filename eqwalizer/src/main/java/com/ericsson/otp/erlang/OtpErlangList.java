@@ -334,7 +334,9 @@ public class OtpErlangList extends OtpErlangObject implements Iterable<OtpErlang
     return new Itr(start);
   }
 
-  /** @return true if the list is proper, i.e. the last tail is nil */
+  /**
+   * @return true if the list is proper, i.e. the last tail is nil
+   */
   public boolean isProper() {
     return lastTail == null;
   }
