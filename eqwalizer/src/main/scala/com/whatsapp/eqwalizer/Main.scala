@@ -58,11 +58,7 @@ object Main {
     }
     val modules = ipcArgs.tail
     val modulesAndStorages = modules.distinct.flatMap(m => DbApi.getAstStorage(m).map(m -> _))
-    if (config.mode == Mode.Shell) {
-      ELPDiagnostics.getDiagnosticsIpcShell(modulesAndStorages)
-    } else {
-      ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
-    }
+    ELPDiagnostics.getDiagnosticsIpc(modulesAndStorages)
   }
 
   private def help(): Unit =
