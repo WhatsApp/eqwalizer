@@ -25,6 +25,7 @@ final class Check(pipelineContext: PipelineContext) {
   private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
   private lazy val typeInfo = pipelineContext.typeInfo
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   lazy val freshen = new TypeVars.VarFreshener().freshen _
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
@@ -74,9 +75,7 @@ final class Check(pipelineContext: PipelineContext) {
     for (expr <- exprs) {
       expr match {
         case MaybeMatch(mPat, mExp) =>
-          val (mType, env1) = elab.elabExpr(mExp, envAcc)
-          if (!subtype.subType(mType, resTy))
-            throw ExpectedSubtype(mExp.pos, mExp, expected = resTy, got = mType)
+          val (mType, env1) = elab.elabExprAndCheck(mExp, envAcc, resTy)
           val (patTy, env2) = elabPat.elabPat(mPat, mType, env1)
           lastTy = patTy
           envAcc = env2
@@ -87,7 +86,7 @@ final class Check(pipelineContext: PipelineContext) {
       }
     }
     if (!subtype.subType(lastTy, resTy))
-      throw ExpectedSubtype(exprs.last.pos, exprs.last, expected = resTy, got = lastTy)
+      diagnosticsInfo.add(ExpectedSubtype(exprs.last.pos, exprs.last, expected = resTy, got = lastTy))
     env
   }
 
@@ -135,22 +134,26 @@ final class Check(pipelineContext: PipelineContext) {
     else
       expr match {
         case Var(v) =>
-          val vt = env.getOrElse(v, throw UnboundVar(expr.pos, v))
+          val vt = env.getOrElse(v, { diagnosticsInfo.add(UnboundVar(expr.pos, v)); DynamicType })
           typeInfo.add(expr.pos, vt)
-          if (subtype.subType(vt, resTy)) env
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = vt)
+          if (!subtype.subType(vt, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = vt))
+          env
         case AtomLit(a) =>
           val litType = AtomLitType(a)
-          if (subtype.subType(litType, resTy)) env
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType)
+          if (!subtype.subType(litType, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
+          env
         case FloatLit() =>
           val litType = NumberType
-          if (subtype.subType(litType, resTy)) env
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType)
+          if (!subtype.subType(litType, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
+          env
         case IntLit(_) =>
           val litType = NumberType
-          if (subtype.subType(litType, resTy)) env
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType)
+          if (!subtype.subType(litType, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
+          env
         case Tuple(elems) =>
           var envAcc = env
           val elemTypes = elems.map { elem =>
@@ -159,67 +162,76 @@ final class Check(pipelineContext: PipelineContext) {
             elemType
           }
           val tupleType = TupleType(elemTypes)
-          if (subtype.subType(tupleType, resTy)) envAcc
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = tupleType)
+          if (!subtype.subType(tupleType, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = tupleType))
+          envAcc
         case StringLit(empty) =>
           val litType = if (empty) NilType else stringType
-          if (subtype.subType(litType, resTy)) env
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType)
+          if (!subtype.subType(litType, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
+          env
         case NilLit() =>
           val litType = NilType
-          if (subtype.subType(litType, resTy)) env
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType)
+          if (!subtype.subType(litType, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
+          env
         case LocalCall(id, args) =>
           val funId = util.globalFunId(module, id)
           if (elabApplyCustom.isCustom(funId)) {
             val (callTy, env1) = elabApplyCustom.elabCustom(funId, args, env, expr.pos)
             if (!subtype.subType(callTy, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy)
+              diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy))
             env1
           } else if (elabApplyOverloaded.isOverloadedFun(funId)) {
             val (callTy, env1) = elabApplyOverloaded.elabOverloaded(expr, funId, args, env)
             if (!subtype.subType(callTy, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy)
+              diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy))
             env1
           } else
             util.getFunType(module, id) match {
               case Some(ft) =>
                 checkApply(funId, expr, freshen(ft), args, resTy, env)
               case None =>
-                throw UnboundVar(expr.pos, id.toString)
+                diagnosticsInfo.add(UnboundVar(expr.pos, id.toString))
+                env
             }
         case DynRemoteFun(mod, name) =>
           throw new IllegalStateException(s"unexpected $expr")
         case dFun: DynRemoteFunArity =>
           val (funTy, env1) = elab.elabExpr(dFun, env)
           if (!subtype.subType(funTy, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = funTy)
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = funTy))
           env1
         case RemoteCall(RemoteId("eqwalizer", "reveal_type", 1), List(expr)) =>
-          val (t, _) = elab.elabExpr(expr, env)
-          throw RevealTypeHint(t)(expr.pos)(pipelineContext)
+          val (t, env1) = elab.elabExpr(expr, env)
+          diagnosticsInfo.add(RevealTypeHint(t)(expr.pos)(pipelineContext))
+          env1
         case RemoteCall(fqn, args) =>
           if (elabApplyCustom.isCustom(fqn)) {
             val (callTy, env1) = elabApplyCustom.elabCustom(fqn, args, env, expr.pos)
             if (!subtype.subType(callTy, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy)
+              diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy))
             env1
           } else if (elabApplyOverloaded.isOverloadedFun(fqn)) {
             val (callTy, env1) = elabApplyOverloaded.elabOverloaded(expr, fqn, args, env)
             if (!subtype.subType(callTy, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy)
+              diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy))
             env1
           } else
             util.getFunType(fqn) match {
               case Some(ft) =>
                 checkApply(fqn, expr, freshen(ft), args, resTy, env)
               case None =>
-                throw UnboundVar(expr.pos, fqn.toString)
+                diagnosticsInfo.add(UnboundVar(expr.pos, fqn.toString))
+                env
             }
         case DynCall(l: Lambda, args) =>
           val arity = lambdaArity(l)
-          if (arity != args.size) throw LambdaArityMismatch(l.pos, l, lambdaArity = arity, argsArity = args.size)
           val (argTys, env1) = elab.elabExprs(args, env)
+          if (arity != args.size) {
+            diagnosticsInfo.add(LambdaArityMismatch(l.pos, l, lambdaArity = arity, argsArity = args.size))
+            return env1
+          }
           l.name match {
             case Some(name) if pipelineCtx.gradualTyping =>
               val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), resTy)
@@ -241,21 +253,27 @@ final class Check(pipelineContext: PipelineContext) {
             val (_argTys, env1) = elab.elabExprs(args, env)
             // dynamic is subtype of everything, - no need to double-check
             env1
-          } else
-            throw NoDynamicRemoteFun(dynRemoteFun.pos, dynRemoteFun)
+          } else {
+            diagnosticsInfo.add(NoDynamicRemoteFun(dynRemoteFun.pos, dynRemoteFun))
+            env
+          }
         case DynCall(f, args) =>
           val (ty, env1) = elab.elabExpr(f, env)
           val expArity = args.size
-          if (!util.isFunType(ty, expArity)) {
-            throw ExpectedFunType(f.pos, f, expArity, ty)
-          }
-          val funTys = narrow.asFunType(ty, args.size).get
+          val funTy =
+            if (!util.isFunType(ty, expArity)) {
+              diagnosticsInfo.add(ExpectedFunType(f.pos, f, expArity, ty))
+              DynamicType
+            } else {
+              ty
+            }
+          val funTys = narrow.asFunType(funTy, args.size).get
           val (argTys, env2) = elab.elabExprs(args, env1)
           if (funTys.nonEmpty) {
             funTys.foreach { ft =>
               val ftResTy = elabApply.elabApply(ft, args, argTys, env1)
               if (!subtype.subType(ftResTy, resTy))
-                throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy)
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy))
             }
           }
           env2
@@ -263,20 +281,22 @@ final class Check(pipelineContext: PipelineContext) {
           util.getFunType(module, id) match {
             case Some(ft) =>
               val ft1 = freshen(ft)
-              if (subtype.subType(ft1, resTy)) env
-              else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1)
+              if (!subtype.subType(ft1, resTy))
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
             case None =>
-              throw UnboundVar(expr.pos, id.toString)
+              diagnosticsInfo.add(UnboundVar(expr.pos, id.toString))
           }
+          env
         case RemoteFun(fqn) =>
           util.getFunType(fqn) match {
             case Some(ft) =>
               val ft1 = freshen(ft)
-              if (subtype.subType(ft1, resTy)) env
-              else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1)
+              if (!subtype.subType(ft1, resTy))
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
             case None =>
-              throw UnboundVar(expr.pos, fqn.toString)
+              diagnosticsInfo.add(UnboundVar(expr.pos, fqn.toString))
           }
+          env
         case lambda: Lambda =>
           checkLambda(lambda, resTy, env)
         case Block(block) =>
@@ -314,18 +334,14 @@ final class Check(pipelineContext: PipelineContext) {
         case Match(mPat, mExp) =>
           val (mType, env1) = elab.elabExpr(mExp, env)
           val (t2, env2) = elabPat.elabPat(mPat, mType, env1)
-          if (subtype.subType(t2, resTy)) env2
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = t2)
+          if (!subtype.subType(t2, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = t2))
+          env2
         case _: UnOp | _: BinOp =>
-          val (ty, env1) = elab.elabExpr(expr, env)
-          if (!subtype.subType(ty, resTy)) {
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ty)
-          }
-          env1
+          elab.elabExprAndCheck(expr, env, resTy)._2
         case Binary(elems) =>
-          if (!subtype.subType(BinaryType, resTy)) {
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = BinaryType)
-          }
+          if (!subtype.subType(BinaryType, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = BinaryType))
           var envAcc = env
           for { elem <- elems } {
             val (_, env1) = elab.elabBinaryElem(elem, envAcc)
@@ -333,9 +349,7 @@ final class Check(pipelineContext: PipelineContext) {
           }
           envAcc
         case Catch(_) =>
-          val (ty, env1) = elab.elabExpr(expr, env)
-          if (!subtype.subType(ty, resTy)) throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ty)
-          env1
+          elab.elabExprAndCheck(expr, env, resTy)._2
         case TryCatchExpr(tryBody, catchClauses, afterBody) =>
           checkBody(tryBody, resTy, env)
           val stackType = if (pipelineContext.gradualTyping) clsExnStackTypeDynamic else clsExnStackType
@@ -382,11 +396,11 @@ final class Check(pipelineContext: PipelineContext) {
           val (tType, _) = elab.elabExpr(template, qEnv)
           val elabType = ListType(tType)
           if (!subtype.subType(elabType, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType)
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType))
           env
         case BComprehension(template, qualifiers) =>
           if (!subtype.subType(BinaryType, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = BinaryType)
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = BinaryType))
           val qEnv = elab.elabQualifiers(qualifiers, env)
           checkExpr(template, BinaryType, qEnv)
           env
@@ -396,60 +410,67 @@ final class Check(pipelineContext: PipelineContext) {
           val (vType, _) = elab.elabExpr(vTemplate, qEnv)
           val elabType = DictMap(kType, vType)
           if (!subtype.subType(elabType, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType)
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType))
           env
         case rCreate: RecordCreate =>
-          val recDecl = util
-            .getRecord(module, rCreate.recName)
-            .getOrElse(throw UnboundRecord(expr.pos, rCreate.recName))
-          if (recDecl.refinable) {
-            val (recType, envCreate) = elab.elabRecordCreate(rCreate, env)
-            if (!subtype.subType(recType, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType)
-            envCreate
-          } else {
-            val recType = RecordType(rCreate.recName)(module)
-            if (!subtype.subType(recType, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType)
-            elab.elabRecordCreate(rCreate, env)._2
+          val recDeclOpt = util.getRecord(module, rCreate.recName)
+          recDeclOpt match {
+            case Some(recDecl) if recDecl.refinable =>
+              val (recType, envCreate) = elab.elabRecordCreate(rCreate, env)
+              if (!subtype.subType(recType, resTy))
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType))
+              envCreate
+            case Some(recDecl) =>
+              val recType = RecordType(rCreate.recName)(module)
+              if (!subtype.subType(recType, resTy))
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType))
+              elab.elabRecordCreate(rCreate, env)._2
+            case None =>
+              diagnosticsInfo.add(UnboundRecord(expr.pos, rCreate.recName))
+              env
           }
         case rUpdate: RecordUpdate =>
-          val recDecl = util
-            .getRecord(module, rUpdate.recName)
-            .getOrElse(throw UnboundRecord(expr.pos, rUpdate.recName))
-          if (recDecl.refinable) {
-            val (recType, envUpdate) = elab.elabRecordUpdate(rUpdate, env)
-            if (!subtype.subType(recType, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType)
-            envUpdate
-          } else {
-            val recType = RecordType(rUpdate.recName)(module)
-            if (!subtype.subType(recType, resTy))
-              throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType)
-            elab.elabRecordUpdate(rUpdate, env)._2
+          val recDeclOpt = util.getRecord(module, rUpdate.recName)
+          recDeclOpt match {
+            case Some(recDecl) if recDecl.refinable =>
+              val (recType, envUpdate) = elab.elabRecordUpdate(rUpdate, env)
+              if (!subtype.subType(recType, resTy))
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType))
+              envUpdate
+            case Some(_) =>
+              val recType = RecordType(rUpdate.recName)(module)
+              if (!subtype.subType(recType, resTy))
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = recType))
+              elab.elabRecordUpdate(rUpdate, env)._2
+            case None =>
+              diagnosticsInfo.add(UnboundRecord(expr.pos, rUpdate.recName))
+              env
           }
         case RecordSelect(recExpr, recName, fieldName) =>
-          val recDecl = util
-            .getRecord(module, recName)
-            .getOrElse(throw UnboundRecord(expr.pos, recName))
+          val recDeclOpt = util.getRecord(module, recName)
           val (elabTy, elabEnv) = elab.elabExpr(recExpr, env)
-          if (!subtype.subType(elabTy, RecordType(recName)(module)))
-            throw ExpectedSubtype(recExpr.pos, recExpr, expected = RecordType(recName)(module), got = elabTy)
-          val fieldTy = narrow.getRecordField(recDecl, elabTy, fieldName)
-          if (!subtype.subType(fieldTy, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldTy)
-          elabEnv
+          recDeclOpt match {
+            case Some(recDecl) =>
+              val (elabTy, elabEnv) = elab.elabExprAndCheck(recExpr, env, RecordType(recName)(module))
+              val fieldTy = narrow.getRecordField(recDecl, elabTy, fieldName)
+              if (!subtype.subType(fieldTy, resTy))
+                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = fieldTy))
+              elabEnv
+            case None =>
+              diagnosticsInfo.add(UnboundRecord(expr.pos, recName))
+              env
+          }
         case RecordIndex(_, _) =>
           val indT = NumberType
           if (!subtype.subType(indT, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = indT)
-          else
-            env
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = indT))
+          env
         case MaybeMatch(mPat, mExp) =>
           val (mType, env1) = elab.elabExpr(mExp, env)
           val (t2, env2) = elabPat.elabPat(mPat, mType, env1)
-          if (subtype.subType(t2, resTy)) env2
-          else throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = t2)
+          if (!subtype.subType(t2, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = t2))
+          env2
         case Maybe(body) =>
           checkMaybeBody(body, resTy, env)
         case MaybeElse(body, elseClauses) =>
@@ -459,11 +480,7 @@ final class Check(pipelineContext: PipelineContext) {
           env
         case _: MapCreate | _: MapUpdate | _: Cons =>
           // delegating this stuff to elaborate for now
-          val (t1, env1) = elab.elabExpr(expr, env)
-          if (!subtype.subType(t1, resTy))
-            throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = t1)
-          else
-            env1
+          elab.elabExprAndCheck(expr, env, resTy)._2
       }
   }
 
@@ -472,8 +489,10 @@ final class Check(pipelineContext: PipelineContext) {
   private def checkLambdaFunType(lambda: Lambda, funTy: FunType, env: Env): Env = {
     val FunType(_, fParamTys, fResTy) = funTy
     val arity = lambdaArity(lambda)
-    if (arity != fParamTys.size)
-      throw LambdaArityMismatch(lambda.pos, lambda, lambdaArity = arity, argsArity = fParamTys.size)
+    if (arity != fParamTys.size) {
+      diagnosticsInfo.add(LambdaArityMismatch(lambda.pos, lambda, lambdaArity = arity, argsArity = fParamTys.size))
+      return env
+    }
     val env1 = lambda.name match {
       case Some(name) =>
         env.updated(name, funTy)
@@ -502,7 +521,7 @@ final class Check(pipelineContext: PipelineContext) {
           case _ =>
             val (ty, _) = elab.elabExpr(lambda, env)
             if (!subtype.subType(ty, resTy))
-              throw ExpectedSubtype(lambda.pos, lambda, expected = resTy, got = ty)
+              diagnosticsInfo.add(ExpectedSubtype(lambda.pos, lambda, expected = resTy, got = ty))
         }
     }
     env
@@ -513,7 +532,8 @@ final class Check(pipelineContext: PipelineContext) {
     var ftResTy = elabApply.elabApply(ft, args, argTys, env1)
     if (CustomReturn.isCustomReturn(funId))
       ftResTy = CustomReturn.customizeResultType(funId, args, resTy)
-    if (!subtype.subType(ftResTy, resTy)) throw ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy)
+    if (!subtype.subType(ftResTy, resTy))
+      diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy))
     env1
   }
 }

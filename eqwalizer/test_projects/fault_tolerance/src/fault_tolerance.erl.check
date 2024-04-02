@@ -98,23 +98,33 @@ too_many_errors(e) ->                      |         |
                                            |         | Expression has type:   number()
                                            |         | Context expected type: atom()
 too_many_errors(f) ->                      |         |
-  6;                                       |         |
+  6;                                       |         | 6.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(g) ->                      |         |
-  7;                                       |         |
+  7;                                       |         | 7.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(h) ->                      |         |
-  8;                                       |         |
+  8;                                       |         | 8.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(i) ->                      |         |
-  9;                                       |         |
+  9;                                       |         | 9.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
 too_many_errors(j) ->                      |         |
-  10.                                      |         |
+  10.                                      |         | 10.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: atom()
                                            |         |
 -spec visible_cast                         |         |
     (number()) -> number().                |         |
 visible_cast(N) ->                         | ERROR   |
-  erlang:atom_to_binary(                   |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(b_to_n(eqwalizer:dynamic_cast(N)))).
+  erlang:atom_to_binary(                   |         | erlang:atom_to_binary(b_to_n(N)).
                                            |         | Expression has type:   binary()
                                            |         | Context expected type: number()
-    b_to_n(                                |         | b_to_n(eqwalizer:dynamic_cast(N)).
+    b_to_n(                                |         | b_to_n(N).
                                            |         | Expression has type:   number()
                                            |         | Context expected type: atom()
       N                                    |         | N.
@@ -143,7 +153,7 @@ lambda_arity(Ns, A) ->                     | ERROR   |
                                            |         | fun with arity 2 used as fun with 1 arguments
   Y =                                      |         |
     X +                                    |         | X.
-                                           |         | Expression has type:   [dynamic()]
+                                           |         | Expression has type:   [number()]
                                            |         | Context expected type: number()
       A,                                   |         | A.
                                            |         | Expression has type:   atom()
@@ -161,7 +171,15 @@ lists_append(M1, M2) ->                    | ERROR   |
     M1,                                    |         | M1.
                                            |         | Expression has type:   #D{dynamic() => dynamic()}
                                            |         | Context expected type: [T]
+                                           |         | ---
+                                           |         | M1.
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
+                                           |         | Context expected type: [dynamic()]
     M2                                     |         | M2.
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
+                                           |         | Context expected type: [T]
+                                           |         | ---
+                                           |         | M2.
                                            |         | Expression has type:   #D{dynamic() => dynamic()}
                                            |         | Context expected type: [dynamic()]
   ),                                       |         |
@@ -467,6 +485,10 @@ rec3() ->                                  | ERROR   |
     _ = <<>>                               |         | <<..>>.
                                            |         | Expression has type:   binary()
                                            |         | Context expected type: number()
+                                           |         | ---
+                                           |         | <<..>>.
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: pid()
   },                                       |         |
   Res.                                     |         | Res.
                                            |         | Expression has type:   #rec{}
@@ -477,7 +499,7 @@ rec3() ->                                  | ERROR   |
 receive1() ->                              | ERROR   |
   receive                                  |         |
     {N} ->                                 |         |
-      atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(_ ++ _)).
+      atom_to_binary(                      |         | erlang:atom_to_binary(_ ++ _).
                                            |         | Expression has type:   binary()
                                            |         | Context expected type: number()
         [N]                                |         | _ ++ _.
@@ -488,10 +510,16 @@ receive1() ->                              | ERROR   |
                                            |         | Context expected type: [term()]
       );                                   |         |
     N ->                                   |         |
-      atom_to_binary(                      |         |
+      atom_to_binary(                      |         | erlang:atom_to_binary(_ ++ _).
+                                           |         | Expression has type:   binary()
+                                           |         | Context expected type: number()
         <<N>>                              |         | <<..>>.
                                            |         | Expression has type:   binary()
                                            |         | Context expected type: [term()]
+                                           |         | ---
+                                           |         | _ ++ _.
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: atom()
           ++ b                             |         | 'b'.
                                            |         | Expression has type:   'b'
                                            |         | Context expected type: [term()]
@@ -503,7 +531,7 @@ receive1() ->                              | ERROR   |
 receive2() ->                              | ERROR   |
   receive                                  |         |
     {N} ->                                 |         |
-      atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast([N])).
+      atom_to_binary(                      |         | erlang:atom_to_binary([N]).
                                            |         | Expression has type:   binary()
                                            |         | Context expected type: number()
         [N]                                |         | [N].
@@ -511,7 +539,7 @@ receive2() ->                              | ERROR   |
                                            |         | Context expected type: atom()
       );                                   |         |
     N ->                                   |         |
-      atom_to_binary(                      |         | erlang:atom_to_binary(eqwalizer:dynamic_cast(<<..>>)).
+      atom_to_binary(                      |         | erlang:atom_to_binary(<<..>>).
                                            |         | Expression has type:   binary()
                                            |         | Context expected type: number()
         <<N>>                              |         | <<..>>.

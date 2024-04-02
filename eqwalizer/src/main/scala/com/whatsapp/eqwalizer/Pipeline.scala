@@ -18,7 +18,6 @@ import com.whatsapp.eqwalizer.tc.TcDiagnostics.{
 }
 import com.whatsapp.eqwalizer.tc.{Options, PipelineContext, noOptions}
 
-import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
 object Pipeline {
@@ -87,53 +86,21 @@ object Pipeline {
     FunSpec(f.id, FunType(Nil, List.fill(f.id.arity)(DynamicType), DynamicType))(f.pos)
 
   private def checkFun(ctx: PipelineContext, f: FunDecl, spec: FunSpec): FuncDecl = {
+    ctx.check.checkFun(f, spec)
+    val errors = ctx.diagnosticsInfo.popErrors()
     if (ctx.tolerateErrors)
-      tolerantCheckFun(ctx, f, spec, ListBuffer.empty)
+      FuncDecl(f.id, errors)(f.pos)
     else
-      try {
-        ctx.check.checkFun(f, spec)
-        val errors = ctx.diagnosticsInfo.popErrors()
-        FuncDecl(f.id, errors)(f.pos)
-      } catch {
-        case te: TypeError =>
-          FuncDecl(f.id, errors = List(te))(f.pos)
-      }
-  }
-
-  @tailrec
-  private def tolerantCheckFun(
-      ctx: PipelineContext,
-      f: FunDecl,
-      spec: FunSpec,
-      typeErrors: ListBuffer[TypeError],
-  ): FuncDecl = {
-    val patched =
-      try {
-        ctx.check.checkFun(f, spec)
-        return FuncDecl(f.id, typeErrors.toList)(f.pos)
-      } catch {
-        case te: TypeError =>
-          typeErrors.addOne(te)
-          te.erroneousExpr match {
-            case Some(expr) if typeErrors.size < 5 =>
-              new Patch(expr).patchFun(f)
-            case _ =>
-              return FuncDecl(f.id, typeErrors.toList)(f.pos)
-          }
-      }
-    ctx.typeInfo.clear(f.pos)
-    tolerantCheckFun(ctx, patched, spec, typeErrors)
+      FuncDecl(f.id, errors.headOption.toList)(f.pos)
   }
 
   private def checkOverloadedFun(ctx: PipelineContext, f: FunDecl, overloadedSpec: OverloadedFunSpec): FuncDecl = {
-    try {
-      ctx.check.checkOverloadedFun(f, overloadedSpec)
-      val errors = ctx.diagnosticsInfo.popErrors()
+    ctx.check.checkOverloadedFun(f, overloadedSpec)
+    val errors = ctx.diagnosticsInfo.popErrors()
+    if (ctx.tolerateErrors)
       FuncDecl(f.id, errors)(f.pos)
-    } catch {
-      case te: TypeError =>
-        FuncDecl(f.id, errors = List(te))(f.pos)
-    }
+    else
+      FuncDecl(f.id, errors.headOption.toList)(f.pos)
   }
 
   def applyFixmes(

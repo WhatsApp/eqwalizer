@@ -20,6 +20,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private lazy val occurrence = pipelineContext.occurrence
   private lazy val typeInfo = pipelineContext.typeInfo
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
 
   private val elabPredicateType1: PartialFunction[String, Type] = {
     case "is_atom"      => AtomType
@@ -153,7 +154,13 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         val ty = RecordType(recName)(module)
         (ty, elabTestT(rec, ty, env))
       case TestRecordCreate(recName, fields) =>
-        val recDecl = util.getRecord(module, recName).getOrElse(throw UnboundRecord(test.pos, recName))
+        val recDecl =
+          util.getRecord(module, recName) match {
+            case Some(recDecl) => recDecl
+            case None =>
+              diagnosticsInfo.add(UnboundRecord(test.pos, recName))
+              return (DynamicType, env)
+          }
         val namedFields = fields.collect { case f: TestRecordFieldNamed => f }
         val optGenField = fields.collectFirst { case f: TestRecordFieldGen => f }
         val genFields = recDecl.fields.keySet -- namedFields.map(_.name)
@@ -165,7 +172,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         for (uField <- undefinedFields) {
           val fieldDecl = recDecl.fields(uField)
           if (fieldDecl.defaultValue.isEmpty && !subtype.subType(undefined, fieldDecl.tp)) {
-            throw UndefinedField(test.pos, recName, uField)
+            diagnosticsInfo.add(UndefinedField(test.pos, recName, uField))
           }
         }
         var envAcc = env
@@ -196,9 +203,10 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestVar(v) =>
         val testType = env.get(v) match {
           case Some(vt) =>
-            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(vt, upper))
-              throw RedundantGuard(pos, v, upper, vt)(pipelineContext)
-            else
+            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(vt, upper)) {
+              diagnosticsInfo.add(RedundantGuard(pos, v, upper, vt)(pipelineContext))
+              vt
+            } else
               narrow.meet(vt, upper)
           case None =>
             upper
@@ -306,9 +314,10 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestVar(v), TestAtom(a)) =>
         env.get(v) match {
           case Some(ty) =>
-            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(ty, AtomLitType(a)))
-              throw RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext)
-            else
+            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(ty, AtomLitType(a))) {
+              diagnosticsInfo.add(RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext))
+              env + (v -> ty)
+            } else
               env + (v -> narrow.meet(ty, AtomLitType(a)))
           case None =>
             env
@@ -316,9 +325,10 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestAtom(a), TestVar(v)) =>
         env.get(v) match {
           case Some(ty) =>
-            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(ty, AtomLitType(a)))
-              throw RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext)
-            else
+            if (checkRedundancy && pipelineContext.checkRedundantGuards && subtype.gradualSubType(ty, AtomLitType(a))) {
+              diagnosticsInfo.add(RedundantGuard(binOp.pos, v, AtomLitType(a), ty)(pipelineContext))
+              env + (v -> ty)
+            } else
               env + (v -> narrow.meet(ty, AtomLitType(a)))
           case None =>
             env

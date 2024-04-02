@@ -30,6 +30,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val narrow = pipelineContext.narrow
   private lazy val variance = pipelineContext.variance
   private lazy val typeInfo = pipelineContext.typeInfo
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   implicit val pipelineCtx = pipelineContext
 
   private type Var = Int
@@ -141,7 +142,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val Arg(expr, argTy, rawParamTy) = arg
     val paramTy = Subst.subst(varToType, rawParamTy)
     if (!subtype.subType(argTy, paramTy))
-      throw ExpectedSubtype(expr.pos, expr, expected = paramTy, got = argTy)
+      diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = paramTy, got = argTy))
   }
 
   private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Map[Var, Type], env: Env): Unit = {

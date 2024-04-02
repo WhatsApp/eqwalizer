@@ -12,7 +12,7 @@ import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object InvalidDiagnostics {
-  sealed trait Invalid extends Diagnostic {
+  sealed trait Invalid extends Exception with Diagnostic {
     override def erroneousExpr: Option[Exprs.Expr] = None
   }
   case class UnknownId(pos: Pos, id: RemoteId) extends Invalid {

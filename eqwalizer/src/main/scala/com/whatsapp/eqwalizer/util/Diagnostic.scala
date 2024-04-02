@@ -10,7 +10,7 @@ import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.Pos
 
 object Diagnostic {
-  trait Diagnostic extends Exception {
+  trait Diagnostic {
     val pos: Pos
     val msg: String
     def explanation: Option[String] = None

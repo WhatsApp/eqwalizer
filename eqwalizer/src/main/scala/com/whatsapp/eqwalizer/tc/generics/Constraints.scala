@@ -39,6 +39,8 @@ object Constraints {
       seen: Set[(Type, Type)], // for handling recursive types, same logic as in subtype.scala
       constraintLoc: ConstraintLoc,
   )
+
+  private case class Failure() extends Exception
 }
 
 class Constraints(pipelineContext: PipelineContext) {
@@ -46,6 +48,7 @@ class Constraints(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   /** Pierce and Turner Local Type Inference section 3.3
@@ -72,7 +75,11 @@ class Constraints(pipelineContext: PipelineContext) {
       seen = Set.empty,
       constraintLoc,
     )
-    constrain(state, lowerBound, upperBound).cs
+    try {
+      constrain(state, lowerBound, upperBound).cs
+    } catch {
+      case Failure() => cs
+    }
   }
 
   @tailrec
@@ -261,13 +268,15 @@ class Constraints(pipelineContext: PipelineContext) {
   ): Nothing = {
     val subst = constraintsToSubst(cs, variances)
     val expected = Subst.subst(subst, cLoc.paramTy)
-    throw ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy)
+    diagnosticsInfo.add(ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy))
+    throw Failure()
   }
 
   private def unionFailure(
       cLoc: ConstraintLoc
   ): Nothing = {
-    throw AmbiguousUnion(cLoc.arg.pos, cLoc.arg, cLoc.paramTy, got = cLoc.argTy)
+    diagnosticsInfo.add(AmbiguousUnion(cLoc.arg.pos, cLoc.arg, cLoc.paramTy, got = cLoc.argTy))
+    throw Failure()
   }
 
   private def constrainSeq(state0: State, lowersAndUppers: Iterable[(Type, Type)]): State =
@@ -290,14 +299,16 @@ class Constraints(pipelineContext: PipelineContext) {
         if (!subtype.subType(c2.lower, c1.upper)) {
           val subst = constraintsToSubst(constraints, variances) + (tv -> c1.upper)
           val expected = Subst.subst(subst, cLoc.paramTy)
-          throw ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy)
-        }
-        if (!subtype.subType(lower, upper)) {
+          diagnosticsInfo.add(ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy))
+          constraints + (tv -> Constraint(DynamicType, DynamicType))
+        } else if (!subtype.subType(lower, upper)) {
           val subst = constraintsToSubst(constraints, variances) + (tv -> c1.lower)
           val expected = Subst.subst(subst, cLoc.paramTy)
-          throw ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy)
+          diagnosticsInfo.add(ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy))
+          constraints + (tv -> Constraint(DynamicType, DynamicType))
+        } else {
+          constraints + (tv -> Constraint(lower, upper))
         }
-        constraints + (tv -> Constraint(lower, upper))
     }
   }
 
@@ -317,7 +328,7 @@ class Constraints(pipelineContext: PipelineContext) {
   private def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Map[Var, Type] =
     cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
 
-  def constraintToType(c: Constraint, variance: Variance): Type = variance match {
+  private def constraintToType(c: Constraint, variance: Variance): Type = variance match {
     case Constant | Covariant =>
       if (subtype.isNoneType(c.lower) && pipelineCtx.gradualTyping) DynamicType
       else c.lower

@@ -666,6 +666,231 @@
     },
     {
       "range": {
+        "start": 1068,
+        "end": 1069
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "6",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1068,
+                "end_byte": 1069
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 6,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1068,
+                    "end_byte": 1069
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
+        "start": 1095,
+        "end": 1096
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "7",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1095,
+                "end_byte": 1096
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 7,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1095,
+                    "end_byte": 1096
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
+        "start": 1122,
+        "end": 1123
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "8",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1122,
+                "end_byte": 1123
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 8,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1122,
+                    "end_byte": 1123
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
+        "start": 1149,
+        "end": 1150
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "9",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1149,
+                "end_byte": 1150
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 9,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1149,
+                    "end_byte": 1150
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
+        "start": 1176,
+        "end": 1178
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   number()\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "10",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1176,
+                "end_byte": 1178
+              }
+            },
+            "expr": {
+              "IntLit": {
+                "value": 10,
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1176,
+                    "end_byte": 1178
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": "NumberType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
         "start": 1249,
         "end": 1301
       },
@@ -673,7 +898,7 @@
       "message": "Expression has type:   binary()\nContext expected type: number()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
-      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(b_to_n(eqwalizer:dynamic_cast(N))))",
+      "expressionOrNull": "erlang:atom_to_binary(b_to_n(N))",
       "explanationOrNull": null,
       "diagnostic": {
         "TypeError": {
@@ -693,50 +918,16 @@
                 },
                 "args": [
                   {
-                    "RemoteCall": {
-                      "id": {
-                        "module": "eqwalizer",
-                        "name": "dynamic_cast",
-                        "arity": 1
-                      },
+                    "LocalCall": {
+                      "id": "b_to_n/1",
                       "args": [
                         {
-                          "LocalCall": {
-                            "id": "b_to_n/1",
-                            "args": [
-                              {
-                                "RemoteCall": {
-                                  "id": {
-                                    "module": "eqwalizer",
-                                    "name": "dynamic_cast",
-                                    "arity": 1
-                                  },
-                                  "args": [
-                                    {
-                                      "Var": {
-                                        "n": "N",
-                                        "location": {
-                                          "TextRange": {
-                                            "start_byte": 1290,
-                                            "end_byte": 1291
-                                          }
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "location": {
-                                    "TextRange": {
-                                      "start_byte": 1290,
-                                      "end_byte": 1291
-                                    }
-                                  }
-                                }
-                              }
-                            ],
+                          "Var": {
+                            "n": "N",
                             "location": {
                               "TextRange": {
-                                "start_byte": 1276,
-                                "end_byte": 1297
+                                "start_byte": 1290,
+                                "end_byte": 1291
                               }
                             }
                           }
@@ -782,7 +973,7 @@
       "message": "Expression has type:   number()\nContext expected type: atom()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
-      "expressionOrNull": "b_to_n(eqwalizer:dynamic_cast(N))",
+      "expressionOrNull": "b_to_n(N)",
       "explanationOrNull": null,
       "diagnostic": {
         "TypeError": {
@@ -798,25 +989,8 @@
                 "id": "b_to_n/1",
                 "args": [
                   {
-                    "RemoteCall": {
-                      "id": {
-                        "module": "eqwalizer",
-                        "name": "dynamic_cast",
-                        "arity": 1
-                      },
-                      "args": [
-                        {
-                          "Var": {
-                            "n": "N",
-                            "location": {
-                              "TextRange": {
-                                "start_byte": 1290,
-                                "end_byte": 1291
-                              }
-                            }
-                          }
-                        }
-                      ],
+                    "Var": {
+                      "n": "N",
                       "location": {
                         "TextRange": {
                           "start_byte": 1290,
@@ -1157,7 +1331,7 @@
         "end": 1528
       },
       "lineAndCol": null,
-      "message": "Expression has type:   [dynamic()]\nContext expected type: number()",
+      "message": "Expression has type:   [number()]\nContext expected type: number()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "X",
@@ -1185,7 +1359,7 @@
             "expected": "NumberType",
             "got": {
               "ListType": {
-                "t": "DynamicType"
+                "t": "NumberType"
               }
             },
             "pipeline_context": {
@@ -1272,6 +1446,151 @@
                   "TextRange": {
                     "start_byte": 1741,
                     "end_byte": 1743
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": {
+                  "VarType": {
+                    "n": 3,
+                    "name": "T"
+                  }
+                }
+              }
+            },
+            "got": {
+              "DictMap": {
+                "k_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                },
+                "v_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                }
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
+        "start": 1741,
+        "end": 1743
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   #D{dynamic() => dynamic()}\nContext expected type: [dynamic()]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "M1",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1741,
+                "end_byte": 1743
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M1",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1741,
+                    "end_byte": 1743
+                  }
+                }
+              }
+            },
+            "expected": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
+            "got": {
+              "DictMap": {
+                "k_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                },
+                "v_type": {
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
+                  }
+                }
+              }
+            },
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
+        "start": 1749,
+        "end": 1751
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   #D{dynamic() => dynamic()}\nContext expected type: [T]",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "M2",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 1749,
+                "end_byte": 1751
+              }
+            },
+            "expr": {
+              "Var": {
+                "n": "M2",
+                "location": {
+                  "TextRange": {
+                    "start_byte": 1749,
+                    "end_byte": 1751
                   }
                 }
               }
@@ -2544,112 +2863,78 @@
                         }
                       },
                       "expr": {
-                        "RemoteCall": {
-                          "id": {
-                            "module": "eqwalizer",
-                            "name": "dynamic_cast",
-                            "arity": 1
-                          },
-                          "args": [
-                            {
-                              "MapCreate": {
-                                "kvs": [
-                                  [
-                                    {
-                                      "AtomLit": {
-                                        "s": "a",
-                                        "location": {
-                                          "TextRange": {
-                                            "start_byte": 2848,
-                                            "end_byte": 2849
-                                          }
-                                        }
-                                      }
-                                    },
-                                    {
-                                      "AtomLit": {
-                                        "s": "b",
-                                        "location": {
-                                          "TextRange": {
-                                            "start_byte": 2853,
-                                            "end_byte": 2854
-                                          }
-                                        }
-                                      }
+                        "MapCreate": {
+                          "kvs": [
+                            [
+                              {
+                                "AtomLit": {
+                                  "s": "a",
+                                  "location": {
+                                    "TextRange": {
+                                      "start_byte": 2848,
+                                      "end_byte": 2849
                                     }
-                                  ],
-                                  [
-                                    {
-                                      "AtomLit": {
-                                        "s": "c",
-                                        "location": {
-                                          "TextRange": {
-                                            "start_byte": 2862,
-                                            "end_byte": 2863
-                                          }
-                                        }
-                                      }
-                                    },
-                                    {
-                                      "BinOp": {
-                                        "op": "+",
-                                        "arg_1": {
-                                          "RemoteCall": {
-                                            "id": {
-                                              "module": "eqwalizer",
-                                              "name": "dynamic_cast",
-                                              "arity": 1
-                                            },
-                                            "args": [
-                                              {
-                                                "AtomLit": {
-                                                  "s": "d",
-                                                  "location": {
-                                                    "TextRange": {
-                                                      "start_byte": 2867,
-                                                      "end_byte": 2868
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            ],
-                                            "location": {
-                                              "TextRange": {
-                                                "start_byte": 2867,
-                                                "end_byte": 2868
-                                              }
-                                            }
-                                          }
-                                        },
-                                        "arg_2": {
-                                          "IntLit": {
-                                            "value": 1,
-                                            "location": {
-                                              "TextRange": {
-                                                "start_byte": 2871,
-                                                "end_byte": 2872
-                                              }
-                                            }
-                                          }
-                                        },
-                                        "location": {
-                                          "TextRange": {
-                                            "start_byte": 2867,
-                                            "end_byte": 2872
-                                          }
-                                        }
-                                      }
+                                  }
+                                }
+                              },
+                              {
+                                "AtomLit": {
+                                  "s": "b",
+                                  "location": {
+                                    "TextRange": {
+                                      "start_byte": 2853,
+                                      "end_byte": 2854
                                     }
-                                  ]
-                                ],
-                                "location": {
-                                  "TextRange": {
-                                    "start_byte": 2839,
-                                    "end_byte": 2878
                                   }
                                 }
                               }
-                            }
+                            ],
+                            [
+                              {
+                                "AtomLit": {
+                                  "s": "c",
+                                  "location": {
+                                    "TextRange": {
+                                      "start_byte": 2862,
+                                      "end_byte": 2863
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "BinOp": {
+                                  "op": "+",
+                                  "arg_1": {
+                                    "AtomLit": {
+                                      "s": "d",
+                                      "location": {
+                                        "TextRange": {
+                                          "start_byte": 2867,
+                                          "end_byte": 2868
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "arg_2": {
+                                    "IntLit": {
+                                      "value": 1,
+                                      "location": {
+                                        "TextRange": {
+                                          "start_byte": 2871,
+                                          "end_byte": 2872
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "location": {
+                                    "TextRange": {
+                                      "start_byte": 2867,
+                                      "end_byte": 2872
+                                    }
+                                  }
+                                }
+                              }
+                            ]
                           ],
                           "location": {
                             "TextRange": {
@@ -2672,32 +2957,15 @@
                           },
                           "args": [
                             {
-                              "RemoteCall": {
-                                "id": {
-                                  "module": "eqwalizer",
-                                  "name": "dynamic_cast",
-                                  "arity": 1
-                                },
-                                "args": [
+                              "Tuple": {
+                                "elems": [
                                   {
-                                    "Tuple": {
-                                      "elems": [
-                                        {
-                                          "Var": {
-                                            "n": "X",
-                                            "location": {
-                                              "TextRange": {
-                                                "start_byte": 2907,
-                                                "end_byte": 2908
-                                              }
-                                            }
-                                          }
-                                        }
-                                      ],
+                                    "Var": {
+                                      "n": "X",
                                       "location": {
                                         "TextRange": {
-                                          "start_byte": 2906,
-                                          "end_byte": 2909
+                                          "start_byte": 2907,
+                                          "end_byte": 2908
                                         }
                                       }
                                     }
@@ -2816,25 +3084,8 @@
                       "BinOp": {
                         "op": "+",
                         "arg_1": {
-                          "RemoteCall": {
-                            "id": {
-                              "module": "eqwalizer",
-                              "name": "dynamic_cast",
-                              "arity": 1
-                            },
-                            "args": [
-                              {
-                                "AtomLit": {
-                                  "s": "d",
-                                  "location": {
-                                    "TextRange": {
-                                      "start_byte": 2867,
-                                      "end_byte": 2868
-                                    }
-                                  }
-                                }
-                              }
-                            ],
+                          "AtomLit": {
+                            "s": "d",
                             "location": {
                               "TextRange": {
                                 "start_byte": 2867,
@@ -3474,25 +3725,8 @@
               "BinOp": {
                 "op": "+",
                 "arg_1": {
-                  "RemoteCall": {
-                    "id": {
-                      "module": "eqwalizer",
-                      "name": "dynamic_cast",
-                      "arity": 1
-                    },
-                    "args": [
-                      {
-                        "Var": {
-                          "n": "M1",
-                          "location": {
-                            "TextRange": {
-                              "start_byte": 3250,
-                              "end_byte": 3252
-                            }
-                          }
-                        }
-                      }
-                    ],
+                  "Var": {
+                    "n": "M1",
                     "location": {
                       "TextRange": {
                         "start_byte": 3250,
@@ -3502,25 +3736,8 @@
                   }
                 },
                 "arg_2": {
-                  "RemoteCall": {
-                    "id": {
-                      "module": "eqwalizer",
-                      "name": "dynamic_cast",
-                      "arity": 1
-                    },
-                    "args": [
-                      {
-                        "Var": {
-                          "n": "M2",
-                          "location": {
-                            "TextRange": {
-                              "start_byte": 3255,
-                              "end_byte": 3257
-                            }
-                          }
-                        }
-                      }
-                    ],
+                  "Var": {
+                    "n": "M2",
                     "location": {
                       "TextRange": {
                         "start_byte": 3255,
@@ -3798,25 +4015,8 @@
               "BinOp": {
                 "op": "+",
                 "arg_1": {
-                  "RemoteCall": {
-                    "id": {
-                      "module": "eqwalizer",
-                      "name": "dynamic_cast",
-                      "arity": 1
-                    },
-                    "args": [
-                      {
-                        "Var": {
-                          "n": "B",
-                          "location": {
-                            "TextRange": {
-                              "start_byte": 3348,
-                              "end_byte": 3349
-                            }
-                          }
-                        }
-                      }
-                    ],
+                  "Var": {
+                    "n": "B",
                     "location": {
                       "TextRange": {
                         "start_byte": 3348,
@@ -4528,6 +4728,50 @@
     },
     {
       "range": {
+        "start": 4072,
+        "end": 4076
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   binary()\nContext expected type: pid()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "<<..>>",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4072,
+                "end_byte": 4076
+              }
+            },
+            "expr": {
+              "Binary": {
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4072,
+                    "end_byte": 4076
+                  }
+                }
+              }
+            },
+            "expected": "PidType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
         "start": 4084,
         "end": 4087
       },
@@ -4585,7 +4829,7 @@
       "message": "Expression has type:   binary()\nContext expected type: number()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
-      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(_ ++ _))",
+      "expressionOrNull": "erlang:atom_to_binary(_ ++ _)",
       "explanationOrNull": null,
       "diagnostic": {
         "TypeError": {
@@ -4605,84 +4849,50 @@
                 },
                 "args": [
                   {
-                    "RemoteCall": {
-                      "id": {
-                        "module": "eqwalizer",
-                        "name": "dynamic_cast",
-                        "arity": 1
-                      },
-                      "args": [
-                        {
-                          "BinOp": {
-                            "op": "++",
-                            "arg_1": {
-                              "Cons": {
-                                "h": {
-                                  "Var": {
-                                    "n": "N",
-                                    "location": {
-                                      "TextRange": {
-                                        "start_byte": 4192,
-                                        "end_byte": 4193
-                                      }
-                                    }
-                                  }
-                                },
-                                "t": {
-                                  "NilLit": {
-                                    "location": {
-                                      "TextRange": {
-                                        "start_byte": 4193,
-                                        "end_byte": 4194
-                                      }
-                                    }
-                                  }
-                                },
-                                "location": {
-                                  "TextRange": {
-                                    "start_byte": 4191,
-                                    "end_byte": 4194
-                                  }
+                    "BinOp": {
+                      "op": "++",
+                      "arg_1": {
+                        "Cons": {
+                          "h": {
+                            "Var": {
+                              "n": "N",
+                              "location": {
+                                "TextRange": {
+                                  "start_byte": 4192,
+                                  "end_byte": 4193
                                 }
                               }
-                            },
-                            "arg_2": {
-                              "RemoteCall": {
-                                "id": {
-                                  "module": "eqwalizer",
-                                  "name": "dynamic_cast",
-                                  "arity": 1
-                                },
-                                "args": [
-                                  {
-                                    "AtomLit": {
-                                      "s": "a",
-                                      "location": {
-                                        "TextRange": {
-                                          "start_byte": 4208,
-                                          "end_byte": 4209
-                                        }
-                                      }
-                                    }
-                                  }
-                                ],
-                                "location": {
-                                  "TextRange": {
-                                    "start_byte": 4208,
-                                    "end_byte": 4209
-                                  }
+                            }
+                          },
+                          "t": {
+                            "NilLit": {
+                              "location": {
+                                "TextRange": {
+                                  "start_byte": 4193,
+                                  "end_byte": 4194
                                 }
                               }
-                            },
-                            "location": {
-                              "TextRange": {
-                                "start_byte": 4191,
-                                "end_byte": 4209
-                              }
+                            }
+                          },
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4191,
+                              "end_byte": 4194
                             }
                           }
                         }
-                      ],
+                      },
+                      "arg_2": {
+                        "AtomLit": {
+                          "s": "a",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4208,
+                              "end_byte": 4209
+                            }
+                          }
+                        }
+                      },
                       "location": {
                         "TextRange": {
                           "start_byte": 4191,
@@ -4769,25 +4979,8 @@
                   }
                 },
                 "arg_2": {
-                  "RemoteCall": {
-                    "id": {
-                      "module": "eqwalizer",
-                      "name": "dynamic_cast",
-                      "arity": 1
-                    },
-                    "args": [
-                      {
-                        "AtomLit": {
-                          "s": "a",
-                          "location": {
-                            "TextRange": {
-                              "start_byte": 4208,
-                              "end_byte": 4209
-                            }
-                          }
-                        }
-                      }
-                    ],
+                  "AtomLit": {
+                    "s": "a",
                     "location": {
                       "TextRange": {
                         "start_byte": 4208,
@@ -4877,6 +5070,111 @@
     },
     {
       "range": {
+        "start": 4234,
+        "end": 4286
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   binary()\nContext expected type: number()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "erlang:atom_to_binary(_ ++ _)",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4234,
+                "end_byte": 4286
+              }
+            },
+            "expr": {
+              "RemoteCall": {
+                "id": {
+                  "module": "erlang",
+                  "name": "atom_to_binary",
+                  "arity": 1
+                },
+                "args": [
+                  {
+                    "BinOp": {
+                      "op": "++",
+                      "arg_1": {
+                        "Binary": {
+                          "elems": [
+                            {
+                              "expr": {
+                                "Var": {
+                                  "n": "N",
+                                  "location": {
+                                    "TextRange": {
+                                      "start_byte": 4260,
+                                      "end_byte": 4261
+                                    }
+                                  }
+                                }
+                              },
+                              "specifier": "UnsignedIntegerSpecifier",
+                              "location": {
+                                "TextRange": {
+                                  "start_byte": 4260,
+                                  "end_byte": 4261
+                                }
+                              }
+                            }
+                          ],
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4258,
+                              "end_byte": 4263
+                            }
+                          }
+                        }
+                      },
+                      "arg_2": {
+                        "AtomLit": {
+                          "s": "b",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4277,
+                              "end_byte": 4278
+                            }
+                          }
+                        }
+                      },
+                      "location": {
+                        "TextRange": {
+                          "start_byte": 4258,
+                          "end_byte": 4278
+                        }
+                      }
+                    }
+                  }
+                ],
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4234,
+                    "end_byte": 4286
+                  }
+                }
+              }
+            },
+            "expected": "NumberType",
+            "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
         "start": 4258,
         "end": 4263
       },
@@ -4933,6 +5231,98 @@
               }
             },
             "got": "BinaryType",
+            "pipeline_context": {
+              "module": "fault_tolerance",
+              "options": {
+                "gradual_typing": true,
+                "eqwater": true,
+                "tolerate_errors": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "range": {
+        "start": 4258,
+        "end": 4278
+      },
+      "lineAndCol": null,
+      "message": "Expression has type:   [dynamic()]\nContext expected type: atom()",
+      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
+      "code": "incompatible_types",
+      "expressionOrNull": "_ ++ _",
+      "explanationOrNull": null,
+      "diagnostic": {
+        "TypeError": {
+          "ExpectedSubtype": {
+            "location": {
+              "TextRange": {
+                "start_byte": 4258,
+                "end_byte": 4278
+              }
+            },
+            "expr": {
+              "BinOp": {
+                "op": "++",
+                "arg_1": {
+                  "Binary": {
+                    "elems": [
+                      {
+                        "expr": {
+                          "Var": {
+                            "n": "N",
+                            "location": {
+                              "TextRange": {
+                                "start_byte": 4260,
+                                "end_byte": 4261
+                              }
+                            }
+                          }
+                        },
+                        "specifier": "UnsignedIntegerSpecifier",
+                        "location": {
+                          "TextRange": {
+                            "start_byte": 4260,
+                            "end_byte": 4261
+                          }
+                        }
+                      }
+                    ],
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4258,
+                        "end_byte": 4263
+                      }
+                    }
+                  }
+                },
+                "arg_2": {
+                  "AtomLit": {
+                    "s": "b",
+                    "location": {
+                      "TextRange": {
+                        "start_byte": 4277,
+                        "end_byte": 4278
+                      }
+                    }
+                  }
+                },
+                "location": {
+                  "TextRange": {
+                    "start_byte": 4258,
+                    "end_byte": 4278
+                  }
+                }
+              }
+            },
+            "expected": "AtomType",
+            "got": {
+              "ListType": {
+                "t": "DynamicType"
+              }
+            },
             "pipeline_context": {
               "module": "fault_tolerance",
               "options": {
@@ -5007,7 +5397,7 @@
       "message": "Expression has type:   binary()\nContext expected type: number()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
-      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast([N]))",
+      "expressionOrNull": "erlang:atom_to_binary([N])",
       "explanationOrNull": null,
       "diagnostic": {
         "TypeError": {
@@ -5027,45 +5417,28 @@
                 },
                 "args": [
                   {
-                    "RemoteCall": {
-                      "id": {
-                        "module": "eqwalizer",
-                        "name": "dynamic_cast",
-                        "arity": 1
-                      },
-                      "args": [
-                        {
-                          "Cons": {
-                            "h": {
-                              "Var": {
-                                "n": "N",
-                                "location": {
-                                  "TextRange": {
-                                    "start_byte": 4397,
-                                    "end_byte": 4398
-                                  }
-                                }
-                              }
-                            },
-                            "t": {
-                              "NilLit": {
-                                "location": {
-                                  "TextRange": {
-                                    "start_byte": 4398,
-                                    "end_byte": 4399
-                                  }
-                                }
-                              }
-                            },
-                            "location": {
-                              "TextRange": {
-                                "start_byte": 4396,
-                                "end_byte": 4399
-                              }
+                    "Cons": {
+                      "h": {
+                        "Var": {
+                          "n": "N",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4397,
+                              "end_byte": 4398
                             }
                           }
                         }
-                      ],
+                      },
+                      "t": {
+                        "NilLit": {
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4398,
+                              "end_byte": 4399
+                            }
+                          }
+                        }
+                      },
                       "location": {
                         "TextRange": {
                           "start_byte": 4396,
@@ -5175,7 +5548,7 @@
       "message": "Expression has type:   binary()\nContext expected type: number()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
-      "expressionOrNull": "erlang:atom_to_binary(eqwalizer:dynamic_cast(<<..>>))",
+      "expressionOrNull": "erlang:atom_to_binary(<<..>>)",
       "explanationOrNull": null,
       "diagnostic": {
         "TypeError": {
@@ -5195,42 +5568,25 @@
                 },
                 "args": [
                   {
-                    "RemoteCall": {
-                      "id": {
-                        "module": "eqwalizer",
-                        "name": "dynamic_cast",
-                        "arity": 1
-                      },
-                      "args": [
+                    "Binary": {
+                      "elems": [
                         {
-                          "Binary": {
-                            "elems": [
-                              {
-                                "expr": {
-                                  "Var": {
-                                    "n": "N",
-                                    "location": {
-                                      "TextRange": {
-                                        "start_byte": 4450,
-                                        "end_byte": 4451
-                                      }
-                                    }
-                                  }
-                                },
-                                "specifier": "UnsignedIntegerSpecifier",
-                                "location": {
-                                  "TextRange": {
-                                    "start_byte": 4450,
-                                    "end_byte": 4451
-                                  }
+                          "expr": {
+                            "Var": {
+                              "n": "N",
+                              "location": {
+                                "TextRange": {
+                                  "start_byte": 4450,
+                                  "end_byte": 4451
                                 }
                               }
-                            ],
-                            "location": {
-                              "TextRange": {
-                                "start_byte": 4448,
-                                "end_byte": 4453
-                              }
+                            }
+                          },
+                          "specifier": "UnsignedIntegerSpecifier",
+                          "location": {
+                            "TextRange": {
+                              "start_byte": 4450,
+                              "end_byte": 4451
                             }
                           }
                         }

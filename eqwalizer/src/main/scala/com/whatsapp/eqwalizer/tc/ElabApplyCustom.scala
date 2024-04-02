@@ -21,6 +21,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
   private lazy val occurrence = pipelineCtx.occurrence
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   implicit val pipelineCtx = pipelineContext
 
   def isCustom(remoteId: RemoteId): Boolean =
@@ -49,6 +50,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "filtermap", 2),
       RemoteId(CompilerMacro.fake_module, "record_info", 2),
     )
+
+  private def coerce(expr: Expr, ty: Type, expTy: Type): Type = {
+    if (!subtype.subType(ty, expTy)) {
+      diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expTy, ty))
+      DynamicType
+    } else {
+      ty
+    }
+  }
 
   def elabCustom(remoteId: RemoteId, args: List[Expr], env: Env, callPos: Pos): (Type, Env) = {
     val (argTys, env1) = elab.elabExprs(args, env)
@@ -102,15 +112,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             }
             (resTyPrecise, env1)
           case None =>
-            throw UnboundVar(callPos, fqn.toString)
+            diagnosticsInfo.add(UnboundVar(callPos, fqn.toString))
+            (DynamicType, env)
         }
       case RemoteId("lists", "filtermap", 2) =>
         val List(funArg, collection) = args
         val List(funArgTy, collectionTy) = argTys
         val listAnyTy = ListType(AnyType)
-        if (!subtype.subType(collectionTy, listAnyTy))
-          throw ExpectedSubtype(collection.pos, collection, listAnyTy, collectionTy)
-        val elemTy = narrow.asListType(collectionTy).get.t
+        val collectionTyCoerced = coerce(collection, collectionTy, listAnyTy)
+        val elemTy = narrow.asListType(collectionTyCoerced).get.t
         val tupleTrueAnyTy = TupleType(List(trueType, AnyType))
         val expRet = subtype.join(booleanType, tupleTrueAnyTy)
         val expFunTy = FunType(Nil, List(elemTy), expRet)
@@ -127,9 +137,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
               lambda.clauses.map(elab.elabClause(_, List(elemTy), lamEnv, Set.empty)).map(_._1)
             }
           case _ =>
-            if (!subtype.subType(funArgTy, expFunTy))
-              throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
-            narrow.asFunType(funArgTy, 1).get.map(_.resTy)
+            if (!subtype.subType(funArgTy, expFunTy)) {
+              diagnosticsInfo.add(ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy))
+              List(DynamicType)
+            } else
+              narrow.asFunType(funArgTy, 1).get.map(_.resTy)
         }
         def funResultsToItemTy(tys: Iterable[Type], defaultTy: Type, pos: Pos): Type =
           tys.foldLeft(NoneType: Type)((memo, ty) => subtype.join(memo, funResultToItemTy(ty, defaultTy, pos)))
@@ -143,17 +155,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case ty if subtype.subType(ty, booleanType) =>
             defaultTy
           case _ =>
-            throw new IllegalArgumentException(s"unexpected $ty")
+            DynamicType
         }
         val resItemTy = funResultsToItemTy(funResTys, elemTy, callPos)
         (ListType(resItemTy), env1)
 
       case fqn @ RemoteId("lists", "flatten", arity @ (1 | 2)) =>
         val arg = args.head
-        val argTy = argTys.head
         val anyListTy = ListType(AnyType)
-        if (!subtype.subType(argTy, anyListTy))
-          throw ExpectedSubtype(arg.pos, arg, expected = anyListTy, got = argTy)
+        val argTy = coerce(arg, argTys.head, anyListTy)
         def flattenElemTy(ty: Type, seenAliases: Set[RemoteType] = Set()): Type = ty match {
           case ListType(ty)   => flattenElemTy(ty, seenAliases)
           case NilType        => NoneType
@@ -170,9 +180,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case 1 => argElemTy
           case 2 =>
             val tail = args(1)
-            val tailTy = argTys(1)
-            if (!subtype.subType(tailTy, anyListTy))
-              throw ExpectedSubtype(tail.pos, tail, expected = anyListTy, got = tailTy)
+            val tailTy = coerce(tail, argTys(1), anyListTy)
             val Some(ListType(tailElemTy)) = narrow.asListType(tailTy)
             subtype.join(argElemTy, tailElemTy)
         }
@@ -185,14 +193,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("lists", "keysort", 2) =>
         val List(index, tupleList) = args
         val List(indexTy, tupleListTy) = argTys
-        def validate(): Unit = {
-          if (!subtype.subType(indexTy, NumberType))
-            throw ExpectedSubtype(index.pos, index, expected = NumberType, got = indexTy)
-          if (!subtype.subType(tupleListTy, ListType(AnyTupleType)))
-            throw ExpectedSubtype(tupleList.pos, tupleList, expected = ListType(AnyTupleType), got = tupleListTy)
-        }
-        validate()
-        (tupleListTy, env1)
+        val _ = coerce(index, indexTy, NumberType)
+        val tupleListCoercedTy = coerce(tupleList, tupleListTy, ListType(AnyTupleType))
+        (tupleListCoercedTy, env1)
 
       /*
         `-spec keystore(term(), pos_integer(), [Tuple], Replacement) -> [Tuple | Replacement].`
@@ -201,43 +204,32 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("lists", "keystore", 4) =>
         val List(key, index, tupleList, replacement) = args
         val List(_keyAny, indexTy, tupleListTy, replacementTy) = argTys
-        def validate(): Unit = {
-          if (!subtype.subType(indexTy, NumberType))
-            throw ExpectedSubtype(index.pos, index, expected = NumberType, got = indexTy)
-          if (!subtype.subType(tupleListTy, ListType(AnyTupleType)))
-            throw ExpectedSubtype(tupleList.pos, tupleList, expected = ListType(AnyTupleType), got = tupleListTy)
-          if (!subtype.subType(replacementTy, AnyTupleType))
-            throw ExpectedSubtype(replacement.pos, replacement, expected = AnyTupleType, got = replacementTy)
-        }
-        validate()
-        val ListType(inTupleTy) = narrow.asListType(tupleListTy).get
-        val resTy = ListType(subtype.join(inTupleTy, replacementTy))
+        val _ = coerce(index, indexTy, NumberType)
+        val tupleListCoercedTy = coerce(tupleList, tupleListTy, ListType(AnyTupleType))
+        val replacementCoercedTy = coerce(replacement, replacementTy, AnyTupleType)
+        val ListType(inTupleTy) = narrow.asListType(tupleListCoercedTy).get
+        val resTy = ListType(subtype.join(inTupleTy, replacementCoercedTy))
         (resTy, env1)
 
       case RemoteId("maps", "filter", 2) =>
         val List(funArg, map) = args
         val List(funArgTy, mapTy) = argTys
-        val (keyTy, valTy) = unpackMapTy(mapTy)
-          .getOrElse(
-            throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-          )
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val (keyTy, valTy) = unpackMapTy(mapCoercedTy).get
         val expFunTy = FunType(Nil, List(keyTy, valTy), booleanType)
         funArg match {
           case lambda: Lambda =>
             check.checkLambda(lambda, expFunTy, env)
           case _ =>
-            if (!subtype.subType(funArgTy, expFunTy))
-              throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
+            coerce(funArg, funArgTy, expFunTy)
         }
-        (narrow.setAllFieldsOptional(mapTy), env1)
+        (narrow.setAllFieldsOptional(mapCoercedTy), env1)
 
       case RemoteId("maps", "find", 2) =>
         val List(key, map) = args
         val List(keyTy, mapTy) = argTys
-        val anyMapTy = DictMap(AnyType, AnyType)
-        if (!subtype.subType(mapTy, anyMapTy))
-          throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = narrow.asMapType(mapTy)
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val mapType = narrow.asMapType(mapCoercedTy)
         val valTy = keyTy match {
           case AtomLitType(key) =>
             narrow.getValType(key, mapType)
@@ -250,10 +242,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "fold", 3) =>
         val List(funArg, _acc, collection) = args
         val List(funArgTy, accTy1, collectionTy) = argTys
-        val (keyTy, valTy) = unpackMapTy(collectionTy)
-          .getOrElse(
-            throw ExpectedSubtype(collection.pos, collection, expected = anyMapTy, got = collectionTy)
-          )
+        val collectionCoercedTy = coerce(collection, collectionTy, anyMapTy)
+        val (keyTy, valTy) = unpackMapTy(collectionCoercedTy).get
         def getAccumulatorTys(accTy: Type): List[Type] = funArg match {
           case lambda: Lambda =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
@@ -262,10 +252,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             accTy1 :: vTys
           case _ =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), AnyType)
-            if (!subtype.subType(funArgTy, expFunTy))
-              throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
-
-            val vTys = narrow.asFunType(funArgTy, 3).get.map(_.resTy)
+            val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
+            val vTys = narrow.asFunType(funArgCoercedTy, 3).get.map(_.resTy)
             accTy1 :: vTys
         }
         def validateAccumulatorTy(accTy: Type): Unit = funArg match {
@@ -273,8 +261,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             check.checkLambda(lambda, FunType(Nil, List(keyTy, valTy, accTy), accTy), env)
           case _ =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
-            if (!subtype.subType(funArgTy, expFunTy))
-              throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
+            coerce(funArg, funArgTy, expFunTy)
         }
         val accTys2 = getAccumulatorTys(accTy1)
         val accTy3 = subtype.join(getAccumulatorTys(narrow.joinAndMergeShapes(accTys2)))
@@ -284,10 +271,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "get", 2) | RemoteId("erlang", "map_get", 2) =>
         val List(key, map) = args
         val List(keyTy, mapTy) = argTys
-        val anyMapTy = DictMap(AnyType, AnyType)
-        if (!subtype.subType(mapTy, anyMapTy))
-          throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = narrow.asMapType(mapTy)
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val mapType = narrow.asMapType(mapCoercedTy)
         val atomKeys = narrow.asAtomLits(keyTy)
         atomKeys match {
           case Some(atoms) =>
@@ -307,23 +292,19 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("erlang", "element", 2) =>
         val List(index, tuple) = args
         val List(indexTy, tupleTy) = argTys
-
-        def validate(): Unit = {
-          if (!subtype.subType(indexTy, NumberType))
-            throw ExpectedSubtype(index.pos, index, expected = NumberType, got = indexTy)
-          if (!subtype.subType(tupleTy, AnyTupleType))
-            throw ExpectedSubtype(tuple.pos, tuple, expected = AnyTupleType, got = tupleTy)
-        }
-        validate()
+        val _ = coerce(index, indexTy, NumberType)
+        val tupleCoercedTy = coerce(tuple, tupleTy, AnyTupleType)
 
         val elemTy = index match {
           case IntLit(Some(n)) =>
-            narrow.getTupleElement(tupleTy, n) match {
+            narrow.getTupleElement(tupleCoercedTy, n) match {
               case Right(elemTy) => elemTy
-              case Left(tupLen)  => throw IndexOutOfBounds(callPos, index, n, tupLen)
+              case Left(tupLen) =>
+                diagnosticsInfo.add(IndexOutOfBounds(callPos, index, n, tupLen))
+                DynamicType
             }
           case _ =>
-            narrow.getAllTupleElements(tupleTy)
+            narrow.getAllTupleElements(tupleCoercedTy)
         }
 
         (elemTy, env1)
@@ -331,10 +312,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "get", 3) =>
         val List(key, map, defaultVal) = args
         val List(keyTy, mapTy, defaultValTy) = argTys
-        val anyMapTy = DictMap(AnyType, AnyType)
-        if (!subtype.subType(mapTy, anyMapTy))
-          throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = narrow.asMapType(mapTy)
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val mapType = narrow.asMapType(mapCoercedTy)
         val atomKeys = narrow.asAtomLits(keyTy)
         atomKeys match {
           case Some(atoms) =>
@@ -351,10 +330,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case AtomLit(keyAtom) =>
             val List(_, valTy, mapTy) = argTys
             val anyMap = DictMap(AnyType, AnyType)
-            if (!subtype.subType(mapTy, anyMap)) {
-              throw ExpectedSubtype(map.pos, map, expected = anyMap, got = mapTy)
-            }
-            val resTy = narrow.adjustMapType(mapTy, AtomLitType(keyAtom), valTy)
+            val mapCoercedTy = coerce(map, mapTy, anyMap)
+            val resTy = narrow.adjustMapType(mapCoercedTy, AtomLitType(keyAtom), valTy)
             (resTy, env1)
           case _ =>
             val ft = util.getFunType(fqn).get
@@ -365,9 +342,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "map", 2) =>
         val List(funArg, map) = args
         val List(funArgTy, mapTy) = argTys
-        if (!subtype.subType(mapTy, anyMapTy))
-          throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = narrow.asMapType(mapTy)
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val mapType = narrow.asMapType(mapCoercedTy)
         val (keyTy, valTy) = (narrow.getKeyType(mapType), narrow.getValType(mapType))
         val expFunTy = FunType(Nil, List(keyTy, valTy), AnyType)
         val resValTy = funArg match {
@@ -376,10 +352,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), lamEnv, Set.empty)).map(_._1)
             subtype.join(vTys)
           case _ =>
-            if (!subtype.subType(funArgTy, expFunTy))
-              throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
-
-            val vTys = narrow.asFunType(funArgTy, 2).get.map(_.resTy)
+            val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
+            val vTys = narrow.asFunType(funArgCoercedTy, 2).get.map(_.resTy)
             subtype.join(vTys)
         }
         (DictMap(keyTy, resValTy), env1)
@@ -387,9 +361,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case RemoteId("maps", "filtermap", 2) =>
         val List(funArg, map) = args
         val List(funArgTy, mapTy) = argTys
-        if (!subtype.subType(mapTy, anyMapTy))
-          throw ExpectedSubtype(map.pos, map, expected = anyMapTy, got = mapTy)
-        val mapType = narrow.asMapType(mapTy)
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val mapType = narrow.asMapType(mapCoercedTy)
         val (keyTy, valTy) = (narrow.getKeyType(mapType), narrow.getValType(mapType))
         val tupleTrueAnyTy = TupleType(List(trueType, AnyType))
         val expRet = subtype.join(booleanType, tupleTrueAnyTy)
@@ -407,9 +380,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
               lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), lamEnv, Set.empty)).map(_._1)
             }
           case _ =>
-            if (!subtype.subType(funArgTy, expFunTy))
-              throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
-            narrow.asFunType(funArgTy, 2).get.map(_.resTy)
+            val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
+            narrow.asFunType(funArgCoercedTy, 2).get.map(_.resTy)
         }
         def funResultsToValTy(tys: Iterable[Type], defaultTy: Type, pos: Pos): Type =
           tys.foldLeft(NoneType: Type)((memo, ty) => subtype.join(memo, funResultToValTy(ty, defaultTy, pos)))
@@ -423,17 +395,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case ty if subtype.subType(ty, booleanType) =>
             defaultTy
           case _ =>
-            throw new IllegalArgumentException(s"unexpected $ty")
+            DynamicType
         }
         val resItemTy = funResultsToValTy(funResTys, valTy, callPos)
         (narrow.setAllFieldsOptional(mapTy, Some(resItemTy)), env1)
 
       case RemoteId("maps", "remove", 2) =>
-        val List(keyArg, mapArg) = args
+        val List(keyArg, map) = args
         val List(keyTy, mapTy) = argTys
-        if (!subtype.subType(mapTy, anyMapTy)) {
-          throw ExpectedSubtype(mapArg.pos, mapArg, expected = anyMapTy, got = mapTy)
-        }
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         def remove(mapTy: Type): Type = mapTy match {
           case shape: ShapeMap =>
             keyTy match {
@@ -454,7 +424,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             throw new IllegalStateException(s"unexpected non-map $unexpected")
         }
 
-        val ty = remove(narrow.asMapType(mapTy))
+        val ty = remove(narrow.asMapType(mapCoercedTy))
         (ty, env1)
 
       case RemoteId("maps", "with", 2) =>
@@ -484,15 +454,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             case _ => None
           }
         }
-        val List(keysArg, mapArg) = args
+        val List(keysArg, map) = args
         val List(keysTy, mapTy) = argTys
-        if (!subtype.subType(mapTy, anyMapTy)) {
-          throw ExpectedSubtype(mapArg.pos, mapArg, expected = anyMapTy, got = mapTy)
-        }
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val expKeysTy = ListType(AnyType)
-        if (!subtype.subType(keysTy, expKeysTy)) {
-          throw ExpectedSubtype(keysArg.pos, keysArg, expected = expKeysTy, got = keysTy)
-        }
+        val _ = coerce(keysArg, keysTy, expKeysTy)
         def `with`(mapTy: Type, keysToKeep: Set[String]): Type = mapTy match {
           case shape: ShapeMap =>
             val props = shape.props.filter(prop => keysToKeep(prop.key))
@@ -506,7 +472,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case unexpected =>
             throw new IllegalStateException(s"unexpected non-map $unexpected")
         }
-        val mapTys = narrow.asMapType(mapTy)
+        val mapTys = narrow.asMapType(mapCoercedTy)
         getKeysToKeep(keysArg, Nil).map(_.toSet) match {
           case None       => (narrow.setAllFieldsOptional(mapTys), env1)
           case Some(keys) => (`with`(mapTys, keys), env1)
@@ -539,15 +505,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             case _ => None
           }
         }
-        val List(keysArg, mapArg) = args
+        val List(keysArg, map) = args
         val List(keysTy, mapTy) = argTys
-        if (!subtype.subType(mapTy, anyMapTy)) {
-          throw ExpectedSubtype(mapArg.pos, mapArg, expected = anyMapTy, got = mapTy)
-        }
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val expKeysTy = ListType(AnyType)
-        if (!subtype.subType(keysTy, expKeysTy)) {
-          throw ExpectedSubtype(keysArg.pos, keysArg, expected = expKeysTy, got = keysTy)
-        }
+        val _ = coerce(keysArg, keysTy, expKeysTy)
         def without(mapTy: Type, keysToRemove: Set[String]): Type = mapTy match {
           case shape: ShapeMap =>
             val props = shape.props.filterNot(prop => keysToRemove(prop.key))
@@ -561,7 +523,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case unexpected =>
             throw new IllegalStateException(s"unexpected non-map $unexpected")
         }
-        val mapTys = narrow.asMapType(mapTy)
+        val mapTys = narrow.asMapType(mapCoercedTy)
         getKeysToRemove(keysArg, Nil).map(_.toSet) match {
           case None       => (narrow.setAllFieldsOptional(mapTys), env1)
           case Some(keys) => (without(mapTys, keys), env1)
@@ -574,10 +536,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         access match {
           case "size" => (NumberType, env1)
           case "fields" =>
-            val record =
-              util.getRecord(pipelineContext.module, recName).getOrElse(throw UnboundRecord(name.pos, recName))
-            val fields = record.fields.keys.map(AtomLitType)
-            (ListType(UnionType(fields.toSet)), env1)
+            val record = util.getRecord(pipelineContext.module, recName)
+            record match {
+              case Some(recDecl) =>
+                val fields = recDecl.fields.keys.map(AtomLitType)
+                (ListType(UnionType(fields.toSet)), env1)
+              case None =>
+                diagnosticsInfo.add(UnboundRecord(name.pos, recName))
+                (DynamicType, env1)
+            }
         }
 
       case rid =>

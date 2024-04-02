@@ -19,11 +19,12 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private val elabApply = pipelineContext.elabApply
   private val narrow = pipelineContext.narrow
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def elabOverloaded(expr: Expr, remoteId: RemoteId, args: List[Expr], env: Env): (Type, Env) = {
     if (!pipelineCtx.gradualTyping && hasLambda(args)) {
-      throw NotSupportedLambdaInOverloadedCall(expr.pos, expr)
+      diagnosticsInfo.add(NotSupportedLambdaInOverloadedCall(expr.pos, expr))
     }
     val depFunSpec = util.getOverloadedSpec(remoteId).get
     val (argTys, env1) = elab.elabExprs(args, env)
@@ -32,10 +33,9 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
         val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
         (resTy, env1)
       case _ =>
-        if (pipelineCtx.gradualTyping)
-          (DynamicType, env1)
-        else
-          throw NoSpecialType(expr.pos, expr, argTys)
+        if (!pipelineCtx.gradualTyping)
+          diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
+        (DynamicType, env1)
     }
   }
 

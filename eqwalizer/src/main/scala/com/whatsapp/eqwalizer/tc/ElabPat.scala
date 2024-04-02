@@ -18,6 +18,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private lazy val util = pipelineContext.util
   private lazy val check = pipelineContext.check
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private lazy val typeInfo = pipelineContext.typeInfo
 
   def elabPats(pats: List[Pat], tys: List[Type], env: Env): (List[Type], Env) = {
@@ -112,7 +113,13 @@ final class ElabPat(pipelineContext: PipelineContext) {
         (patType, env)
       case PatRecord(recName, namedFields, genFieldOpt) =>
         val recType = narrow.meet(t, RecordType(recName)(module))
-        val recDecl = util.getRecord(module, recName).getOrElse(throw UnboundRecord(pat.pos, recName))
+        val recDecl =
+          util.getRecord(module, recName) match {
+            case Some(recDecl) => recDecl
+            case None =>
+              diagnosticsInfo.add(UnboundRecord(pat.pos, recName))
+              return (DynamicType, env)
+          }
         var envAcc = env
         var refinedFields: Map[String, Type] = Map.empty
         for (namedField <- namedFields) {
