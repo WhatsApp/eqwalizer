@@ -66,6 +66,8 @@ package object tc {
       options.checkRedundantGuards.getOrElse(config.checkRedundantGuards)
     val typeInfo: TypeInfo =
       new TypeInfo(this)
+    val diagnosticsInfo: DiagnosticsInfo =
+      new DiagnosticsInfo()
     val errorDepth: Int =
       options.errorDepth.getOrElse(config.errorDepth)
   }

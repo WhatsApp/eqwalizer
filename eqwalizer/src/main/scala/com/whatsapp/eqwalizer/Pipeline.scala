@@ -92,7 +92,8 @@ object Pipeline {
     else
       try {
         ctx.check.checkFun(f, spec)
-        FuncDecl(f.id, errors = Nil)(f.pos)
+        val errors = ctx.diagnosticsInfo.popErrors()
+        FuncDecl(f.id, errors)(f.pos)
       } catch {
         case te: TypeError =>
           FuncDecl(f.id, errors = List(te))(f.pos)
@@ -127,7 +128,8 @@ object Pipeline {
   private def checkOverloadedFun(ctx: PipelineContext, f: FunDecl, overloadedSpec: OverloadedFunSpec): FuncDecl = {
     try {
       ctx.check.checkOverloadedFun(f, overloadedSpec)
-      FuncDecl(f.id, errors = Nil)(f.pos)
+      val errors = ctx.diagnosticsInfo.popErrors()
+      FuncDecl(f.id, errors)(f.pos)
     } catch {
       case te: TypeError =>
         FuncDecl(f.id, errors = List(te))(f.pos)
