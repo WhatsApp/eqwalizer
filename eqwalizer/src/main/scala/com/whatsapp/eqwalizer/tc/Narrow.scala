@@ -560,12 +560,14 @@ class Narrow(pipelineContext: PipelineContext) {
   private def mergeShapes(s1: ShapeMap, s2: ShapeMap): ShapeMap = {
     var optProps = mutable.HashMap.empty[String, Type]
     var reqProps = mutable.HashMap.empty[String, Type]
-    val commonKeys = s1.props.map(_.key).toSet & s2.props.map(_.key).toSet
+    val commonReqKeys = s1.props.collect { case ReqProp(key, _) => key }.toSet & s2.props.collect {
+      case ReqProp(key, _) => key
+    }.toSet
     for (p <- s1.props.toSet ++ s2.props.toSet) {
       p match {
         case OptProp(key, tp) => optProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
         case ReqProp(key, tp) =>
-          if (commonKeys.contains(key)) {
+          if (commonReqKeys.contains(key)) {
             reqProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
           } else {
             optProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
