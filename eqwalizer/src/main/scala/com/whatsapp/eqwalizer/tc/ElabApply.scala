@@ -26,8 +26,8 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val elab = pipelineContext.elab
   private lazy val subtype = pipelineContext.subtype
   private lazy val constraints = pipelineContext.constraints
-  private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
+  private lazy val narrow = pipelineContext.narrow
   private lazy val variance = pipelineContext.variance
   private lazy val typeInfo = pipelineContext.typeInfo
   implicit val pipelineCtx = pipelineContext
@@ -115,7 +115,11 @@ class ElabApply(pipelineContext: PipelineContext) {
 
     typeInfo.setCollect(false)
     val (cs2, subst2) = inferenceRound(cs1, subst1)
-    val (cs3, subst3) = inferenceRound(cs2, subst2)
+    val subst2Merged = subst2.map {
+      case (v, UnionType(tys)) => (v, narrow.joinAndMergeShapes(tys))
+      case (v, ty)             => (v, ty)
+    }
+    val (cs3, subst3) = inferenceRound(cs2, subst2Merged)
     typeInfo.setCollect(true)
 
     // Then we check the lambdas and use the inferred return types of the lambdas for a final round of constraint generation
