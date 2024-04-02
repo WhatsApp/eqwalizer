@@ -10,6 +10,8 @@ import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
 import com.whatsapp.eqwalizer.ast.{RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
 
+import scala.collection.mutable
+
 class Narrow(pipelineContext: PipelineContext) {
   private val subtype = pipelineContext.subtype
   private val util = pipelineContext.util
@@ -554,4 +556,42 @@ class Narrow(pipelineContext: PipelineContext) {
         asAtomLits(body)
       case _ => None
     }
+
+  private def mergeShapes(s1: ShapeMap, s2: ShapeMap): ShapeMap = {
+    var optProps = mutable.HashMap.empty[String, Type]
+    var reqProps = mutable.HashMap.empty[String, Type]
+    val commonKeys = s1.props.map(_.key).toSet & s2.props.map(_.key).toSet
+    for (p <- s1.props.toSet ++ s2.props.toSet) {
+      p match {
+        case OptProp(key, tp) => optProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
+        case ReqProp(key, tp) =>
+          if (commonKeys.contains(key)) {
+            reqProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
+          } else {
+            optProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
+          }
+      }
+    }
+    val allProps = optProps.map { case (k, t) => OptProp(k, t) }.toList ++ reqProps.map { case (k, t) =>
+      ReqProp(k, t)
+    }.toList
+    ShapeMap(allProps)
+  }
+
+  def joinAndMergeShapes(tys: Iterable[Type]): Type = {
+    val (shapes, notShapes) = tys.partition {
+      case s: ShapeMap => true
+      case _           => false
+    }
+    val joinedNotShapes = subtype.join(notShapes)
+    val shapesCoerced = shapes.collect { case s: ShapeMap => s }
+    if (shapesCoerced.isEmpty) {
+      joinedNotShapes
+    } else {
+      subtype.join(
+        shapesCoerced.tail.foldLeft(shapesCoerced.head)((acc, shape) => mergeShapes(acc, shape)),
+        joinedNotShapes,
+      )
+    }
+  }
 }

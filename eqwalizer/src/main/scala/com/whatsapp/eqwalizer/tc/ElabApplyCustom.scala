@@ -254,19 +254,19 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           .getOrElse(
             throw ExpectedSubtype(collection.pos, collection, expected = anyMapTy, got = collectionTy)
           )
-        def getAccumulatorTy(accTy: Type): Type = funArg match {
+        def getAccumulatorTys(accTy: Type): List[Type] = funArg match {
           case lambda: Lambda =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
             val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy, accTy), lamEnv, Set.empty)).map(_._1)
-            subtype.join(accTy :: vTys)
+            accTy1 :: vTys
           case _ =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), AnyType)
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
 
             val vTys = narrow.asFunType(funArgTy, 3).get.map(_.resTy)
-            subtype.join(accTy :: vTys)
+            accTy1 :: vTys
         }
         def validateAccumulatorTy(accTy: Type): Unit = funArg match {
           case lambda: Lambda =>
@@ -276,8 +276,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             if (!subtype.subType(funArgTy, expFunTy))
               throw ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy)
         }
-        val accTy2 = getAccumulatorTy(accTy1)
-        val accTy3 = getAccumulatorTy(accTy2)
+        val accTys2 = getAccumulatorTys(accTy1)
+        val accTy3 = subtype.join(getAccumulatorTys(narrow.joinAndMergeShapes(accTys2)))
         validateAccumulatorTy(accTy3)
         (accTy3, env1)
 

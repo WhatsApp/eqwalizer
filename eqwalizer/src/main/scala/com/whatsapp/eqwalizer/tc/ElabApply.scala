@@ -26,6 +26,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val elab = pipelineContext.elab
   private lazy val subtype = pipelineContext.subtype
   private lazy val constraints = pipelineContext.constraints
+  private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
   private lazy val variance = pipelineContext.variance
   private lazy val typeInfo = pipelineContext.typeInfo
