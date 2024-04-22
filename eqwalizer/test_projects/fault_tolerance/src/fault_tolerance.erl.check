@@ -369,11 +369,11 @@ maps(M) ->                                 | ERROR   |
                                            |         | Expression has type:   'b'
                                            |         | Context expected type: number()
   M1 + M2.                                 |         | M1.
-                                           |         | Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
                                            |         | Context expected type: number()
                                            |         | ---
                                            |         | M2.
-                                           |         | Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
                                            |         | Context expected type: number()
                                            |         | ---
                                            |         | _ + _.

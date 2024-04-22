@@ -3623,7 +3623,7 @@
         "end": 3252
       },
       "lineAndCol": null,
-      "message": "Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}\nContext expected type: number()",
+      "message": "Expression has type:   #D{dynamic() => dynamic()}\nContext expected type: number()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M1",
@@ -3652,39 +3652,21 @@
             "got": {
               "DictMap": {
                 "k_type": {
-                  "UnionType": {
-                    "tys": [
-                      {
-                        "RemoteType": {
-                          "id": {
-                            "module": "eqwalizer",
-                            "name": "dynamic",
-                            "arity": 0
-                          }
-                        }
-                      },
-                      {
-                        "AtomLitType": {
-                          "atom": "id"
-                        }
-                      }
-                    ]
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
                   }
                 },
                 "v_type": {
-                  "UnionType": {
-                    "tys": [
-                      {
-                        "RemoteType": {
-                          "id": {
-                            "module": "eqwalizer",
-                            "name": "dynamic",
-                            "arity": 0
-                          }
-                        }
-                      },
-                      "NumberType"
-                    ]
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
                   }
                 }
               }
@@ -3778,7 +3760,7 @@
         "end": 3257
       },
       "lineAndCol": null,
-      "message": "Expression has type:   #D{dynamic() | 'id' => dynamic() | number()}\nContext expected type: number()",
+      "message": "Expression has type:   #D{dynamic() => dynamic()}\nContext expected type: number()",
       "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
       "code": "incompatible_types",
       "expressionOrNull": "M2",
@@ -3807,39 +3789,21 @@
             "got": {
               "DictMap": {
                 "k_type": {
-                  "UnionType": {
-                    "tys": [
-                      {
-                        "RemoteType": {
-                          "id": {
-                            "module": "eqwalizer",
-                            "name": "dynamic",
-                            "arity": 0
-                          }
-                        }
-                      },
-                      {
-                        "AtomLitType": {
-                          "atom": "id"
-                        }
-                      }
-                    ]
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
                   }
                 },
                 "v_type": {
-                  "UnionType": {
-                    "tys": [
-                      {
-                        "RemoteType": {
-                          "id": {
-                            "module": "eqwalizer",
-                            "name": "dynamic",
-                            "arity": 0
-                          }
-                        }
-                      },
-                      "NumberType"
-                    ]
+                  "RemoteType": {
+                    "id": {
+                      "module": "eqwalizer",
+                      "name": "dynamic",
+                      "arity": 0
+                    }
                   }
                 }
               }

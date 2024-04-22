@@ -475,6 +475,8 @@ class Narrow(pipelineContext: PipelineContext) {
         BoundedDynamicType(adjustMapType(bound, keyT, valT))
       case shapeMap: ShapeMap =>
         adjustShapeMap(shapeMap, keyT, valT)
+      case DictMap(kT, vT) if subtype.isDynamicType(kT) && subtype.isDynamicType(vT) =>
+        DictMap(kT, vT)
       case dictMap: DictMap =>
         adjustDictMap(dictMap, keyT, valT)
       case UnionType(elems) =>

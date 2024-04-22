@@ -124,7 +124,7 @@ generic(_, _) -> error(stub).              | OK      |
     (dyn_map(), #{a => atom()}) -> ok.     |         |
 use_generic_shape(DM, S) ->                | ERROR   |
   generic(DM, S).                          |         | generic(DM, S).
-                                           |         | Expression has type:   #S{a => atom()}
+                                           |         | Expression has type:   dyn_map() | #S{a => atom()}
                                            |         | Context expected type: 'ok'
                                            |         |
 -spec tuple_mismatch(dyn_map()) ->         |         |
