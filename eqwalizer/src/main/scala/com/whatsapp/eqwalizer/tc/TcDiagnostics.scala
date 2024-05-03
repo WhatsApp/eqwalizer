@@ -150,6 +150,11 @@ object TcDiagnostics {
     def errorName = "ambiguous_union"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
+  case class ClauseNotCovered(pos: Pos) extends TypeError {
+    override val msg: String = "Clause is not covered by spec"
+    val errorName = "clause_not_covered"
+    override val erroneousExpr: Option[Expr] = None
+  }
 
   implicit val codec: JsonValueCodec[TypeError] = JsonCodecMaker.make(
     CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {

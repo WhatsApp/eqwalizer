@@ -46,6 +46,7 @@ package object eqwalizer {
       eqwater: Boolean,
       tolerateErrors: Boolean,
       checkRedundantGuards: Boolean,
+      clauseCoverage: Boolean,
       mode: Mode.Mode,
       errorDepth: Int,
   ) {
@@ -76,6 +77,7 @@ package object eqwalizer {
       eqwater = config.getBoolean("eqwater"),
       tolerateErrors = config.getBoolean("tolerate_errors"),
       checkRedundantGuards = config.getBoolean("check_redundant_guards"),
+      clauseCoverage = config.getBoolean("clause_coverage"),
       mode,
       errorDepth = config.getInt("error_depth"),
     )

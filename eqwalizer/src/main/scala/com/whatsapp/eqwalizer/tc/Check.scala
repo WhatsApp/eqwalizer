@@ -35,10 +35,17 @@ final class Check(pipelineContext: PipelineContext) {
     if (occurrence.eqwater(f.clauses)) {
       val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Map.empty)
       f.clauses
+        .lazyZip(1 to f.clauses.length)
         .lazyZip(clauseEnvs)
-        .map((clause, occEnv) => checkClause(clause, argTys, resTy, occEnv, Set.empty))
+        .foreach((clause, index, occEnv) =>
+          checkClause(clause, argTys, resTy, occEnv, Set.empty, checkCoverage = (index != f.clauses.length))
+        )
     } else {
-      f.clauses.map(checkClause(_, argTys, resTy, Env.empty, Set.empty))
+      f.clauses
+        .lazyZip(1 to f.clauses.length)
+        .foreach((clause, index) =>
+          checkClause(clause, argTys, resTy, Env.empty, Set.empty, checkCoverage = (index != f.clauses.length))
+        )
     }
   }
 
@@ -96,6 +103,7 @@ final class Check(pipelineContext: PipelineContext) {
       resTy: Type,
       env0: Env,
       exportedVars: Set[String],
+      checkCoverage: Boolean = false,
   ): Env = {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env0, patVars)
@@ -105,6 +113,9 @@ final class Check(pipelineContext: PipelineContext) {
     typeInfo.setCollect(true)
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
+    if (pipelineContext.clauseCoverage && checkCoverage && env4.exists { case (_, ty) => subtype.isNoneType(ty) }) {
+      diagnosticsInfo.add(ClauseNotCovered(clause.pos))
+    }
     val env5 = checkBody(clause.body, resTy, env4)
     util.exitScope(env0, env5, exportedVars)
   }

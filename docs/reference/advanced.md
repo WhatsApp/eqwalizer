@@ -172,3 +172,9 @@ a given function or module.
 
 Enable with `EQWALIZER_CHECK_REDUNDANT_GUARDS=true`. With this setting, eqWAlizer will
 attempt to detect and report redundant type assertions. See [redundant_guard error](./errors.md#redundant_guard).
+
+### Spec coverage of function clauses
+
+Enable checks of proper coverage of function clauses by specs using `EQWALIZER_CLAUSE_COVERAGE=true`.
+By default, eqWAlizer will not check coverage of function clauses by the corresponding spec,
+hence a clause may be implicitly left unchecked.

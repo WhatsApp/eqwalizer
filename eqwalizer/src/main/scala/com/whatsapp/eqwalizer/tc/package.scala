@@ -70,5 +70,6 @@ package object tc {
       new DiagnosticsInfo()
     val errorDepth: Int =
       options.errorDepth.getOrElse(config.errorDepth)
+    val clauseCoverage: Boolean = config.clauseCoverage
   }
 }
