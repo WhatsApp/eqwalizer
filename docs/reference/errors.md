@@ -593,3 +593,25 @@ which branch to use, e.g.:
 -spec apply_generic({ok, atom()}) -> {ok, atom()}.
 apply_generic(V) -> generic_function(ok, {right, V}).
 ```
+
+
+### clause_not_covered
+
+This error indicates that a clause is not properly covered by a spec, and will
+thus be only partially checked by eqWAlizer.
+
+```Erlang
+-spec do_something({ok, atom()}) -> atom().
+do_something({ok, A}) -> A;
+do_something(err) -> err;
+do_something(_) -> exit(badarg).
+```
+
+In the above example, the second clause matches when the argument is `err`,
+even though the spec does not allow such an argument. Hence, the clause is
+not covered.
+
+To fix it, add the `err` case to the spec as follows:
+```Erlang
+-spec do_something({ok, atom()} | err) -> atom().
+```
