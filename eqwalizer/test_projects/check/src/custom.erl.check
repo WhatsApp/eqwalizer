@@ -2920,8 +2920,15 @@ maps_remove2(M) ->                         | OK      |
 ) -> #{a := integer()}.                    |         |
 maps_remove3_neg(A, M) ->                  | ERROR   |
     maps:remove(A, M).                     |         | maps:remove(A, M).
-                                           |         | Expression has type:   dict  map #D{atom() => number()}
-                                           |         | Context expected type: shape map #S{a := number()}
+                                           |         | Expression has type:   #S{a => number()}
+                                           |         | Context expected type: #S{a := number()}
+                                           |         | 
+                                           |         | These associations do not match:
+                                           |         | 
+                                           |         |   #S{
+                                           |         | -    a := ...
+                                           |         | +    a => ...
+                                           |         |   }
                                            |         |
 -spec maps_remove4(                        |         |
     #{a := integer(), b := atom()} |       |         |

@@ -411,8 +411,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
                 val props = shape.props.filter(_.key != key)
                 shape.copy(props = props)
               case _ =>
-                val valTy = subtype.join(shape.props.map(_.tp))
-                DictMap(AtomType, valTy)
+                ShapeMap(shape.props.map { case ReqProp(k, v) => OptProp(k, v); case prop => prop })
             }
           case UnionType(tys) =>
             subtype.join(tys.map(remove))
