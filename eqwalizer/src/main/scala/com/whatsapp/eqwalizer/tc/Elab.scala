@@ -24,6 +24,7 @@ final class Elab(pipelineContext: PipelineContext) {
   private lazy val util = pipelineContext.util
   private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
+  private lazy val customReturn = pipelineContext.customReturn
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
@@ -143,8 +144,8 @@ final class Elab(pipelineContext: PipelineContext) {
             case Some(ft) =>
               val (argTys, env1) = elabExprs(args, env)
               var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
-              if (CustomReturn.isCustomReturn(funId))
-                resTy = CustomReturn.customizeResultType(funId, args, resTy)
+              if (customReturn.isCustomReturn(funId))
+                resTy = customReturn.customizeResultType(funId, args, argTys, resTy)
               (resTy, env1)
             case None =>
               diagnosticsInfo.add(UnboundVar(expr.pos, id.toString))
@@ -234,8 +235,8 @@ final class Elab(pipelineContext: PipelineContext) {
             case Some(ft) =>
               val (argTys, env1) = elabExprs(args, env)
               var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
-              if (CustomReturn.isCustomReturn(fqn))
-                resTy = CustomReturn.customizeResultType(fqn, args, resTy)
+              if (customReturn.isCustomReturn(fqn))
+                resTy = customReturn.customizeResultType(fqn, args, argTys, resTy)
               (resTy, env1)
             case None =>
               diagnosticsInfo.add(UnboundVar(expr.pos, fqn.toString))

@@ -12,7 +12,8 @@ import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, Tuple}
 import com.whatsapp.eqwalizer.ast.RemoteId
 import com.whatsapp.eqwalizer.ast.Types.{BinaryType, Type, stringType}
 
-object CustomReturn {
+final class CustomReturn(pipelineContext: PipelineContext) {
+  private lazy val util = pipelineContext.util
   private lazy val custom: Set[RemoteId] =
     Set(
       RemoteId("re", "replace", 4)
@@ -21,14 +22,18 @@ object CustomReturn {
   def isCustomReturn(remoteId: RemoteId): Boolean =
     custom(remoteId)
 
-  def customizeResultType(remoteId: RemoteId, args: List[Expr], resTy: Type): Type =
-    (remoteId, args) match {
-      case (RemoteId("re", "replace", 4), List(_, _, _, options)) =>
-        findReturn(options) match {
-          case Some("binary") =>
-            BinaryType
-          case Some("list") =>
-            stringType
+  def customizeResultType(remoteId: RemoteId, args: List[Expr], argTys: List[Type], resTy: Type): Type =
+    remoteId match {
+      case RemoteId("re", "replace", 4) =>
+        args match {
+          case List(_, _, _, options) =>
+            findReturn(options) match {
+              case Some("binary") =>
+                BinaryType
+              case Some("list") =>
+                stringType
+              case _ => resTy
+            }
           case _ => resTy
         }
       case _ =>

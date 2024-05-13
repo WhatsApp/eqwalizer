@@ -24,6 +24,7 @@ final class Check(pipelineContext: PipelineContext) {
   private lazy val util = pipelineContext.util
   private lazy val narrow = pipelineContext.narrow
   private lazy val occurrence = pipelineContext.occurrence
+  private lazy val customReturn = pipelineContext.customReturn
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   lazy val freshen = new TypeVars.VarFreshener().freshen _
@@ -541,8 +542,8 @@ final class Check(pipelineContext: PipelineContext) {
   private def checkApply(funId: RemoteId, expr: Expr, ft: FunType, args: List[Expr], resTy: Type, env: Env): Env = {
     val (argTys, env1) = elab.elabExprs(args, env)
     var ftResTy = elabApply.elabApply(ft, args, argTys, env1)
-    if (CustomReturn.isCustomReturn(funId))
-      ftResTy = CustomReturn.customizeResultType(funId, args, ftResTy)
+    if (customReturn.isCustomReturn(funId))
+      ftResTy = customReturn.customizeResultType(funId, args, argTys, ftResTy)
     if (!subtype.subType(ftResTy, resTy))
       diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy))
     env1

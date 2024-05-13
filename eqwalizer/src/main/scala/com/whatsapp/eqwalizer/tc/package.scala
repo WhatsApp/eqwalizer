@@ -57,6 +57,8 @@ package object tc {
       new ElabPat(this)
     val occurrence: Occurrence =
       new Occurrence(this)
+    val customReturn: CustomReturn =
+      new CustomReturn(this)
     val unlimitedRefinement: Boolean = {
       options.unlimitedRefinement.getOrElse(false)
     }
