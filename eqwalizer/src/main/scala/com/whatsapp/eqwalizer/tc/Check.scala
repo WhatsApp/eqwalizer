@@ -542,7 +542,7 @@ final class Check(pipelineContext: PipelineContext) {
     val (argTys, env1) = elab.elabExprs(args, env)
     var ftResTy = elabApply.elabApply(ft, args, argTys, env1)
     if (CustomReturn.isCustomReturn(funId))
-      ftResTy = CustomReturn.customizeResultType(funId, args, resTy)
+      ftResTy = CustomReturn.customizeResultType(funId, args, ftResTy)
     if (!subtype.subType(ftResTy, resTy))
       diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy))
     env1
