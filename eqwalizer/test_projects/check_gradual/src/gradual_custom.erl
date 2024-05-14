@@ -223,3 +223,77 @@ filename_join_1_dyn2(Dyn) ->
   Res = filename:join([Dyn, Dyn]),
   eqwalizer:reveal_type(Res),
   Res.
+
+-spec min1(
+    integer(),
+    integer() | undefined
+) -> integer().
+min1(X, Y) ->
+  min(X, Y).
+
+-spec min2(
+    integer() | undefined,
+    integer()
+) -> integer().
+min2(X, Y) ->
+  5 + min(X, Y).
+
+-spec min3_neg(
+    number() | undefined,
+    number() | undefined
+) -> number().
+min3_neg(X, Y) -> min(X, Y).
+
+-spec min4(
+    number(),
+    atom()
+) -> number().
+min4(X, Y) -> min(X, Y).
+
+-spec min5_neg(
+    number(),
+    atom() | binary()
+) -> number().
+min5_neg(X, Y) -> min(X, Y).
+
+-spec min6_neg(
+    number() | dynamic(),
+    number() | atom() | dynamic()
+) -> number().
+min6_neg(X, Y) -> min(X, Y).
+
+-spec min7_neg(
+    number() | dynamic(),
+    atom() | dynamic()
+) -> number().
+min7_neg(X, Y) -> min(X, Y).
+
+-spec min8_neg(
+    dynamic() | atom() | none(),
+    dynamic() | {none()}
+) -> number().
+min8_neg(X, Y) ->
+  Y = min(X, Y),
+  eqwalizer:reveal_type(Y),
+  Y.
+
+-type version() :: {integer(), integer(), integer()}.
+
+-spec parse_version(binary()) -> version().
+parse_version(_) -> error(not_implemented).
+
+-spec repro(#{binary() => binary()}) -> version() | undefined.
+repro(Releases) ->
+  OldestAcceptableDate = <<>>,
+  maps:fold(
+    fun(Version, LaunchDate, OldestVersionTuple) ->
+      VersionTuple = parse_version(Version),
+      case OldestAcceptableDate =< LaunchDate of
+        true when OldestVersionTuple == undefined -> VersionTuple;
+        true -> min(VersionTuple, OldestVersionTuple);
+        _ -> OldestVersionTuple
+      end
+    end,
+    undefined,
+    Releases
+  ).

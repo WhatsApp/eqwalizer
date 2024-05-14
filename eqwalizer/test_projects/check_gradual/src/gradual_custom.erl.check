@@ -260,3 +260,120 @@ filename_join_1_dyn2(Dyn) ->               | ERROR   |
   eqwalizer:reveal_type(Res),              |         | file:filename_all()
 
   Res.                                     |         |
+                                           |         |
+-spec min1(                                |         |
+    integer(),                             |         |
+    integer() | undefined                  |         |
+) -> integer().                            |         |
+min1(X, Y) ->                              | ERROR   |
+  min(X, Y).                               |         | erlang:min(X, Y).
+                                           |         | Expression has type:   number() | number() | 'undefined'
+                                           |         | Context expected type: number()
+                                           |         | 
+                                           |         |   number() | number() | 'undefined' is not compatible with number()
+                                           |         |   because
+                                           |         |   'undefined' is not compatible with number()
+                                           |         |
+-spec min2(                                |         |
+    integer() | undefined,                 |         |
+    integer()                              |         |
+) -> integer().                            |         |
+min2(X, Y) ->                              | ERROR   |
+  5 + min(X, Y).                           |         | erlang:min(X, Y).
+                                           |         | Expression has type:   number() | 'undefined' | number()
+                                           |         | Context expected type: number()
+                                           |         | 
+                                           |         |   number() | 'undefined' | number() is not compatible with number()
+                                           |         |   because
+                                           |         |   'undefined' is not compatible with number()
+                                           |         |
+-spec min3_neg(                            |         |
+    number() | undefined,                  |         |
+    number() | undefined                   |         |
+) -> number().                             |         |
+min3_neg(X, Y) -> min(X, Y).               | ERROR   | erlang:min(X, Y).
+                                           |         | Expression has type:   number() | 'undefined'
+                                           |         | Context expected type: number()
+                                           |         | 
+                                           |         |   number() | 'undefined' is not compatible with number()
+                                           |         |   because
+                                           |         |   'undefined' is not compatible with number()
+                                           |         |
+-spec min4(                                |         |
+    number(),                              |         |
+    atom()                                 |         |
+) -> number().                             |         |
+min4(X, Y) -> min(X, Y).                   | ERROR   | erlang:min(X, Y).
+                                           |         | Expression has type:   number() | atom()
+                                           |         | Context expected type: number()
+                                           |         | 
+                                           |         |   number() | atom() is not compatible with number()
+                                           |         |   because
+                                           |         |   atom() is not compatible with number()
+                                           |         |
+-spec min5_neg(                            |         |
+    number(),                              |         |
+    atom() | binary()                      |         |
+) -> number().                             |         |
+min5_neg(X, Y) -> min(X, Y).               | ERROR   | erlang:min(X, Y).
+                                           |         | Expression has type:   number() | atom() | binary()
+                                           |         | Context expected type: number()
+                                           |         | 
+                                           |         |   number() | atom() | binary() is not compatible with number()
+                                           |         |   because
+                                           |         |   atom() is not compatible with number()
+                                           |         |
+-spec min6_neg(                            |         |
+    number() | dynamic(),                  |         |
+    number() | atom() | dynamic()          |         |
+) -> number().                             |         |
+min6_neg(X, Y) -> min(X, Y).               | ERROR   | erlang:min(X, Y).
+                                           |         | Expression has type:   number() | dynamic() | number() | atom() | dynamic()
+                                           |         | Context expected type: number()
+                                           |         | 
+                                           |         |   number() | dynamic() | number() | atom() | dynamic() is not compatible with number()
+                                           |         |   because
+                                           |         |   atom() is not compatible with number()
+                                           |         |
+-spec min7_neg(                            |         |
+    number() | dynamic(),                  |         |
+    atom() | dynamic()                     |         |
+) -> number().                             |         |
+min7_neg(X, Y) -> min(X, Y).               | ERROR   | erlang:min(X, Y).
+                                           |         | Expression has type:   number() | dynamic() | atom() | dynamic()
+                                           |         | Context expected type: number()
+                                           |         | 
+                                           |         |   number() | dynamic() | atom() | dynamic() is not compatible with number()
+                                           |         |   because
+                                           |         |   atom() is not compatible with number()
+                                           |         |
+-spec min8_neg(                            |         |
+    dynamic() | atom() | none(),           |         |
+    dynamic() | {none()}                   |         |
+) -> number().                             |         |
+min8_neg(X, Y) ->                          | ERROR   |
+  Y = min(X, Y),                           |         |
+  eqwalizer:reveal_type(Y),                |         | dynamic() | {none()}
+
+  Y.                                       |         |
+                                           |         |
+-type version() :: {integer(), integer(), ……         |
+                                           |         |
+-spec parse_version(binary()) -> version()……         |
+parse_version(_) -> error(not_implemented)…… OK      |
+                                           |         |
+-spec repro(#{binary() => binary()}) -> ve……         |
+repro(Releases) ->                         | OK      |
+  OldestAcceptableDate = <<>>,             |         |
+  maps:fold(                               |         |
+    fun(Version, LaunchDate, OldestVersion……         |
+      VersionTuple = parse_version(Version……         |
+      case OldestAcceptableDate =< LaunchD……         |
+        true when OldestVersionTuple == un……         |
+        true -> min(VersionTuple, OldestVe……         |
+        _ -> OldestVersionTuple            |         |
+      end                                  |         |
+    end,                                   |         |
+    undefined,                             |         |
+    Releases                               |         |
+  ).                                       |         |
