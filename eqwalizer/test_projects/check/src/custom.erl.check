@@ -1883,7 +1883,7 @@ min2(X, Y) ->                              | OK      |
     none().                                |         |
 min3_neg(X, Y) ->                          | ERROR   |
     erlang:min(X, Y).                      |         | erlang:min(X, Y).
-                                           |         | Expression has type:   atom() | number()
+                                           |         | Expression has type:   number()
                                            |         | Context expected type: none()
                                            |         |
 -spec max1(integer(), integer()) ->        |         |

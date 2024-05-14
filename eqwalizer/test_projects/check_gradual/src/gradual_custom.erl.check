@@ -265,27 +265,15 @@ filename_join_1_dyn2(Dyn) ->               | ERROR   |
     integer(),                             |         |
     integer() | undefined                  |         |
 ) -> integer().                            |         |
-min1(X, Y) ->                              | ERROR   |
-  min(X, Y).                               |         | erlang:min(X, Y).
-                                           |         | Expression has type:   number() | number() | 'undefined'
-                                           |         | Context expected type: number()
-                                           |         | 
-                                           |         |   number() | number() | 'undefined' is not compatible with number()
-                                           |         |   because
-                                           |         |   'undefined' is not compatible with number()
+min1(X, Y) ->                              | OK      |
+  min(X, Y).                               |         |
                                            |         |
 -spec min2(                                |         |
     integer() | undefined,                 |         |
     integer()                              |         |
 ) -> integer().                            |         |
-min2(X, Y) ->                              | ERROR   |
-  5 + min(X, Y).                           |         | erlang:min(X, Y).
-                                           |         | Expression has type:   number() | 'undefined' | number()
-                                           |         | Context expected type: number()
-                                           |         | 
-                                           |         |   number() | 'undefined' | number() is not compatible with number()
-                                           |         |   because
-                                           |         |   'undefined' is not compatible with number()
+min2(X, Y) ->                              | OK      |
+  5 + min(X, Y).                           |         |
                                            |         |
 -spec min3_neg(                            |         |
     number() | undefined,                  |         |
@@ -303,13 +291,7 @@ min3_neg(X, Y) -> min(X, Y).               | ERROR   | erlang:min(X, Y).
     number(),                              |         |
     atom()                                 |         |
 ) -> number().                             |         |
-min4(X, Y) -> min(X, Y).                   | ERROR   | erlang:min(X, Y).
-                                           |         | Expression has type:   number() | atom()
-                                           |         | Context expected type: number()
-                                           |         | 
-                                           |         |   number() | atom() is not compatible with number()
-                                           |         |   because
-                                           |         |   atom() is not compatible with number()
+min4(X, Y) -> min(X, Y).                   | OK      |
                                            |         |
 -spec min5_neg(                            |         |
     number(),                              |         |
