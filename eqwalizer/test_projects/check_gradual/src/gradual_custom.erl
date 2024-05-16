@@ -257,20 +257,20 @@ min4(X, Y) -> min(X, Y).
 min5_neg(X, Y) -> min(X, Y).
 
 -spec min6_neg(
-    number() | dynamic(),
-    number() | atom() | dynamic()
+    number() | eqwalizer:dynamic(),
+    number() | atom() | eqwalizer:dynamic()
 ) -> number().
 min6_neg(X, Y) -> min(X, Y).
 
 -spec min7_neg(
-    number() | dynamic(),
-    atom() | dynamic()
+    number() | eqwalizer:dynamic(),
+    atom() | eqwalizer:dynamic()
 ) -> number().
 min7_neg(X, Y) -> min(X, Y).
 
 -spec min8_neg(
-    dynamic() | atom() | none(),
-    dynamic() | {none()}
+    eqwalizer:dynamic() | atom() | none(),
+    eqwalizer:dynamic() | {none()}
 ) -> number().
 min8_neg(X, Y) ->
   Y = min(X, Y),
