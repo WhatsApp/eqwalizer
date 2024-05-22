@@ -40,8 +40,8 @@ class Narrow(pipelineContext: PipelineContext) {
           BoundedDynamicType(b1)
         case (DynamicType, BoundedDynamicType(b2)) =>
           BoundedDynamicType(b2)
-        case (DynamicType, _) => DynamicType
-        case (_, DynamicType) => DynamicType
+        case (DynamicType, t) => BoundedDynamicType(t)
+        case (t, DynamicType) => BoundedDynamicType(t)
         case (BoundedDynamicType(b1), BoundedDynamicType(b2)) =>
           BoundedDynamicType(meetAux(b1, b2, seen))
         case (BoundedDynamicType(b1), _) =>

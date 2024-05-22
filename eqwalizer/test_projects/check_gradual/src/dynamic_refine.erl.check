@@ -95,7 +95,7 @@ refine_todo1_neg() ->                      | ERROR   |
     % It would be better to have           |         |
     % Dyn refined as [dynamic()] here      |         |
     is_list(Dyn) -> {Dyn}                  |         | {Dyn}.
-                                           |         | Expression has type:   {dynamic()}
+                                           |         | Expression has type:   {dynamic([term()])}
                                            |         | Context expected type: 'ok'
   end.                                     |         |
                                            |         |
@@ -115,7 +115,7 @@ refine_todo2_neg() ->                      | ERROR   |
     % It would be better to have           |         |
     % Dyn refined as binary here           |         |
     is_binary(Dyn) -> {Dyn};               |         | {Dyn}.
-                                           |         | Expression has type:   {dynamic()}
+                                           |         | Expression has type:   {dynamic(binary())}
                                            |         | Context expected type: 'ok'
     true -> ok                             |         |
   end.                                     |         |
@@ -247,12 +247,10 @@ dyn_refine_union_neg(D) -> D.              |         | D.
                                            |         |
 -record(foo, {id :: integer()}).           |         |
                                            |         |
-with_rec_neg(undefined) ->                 | ERROR   |
+with_rec_neg(undefined) ->                 | OK      |
   undefined;                               |         |
 with_rec_neg(#foo{id = Id}) ->             |         |
-  atom_to_binary(Id).                      |         | Id.
-                                           |         | Expression has type:   number()
-                                           |         | Context expected type: atom()
+  atom_to_binary(Id).                      |         |
                                            |         |
 -spec with_rec_neg2(                       |         |
     eqwalizer:dynamic() | #foo{}           |         |
@@ -339,10 +337,8 @@ refine_dyn_record(R = #ref_rec{a = I})     | OK      |
 -spec refine_dyn_select(                   |         |
     dyn_alias()                            |         |
 ) -> integer().                            |         |
-refine_dyn_select(R = #ref_rec{a = I})     | ERROR   |
-    when is_integer(I) -> R#ref_rec.a.     |         | ...#ref_rec.a.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: number()
+refine_dyn_select(R = #ref_rec{a = I})     | OK      |
+    when is_integer(I) -> R#ref_rec.a.     |         |
                                            |         |
 % Testing interaction between generics and……         |
 filter_none(D) ->                          | OK      |

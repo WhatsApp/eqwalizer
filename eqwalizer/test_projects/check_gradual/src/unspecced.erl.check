@@ -54,7 +54,5 @@ get_id_neg1(Rec) ->                        | ERROR   |
                                            |         | Expression has type:   number()
                                            |         | Context expected type: atom()
                                            |         |
-get_id_neg2(#rec{id = Id}) ->              | ERROR   |
-  atom_to_binary(Id).                      |         | Id.
-                                           |         | Expression has type:   number()
-                                           |         | Context expected type: atom()
+get_id_neg2(#rec{id = Id}) ->              | OK      |
+  atom_to_binary(Id).                      |         |
