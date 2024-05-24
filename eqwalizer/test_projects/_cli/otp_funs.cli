@@ -15,9 +15,9 @@ filename  21
 gb_sets  26
 proplists  51
 maps  151
-lists  169
-erlang  406
+lists  170
+erlang  407
 Per app stats:
 kernel  21
-erts  406
-stdlib  473
+erts  407
+stdlib  474

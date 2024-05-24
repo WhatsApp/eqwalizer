@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer.tc
 
 import scala.annotation.tailrec
-import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, IntLit, Lambda, NilLit}
+import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, IntLit, Lambda, NilLit, Var}
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundVar, UnboundRecord}
@@ -50,6 +50,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "filtermap", 2),
       RemoteId(CompilerMacro.fake_module, "record_info", 2),
     )
+
+  private lazy val customPredicate: Set[RemoteId] =
+    Set(RemoteId("lists", "member", 2))
+
+  def isCustomPredicate(id: RemoteId): Boolean =
+    customPredicate(id)
 
   private def coerce(expr: Expr, ty: Type, expTy: Type): Type = {
     if (!subtype.subType(ty, expTy)) {
@@ -546,6 +552,27 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             }
         }
 
+      case rid =>
+        throw new IllegalArgumentException(s"unexpected $rid")
+    }
+  }
+
+  def elabCustomPredicate(remoteId: RemoteId, args: List[Expr], env: Env, callPos: Pos): (Type, Env, Env) = {
+    val (argTys, env1) = elab.elabExprs(args, env)
+    remoteId match {
+      case RemoteId("lists", "member", 2) =>
+        val List(elem, list) = args
+        val List(elemTy, listTy) = argTys
+        val listTy1 = coerce(list, listTy, expTy = ListType(AnyType))
+        elem match {
+          case Var(x) =>
+            val ListType(predListTy) = narrow.asListType(listTy1).get
+            val posElemT = predListTy
+            val posEnv = env1.updated(x, posElemT)
+            (booleanType, posEnv, env1)
+          case _ =>
+            (booleanType, env1, env1)
+        }
       case rid =>
         throw new IllegalArgumentException(s"unexpected $rid")
     }

@@ -297,3 +297,8 @@ repro(Releases) ->
     undefined,
     Releases
   ).
+
+-spec lists_member_1(atom()) -> foo | bar.
+lists_member_1(Atom) ->
+  lists:member(Atom, [foo, bar]) orelse error(bad_arg),
+  Atom.

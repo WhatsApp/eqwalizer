@@ -346,6 +346,13 @@ final class Elab(pipelineContext: PipelineContext) {
         val test = Filters.asTest(testArg).get
         val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)(checkRedundancy = true)
         (AtomLitType("true"), env1)
+      case BinOp(
+            "orelse",
+            call @ RemoteCall(id, args),
+            RemoteCall(RemoteId("erlang", "throw" | "error" | "exit", _), _),
+          ) if elabApplyCustom.isCustomPredicate(id) =>
+        val (_, posEnv, _) = elabApplyCustom.elabCustomPredicate(id, args, env, call.pos)
+        (AtomLitType("true"), posEnv)
       case BinOp("andalso", testArg, RemoteCall(RemoteId("erlang", "throw" | "error" | "exit", _), _))
           if Filters.asTest(testArg).isDefined =>
         val test = Filters.asTest(testArg).get

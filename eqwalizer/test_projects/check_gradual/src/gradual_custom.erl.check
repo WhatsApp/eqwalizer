@@ -359,3 +359,8 @@ repro(Releases) ->                         | OK      |
     undefined,                             |         |
     Releases                               |         |
   ).                                       |         |
+                                           |         |
+-spec lists_member_1(atom()) -> foo | bar. |         |
+lists_member_1(Atom) ->                    | OK      |
+  lists:member(Atom, [foo, bar]) orelse er……         |
+  Atom.                                    |         |
