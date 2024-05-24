@@ -62,10 +62,10 @@ jobs:
     needs:
       - linux-ci
     runs-on: macos-latest
-    name: MacOS CI (${{matrix.brew_erlang}})
+    name: MacOS CI (${{matrix.brew-otp-version}})
     strategy:
       matrix:
-        brew_erlang: ['erlang@26', 'erlang@25']
+        brew-otp-version: ['26', '25']
     steps:
       - name: Checkout eqWAlizer
         uses: "actions/checkout@v3"
@@ -81,9 +81,13 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install Erlang
-        run: brew install ${{matrix.brew_erlang}}
+        run: brew install erlang@${{matrix.brew-otp-version}}
+      - name: Add erl to path
+        run: "echo '/opt/homebrew/opt/erlang@${{ matrix.brew-otp-version }}/bin' >> $GITHUB_PATH"
       - name: Install rebar3
         run: "mkdir rebar3 && curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3/rebar3 && chmod +x rebar3/rebar3"
+      - name: Add rebar3 to path
+        run: 'echo "$GITHUB_WORKSPACE/rebar3" >> $GITHUB_PATH'
       - name: Set up rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Download eqwalizer.jar
@@ -95,10 +99,10 @@ jobs:
         run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
       - name: Test elp
         working-directory: elp
-        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/${{matrix.brew_erlang}}/bin:$PATH && cargo test --no-default-features --workspace"
+        run: "cargo test --no-default-features --workspace"
       - name: Assemble elp
         working-directory: elp
-        run: "export PATH=$GITHUB_WORKSPACE/rebar3:/usr/local/opt/${{matrix.brew_erlang}}/bin:$PATH && cargo build --release"
+        run: "cargo build --release"
 name: eqWAlizer CI
 on:
   push: {}
