@@ -286,6 +286,16 @@ final class Elab(pipelineContext: PipelineContext) {
         val (_, _) = elabExpr(c.expr, env)
         val ifExpr = Predicates.asIf(c)
         elabExpr(ifExpr, env)
+      case Case(call @ RemoteCall(id, args), clauses)
+          if Predicates.booleanClauses(clauses) && elabApplyCustom.isCustomPredicate(id) =>
+        val (_, posEnv, negEnv) = elabApplyCustom.elabCustomPredicate(id, args, env, call.pos)
+        val (posClause, negClause) = Predicates.posNegClauses(clauses)
+        val effVars = Vars.clausesVars(clauses)
+        val (posT, posEnv1) =
+          elabClause(posClause, List(booleanType), posEnv, effVars)
+        val (negT, negEnv1) =
+          elabClause(negClause, List(booleanType), negEnv, effVars)
+        (subtype.join(posT, negT), subtype.joinEnvs(List(posEnv1, negEnv1)))
       case c @ Case(sel, clauses) =>
         val (selTy, env1) = elabExpr(sel, env)
         val effVars = Vars.clausesVars(clauses)

@@ -364,3 +364,56 @@ repro(Releases) ->                         | OK      |
 lists_member_1(Atom) ->                    | OK      |
   lists:member(Atom, [foo, bar]) orelse er……         |
   Atom.                                    |         |
+                                           |         |
+-spec lists_member_2(atom()) -> foo | bar ……         |
+lists_member_2(Atom) ->                    | OK      |
+  Res =                                    |         |
+    case lists:member(Atom, [foo, bar]) of |         |
+      true -> Atom;                        |         |
+      _ -> <<>>                            |         |
+    end,                                   |         |
+  Res.                                     |         |
+                                           |         |
+-spec lists_member_3(atom()) -> foo | bar ……         |
+lists_member_3(Atom) ->                    | OK      |
+  case lists:member(Atom, [foo, bar]) of   |         |
+    true -> Atom;                          |         |
+    _ -> <<>>                              |         |
+  end.                                     |         |
+                                           |         |
+-spec lists_member_4_neg(atom()) -> foo | ……         |
+lists_member_4_neg(Atom) ->                | ERROR   |
+  case lists:member(Atom, [foo, bar, undef……         |
+    true -> Atom;                          |         | Atom.
+                                           |         | Expression has type:   'bar' | 'undefined' | 'foo'
+                                           |         | Context expected type: 'foo' | 'bar' | binary()
+                                           |         | 
+                                           |         |   'bar' | 'undefined' | 'foo' is not compatible with 'foo' | 'bar' | binary()
+                                           |         |   because
+                                           |         |   'undefined' is not compatible with 'foo' | 'bar' | binary()
+                                           |         |   because
+                                           |         |   'undefined' is not compatible with 'foo'
+    _ -> <<>>                              |         |
+  end.                                     |         |
+                                           |         |
+-spec parse_atom(binary(), [A]) -> A.      |         |
+parse_atom(Bin, Atoms) ->                  | OK      |
+  Atom = binary_to_existing_atom(Bin),     |         |
+  case lists:member(Atom, Atoms) of        |         |
+    true -> Atom;                          |         |
+    false -> error(bad_atom)               |         |
+  end.                                     |         |
+                                           |         |
+-spec parse_1(binary()) -> foo | bar.      |         |
+parse_1(Bin) ->                            | OK      |
+  parse_atom(Bin, [foo, bar]).             |         |
+                                           |         |
+-spec parse_2(binary()) -> foo.            |         |
+parse_2(Bin) ->                            | ERROR   |
+  parse_atom(Bin, [foo, bar]).             |         | parse_atom(Bin, ['foo', 'bar']).
+                                           |         | Expression has type:   'foo' | 'bar'
+                                           |         | Context expected type: 'foo'
+                                           |         | 
+                                           |         |   'foo' | 'bar' is not compatible with 'foo'
+                                           |         |   because
+                                           |         |   'bar' is not compatible with 'foo'

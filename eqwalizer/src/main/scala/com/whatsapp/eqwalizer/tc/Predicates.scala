@@ -14,7 +14,7 @@ import com.whatsapp.eqwalizer.ast.Filters
 object Predicates {
   def isCaseIf(e: Case): Boolean = {
     val Case(sel, clauses) = e
-    clauses.size == 2 && testingBranches(clauses) && Filters.asTest(sel).isDefined
+    clauses.size == 2 && booleanClauses(clauses) && Filters.asTest(sel).isDefined
   }
 
   def asIf(e: Case): If = {
@@ -33,7 +33,7 @@ object Predicates {
     }
   }
 
-  private def testingBranches(clauses: List[Clause]): Boolean =
+  def booleanClauses(clauses: List[Clause]): Boolean =
     clauses match {
       case List(Clause(List(pat1), List(), _), Clause(List(pat2), List(), _)) =>
         (pat1, pat2) match {
@@ -44,4 +44,14 @@ object Predicates {
       case _ =>
         false
     }
+
+  def posNegClauses(clauses: List[Clause]): (Clause, Clause) = {
+    val List(clause1 @ Clause(List(pat1), List(), _), clause2 @ Clause(List(pat2), List(), _)) = clauses
+    (pat1, pat2) match {
+      case (PatAtom("true"), PatAtom("false") | PatWild()) =>
+        (clause1, clause2)
+      case (_, _) =>
+        (clause2, clause1)
+    }
+  }
 }

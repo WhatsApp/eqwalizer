@@ -318,6 +318,16 @@ final class Check(pipelineContext: PipelineContext) {
           val (_, _) = elab.elabExpr(c.expr, env)
           val ifExpr = Predicates.asIf(c)
           checkExpr(ifExpr, resTy, env)
+        case Case(call @ RemoteCall(id, args), clauses)
+            if Predicates.booleanClauses(clauses) && elabApplyCustom.isCustomPredicate(id) =>
+          val (_, posEnv, negEnv) = elabApplyCustom.elabCustomPredicate(id, args, env, call.pos)
+          val (posClause, negClause) = Predicates.posNegClauses(clauses)
+          val effVars = Vars.clausesVars(clauses)
+          val posEnv1 =
+            checkClause(posClause, List(booleanType), resTy, posEnv, effVars)
+          val negEnv1 =
+            checkClause(negClause, List(booleanType), resTy, negEnv, effVars)
+          subtype.joinEnvs(List(posEnv1, negEnv1))
         case c @ Case(sel, clauses) =>
           val (selType, env1) = elab.elabExpr(sel, env)
           val effVars = Vars.clausesVars(clauses)

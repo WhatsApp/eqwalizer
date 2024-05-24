@@ -302,3 +302,42 @@ repro(Releases) ->
 lists_member_1(Atom) ->
   lists:member(Atom, [foo, bar]) orelse error(bad_arg),
   Atom.
+
+-spec lists_member_2(atom()) -> foo | bar | binary().
+lists_member_2(Atom) ->
+  Res =
+    case lists:member(Atom, [foo, bar]) of
+      true -> Atom;
+      _ -> <<>>
+    end,
+  Res.
+
+-spec lists_member_3(atom()) -> foo | bar | binary().
+lists_member_3(Atom) ->
+  case lists:member(Atom, [foo, bar]) of
+    true -> Atom;
+    _ -> <<>>
+  end.
+
+-spec lists_member_4_neg(atom()) -> foo | bar | binary().
+lists_member_4_neg(Atom) ->
+  case lists:member(Atom, [foo, bar, undefined]) of
+    true -> Atom;
+    _ -> <<>>
+  end.
+
+-spec parse_atom(binary(), [A]) -> A.
+parse_atom(Bin, Atoms) ->
+  Atom = binary_to_existing_atom(Bin),
+  case lists:member(Atom, Atoms) of
+    true -> Atom;
+    false -> error(bad_atom)
+  end.
+
+-spec parse_1(binary()) -> foo | bar.
+parse_1(Bin) ->
+  parse_atom(Bin, [foo, bar]).
+
+-spec parse_2(binary()) -> foo.
+parse_2(Bin) ->
+  parse_atom(Bin, [foo, bar]).
