@@ -1,111 +1,225 @@
+name: eqWAlizer CI
+on:
+  push:
+  release:
+    types: [created]
+
 jobs:
-  linux-ci:
-    runs-on: ubuntu-20.04
-    name: Linux CI (OTP ${{matrix.otp}})
-    strategy:
-      matrix:
-        otp: ['26.0', '25.3']
+  build-jar:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout eqWAlizer
-        uses: "actions/checkout@v3"
-      - name: Checkout ELP
-        uses: "actions/checkout@v3"
-        with:
-          repository: WhatsApp/erlang-language-platform
-          path: elp
-      - name: Set up GraalVM
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '17'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install musl-tools for rust toolchain
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: musl-tools
-          version: 1.0
-      - name: Set up rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          target: x86_64-unknown-linux-musl
-      - name: Install OTP
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: ${{matrix.otp}}
-          install-rebar: false
-          install-hex: false
-      - name: Install rebar3
-        run: "curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3 && chmod +x rebar3"
-      - name: "add rebar3 to path"
-        run: 'echo "$GITHUB_WORKSPACE/rebar3" >> $GITHUB_PATH'
+        uses: actions/checkout@v4
+
       - name: Assemble eqwalizer.jar
-        run: "cd eqwalizer; sbt assembly"
-      - name: Assemble eqwalizer binary
-        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
-      - name: Test elp
-        working-directory: elp
-        run: "cargo test --no-default-features --workspace --target x86_64-unknown-linux-musl"
-      - name: Assemble elp
-        working-directory: elp
-        run: "cargo build --release --target x86_64-unknown-linux-musl"
-      - name: Add elp to path
-        run: 'echo "$GITHUB_WORKSPACE/elp/target/x86_64-unknown-linux-musl/release" >> $GITHUB_PATH'
-      - name: Test eqwalizer
-        run: 'cd eqwalizer && sbt test'
+        working-directory: eqwalizer
+        run: sbt assembly
+
       - name: Upload eqwalizer.jar
-        if: matrix.otp == '25.3'
-        uses: "actions/upload-artifact@v3"
+        uses: actions/upload-artifact@v4
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13/eqwalizer.jar
-  macos-ci:
-    needs:
-      - linux-ci
-    runs-on: macos-latest
-    name: MacOS CI (${{matrix.brew-otp-version}})
+
+  build-native-image:
+    needs: build-jar
     strategy:
       matrix:
-        brew-otp-version: ['26', '25']
+        target:
+          - runner: ubuntu-latest
+            triplet: x86_64-unknown-linux-gnu
+            os: linux
+            arch: x86_64
+          # - runner: ubuntu-latest
+          #   triplet: aarch64-unknown-linux-gnu
+          #   os: linux
+          #   arch: aarch64
+          - runner: macos-13
+            triplet: x86_64-apple-darwin
+            os: macos
+            arch: x86_64
+          - runner: macos-latest
+            triplet: aarch64-apple-darwin
+            os: macos
+            arch: aarch64
+    runs-on: ${{ matrix.target.runner }}
     steps:
-      - name: Checkout eqWAlizer
-        uses: "actions/checkout@v3"
-      - name: Checkout ELP
-        uses: "actions/checkout@v3"
+      - name: Download eqwalizer.jar
+        uses: actions/download-artifact@v4
         with:
-          repository: WhatsApp/erlang-language-platform
-          path: elp
+          name: eqwalizer.jar
+          path: artifacts/
+
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '17'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install Erlang
-        run: brew install erlang@${{matrix.brew-otp-version}}
-      - name: Add erl to path
-        run: "echo '/opt/homebrew/opt/erlang@${{ matrix.brew-otp-version }}/bin' >> $GITHUB_PATH"
-      - name: Install rebar3
-        run: "mkdir rebar3 && curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3/rebar3 && chmod +x rebar3/rebar3"
-      - name: Add rebar3 to path
-        run: 'echo "$GITHUB_WORKSPACE/rebar3" >> $GITHUB_PATH'
-      - name: Set up rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+          java-version: "22"
+          distribution: "graalvm"
+          github-token: ${{ github.token }}
+
+      - name: Assemble eqwalizer binary
+        if: matrix.target.triplet != 'aarch64-unknown-linux-gnu'
+        run: |
+          native-image \
+            -H:+UnlockExperimentalVMOptions \
+            -H:+ReportExceptionStackTraces \
+            -H:IncludeResources=application.conf \
+            --no-server \
+            --no-fallback \
+            -jar artifacts/eqwalizer.jar \
+            artifacts/eqwalizer.${{ matrix.target.triplet }}
+
+      - name: Assemble eqwalizer binary (qemu)
+        if: matrix.target.triplet == 'aarch64-unknown-linux-gnu'
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: ${{ matrix.target.arch }}
+          distro: ubuntu22.04
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          install: |
+            apt-get -q update
+            apt-get -q install -y curl gcc zlib1g-dev
+            GRAALVM_URL=https://download.oracle.com/graalvm/22/latest/graalvm-jdk-22_linux-aarch64_bin.tar.gz
+            GRAALVM_SHA256=$(curl -s "${GRAALVM_URL}.sha256")
+            curl --output graalvm.tar.gz "${GRAALVM_URL}"
+            echo "$GRAALVM_SHA256  graalvm.tar.gz" | sha256sum -c
+            mkdir /opt/graalvm
+            tar -xzf graalvm.tar.gz -C /opt/graalvm --strip-components=1
+          run: |
+            /opt/graalvm/bin/native-image \
+              -H:+UnlockExperimentalVMOptions \
+              -H:+ReportExceptionStackTraces \
+              -H:IncludeResources=application.conf \
+              --no-server \
+              --no-fallback \
+              -jar /artifacts/eqwalizer.jar \
+              /artifacts/eqwalizer.${{ matrix.target.triplet }}
+
+      - name: Upload eqwalizer.${{ matrix.target.triplet }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: eqwalizer.${{ matrix.target.triplet }}
+          path: artifacts/eqwalizer.${{ matrix.target.triplet }}
+
+  test:
+    needs: build-jar
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - runner: ubuntu-latest
+            triplet: x86_64-unknown-linux-gnu
+            os: linux
+          # - runner: macos-latest
+          #   triplet: aarch64-apple-darwin
+          #   os: macos
+        otp:
+          - version: "26.2"
+            version-major: "26"
+          - version: "25.3"
+            version-major: "25"
+        elp:
+          - "2024-05-24"
+    runs-on: ${{ matrix.target.runner }}
+    steps:
+      - name: Install OTP (setup-beam)
+        if: runner.os != 'macOS'
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp.version }}
+          rebar3-version: "3.23.0"
+
+      - name: Install OTP (brew)
+        if: runner.os == 'macOS'
+        run: |
+          brew install \
+            erlang@${{ matrix.otp.version-major }} \
+            rebar3 \
+            sbt
+          echo "/opt/homebrew/opt/erlang@${{ matrix.otp.version-major }}/bin" >> $GITHUB_PATH
+
+      - name: Checkout eqWAlizer
+        uses: actions/checkout@v4
+
       - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v3"
+        uses: actions/download-artifact@v4
         with:
           name: eqwalizer.jar
-          path: eqwalizer/target/scala-2.13
-      - name: Assemble eqwalizer binary
-        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
-      - name: Test elp
-        working-directory: elp
-        run: "cargo test --no-default-features --workspace"
-      - name: Assemble elp
-        working-directory: elp
-        run: "cargo build --release"
-name: eqWAlizer CI
-on:
-  push: {}
-env:
-  EQWALIZER_DIR: ${{ github.workspace }}/eqwalizer
-  ELP_EQWALIZER_PATH: ${{ github.workspace }}/eqwalizer/eqwalizer
+          path: eqwalizer/
+
+      - name: Download elp
+        run: |
+          mkdir -p "${{ github.workspace }}/.bin/"
+          curl --no-progress-meter -L \
+            https://github.com/WhatsApp/erlang-language-platform/releases/download/${{ matrix.elp }}/elp-${{ matrix.target.os }}-${{ matrix.target.triplet }}-otp-${{ matrix.otp.version }}.tar.gz \
+            -o ./elp.tar.gz
+          tar -C "${{ github.workspace }}/.bin/" -xzvf ./elp.tar.gz
+          rm ./elp.tar.gz
+          echo "${{ github.workspace }}/.bin" >> $GITHUB_PATH
+
+      - name: Run tests
+        working-directory: eqwalizer
+        env:
+          ELP_EQWALIZER_PATH: ${{ github.workspace }}/eqwalizer/eqwalizer.jar
+        run: |
+          sbt test
+
+  publish-release-assets:
+    if: github.event_name == 'release' && github.event.action == 'created'
+    needs:
+      - build-jar
+      - build-native-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: List artifacts
+        run: ls -Ralh artifacts/
+      - name: Upload release assets
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require("fs/promises");
+            const path = require("path");
+            const crypto = require("crypto");
+
+            const assetNames = [
+              "eqwalizer.jar",
+              // "eqwalizer.aarch64-unknown-linux-gnu",
+              "eqwalizer.x86_64-unknown-linux-gnu",
+              "eqwalizer.aarch64-apple-darwin",
+              "eqwalizer.x86_64-apple-darwin",
+            ];
+            const checksums = [];
+
+            for (const assetName of assetNames) {
+              const assetPath = path.join("artifacts", assetName);
+              const assetData = await fs.readFile(assetPath);
+              await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: ${{ github.event.release.id }},
+                name: assetName,
+                data: assetData 
+              });
+              const assetSHA256 = crypto.createHash("sha256").update(assetData).digest("hex");
+              checksums.push(`${assetSHA256}  ${assetName}`);
+            }
+
+            if (checksums.length > 0) {
+              await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: ${{ github.event.release.id }},
+                name: "checksums-sha256.txt",
+                data: checksums.join("\n"),
+                headers: {
+                  "Content-Type": "text/plain"
+                }
+              });
+            }
