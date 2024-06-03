@@ -333,6 +333,20 @@ final class ElabGuard(pipelineContext: PipelineContext) {
           case None =>
             env
         }
+      case TestBinOp("=:=" | "==", TestCall(Id("element", 2), List(TestNumber(Some(i)), TestVar(v))), TestAtom(a)) =>
+        env.get(v) match {
+          case Some(ty) =>
+            env + (v -> narrow.filterTupleType(ty, i, AtomLitType(a)))
+          case None =>
+            env
+        }
+      case TestBinOp("=:=" | "==", TestAtom(a), TestCall(Id("element", 2), List(TestNumber(Some(i)), TestVar(v)))) =>
+        env.get(v) match {
+          case Some(ty) =>
+            env + (v -> narrow.filterTupleType(ty, i, AtomLitType(a)))
+          case None =>
+            env
+        }
       case TestBinOp("=/=" | "/=", TestVar(v), TestAtom(a)) =>
         env.get(v) match {
           case Some(ty) =>

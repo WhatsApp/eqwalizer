@@ -56,3 +56,18 @@ refine_tuple_neg(T) when is_tuple(T) -> T; | ERROR   | T.
                                            |         |   {'b', 'c'} is not compatible with 'a' | {none()}
                                            |         |   expected union does not contain any tuple type of size 2
 refine_tuple_neg(T) -> T.                  |         |
+                                           |         |
+-record(rpc, {module :: module()}).        |         |
+                                           |         |
+-type rpc_call() ::                        |         |
+  #rpc{} |                                 |         |
+  {rpc, module(), atom()} |                |         |
+  {rpc, module(), atom(), [term()]}.       |         |
+                                           |         |
+-type call() :: binary() | {call, binary()……         |
+                                           |         |
+-spec maybe_rpc_call(call()) -> rpc_call()……         |
+maybe_rpc_call(Call) when is_tuple(Call), …… OK      |
+  Call;                                    |         |
+maybe_rpc_call(_) ->                       |         |
+  undefined.                               |         |

@@ -45,3 +45,18 @@ fuzz03([_ | {}]) ->
     -> a | {none()}.
 refine_tuple_neg(T) when is_tuple(T) -> T;
 refine_tuple_neg(T) -> T.
+
+-record(rpc, {module :: module()}).
+
+-type rpc_call() ::
+  #rpc{} |
+  {rpc, module(), atom()} |
+  {rpc, module(), atom(), [term()]}.
+
+-type call() :: binary() | {call, binary()} | rpc_call().
+
+-spec maybe_rpc_call(call()) -> rpc_call() | undefined.
+maybe_rpc_call(Call) when is_tuple(Call), element(1, Call) == rpc ->
+  Call;
+maybe_rpc_call(_) ->
+  undefined.

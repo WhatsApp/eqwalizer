@@ -353,6 +353,53 @@ class Narrow(pipelineContext: PipelineContext) {
       case _ => List()
     }
 
+  def filterTupleType(t: Type, elemIndex: Int, elemTy: Type): Type =
+    if (elemIndex >= 1)
+      filterTupleTypeAux(t, elemIndex - 1, elemTy)
+    else
+      NoneType
+
+  private def filterTupleTypeAux(t: Type, elemIndex: Int, elemTy: Type): Type =
+    t match {
+      case _: OpaqueType =>
+        t
+      case DynamicType =>
+        t
+      case BoundedDynamicType(bound) =>
+        BoundedDynamicType(filterTupleTypeAux(bound, elemIndex, elemTy))
+      case AnyType | VarType(_) =>
+        t
+      case AnyTupleType =>
+        t
+      case tt: TupleType if isTupleElem(tt, elemIndex, elemTy) =>
+        t
+      case r: RecordType =>
+        recordToTuple(r) match {
+          case Some(tt) if isTupleElem(tt, elemIndex, elemTy) =>
+            t
+          case _ =>
+            NoneType
+        }
+      case r: RefinedRecordType =>
+        refinedRecordToTuple(r) match {
+          case Some(tt) if isTupleElem(tt, elemIndex, elemTy) =>
+            t
+          case _ =>
+            NoneType
+        }
+      case UnionType(tys) =>
+        UnionType(tys.map(filterTupleTypeAux(_, elemIndex, elemTy)))
+      case RemoteType(rid, args) =>
+        val body = util.getTypeDeclBody(rid, args)
+        filterTupleTypeAux(body, elemIndex, elemTy)
+      case _ => NoneType
+    }
+
+  private def isTupleElem(tupleType: TupleType, elemIndex: Int, elemTy: Type): Boolean = {
+    val TupleType(ts) = tupleType
+    (elemIndex < ts.length) && subtype.subType(ts(elemIndex), elemTy)
+  }
+
   /**
   * Given a type (required to be a subtype of `AnyTupleType`) and an index, returns the type of the tuple element at
   * the index wrapped in a `Right`. If the index can be possibly out of bounds (in at least one of the options in a
