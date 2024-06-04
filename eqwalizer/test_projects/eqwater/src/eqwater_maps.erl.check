@@ -78,12 +78,6 @@ add_optional(Z, _) ->                      |         |
   Z.                                       |         |
                                            |         |
 -spec map_occ_09(#{a => undefined | map()}……         |
-map_occ_09(#{a := undefined}) -> 1;        | ERROR   |
-map_occ_09(#{a := Map}) -> Map#{2 => 2};   |         | Map.
-                                           |         | Expression has type:   'undefined' | #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
-                                           |         | Context expected type: #D{term() => term()}
-                                           |         | 
-                                           |         |   'undefined' | #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with #D{term() => term()}
-                                           |         |   because
-                                           |         |   'undefined' is not compatible with #D{term() => term()}
+map_occ_09(#{a := undefined}) -> 1;        | OK      |
+map_occ_09(#{a := Map}) -> Map#{2 => 2};   |         |
 map_occ_09(_) -> 3.                        |         |

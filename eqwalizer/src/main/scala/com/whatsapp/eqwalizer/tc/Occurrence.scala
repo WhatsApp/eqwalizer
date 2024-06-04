@@ -893,16 +893,22 @@ final class Occurrence(pipelineContext: PipelineContext) {
             case None => rt
           }
         }
-      case (ShapeMap(props), ShapeField(field) :: path) if props.exists(_.key == field) =>
-        val refinedProps = props.map {
-          case ReqProp(key, tp) if key == field =>
-            ReqProp(key, update(tp, path, pol, s))
-          case OptProp(key, tp) if key == field =>
-            if (pol == +) ReqProp(key, update(tp, path, pol, s))
-            else OptProp(key, update(tp, path, pol, s))
-          case p => p
-        }
-        ShapeMap_*(refinedProps)
+      case (ShapeMap(props), ShapeField(field) :: path) =>
+        if (props.exists(_.key == field)) {
+          val refinedProps = props.map {
+            case ReqProp(key, tp) if key == field =>
+              ReqProp(key, update(tp, path, pol, s))
+            case OptProp(key, tp) if key == field =>
+              if (pol == +) ReqProp(key, update(tp, path, pol, s))
+              else OptProp(key, update(tp, path, pol, s))
+            case p => p
+          }
+          ShapeMap_*(refinedProps)
+        } else
+          pol match {
+            case + => NoneType
+            case - => t
+          }
       case (ListType(lt), ListHead :: path) =>
         if (subtype.isNoneType(update(lt, path, pol, s)))
           NoneType
