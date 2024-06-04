@@ -48,3 +48,8 @@ add_optional(Foo = #{required := _R1}, Optional) ->
   Foo#{optional => Optional};
 add_optional(Z, _) ->
   Z.
+
+-spec map_occ_09(#{a => undefined | map()} | #{b => term()}) -> term().
+map_occ_09(#{a := undefined}) -> 1;
+map_occ_09(#{a := Map}) -> Map#{2 => 2};
+map_occ_09(_) -> 3.
