@@ -264,7 +264,10 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     val TestUnOp(op, arg) = unOp
     op match {
       case "not" =>
-        (booleanType, elabTestT(arg, booleanType, env))
+        arg match {
+          case TestVar(_) => (booleanType, elabTestT(arg, booleanType, env))
+          case _          => (booleanType, env)
+        }
       case "bnot" | "+" | "-" =>
         (NumberType, elabTestT(arg, NumberType, env))
       case _ =>
