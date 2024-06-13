@@ -318,7 +318,7 @@ when
 'gen_statem:call'(_, _) -> error(eqwalizer_specs).
 
 -spec 'gen_statem:call'(gen_statem:server_ref(), term(), Timeout) -> eqwalizer:dynamic() when
-    Timeout :: timeout() | {clean_timeout, timeout()} | {dirty_timeout | timeout()}.
+    Timeout :: timeout() | {clean_timeout, timeout()} | {dirty_timeout, timeout()}.
 'gen_statem:call'(_, _, _) -> error(eqwalizer_specs).
 
 %% -------- gb_sets --------
