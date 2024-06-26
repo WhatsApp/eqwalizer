@@ -118,3 +118,16 @@ scope_neg(A) ->                            | ERROR   |
                                            |         |   {'false' | number(), term()} is not compatible with {'false' | number(), number()}
                                            |         |   because
                                            |         |   term() is not compatible with number()
+                                           |         |
+-spec assert7(                             |         |
+    string() | binary()                    |         |
+) -> binary().                             |         |
+assert7(Input) ->                          | ERROR   |
+  true = is_binary(Input),                 |         |
+  Input.                                   |         | Input.
+                                           |         | Expression has type:   string() | binary()
+                                           |         | Context expected type: binary()
+                                           |         | 
+                                           |         |   string() | binary() is not compatible with binary()
+                                           |         |   because
+                                           |         |   string() is not compatible with binary()

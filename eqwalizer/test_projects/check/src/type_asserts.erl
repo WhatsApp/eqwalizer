@@ -88,3 +88,10 @@ double_andalso_neg(N, A) ->
 scope_neg(A) ->
   X = is_number(A) andalso A,
   {X, A}.
+
+-spec assert7(
+    string() | binary()
+) -> binary().
+assert7(Input) ->
+  true = is_binary(Input),
+  Input.
