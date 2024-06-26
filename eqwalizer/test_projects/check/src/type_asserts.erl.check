@@ -122,12 +122,6 @@ scope_neg(A) ->                            | ERROR   |
 -spec assert7(                             |         |
     string() | binary()                    |         |
 ) -> binary().                             |         |
-assert7(Input) ->                          | ERROR   |
+assert7(Input) ->                          | OK      |
   true = is_binary(Input),                 |         |
-  Input.                                   |         | Input.
-                                           |         | Expression has type:   string() | binary()
-                                           |         | Context expected type: binary()
-                                           |         | 
-                                           |         |   string() | binary() is not compatible with binary()
-                                           |         |   because
-                                           |         |   string() is not compatible with binary()
+  Input.                                   |         |

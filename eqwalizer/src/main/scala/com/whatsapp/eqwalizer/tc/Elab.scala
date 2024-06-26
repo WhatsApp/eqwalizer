@@ -336,6 +336,10 @@ final class Elab(pipelineContext: PipelineContext) {
         check.checkExpr(l, gradualFunType, env1)
         val (patTy, patEnv) = elabPat.elabPat(mPat, gradualFunType, env)
         (patTy, patEnv)
+      case Match(Pats.PatAtom("true"), mExp) if Filters.asTest(mExp).isDefined =>
+        val test = Filters.asTest(mExp).get
+        val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)(checkRedundancy = true)
+        (AtomLitType("true"), env1)
       case Match(mPat, mExp) =>
         val (ty, env1) = elabExpr(mExp, env)
         val (patTy, patEnv) = elabPat.elabPat(mPat, ty, env1)
