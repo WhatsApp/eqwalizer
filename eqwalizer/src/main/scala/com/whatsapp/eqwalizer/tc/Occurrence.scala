@@ -167,6 +167,24 @@ final class Occurrence(pipelineContext: PipelineContext) {
     pipelineContext.eqwater && (emptyPatterns || smallClauses)
   }
 
+  private def ignoreNumberRefinement(clause: Clause, aMap: AMap, nextClauses: List[(Clause, AMap)]): Boolean = {
+    clause match {
+      case Clause(_, List(Guard(List(TestCall(Id("is_integer", 1), List(TestVar(v1)))))), _) =>
+        nextClauses.exists {
+          case (Clause(_, List(Guard(List(TestCall(Id("is_float", 1), List(TestVar(v2)))))), _), aMap2) =>
+            aMap.getOrElse(v1, VarObj(v1)) == aMap2.getOrElse(v2, VarObj(v2))
+          case _ => false
+        }
+      case Clause(_, List(Guard(List(TestCall(Id("is_float", 1), List(TestVar(v1)))))), _) =>
+        nextClauses.exists {
+          case (Clause(_, List(Guard(List(TestCall(Id("is_integer", 1), List(TestVar(v2)))))), _), aMap2) =>
+            aMap.getOrElse(v1, VarObj(v1)) == aMap2.getOrElse(v2, VarObj(v2))
+          case _ => false
+        }
+      case _ => false
+    }
+  }
+
   private def linearVars(clause: Clause): Boolean = {
     val varsL = vars.clausePatVarsL(clause)
     varsL.toSet.size == varsL.size
@@ -270,24 +288,33 @@ final class Occurrence(pipelineContext: PipelineContext) {
     val vars = argTys.map(_ => genVar())
     val env1 = env ++ vars.zip(argTys).toMap
 
-    for (clause <- clauses) {
+    var clausesWithAliases = clauses.map { clause =>
+      var aMap: AMap = Map.empty
+      for ((x, pat) <- vars.zip(clause.pats)) {
+        aMap = aMap ++ aliases(x, Nil, pat, env).toMap
+      }
+      (clause, aMap)
+    }
+    while (clausesWithAliases.nonEmpty) {
+      val (clause, aMap) = clausesWithAliases.head
+      clausesWithAliases = clausesWithAliases.tail
       if (linearVars(clause)) {
         val pats = clause.pats
         val allPos = ListBuffer.empty[Prop]
         val allNeg = ListBuffer.empty[Prop]
-        var aMap: AMap = Map.empty
         for ((x, pat) <- vars.zip(pats)) {
           val (patPos, patNeg) = patProps(x, Nil, pat, env).unzip
           patPos.foreach(allPos.addOne)
           patNeg.foreach(allNeg.addOne)
-          aMap = aMap ++ aliases(x, Nil, pat, env).toMap
         }
         val (testPos, testNeg) = guardsProps(clause.guards, aMap)
         val clauseProps = combine((allPos ++ testPos).toList, propsAcc)
         val clauseEnv = batchSelect(env1, clauseProps, aMap)
         clauseEnvs.addOne(clauseEnv)
         propsAcc = {
-          val allNeg1 = allNeg.toList ++ testNeg
+          val allNeg1 =
+            if (!ignoreNumberRefinement(clause, aMap, clausesWithAliases)) allNeg.toList ++ testNeg
+            else allNeg.toList
           allNeg1 match {
             case Nil =>
               propsAcc
