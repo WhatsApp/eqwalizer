@@ -175,6 +175,6 @@ attempt to detect and report redundant type assertions. See [redundant_guard err
 
 ### Spec coverage of function clauses
 
-Enable checks of proper coverage of function clauses by specs using `EQWALIZER_CLAUSE_COVERAGE=true`.
-By default, eqWAlizer will not check coverage of function clauses by the corresponding spec,
-hence a clause may be implicitly left unchecked.
+Disable checks of proper coverage of function clauses by specs using `EQWALIZER_CLAUSE_COVERAGE=false`.
+By default, eqWAlizer will check coverage of function clauses by the corresponding spec,
+ensuring all clauses are properly checked.
