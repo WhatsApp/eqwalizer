@@ -605,6 +605,30 @@ maps_fold_4_3_neg(M) ->
         M
     ).
 
+-spec maps_to_list_1(#{a => string(), b => number(), c => atom()}) ->
+    [{a, string()} | {b, number()} | {c, atom()}].
+maps_to_list_1(M) -> maps:to_list(M).
+
+-spec maps_to_list_2(#{number() => atom()}) -> [{number(), atom()}].
+maps_to_list_2(M) -> maps:to_list(M).
+
+-spec maps_to_list_3(dynamic()) -> dynamic().
+maps_to_list_3(M) -> maps:to_list(M).
+
+-spec maps_to_list_4(#{a => string(), b => [number()]} | #{b => [atom()], c => atom()}) ->
+    [{a, string()} | {b, [number()] | [atom()]} | {c, atom()}].
+maps_to_list_4(M) -> maps:to_list(M).
+
+-spec maps_to_list_5(#{a => string()} | #{atom() => map()}) ->
+    [{a, string()} | {atom(), map()}].
+maps_to_list_5(M) -> maps:to_list(M).
+
+-spec maps_to_list_6(map()) -> [dynamic()].
+maps_to_list_6(M) -> maps:to_list(M).
+
+-spec maps_to_list_7_neg(number()) -> dynamic().
+maps_to_list_7_neg(Num) -> maps:to_list(Num).
+
 -spec lists_filtermap_1() -> [number()].
 lists_filtermap_1() ->
     lists:filtermap(

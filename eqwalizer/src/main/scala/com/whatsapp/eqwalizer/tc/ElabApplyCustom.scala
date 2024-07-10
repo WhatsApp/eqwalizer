@@ -38,16 +38,17 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("lists", "keysort", 2),
       RemoteId("lists", "keystore", 4),
       RemoteId("maps", "filter", 2),
+      RemoteId("maps", "filtermap", 2),
       RemoteId("maps", "find", 2),
       RemoteId("maps", "fold", 3),
       RemoteId("maps", "get", 2),
       RemoteId("maps", "get", 3),
       RemoteId("maps", "map", 2),
-      RemoteId("maps", "remove", 2),
       RemoteId("maps", "put", 3),
+      RemoteId("maps", "remove", 2),
+      RemoteId("maps", "to_list", 1),
       RemoteId("maps", "with", 2),
       RemoteId("maps", "without", 2),
-      RemoteId("maps", "filtermap", 2),
       RemoteId(CompilerMacro.fake_module, "record_info", 2),
     )
 
@@ -431,6 +432,22 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
 
         val ty = remove(narrow.asMapType(mapCoercedTy))
         (ty, env1)
+
+      case RemoteId("maps", "to_list", 1) =>
+        def mapToList(ty: Type): Type = ty match {
+          case ShapeMap(props) =>
+            ListType(UnionType(props.map { prop => TupleType(List(AtomLitType(prop.key), prop.tp)) }.toSet))
+          case DictMap(keysTy, valuesTy) =>
+            ListType(TupleType(List(keysTy, valuesTy)))
+          case UnionType(tys) =>
+            subtype.join(tys.map(mapToList))
+          case NoneType =>
+            NoneType
+          case unexpected =>
+            throw new IllegalStateException(s"unexpected non-map $unexpected")
+        }
+        val pairTys = narrow.asMapType(coerce(args.head, argTys.head, anyMapTy))
+        (mapToList(pairTys), env1)
 
       case RemoteId("maps", "with", 2) =>
         @tailrec

@@ -739,6 +739,32 @@ maps_fold_4_3_neg(M) ->                    | ERROR   |
         M                                  |         |
     ).                                     |         |
                                            |         |
+-spec maps_to_list_1(#{a => string(), b =>……         |
+    [{a, string()} | {b, number()} | {c, a……         |
+maps_to_list_1(M) -> maps:to_list(M).      | OK      |
+                                           |         |
+-spec maps_to_list_2(#{number() => atom()}……         |
+maps_to_list_2(M) -> maps:to_list(M).      | OK      |
+                                           |         |
+-spec maps_to_list_3(dynamic()) -> dynamic……         |
+maps_to_list_3(M) -> maps:to_list(M).      | OK      |
+                                           |         |
+-spec maps_to_list_4(#{a => string(), b =>……         |
+    [{a, string()} | {b, [number()] | [ato……         |
+maps_to_list_4(M) -> maps:to_list(M).      | OK      |
+                                           |         |
+-spec maps_to_list_5(#{a => string()} | #{……         |
+    [{a, string()} | {atom(), map()}].     |         |
+maps_to_list_5(M) -> maps:to_list(M).      | OK      |
+                                           |         |
+-spec maps_to_list_6(map()) -> [dynamic()]……         |
+maps_to_list_6(M) -> maps:to_list(M).      | OK      |
+                                           |         |
+-spec maps_to_list_7_neg(number()) -> dyna……         |
+maps_to_list_7_neg(Num) -> maps:to_list(Nu…… ERROR   | Num.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: #D{term() => term()}
+                                           |         |
 -spec lists_filtermap_1() -> [number()].   |         |
 lists_filtermap_1() ->                     | OK      |
     lists:filtermap(                       |         |
