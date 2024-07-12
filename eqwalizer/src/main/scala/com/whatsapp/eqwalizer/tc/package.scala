@@ -73,5 +73,6 @@ package object tc {
     val errorDepth: Int =
       options.errorDepth.getOrElse(config.errorDepth)
     val clauseCoverage: Boolean = config.clauseCoverage
+    val overloadedSpecDynamicResult: Boolean = config.overloadedSpecDynamicResult
   }
 }

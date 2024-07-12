@@ -47,6 +47,7 @@ package object eqwalizer {
       tolerateErrors: Boolean,
       checkRedundantGuards: Boolean,
       clauseCoverage: Boolean,
+      overloadedSpecDynamicResult: Boolean,
       mode: Mode.Mode,
       errorDepth: Int,
   ) {
@@ -78,6 +79,7 @@ package object eqwalizer {
       tolerateErrors = config.getBoolean("tolerate_errors"),
       checkRedundantGuards = config.getBoolean("check_redundant_guards"),
       clauseCoverage = config.getBoolean("clause_coverage"),
+      overloadedSpecDynamicResult = config.getBoolean("overloaded_spec_dynamic_result"),
       mode,
       errorDepth = config.getInt("error_depth"),
     )

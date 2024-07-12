@@ -33,7 +33,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
         val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
         (resTy, env1)
       case _ =>
-        if (!pipelineCtx.gradualTyping)
+        if (!pipelineCtx.gradualTyping || pipelineCtx.overloadedSpecDynamicResult)
           diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
         (DynamicType, env1)
     }
