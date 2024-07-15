@@ -4,7 +4,7 @@ jobs:
     name: Linux CI (OTP ${{matrix.otp}})
     strategy:
       matrix:
-        otp: ['26.0', '25.3']
+        otp: ['26.2']
     steps:
       - name: Checkout eqWAlizer
         uses: "actions/checkout@v3"
@@ -53,7 +53,7 @@ jobs:
       - name: Test eqwalizer
         run: 'cd eqwalizer && sbt test'
       - name: Upload eqwalizer.jar
-        if: matrix.otp == '25.3'
+        if: matrix.otp == '26.2'
         uses: "actions/upload-artifact@v3"
         with:
           name: eqwalizer.jar
@@ -65,7 +65,7 @@ jobs:
     name: MacOS CI (${{matrix.brew-otp-version}})
     strategy:
       matrix:
-        brew-otp-version: ['26', '25']
+        brew-otp-version: ['26']
     steps:
       - name: Checkout eqWAlizer
         uses: "actions/checkout@v3"

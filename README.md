@@ -9,7 +9,7 @@ A type-checker for Erlang.
 
 ## Using it with rebar3 projects
 
-1. Use OTP 25
+1. Use OTP 26
 2. Download the `elp` binary for your system from https://github.com/WhatsApp/erlang-language-platform/releases
 
     > On Mac you will probably get the following message when trying to run the executable the first time: "elp cannot be opened because the developer cannot be verified.".
@@ -45,7 +45,7 @@ Adding `eqwalizer_support` and `eqwalizer_rebar3`:
 
 ## Using it with non-rebar projects
 
-1. Use OTP 25 (it will be detected automatically by eqWAlizer)
+1. Use OTP 26 (it will be detected automatically by eqWAlizer)
 2. Download the `elp` binary for your system from https://github.com/WhatsApp/erlang-language-platform/releases
 3. Write a `project.json` file describing your project, see below for the file structure.
 Ensure `eqwalizer_support` is added as a dependency, and that its `ebin` folder is reachable and populated
