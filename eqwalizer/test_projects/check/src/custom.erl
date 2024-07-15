@@ -7,6 +7,7 @@
 
 -import(maps, [get/2, get/3]).
 -compile([export_all, nowarn_export_all]).
+-include_lib("kernel/include/file.hrl").
 
 -record(foo, {
     a :: ok | error,
@@ -2158,21 +2159,21 @@ file_open1() ->
         file:open("/file", [read]),
     Device.
 
--spec file_open2() -> file:fd().
+-spec file_open2() -> #file_descriptor{}.
 file_open2() ->
     {ok, Device} =
         file:open("/file", [read, raw]),
     Device.
 
 -spec file_open3_neg
-    ([file:mode()]) -> file:fd().
+    ([file:mode()]) -> #file_descriptor{}.
 file_open3_neg(Modes) ->
     {ok, Device} =
         file:open("/file", Modes),
     Device.
 
 -spec file_open5_neg
-    (file:mode()) -> file:fd().
+    (file:mode()) -> #file_descriptor{}.
 file_open5_neg(Mode) ->
     {ok, Device} =
         file:open("/file", [Mode]),

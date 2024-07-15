@@ -7,6 +7,7 @@
                                            |         |
 -import(maps, [get/2, get/3]).             |         |
 -compile([export_all, nowarn_export_all]). |         |
+-include_lib("kernel/include/file.hrl").   |         |
                                            |         |
 -record(foo, {                             |         |
     a :: ok | error,                       |         |
@@ -2888,41 +2889,37 @@ file_open1() ->                            | OK      |
         file:open("/file", [read]),        |         |
     Device.                                |         |
                                            |         |
--spec file_open2() -> file:fd().           |         |
+-spec file_open2() -> #file_descriptor{}.  |         |
 file_open2() ->                            | OK      |
     {ok, Device} =                         |         |
         file:open("/file", [read, raw]),   |         |
     Device.                                |         |
                                            |         |
 -spec file_open3_neg                       |         |
-    ([file:mode()]) -> file:fd().          |         |
+    ([file:mode()]) -> #file_descriptor{}. |         |
 file_open3_neg(Modes) ->                   | ERROR   |
     {ok, Device} =                         |         |
         file:open("/file", Modes),         |         |
     Device.                                |         | Device.
                                            |         | Expression has type:   file:io_device()
-                                           |         | Context expected type: file:fd()
+                                           |         | Context expected type: #file_descriptor{}
                                            |         | 
-                                           |         |   file:io_device() is not compatible with file:fd()
-                                           |         |   because
-                                           |         |   pid() | file:fd() is not compatible with file:fd()
+                                           |         |   file:io_device() is not compatible with #file_descriptor{}
                                            |         |   because
                                            |         |   pid() | file:fd() is not compatible with #file_descriptor{}
                                            |         |   because
                                            |         |   pid() is not compatible with #file_descriptor{}
                                            |         |
 -spec file_open5_neg                       |         |
-    (file:mode()) -> file:fd().            |         |
+    (file:mode()) -> #file_descriptor{}.   |         |
 file_open5_neg(Mode) ->                    | ERROR   |
     {ok, Device} =                         |         |
         file:open("/file", [Mode]),        |         |
     Device.                                |         | Device.
                                            |         | Expression has type:   file:io_device()
-                                           |         | Context expected type: file:fd()
+                                           |         | Context expected type: #file_descriptor{}
                                            |         | 
-                                           |         |   file:io_device() is not compatible with file:fd()
-                                           |         |   because
-                                           |         |   pid() | file:fd() is not compatible with file:fd()
+                                           |         |   file:io_device() is not compatible with #file_descriptor{}
                                            |         |   because
                                            |         |   pid() | file:fd() is not compatible with #file_descriptor{}
                                            |         |   because
