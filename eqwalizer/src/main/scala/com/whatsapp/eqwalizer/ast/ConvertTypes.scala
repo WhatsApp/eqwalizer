@@ -128,7 +128,7 @@ class ConvertTypes(module: String) {
           case prop @ OptExtProp(AtomLitExtType(key), _) => (key, prop)
         }
         val isShape = atomKeyedProps.size == props.size
-        if (isShape) ShapeMap(atomKeyedProps.map(toShapeProps(s, _)))
+        if (isShape) ShapeMap(atomKeyedProps.distinctBy(_._1).map(toShapeProps(s, _)))
         else DictMap(c(props.head.key), c(props.head.tp))
       case BuiltinExtType(name) =>
         builtinTypes(name)

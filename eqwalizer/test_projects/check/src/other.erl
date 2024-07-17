@@ -49,3 +49,6 @@ any_as_metadata_neg(M) -> M.
 elab_var_scope(_) ->
     (begin X = 3, X, fun () -> ok end end)(),
     X.
+
+-spec map_with_dup_keys(#{ak => av1, bk => bv1, ak => av2}) -> #{ak => av1, bk => bv1}.
+map_with_dup_keys(M) -> M.
