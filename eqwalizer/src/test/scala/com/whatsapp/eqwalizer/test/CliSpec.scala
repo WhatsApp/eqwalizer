@@ -7,7 +7,6 @@
 package com.whatsapp.eqwalizer.test
 
 import com.whatsapp.eqwalizer.Main
-import com.whatsapp.eqwalizer.analyses._
 
 class CliSpec extends SnapshotSpec {
   describe("eqwalizer") {
@@ -37,30 +36,6 @@ class CliSpec extends SnapshotSpec {
       intercept[IllegalArgumentException] {
         Main.main(Array("check", "--json", "missing"))
       }
-    }
-
-    it("reports pinned vars") {
-      checkAction(PinnedVars.main(Array()), "pinned.cli")
-    }
-
-    it("reports refined record types") {
-      checkAction(RefinedRecordTypes.main(Array()), "refined_record_types.cli")
-    }
-
-    it("report bad prop types") {
-      checkAction(BadPropTypes.main(Array()), "bad_prop_types.cli")
-    }
-
-    it("reports overloaded fun specs") {
-      checkAction(OverloadedFunSpecs.main(Array()), "overloaded_fun_specs.cli")
-    }
-
-    it("reports unions with type variables") {
-      checkAction(UnionsWithTypeVars.main(Array()), "unions_with_type_vars.cli")
-    }
-
-    it("reports OTP function calls") {
-      checkAction(OTPFuns.main(Array()), "otp_funs.cli")
     }
 
     it("prints ELP diagnostics") {
