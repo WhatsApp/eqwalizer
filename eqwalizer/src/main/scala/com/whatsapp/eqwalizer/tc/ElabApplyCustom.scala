@@ -363,7 +363,16 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val vTys = narrow.asFunType(funArgCoercedTy, 2).get.map(_.resTy)
             subtype.join(vTys)
         }
-        (DictMap(keyTy, resValTy), env1)
+        def mapValueType(argMapTy: Type, argValTy: Type): Type = argMapTy match {
+          case ShapeMap(props) =>
+            ShapeMap(props.map {
+              case ReqProp(key, ty) => ReqProp(key, argValTy)
+              case OptProp(key, ty) => OptProp(key, argValTy)
+            })
+          case UnionType(tys) => subtype.join(tys.map(mapValueType(_, argValTy)))
+          case _              => DictMap(keyTy, resValTy)
+        }
+        (mapValueType(mapType, resValTy), env1)
 
       case RemoteId("maps", "filtermap", 2) =>
         val List(funArg, map) = args

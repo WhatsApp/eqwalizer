@@ -479,6 +479,22 @@ maps_map_2_10_neg() ->
     maps:map(F, non_kv),
     nok.
 
+-spec maps_map_2_11(
+    fun((dynamic(), dynamic()) -> ret),
+    #{ka => va, kb => vb}
+) ->
+    #{ka => ret, kb => ret}.
+maps_map_2_11(Fun, M) ->
+    maps:map(Fun, M).
+
+-spec maps_map_2_12(
+    fun((dynamic(), dynamic()) -> ret),
+    #{ka => va1, kb => vb1} | #{ka => va2, kb => vb2} | #{kb => vb3, kc => vc3}
+) ->
+    #{ka => ret, kb => ret} | #{kb => ret, kc => ret}.
+maps_map_2_12(Fun, M) ->
+    maps:map(Fun, M).
+
 -spec maps_fold_3_1()
         -> [number() | a | b].
 maps_fold_3_1() ->

@@ -572,8 +572,13 @@ maps_map_2_9_neg() ->                      | ERROR   |
     M = #{a => a, b => b},                 |         |
     F = fun erlang:'=:='/2,                |         |
     maps:map(F, M).                        |         | maps:map(F, M).
-                                           |         | Expression has type:   dict  map #D{'a' | 'b' => boolean()}
-                                           |         | Context expected type: shape map #S{a => 'a', b => 'b'}
+                                           |         | Expression has type:   #S{a := boolean(), b := boolean()}
+                                           |         | Context expected type: #S{a => 'a', b => 'b'}
+                                           |         | 
+                                           |         |   at shape key 'a':
+                                           |         |   #S{a := boolean(), b := boolean()} is not compatible with #S{a => 'a', b => 'b'}
+                                           |         |   because
+                                           |         |   boolean() is not compatible with 'a'
                                            |         |
 -spec maps_map_2_10_neg()                  |         |
         -> nok.                            |         |
@@ -583,6 +588,22 @@ maps_map_2_10_neg() ->                     | ERROR   |
                                            |         | Expression has type:   'non_kv'
                                            |         | Context expected type: #D{term() => term()}
     nok.                                   |         |
+                                           |         |
+-spec maps_map_2_11(                       |         |
+    fun((dynamic(), dynamic()) -> ret),    |         |
+    #{ka => va, kb => vb}                  |         |
+) ->                                       |         |
+    #{ka => ret, kb => ret}.               |         |
+maps_map_2_11(Fun, M) ->                   | OK      |
+    maps:map(Fun, M).                      |         |
+                                           |         |
+-spec maps_map_2_12(                       |         |
+    fun((dynamic(), dynamic()) -> ret),    |         |
+    #{ka => va1, kb => vb1} | #{ka => va2,……         |
+) ->                                       |         |
+    #{ka => ret, kb => ret} | #{kb => ret,……         |
+maps_map_2_12(Fun, M) ->                   | OK      |
+    maps:map(Fun, M).                      |         |
                                            |         |
 -spec maps_fold_3_1()                      |         |
         -> [number() | a | b].             |         |
