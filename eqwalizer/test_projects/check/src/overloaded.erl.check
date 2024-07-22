@@ -66,30 +66,26 @@ swap_proxy_4(X) ->                         | OK      |
 -spec swap_proxy_gen_1(                    |         |
     atom() | binary()                      |         |
 ) -> atom() | binary().                    |         |
-swap_proxy_gen_1(AB) ->                    | ERROR   |
-    swap_proxy_1(AB).                      |         | swap_proxy_1(AB).
-                                           |         | Not enough info to branch. Arg types: atom() | binary()
+swap_proxy_gen_1(AB) ->                    | OK      |
+    swap_proxy_1(AB).                      |         |
                                            |         |
 -spec swap_proxy_gen_2(                    |         |
     atom() | binary()                      |         |
 ) -> atom() | binary().                    |         |
-swap_proxy_gen_2(AB) ->                    | ERROR   |
-    swap_proxy_2(AB).                      |         | swap_proxy_2(AB).
-                                           |         | Not enough info to branch. Arg types: atom() | binary()
+swap_proxy_gen_2(AB) ->                    | OK      |
+    swap_proxy_2(AB).                      |         |
                                            |         |
 -spec swap_proxy_gen_3(                    |         |
     atom() | binary()                      |         |
 ) -> atom() | binary().                    |         |
-swap_proxy_gen_3(AB) ->                    | ERROR   |
-    overloaded:swap_proxy_3(AB).           |         | overloaded:swap_proxy_3(AB).
-                                           |         | Not enough info to branch. Arg types: atom() | binary()
+swap_proxy_gen_3(AB) ->                    | OK      |
+    overloaded:swap_proxy_3(AB).           |         |
                                            |         |
 -spec swap_proxy_gen_4(                    |         |
     atom() | binary()                      |         |
 ) -> atom() | binary().                    |         |
-swap_proxy_gen_4(AB) ->                    | ERROR   |
-    overloaded:swap_proxy_4(AB).           |         | overloaded:swap_proxy_4(AB).
-                                           |         | Not enough info to branch. Arg types: atom() | binary()
+swap_proxy_gen_4(AB) ->                    | OK      |
+    overloaded:swap_proxy_4(AB).           |         |
                                            |         |
 -spec app_tuple                            |         |
     ({fun(() -> Res)}) -> Res;             |         |
@@ -104,27 +100,23 @@ app_tuple({F, A, B}) -> F(A, B).           |         |
 bar(_) -> throw(err).                      | OK      |
                                            |         |
 -spec test_bar1() -> b.                    |         |
-test_bar1() ->                             | ERROR   |
-    Res = bar(fun(a) -> a end),            |         | bar(fun).
-                                           |         | Lambdas are not allowed as args to overloaded functions
+test_bar1() ->                             | OK      |
+    Res = bar(fun(a) -> a end),            |         |
     Res.                                   |         |
                                            |         |
 -spec test_bar2(fun((a) -> b)) -> b.       |         |
-test_bar2(F) ->                            | ERROR   |
-    Res = bar(F),                          |         | bar(F).
-                                           |         | Not enough info to branch. Arg types: fun(('a') -> 'b')
+test_bar2(F) ->                            | OK      |
+    Res = bar(F),                          |         |
     Res.                                   |         |
                                            |         |
 -spec test_bar3(fun((a) -> c)) -> b.       |         |
-test_bar3(F) ->                            | ERROR   |
-    Res = bar(F),                          |         | bar(F).
-                                           |         | Not enough info to branch. Arg types: fun(('a') -> 'c')
+test_bar3(F) ->                            | OK      |
+    Res = bar(F),                          |         |
     Res.                                   |         |
                                            |         |
 -spec test_bar4(fun((a) -> z)) -> z.       |         |
-test_bar4(F) ->                            | ERROR   |
-    Res = bar(F),                          |         | bar(F).
-                                           |         | Not enough info to branch. Arg types: fun(('a') -> 'z')
+test_bar4(F) ->                            | OK      |
+    Res = bar(F),                          |         |
     Res.                                   |         |
                                            |         |
 -spec inner_bar({fun((a) -> b)}) -> b;     |         |
@@ -132,9 +124,8 @@ test_bar4(F) ->                            | ERROR   |
 inner_bar(_) -> throw(err).                | OK      |
                                            |         |
 -spec test_inner_bar() -> b.               |         |
-test_inner_bar() ->                        | ERROR   |
-    Res = bar({fun(a) -> a end}),          |         | bar({fun}).
-                                           |         | Lambdas are not allowed as args to overloaded functions
+test_inner_bar() ->                        | OK      |
+    Res = bar({fun(a) -> a end}),          |         |
     Res.                                   |         |
                                            |         |
 % adapted from maps:filter/2 that has      |         |
@@ -155,13 +146,12 @@ maps_filter(_, Map) when is_map(Map) ->    | ERROR   |
                                            |         |
 -spec test_overloaded_generic(boolean())   |         |
         -> #{number() => number()}.        |         |
-test_overloaded_generic(B) ->              | ERROR   |
+test_overloaded_generic(B) ->              | OK      |
     M = #{1 => 1, 2 => 3},                 |         |
     It = maps:iterator(M),                 |         |
     F = fun erlang:'=:='/2,                |         |
     case B of                              |         |
-        true -> maps_filter(F, M);         |         | maps_filter(F, M).
-                                           |         | Not enough info to branch. Arg types: fun((term(), term()) -> boolean()), #D{number() => number()}
+        true -> maps_filter(F, M);         |         |
         false -> maps_filter(F, It)        |         |
     end.                                   |         |
                                            |         |
@@ -176,9 +166,8 @@ test_overloaded_generic(B) ->              | ERROR   |
 -spec get_list                             |         |
     ([prop(K, V)], props(K, V)) -> [V];    |         |
     ([V], props(_, V)) -> [V].             |         |
-get_list(KeysDefaults, List) ->            | ERROR   |
-    get_list(KeysDefaults, List, []).      |         | get_list(KeysDefaults, List, []).
-                                           |         | Not enough info to branch. Arg types: [prop(K, V)], props(K, V), []
+get_list(KeysDefaults, List) ->            | OK      |
+    get_list(KeysDefaults, List, []).      |         |
                                            |         |
 -spec pget(K, props(K, V), V) -> V.        |         |
 pget(_, _, _) -> throw(not_implemented).   | OK      |
@@ -196,13 +185,12 @@ pget(_, _) -> throw(not_implemented).      | OK      |
         [V];                               |         |
     ([K], props(K, V), [V]) ->             |         |
         [V].                               |         |
-get_list([], _List, Acc) ->                | ERROR   |
+get_list([], _List, Acc) ->                | OK      |
     lists:reverse(Acc);                    |         |
 get_list(                                  |         |
     [{Key, Default} | T], List, Acc        |         |
 ) ->                                       |         |
-    get_list(T, List,                      |         | get_list(T, List, [pget(Key, List, Default) | Acc]).
-                                           |         | Not enough info to branch. Arg types: [prop(K, V)], props(K, V), [V]
+    get_list(T, List,                      |         |
         [pget(Key, List, Default)|Acc]     |         |
     );                                     |         |
 get_list([Key | T], List, Acc) ->          |         |
@@ -242,28 +230,24 @@ get_list_any(_, _, _) ->                   | OK      |
 %% errors when overlapped domains          |         |
 %% are discovered at call site             |         |
 -spec non_overlap_atoms1() -> [atom()].    |         |
-non_overlap_atoms1() ->                    | ERROR   |
+non_overlap_atoms1() ->                    | OK      |
     ABs = [{a, b}],                        |         |
-    get_list_atoms(ABs, ABs, [b]).         |         | get_list_atoms(ABs, ABs, ['b']).
-                                           |         | Not enough info to branch. Arg types: [{'a', 'b'}], [{'a', 'b'}], ['b']
+    get_list_atoms(ABs, ABs, [b]).         |         |
                                            |         |
 -spec non_overlap_atoms2() -> [atom()].    |         |
-non_overlap_atoms2() ->                    | ERROR   |
-    get_list_atoms([b], [{a, b}], [b]).    |         | get_list_atoms(['b'], [{'a', 'b'}], ['b']).
-                                           |         | Not enough info to branch. Arg types: ['b'], [{'a', 'b'}], ['b']
+non_overlap_atoms2() ->                    | OK      |
+    get_list_atoms([b], [{a, b}], [b]).    |         |
                                            |         |
 -spec overlap_any1() -> [atom()].          |         |
-overlap_any1() ->                          | ERROR   |
+overlap_any1() ->                          | OK      |
     ABs = [{a, b}],                        |         |
-    get_list_any(ABs, ABs, [b]).           |         | get_list_any(ABs, ABs, ['b']).
-                                           |         | Not enough info to branch. Arg types: [{'a', 'b'}], [{'a', 'b'}], ['b']
+    get_list_any(ABs, ABs, [b]).           |         |
                                            |         |
 -spec non_overlap_any2() -> [atom()].      |         |
-non_overlap_any2() ->                      | ERROR   |
+non_overlap_any2() ->                      | OK      |
     % selects the second branch and        |         |
     % reports an error                     |         |
-    get_list_any([b], [{a, b}], [b]).      |         | get_list_any(['b'], [{'a', 'b'}], ['b']).
-                                           |         | Not enough info to branch. Arg types: ['b'], [{'a', 'b'}], ['b']
+    get_list_any([b], [{a, b}], [b]).      |         |
                                            |         |
 -spec take_ok_or_any(term()) -> error;     |         |
     (ok) -> ok.                            |         |
@@ -273,9 +257,8 @@ take_ok_or_any(ok) -> ok;                  | ERROR   | 'ok'.
 take_ok_or_any(_) -> error.                |         |
                                            |         |
 -spec overlap_any_neg(term()) -> error.    |         |
-overlap_any_neg(Any) ->                    | ERROR   |
-    take_ok_or_any(Any).                   |         | take_ok_or_any(Any).
-                                           |         | Not enough info to branch. Arg types: term()
+overlap_any_neg(Any) ->                    | OK      |
+    take_ok_or_any(Any).                   |         |
                                            |         |
 -spec over                                 |         |
   (integer()) -> atom();                   |         |
@@ -297,12 +280,11 @@ use_over(X) -> over(X).                    | ERROR   | X.
 -spec use_invalid_neg(a) -> a;             | INVALID | use_invalid_neg/1 references type with invalid definition: invalid/0
 
                  (err) -> invalid().       |         |
-use_invalid_neg(a) -> a.                   | NO SPEC |
+use_invalid_neg(a) -> a.                   |         |
                                            |         |
 -spec no_match_neg() -> term().            |         |
-no_match_neg() ->                          | ERROR   |
-    _ = swap(""),                          |         | swap(string_lit).
-                                           |         | Not enough info to branch. Arg types: []
+no_match_neg() ->                          | OK      |
+    _ = swap(""),                          |         |
     ok.                                    |         |
                                            |         |
 -spec fst_gen                              |         |
@@ -318,9 +300,8 @@ use_fst_gen1(X) ->                         | OK      |
                                            |         |
 -spec use_fst_gen2                         |         |
     ({atom()} | [atom()]) -> atom().       |         |
-use_fst_gen2(X) ->                         | ERROR   |
-    fst_gen(X).                            |         | fst_gen(X).
-                                           |         | Not enough info to branch. Arg types: {atom()} | [atom()]
+use_fst_gen2(X) ->                         | OK      |
+    fst_gen(X).                            |         |
                                            |         |
 -spec swap2_neg() -> number().             |         |
 swap2_neg() ->                             | ERROR   |

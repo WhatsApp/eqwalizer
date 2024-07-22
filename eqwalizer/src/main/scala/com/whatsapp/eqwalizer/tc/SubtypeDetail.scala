@@ -173,11 +173,11 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
         else Nil
       case (AnyArityFunType(_), AnyFunType) =>
         Nil
-      case (AnyFunType, AnyArityFunType(_)) if pipelineContext.gradualTyping =>
+      case (AnyFunType, AnyArityFunType(_)) =>
         Nil
       case (FunType(_, _, resTy1), AnyArityFunType(resTy2)) =>
         recur(resTy1, resTy2)
-      case (AnyArityFunType(resTy1), FunType(_, _, resTy2)) if pipelineContext.gradualTyping =>
+      case (AnyArityFunType(resTy1), FunType(_, _, resTy2)) =>
         recur(resTy1, resTy2)
       case (RecordType(_), AnyTupleType) =>
         Nil

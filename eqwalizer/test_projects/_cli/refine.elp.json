@@ -1245,51 +1245,6 @@
     },
     {
       "range": {
-        "start": 4079,
-        "end": 4080
-      },
-      "lineAndCol": null,
-      "message": "Expression has type:   tuple()\nContext expected type: #my_rec{}",
-      "uri": "https://fb.me/eqwalizer_errors#incompatible_types",
-      "code": "incompatible_types",
-      "expressionOrNull": "R",
-      "explanationOrNull": null,
-      "diagnostic": {
-        "TypeError": {
-          "ExpectedSubtype": {
-            "location": {
-              "TextRange": {
-                "start_byte": 4079,
-                "end_byte": 4080
-              }
-            },
-            "expr": {
-              "Var": {
-                "n": "R",
-                "location": {
-                  "TextRange": {
-                    "start_byte": 4079,
-                    "end_byte": 4080
-                  }
-                }
-              }
-            },
-            "expected": {
-              "RecordType": {
-                "name": "my_rec",
-                "module": "refine"
-              }
-            },
-            "got": "AnyTupleType",
-            "pipeline_context": {
-              "module": "refine"
-            }
-          }
-        }
-      }
-    },
-    {
-      "range": {
         "start": 4182,
         "end": 4183
       },

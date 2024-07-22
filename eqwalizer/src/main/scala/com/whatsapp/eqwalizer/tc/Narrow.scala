@@ -242,12 +242,10 @@ class Narrow(pipelineContext: PipelineContext) {
       asFunTypeAux(bound, arity).map(fts =>
         fts.map(ft => FunType(ft.forall, ft.argTys.map(BoundedDynamicType), BoundedDynamicType(ft.resTy)))
       )
-    case AnyFunType if pipelineContext.gradualTyping =>
+    case AnyFunType =>
       Some(List(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)))
-    case AnyArityFunType(resTy) if pipelineContext.gradualTyping =>
-      Some(List(FunType(List.empty, List.fill(arity)(DynamicType), resTy)))
     case AnyArityFunType(resTy) =>
-      Some(List(FunType(List.empty, List.fill(arity)(NoneType), resTy)))
+      Some(List(FunType(List.empty, List.fill(arity)(DynamicType), resTy)))
     case _ if subtype.isNoneType(ty) =>
       Some(List())
     case ft: FunType =>
@@ -273,17 +271,13 @@ class Narrow(pipelineContext: PipelineContext) {
       extractFunTypes(bound, arity).map(ft =>
         FunType(ft.forall, ft.argTys.map(BoundedDynamicType), BoundedDynamicType(ft.resTy))
       )
-    case AnyFunType if pipelineContext.gradualTyping =>
-      Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
     case AnyFunType =>
-      Set(FunType(List.empty, List.fill(arity)(NoneType), AnyType))
+      Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
     case ft: FunType =>
       if (ft.argTys.size == arity) Set(ft)
       else Set()
-    case AnyArityFunType(resTy) if pipelineContext.gradualTyping =>
-      Set(FunType(List.empty, List.fill(arity)(DynamicType), resTy))
     case AnyArityFunType(resTy) =>
-      Set(FunType(List.empty, List.fill(arity)(NoneType), resTy))
+      Set(FunType(List.empty, List.fill(arity)(DynamicType), resTy))
     case UnionType(tys) =>
       tys.flatMap(extractFunTypes(_, arity))
     case RemoteType(rid, args) =>
@@ -312,10 +306,7 @@ class Narrow(pipelineContext: PipelineContext) {
           case Some(recDecl) =>
             recDecl.fields.values.toList.map(_.tp)
           case None =>
-            if (pipelineContext.gradualTyping)
-              List.fill(arity - 1)(DynamicType)
-            else
-              List.fill(arity - 1)(AnyType)
+            List.fill(arity - 1)(DynamicType)
         }
         val recArity = recFieldTypes.size + 1
         if (arity == recArity) {
@@ -328,10 +319,7 @@ class Narrow(pipelineContext: PipelineContext) {
           case Some(recDecl) =>
             recDecl.fields.map(f => r.fields.getOrElse(f._1, f._2.tp)).toList
           case None =>
-            if (pipelineContext.gradualTyping)
-              List.fill(arity - 1)(DynamicType)
-            else
-              List.fill(arity - 1)(AnyType)
+            List.fill(arity - 1)(DynamicType)
         }
         val recArity = recFieldTypes.size + 1
         if (arity == recArity) {
@@ -339,10 +327,7 @@ class Narrow(pipelineContext: PipelineContext) {
         } else
           List()
       case AnyTupleType =>
-        if (pipelineContext.gradualTyping)
-          List(TupleType(List.fill(arity)(DynamicType)))
-        else
-          List(TupleType(List.fill(arity)(AnyType)))
+        List(TupleType(List.fill(arity)(DynamicType)))
       case tt: TupleType if tt.argTys.size == arity => List(tt)
       case UnionType(tys)                           => tys.flatMap(asTupleTypeAux(_, arity)).toList
       case RemoteType(rid, args) =>
@@ -409,10 +394,8 @@ class Narrow(pipelineContext: PipelineContext) {
       Right(NoneType)
     case DynamicType =>
       Right(DynamicType)
-    case AnyTupleType if pipelineContext.gradualTyping =>
-      Right(DynamicType)
     case AnyTupleType =>
-      Right(AnyType)
+      Right(DynamicType)
     case BoundedDynamicType(t) if subtype.subType(t, AnyTupleType) =>
       Right(BoundedDynamicType(getTupleElement(t, idx).getOrElse(NoneType)))
     case BoundedDynamicType(t) =>
@@ -423,15 +406,13 @@ class Narrow(pipelineContext: PipelineContext) {
       Left(elemTys.length)
     case r: RecordType =>
       recordToTuple(r) match {
-        case Some(tupTy)                           => getTupleElement(tupTy, idx)
-        case None if pipelineContext.gradualTyping => Right(DynamicType)
-        case None                                  => Right(AnyType)
+        case Some(tupTy) => getTupleElement(tupTy, idx)
+        case None        => Right(DynamicType)
       }
     case r: RefinedRecordType =>
       refinedRecordToTuple(r) match {
-        case Some(tupTy)                           => getTupleElement(tupTy, idx)
-        case None if pipelineContext.gradualTyping => Right(DynamicType)
-        case None                                  => Right(AnyType)
+        case Some(tupTy) => getTupleElement(tupTy, idx)
+        case None        => Right(DynamicType)
       }
     case UnionType(tys) =>
       val res = tys.map(getTupleElement(_, idx)).foldLeft[Either[Int, Set[Type]]](Right(Set.empty)) {
@@ -456,10 +437,8 @@ class Narrow(pipelineContext: PipelineContext) {
       NoneType
     case DynamicType =>
       DynamicType
-    case AnyTupleType if pipelineContext.gradualTyping =>
-      DynamicType
     case AnyTupleType =>
-      AnyType
+      DynamicType
     case BoundedDynamicType(t) if subtype.subType(t, AnyTupleType) =>
       BoundedDynamicType(getAllTupleElements(t))
     case BoundedDynamicType(t) =>
@@ -468,15 +447,13 @@ class Narrow(pipelineContext: PipelineContext) {
       UnionType(elemTys.toSet)
     case r: RecordType =>
       recordToTuple(r) match {
-        case Some(tupTy)                           => getAllTupleElements(tupTy)
-        case None if pipelineContext.gradualTyping => DynamicType
-        case None                                  => AnyType
+        case Some(tupTy) => getAllTupleElements(tupTy)
+        case None        => DynamicType
       }
     case r: RefinedRecordType =>
       refinedRecordToTuple(r) match {
-        case Some(tupTy)                           => getAllTupleElements(tupTy)
-        case None if pipelineContext.gradualTyping => DynamicType
-        case None                                  => AnyType
+        case Some(tupTy) => getAllTupleElements(tupTy)
+        case None        => DynamicType
       }
     case UnionType(tys) =>
       UnionType(util.flattenUnions(UnionType(tys.map(getAllTupleElements))).toSet)

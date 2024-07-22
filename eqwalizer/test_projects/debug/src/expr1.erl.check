@@ -9,217 +9,221 @@
                                            |         |
 -record(test_rec, {id}).                   |         |
                                            |         |
-id(X) ->                                   | NO SPEC |
+id(X) ->                                   | OK      |
     X.                                     |         |
                                            |         |
-atom_lit() ->                              | NO SPEC |
+atom_lit() ->                              | OK      |
     atom.                                  |         |
                                            |         |
-int_lit() ->                               | NO SPEC |
+int_lit() ->                               | OK      |
     1.                                     |         |
                                            |         |
-float_lit() ->                             | NO SPEC |
+float_lit() ->                             | OK      |
     1.0.                                   |         |
                                            |         |
-char_lit() ->                              | NO SPEC |
+char_lit() ->                              | OK      |
     $c.                                    |         |
                                            |         |
-string_lit() ->                            | NO SPEC |
+string_lit() ->                            | OK      |
     "".                                    |         |
                                            |         |
-match() ->                                 | NO SPEC |
+match() ->                                 | OK      |
     X = 1,                                 |         |
     X.                                     |         |
                                            |         |
-tuple() ->                                 | NO SPEC |
+tuple() ->                                 | OK      |
     {tuple, 1}.                            |         |
                                            |         |
-nil() ->                                   | NO SPEC |
+nil() ->                                   | OK      |
     [].                                    |         |
                                            |         |
-cons(H, T) ->                              | NO SPEC |
+cons(H, T) ->                              | OK      |
     [H | T].                               |         |
                                            |         |
-binary() ->                                | NO SPEC |
+binary() ->                                | OK      |
     <<>>.                                  |         |
                                            |         |
-un_op(X) ->                                | NO SPEC |
+un_op(X) ->                                | OK      |
     not X.                                 |         |
                                            |         |
-bin_op(X, Y) ->                            | NO SPEC |
+bin_op(X, Y) ->                            | OK      |
     X andalso Y.                           |         |
                                            |         |
-record_create() ->                         | NO SPEC |
+record_create() ->                         | OK      |
     #test_rec{}.                           |         |
                                            |         |
-record_update(Rec) ->                      | NO SPEC |
+record_update(Rec) ->                      | OK      |
     Rec#test_rec{id = 1}.                  |         |
                                            |         |
-record_select(Rec) ->                      | NO SPEC |
+record_select(Rec) ->                      | OK      |
     Rec#test_rec.id.                       |         |
                                            |         |
-record_index() ->                          | NO SPEC |
+record_index() ->                          | OK      |
     #test_rec.id.                          |         |
                                            |         |
-map_create() ->                            | NO SPEC |
+map_create() ->                            | OK      |
     #{id => 1}.                            |         |
                                            |         |
-map_update(M) ->                           | NO SPEC |
+map_update(M) ->                           | OK      |
     M#{id => 1}.                           |         |
                                            |         |
-call1(X) ->                                | NO SPEC |
+call1(X) ->                                | OK      |
     id(X).                                 |         |
                                            |         |
-call2(X) ->                                | NO SPEC |
+call2(X) ->                                | OK      |
     terms1:id(X).                          |         |
                                            |         |
-list_comp1() ->                            | NO SPEC |
+list_comp1() ->                            | OK      |
     [X || X <- [1, 2, 3]].                 |         |
                                            |         |
-list_comp2() ->                            | NO SPEC |
+list_comp2() ->                            | OK      |
     [X || <<X>> <= <<1, 2, 3>>].           |         |
                                            |         |
-binary_comp1() ->                          | NO SPEC |
-    << X || X <- [1, 2, 3] >>.             |         |
+binary_comp1() ->                          | ERROR   |
+    << X || X <- [1, 2, 3] >>.             |         | X.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: binary()
                                            |         |
-binary_comp2() ->                          | NO SPEC |
-    << X || <<X>> <= <<1, 2, 3>> >>.       |         |
+binary_comp2() ->                          | ERROR   |
+    << X || <<X>> <= <<1, 2, 3>> >>.       |         | X.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: binary()
                                            |         |
-dynamic_call1(F, Arg) ->                   | NO SPEC |
+dynamic_call1(F, Arg) ->                   | OK      |
     F(Arg).                                |         |
                                            |         |
-dynamic_call2(M, F, Arg) ->                | NO SPEC |
+dynamic_call2(M, F, Arg) ->                | OK      |
     M:F(Arg).                              |         |
                                            |         |
-block(X) ->                                | NO SPEC |
+block(X) ->                                | OK      |
     begin id(X) end.                       |         |
                                            |         |
-if_exp(X, Y, Z) ->                         | NO SPEC |
+if_exp(X, Y, Z) ->                         | OK      |
     if                                     |         |
         X -> Y;                            |         |
         true -> Z                          |         |
     end.                                   |         |
                                            |         |
-case_exp(B) ->                             | NO SPEC |
+case_exp(B) ->                             | OK      |
     case B of                              |         |
         true -> false;                     |         |
         false -> true                      |         |
     end.                                   |         |
                                            |         |
-try_exp(E) ->                              | NO SPEC |
+try_exp(E) ->                              | OK      |
     try                                    |         |
         E                                  |         |
     catch                                  |         |
         Y -> Y                             |         |
     end.                                   |         |
                                            |         |
-anon_fun() ->                              | NO SPEC |
+anon_fun() ->                              | OK      |
     fun (X) -> X end.                      |         |
                                            |         |
-named_fun() ->                             | NO SPEC |
+named_fun() ->                             | OK      |
     fun _Fun(X) -> X end.                  |         |
                                            |         |
-fun_lit() ->                               | NO SPEC |
+fun_lit() ->                               | OK      |
     fun anon_fun/0.                        |         |
                                            |         |
-remote_fun_lit() ->                        | NO SPEC |
+remote_fun_lit() ->                        | OK      |
     fun terms1:anon_fun/0.                 |         |
                                            |         |
-dyn_fun(M, F) ->                           | NO SPEC |
+dyn_fun(M, F) ->                           | OK      |
     fun M:F/0.                             |         |
                                            |         |
-dyn_call1(M) ->                            | NO SPEC |
+dyn_call1(M) ->                            | OK      |
     M:start().                             |         |
                                            |         |
-dyn_call2(M, F, X, Y) ->                   | NO SPEC |
+dyn_call2(M, F, X, Y) ->                   | OK      |
     M:F(X, Y).                             |         |
                                            |         |
 %%%% Patterns                              |         |
                                            |         |
-match_pat(_X = x, _Y = x) -> ok.           | NO SPEC |
+match_pat(_X = x, _Y = x) -> ok.           | OK      |
                                            |         |
-wildcard_pat(_) -> ok.                     | NO SPEC |
+wildcard_pat(_) -> ok.                     | OK      |
                                            |         |
-tuple_pat({_, _}) -> ok.                   | NO SPEC |
+tuple_pat({_, _}) -> ok.                   | OK      |
                                            |         |
-nil_pat([]) -> ok.                         | NO SPEC |
+nil_pat([]) -> ok.                         | OK      |
                                            |         |
-cons_pat([X|Y]) -> {X, Y}.                 | NO SPEC |
+cons_pat([X|Y]) -> {X, Y}.                 | OK      |
                                            |         |
-lit_pat1(1) -> ok.                         | NO SPEC |
-lit_pat2(1.0) -> ok.                       | NO SPEC |
-lit_pat3($c) -> ok.                        | NO SPEC |
+lit_pat1(1) -> ok.                         | OK      |
+lit_pat2(1.0) -> ok.                       | OK      |
+lit_pat3($c) -> ok.                        | OK      |
                                            |         |
-atom_pat(ok) -> nok.                       | NO SPEC |
+atom_pat(ok) -> nok.                       | OK      |
                                            |         |
-string_pat("ok") -> ok.                    | NO SPEC |
+string_pat("ok") -> ok.                    | OK      |
                                            |         |
-bin_pat(<<>>) -> bin.                      | NO SPEC |
+bin_pat(<<>>) -> bin.                      | OK      |
                                            |         |
-unop_pat(-1) -> 1.                         | NO SPEC |
+unop_pat(-1) -> 1.                         | OK      |
                                            |         |
-binop_pat(3 + 5) -> 0.                     | NO SPEC |
+binop_pat(3 + 5) -> 0.                     | OK      |
                                            |         |
-record_pat(#test_rec{}) -> test_rec.       | NO SPEC |
+record_pat(#test_rec{}) -> test_rec.       | OK      |
                                            |         |
-record_index_pat(#test_rec.id) -> test_rec…… NO SPEC |
+record_index_pat(#test_rec.id) -> test_rec…… OK      |
                                            |         |
-map_pat(#{id := _X}) -> id.                | NO SPEC |
+map_pat(#{id := _X}) -> id.                | OK      |
                                            |         |
 %%% Guards                                 |         |
                                            |         |
-var_guard(X, Y) when X -> Y.               | NO SPEC |
+var_guard(X, Y) when X -> Y.               | OK      |
                                            |         |
-tuple_guard(X, Y) when {X, Y} -> Y.        | NO SPEC |
+tuple_guard(X, Y) when {X, Y} -> Y.        | OK      |
                                            |         |
-nil_guard(_X, Y) when [] -> Y.             | NO SPEC |
+nil_guard(_X, Y) when [] -> Y.             | OK      |
                                            |         |
-cons_guard(X, Y) when [X | Y] -> Y.        | NO SPEC |
+cons_guard(X, Y) when [X | Y] -> Y.        | OK      |
                                            |         |
-bin_guard(_X, Y) when <<>> -> Y.           | NO SPEC |
+bin_guard(_X, Y) when <<>> -> Y.           | OK      |
                                            |         |
-unop_guard(X, Y) when -X -> Y.             | NO SPEC |
+unop_guard(X, Y) when -X -> Y.             | OK      |
                                            |         |
-binop_guard(X, Y) when X + Y -> Y.         | NO SPEC |
+binop_guard(X, Y) when X + Y -> Y.         | OK      |
                                            |         |
-record_guard(_X, Y)                        | NO SPEC |
+record_guard(_X, Y)                        | OK      |
     when #test_rec{} -> Y.                 |         |
                                            |         |
-record_index_guard(_X, Y)                  | NO SPEC |
+record_index_guard(_X, Y)                  | OK      |
     when #test_rec.id -> Y.                |         |
                                            |         |
-record_field_guard(X)                      | NO SPEC |
+record_field_guard(X)                      | OK      |
     when X#test_rec.id -> ok.              |         |
                                            |         |
-map_guard(_X)                              | NO SPEC |
+map_guard(_X)                              | OK      |
     when #{} -> ok.                        |         |
                                            |         |
-map_update_guard(X)                        | NO SPEC |
+map_update_guard(X)                        | OK      |
     when X#{id := 3} -> ok.                |         |
                                            |         |
-call_guard(X)                              | NO SPEC |
+call_guard(X)                              | OK      |
     when is_number(X) -> ok.               |         |
                                            |         |
-remote_call_guard(X)                       | NO SPEC |
+remote_call_guard(X)                       | OK      |
     when erlang:is_number(X) -> ok.        |         |
                                            |         |
-atom_guard(_X)                             | NO SPEC |
+atom_guard(_X)                             | OK      |
     when ok -> ok.                         |         |
                                            |         |
-string_guard(_X)                           | NO SPEC |
+string_guard(_X)                           | OK      |
     when "string" -> ok.                   |         |
                                            |         |
-lit_guard(_X)                              | NO SPEC |
+lit_guard(_X)                              | OK      |
     when $c -> ok.                         |         |
                                            |         |
-list_concat(X, Y) -> X ++ Y.               | NO SPEC |
+list_concat(X, Y) -> X ++ Y.               | OK      |
                                            |         |
-list_subtract(X, Y) -> X -- Y.             | NO SPEC |
+list_subtract(X, Y) -> X -- Y.             | OK      |
                                            |         |
-string_prefix("prefix" ++ S) -> S.         | NO SPEC |
+string_prefix("prefix" ++ S) -> S.         | OK      |
                                            |         |
-dyn_call3(F) ->                            | NO SPEC |
+dyn_call3(F) ->                            | OK      |
     lists:F(2, 3).                         |         |
                                            |         |
-empty_receive(Timeout) ->                  | NO SPEC |
+empty_receive(Timeout) ->                  | OK      |
     receive after Timeout -> ok end.       |         |

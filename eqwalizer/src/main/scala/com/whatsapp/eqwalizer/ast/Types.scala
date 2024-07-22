@@ -60,8 +60,6 @@ object Types {
   val undefined: Type = AtomLitType("undefined")
   val exnClassType: Type =
     UnionType(Set(AtomLitType("error"), AtomLitType("exit"), AtomLitType("throw")))
-  val clsExnStackType: Type =
-    TupleType(List(exnClassType, AnyType, ListType(AnyType)))
   val clsExnStackTypeDynamic: Type =
     TupleType(List(exnClassType, DynamicType, ListType(DynamicType)))
 

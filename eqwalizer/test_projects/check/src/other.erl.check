@@ -31,15 +31,13 @@ slice_inter2(ok) ->                        | OK      |
                                            |         |
 -spec get_inter1() ->                      |         |
     term().                                |         |
-get_inter1() ->                            | ERROR   |
-    fun inter/1.                           |         | Unbound var: inter/1
-
+get_inter1() ->                            | OK      |
+    fun inter/1.                           |         |
                                            |         |
 -spec get_inter2() ->                      |         |
     term().                                |         |
-get_inter2() ->                            | ERROR   |
-    fun other:inter/1.                     |         | Unbound var: other:inter/1
-
+get_inter2() ->                            | OK      |
+    fun other:inter/1.                     |         |
                                            |         |
 % logger:metadata() is automatically       |         |
 % approximated                             |         |
@@ -51,7 +49,7 @@ any_as_metadata_neg(M) -> M.               | ERROR   | M.
                                            |         | 
                                            |         |   term() is not compatible with logger:metadata()
                                            |         |   because
-                                           |         |   term() is not compatible with #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |   term() is not compatible with #D{dynamic() => dynamic()}
                                            |         |
 -spec elab_var_scope(term()) -> term().    |         |
 elab_var_scope(_) ->                       | OK      |

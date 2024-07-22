@@ -29,7 +29,7 @@
 -spec wy_ey_sy() -> ok.                    |         |
 wy_ey_sy() -> ok.                          | OK      |
                                            |         |
-wy_ey_sn() -> ok.                          | NO SPEC |
+wy_ey_sn() -> ok.                          | OK      |
                                            |         |
 -spec wn_ey_sy() -> ok.                    |         |
 wn_ey_sy() ->                              | ERROR   |
@@ -37,24 +37,30 @@ wn_ey_sy() ->                              | ERROR   |
                                            |         | Expression has type:   'ok'
                                            |         | Context expected type: number()
                                            |         |
-wn_ey_sn() ->                              | NO SPEC |
+wn_ey_sn() ->                              | ERROR   |
   _ = wy_en_sy(),                          |         |
   _ = wy_en_sn(),                          |         |
   _ = wn_en_sy(),                          |         |
   _ = wn_en_sn(),                          |         |
-  wy_ey_sy() + 3.                          |         |
+  wy_ey_sy() + 3.                          |         | wy_ey_sy().
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: number()
                                            |         |
-wn_en_sy() ->                              | NO SPEC |
-  wy_ey_sy() + 3.                          |         |
+wn_en_sy() ->                              | ERROR   |
+  wy_ey_sy() + 3.                          |         | wy_ey_sy().
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: number()
                                            |         |
 -spec wy_en_sy() -> ok.                    |         |
 wy_en_sy() ->                              | OK      |
   ok.                                      |         |
                                            |         |
-wy_en_sn() -> ok.                          | NO SPEC |
+wy_en_sn() -> ok.                          | OK      |
                                            |         |
-wn_en_sn() ->                              | NO SPEC |
-  wy_ey_sy() + 3.                          |         |
+wn_en_sn() ->                              | ERROR   |
+  wy_ey_sy() + 3.                          |         | wy_ey_sy().
+                                           |         | Expression has type:   'ok'
+                                           |         | Context expected type: number()
                                            |         |
 % for 'typeDependencies' stats             |         |
 -record(rec, {                             |         |

@@ -85,9 +85,7 @@ f08(X) -> X.                               | ERROR   | X.
                                            |         | Context expected type: none()
                                            |         |
 -spec map01(map()) -> #{}.                 |         |
-map01(M) -> M.                             | ERROR   | M.
-                                           |         | Expression has type:   dict  map #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
-                                           |         | Context expected type: shape map #S{}
+map01(M) -> M.                             | OK      |
                                            |         |
 -spec map02(#{a => atom()})                |         |
         -> #{a := atom()}.                 |         |
@@ -153,9 +151,7 @@ map08(M) -> M.                             | ERROR   | M.
                                            |         |
 -spec tuple1                               |         |
     (tuple()) -> {term()}.                 |         |
-tuple1(X) -> X.                            | ERROR   | X.
-                                           |         | Expression has type:   tuple()
-                                           |         | Context expected type: {term()}
+tuple1(X) -> X.                            | OK      |
                                            |         |
 -spec any_fun(term()) -> fun().            |         |
 any_fun(F) -> F.                           | ERROR   | F.

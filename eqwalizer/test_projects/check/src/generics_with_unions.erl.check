@@ -87,7 +87,7 @@ test_ret_neg() -> union(a, b).             | ERROR   | union('a', 'b').
 
     (pid() | ty_var_from_nowhere())        |         |
     -> nok.                                |         |
-test_uses_ty_var_from_nowhere(X) -> X.     | NO SPEC |
+test_uses_ty_var_from_nowhere(X) -> X.     |         |
                                            |         |
 -type prop(K, V) :: {K, V}.                |         |
 -type props(K, V) :: [prop(K, V)].         |         |

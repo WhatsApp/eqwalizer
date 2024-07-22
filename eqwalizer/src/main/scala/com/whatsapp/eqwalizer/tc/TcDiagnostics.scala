@@ -37,18 +37,6 @@ object TcDiagnostics {
     def errorName = "expected_fun_type"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
-  case class NoDynamicRemoteFun(pos: Pos, expr: Expr)(implicit val pipelineContext: PipelineContext) extends TypeError {
-    val msg: String = s"Dynamic calls of unknown functions are not supported."
-    def errorName = "dyn_remote_fun"
-    override def erroneousExpr: Option[Expr] = Some(expr)
-  }
-  case class NoSpecialType(pos: Pos, expr: Expr, argTys: List[Type])(implicit val pipelineContext: PipelineContext)
-      extends TypeError {
-    private val argTysString = argTys.map(show).mkString(", ")
-    override val msg: String = s"Not enough info to branch. Arg types: $argTysString"
-    def errorName = "not_enough_info_to_branch"
-    override def erroneousExpr: Option[Expr] = Some(expr)
-  }
   case class LambdaArityMismatch(pos: Pos, expr: Expr, lambdaArity: Int, argsArity: Int) extends TypeError {
     override val msg: String = s"fun with arity $lambdaArity used as fun with $argsArity arguments"
     def errorName = "fun_arity_mismatch"
@@ -57,11 +45,6 @@ object TcDiagnostics {
   case class IndexOutOfBounds(pos: Pos, expr: Expr, index: Int, tupleArity: Int) extends TypeError {
     override val msg: String = s"Tried to access element $index of a tuple with $tupleArity elements"
     def errorName = "index_out_of_bounds"
-    override def erroneousExpr: Option[Expr] = Some(expr)
-  }
-  case class NotSupportedLambdaInOverloadedCall(pos: Pos, expr: Expr) extends TypeError {
-    override val msg: String = s"Lambdas are not allowed as args to overloaded functions"
-    def errorName = "fun_in_overload_arg"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
   case class UndefinedField(pos: Pos, recName: String, fieldName: String) extends TypeError {

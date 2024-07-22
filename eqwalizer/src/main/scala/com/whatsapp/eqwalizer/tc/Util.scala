@@ -52,17 +52,14 @@ class Util(pipelineContext: PipelineContext) {
       case Some(tp) =>
         tp
       case None =>
-        if (pipelineContext.gradualTyping)
-          DynamicType
-        else
-          AnyType
+        DynamicType
     }
     RecFieldTyped(f.name, tp, f.defaultValue, f.refinable)
   }
 
-  def getFunType(fqn: RemoteId, gradual: Boolean = pipelineContext.gradualTyping): Option[FunType] = {
+  def getFunType(fqn: RemoteId): Option[FunType] = {
     val funType = DbApi.getSpec(fqn.module, Id(fqn.name, fqn.arity)).map(_.ty)
-    if (funType.isEmpty && gradual) {
+    if (funType.isEmpty) {
       val arity = fqn.arity
       Some(FunType(Nil, List.fill(arity)(DynamicType), DynamicType))
     } else {
@@ -88,9 +85,9 @@ class Util(pipelineContext: PipelineContext) {
 
   def getTypeDeclBody(remoteId: RemoteId, args: List[Type]): Type = {
     remoteId match {
-      case RemoteId("eqwalizer", "dynamic", 0) if pipelineContext.gradualTyping =>
+      case RemoteId("eqwalizer", "dynamic", 0) =>
         return DynamicType
-      case RemoteId("eqwalizer", "dynamic", 1) if pipelineContext.gradualTyping =>
+      case RemoteId("eqwalizer", "dynamic", 1) =>
         return BoundedDynamicType(args.head)
       case _ =>
     }
@@ -126,11 +123,11 @@ class Util(pipelineContext: PipelineContext) {
   }
 
   def isFunType(ty: Type, arity: Int): Boolean = ty match {
-    case FunType(_, argTys, _) if argTys.size == arity       => true
-    case DynamicType                                         => true
-    case NoneType                                            => true
-    case AnyFunType if pipelineContext.gradualTyping         => true
-    case AnyArityFunType(_) if pipelineContext.gradualTyping => true
+    case FunType(_, argTys, _) if argTys.size == arity => true
+    case DynamicType                                   => true
+    case NoneType                                      => true
+    case AnyFunType                                    => true
+    case AnyArityFunType(_)                            => true
     case RemoteType(rid, argTys) =>
       val body = getTypeDeclBody(rid, argTys)
       isFunType(body, arity)

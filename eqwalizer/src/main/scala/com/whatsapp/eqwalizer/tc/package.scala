@@ -17,7 +17,6 @@ package object tc {
   }
 
   case class Options(
-      gradualTyping: Option[Boolean] = None,
       eqwater: Option[Boolean] = None,
       tolerateErrors: Option[Boolean] = None,
       unlimitedRefinement: Option[Boolean] = None,
@@ -28,12 +27,10 @@ package object tc {
   val noOptions: Options = Options()
 
   case class PipelineContext(module: String, options: Options = Options()) {
-    val gradualTyping: Boolean =
-      options.gradualTyping.getOrElse(config.gradualTyping)
     val eqwater: Boolean =
       options.eqwater.getOrElse(config.eqwater)
     val tolerateErrors: Boolean =
-      gradualTyping && options.tolerateErrors.getOrElse(config.tolerateErrors)
+      options.tolerateErrors.getOrElse(config.tolerateErrors)
     val util: Util = new Util(this)
     val vars: Vars = new Vars(this)
     val subtype: Subtype = new Subtype(this)

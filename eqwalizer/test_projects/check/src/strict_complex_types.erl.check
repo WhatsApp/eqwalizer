@@ -27,7 +27,7 @@ mk_complex_map_neg() ->                    | ERROR   |
                                            |         | 
                                            |         |   'undefined' is not compatible with complex_map()
                                            |         |   because
-                                           |         |   'undefined' is not compatible with #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         |   'undefined' is not compatible with #D{dynamic() => dynamic()}
                                            |         |
 -spec use_complex_map1(complex_map())      |         |
       -> complex_map().                    |         |
@@ -45,15 +45,9 @@ use_complex_map2(List) ->                  | ERROR   |
                                            |         |
 -spec use_complex_map3()                   |         |
       -> integer().                        |         |
-use_complex_map3() ->                      | ERROR   |
+use_complex_map3() ->                      | OK      |
   Map = mk_complex_map(),                  |         |
-  maps:get(id, Map).                       |         | maps:get('id', Map).
-                                           |         | Expression has type:   eqwalizer:dynamic()
-                                           |         | Context expected type: number()
-                                           |         | 
-                                           |         |   eqwalizer:dynamic() is not compatible with number()
-                                           |         |   because
-                                           |         |   term() is not compatible with number()
+  maps:get(id, Map).                       |         |
                                            |         |
 -spec use_complex_map4_neg()               |         |
       -> integer().                        |         |
@@ -65,4 +59,4 @@ use_complex_map4_neg() ->                  | ERROR   |
                                            |         | 
                                            |         |   complex_map() is not compatible with [T]
                                            |         |   because
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with [T]
+                                           |         |   #D{dynamic() => dynamic()} is not compatible with [T]

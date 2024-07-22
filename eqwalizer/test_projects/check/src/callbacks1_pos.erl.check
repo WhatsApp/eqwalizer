@@ -17,9 +17,9 @@
                                            |         |
 -type ty() :: ok.                          |         |
                                            |         |
-init(_) -> {ok, my_ret}.                   | NO SPEC |
+init(_) -> {ok, my_ret}.                   | OK      |
                                            |         |
-handle_call(_, _From, State) ->            | NO SPEC |
+handle_call(_, _From, State) ->            | OK      |
     {reply, ok, State}.                    |         |
                                            |         |
 -spec handle_cast(ok, ok) ->               |         |

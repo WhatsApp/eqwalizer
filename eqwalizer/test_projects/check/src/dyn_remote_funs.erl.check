@@ -8,97 +8,91 @@
                                            |         |
                                            |         |
 -spec test_01(atom()) -> term().           |         |
-test_01(F) ->                              | ERROR   |
-    lists:F(fun(X) -> X end, [3]).         |         | 'lists':F.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_01(F) ->                              | OK      |
+    lists:F(fun(X) -> X end, [3]).         |         |
                                            |         |
 -spec test_02(atom()) -> term().           |         |
-test_02(F) ->                              | ERROR   |
-    Res = lists:F(                         |         | 'lists':F.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_02(F) ->                              | OK      |
+    Res = lists:F(                         |         |
         fun(X) -> X end,                   |         |
         [3]                                |         |
     ),                                     |         |
     Res.                                   |         |
                                            |         |
 -spec test_03(atom()) -> term().           |         |
-test_03(L) ->                              | ERROR   |
-    L:map(fun(X) -> X end, [3]).           |         | L:'map'.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_03(L) ->                              | OK      |
+    L:map(fun(X) -> X end, [3]).           |         |
                                            |         |
 -spec test_04(atom()) -> term().           |         |
-test_04(L) ->                              | ERROR   |
-    Res = L:map(                           |         | L:'map'.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_04(L) ->                              | OK      |
+    Res = L:map(                           |         |
         fun(X) -> X end,                   |         |
         [3]                                |         |
     ),                                     |         |
     Res.                                   |         |
                                            |         |
 -spec test_04(atom(), atom()) -> term().   |         |
-test_04(L, F) ->                           | ERROR   |
-    Res = L:F(                             |         | L:F.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_04(L, F) ->                           | OK      |
+    Res = L:F(                             |         |
         fun(X) -> X end,                   |         |
         [3]                                |         |
     ),                                     |         |
     Res.                                   |         |
                                            |         |
 -spec test_05(atom(), number()) -> fun().  |         |
-test_05(F, N) ->                           | ERROR   |
-    fun lists:F/N.                         |         | 'lists':F/N.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_05(F, N) ->                           | OK      |
+    fun lists:F/N.                         |         |
                                            |         |
 -spec test_06(atom(), atom(), number())    |         |
         -> fun().                          |         |
-test_06(M, F, N) ->                        | ERROR   |
-    fun M:F/N.                             |         | M:F/N.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_06(M, F, N) ->                        | OK      |
+    fun M:F/N.                             |         |
                                            |         |
 -spec test_07(atom(), atom(), number())    |         |
         -> fun().                          |         |
-test_07(M, F, N) ->                        | ERROR   |
-    Res = fun M:F/N,                       |         | M:F/N.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_07(M, F, N) ->                        | OK      |
+    Res = fun M:F/N,                       |         |
     Res.                                   |         |
                                            |         |
 -spec test_08(atom(), atom(), number())    |         |
         -> fun((none()) -> term()).        |         |
-test_08(M, F, N) ->                        | ERROR   |
-    Res = fun M:F/N,                       |         | M:F/N.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_08(M, F, N) ->                        | OK      |
+    Res = fun M:F/N,                       |         |
     Res.                                   |         |
                                            |         |
 -spec test_09(atom(), atom(), number())    |         |
         -> fun((none()) -> term()).        |         |
 test_09(M, F, N) ->                        | ERROR   |
-    Res = fun M:F/N,                       |         | M:F/N.
-                                           |         | Dynamic calls of unknown functions are not supported.
+    Res = fun M:F/N,                       |         |
   case true of                             |         |
     true when is_function(Res, 2)          |         |
-        -> Res;                            |         |
+        -> Res;                            |         | Res.
+                                           |         | Expression has type:   fun((term(), term()) -> term())
+                                           |         | Context expected type: fun((none()) -> term())
     false ->                               |         |
         throw(err)                         |         |
   end.                                     |         |
                                            |         |
 -spec test_10_pos(atom(), atom()) -> fun()……         |
-test_10_pos(M, F) ->                       | ERROR   |
-    fun M:F/2.                             |         | M:F/2.
-                                           |         | Dynamic calls of unknown functions are not supported.
+test_10_pos(M, F) ->                       | OK      |
+    fun M:F/2.                             |         |
                                            |         |
 -spec test_11_neg(atom(), atom()) -> a.    |         |
 test_11_neg(M, F) ->                       | ERROR   |
     fun M:F/2.                             |         | M:F/2.
-                                           |         | Dynamic calls of unknown functions are not supported.
+                                           |         | Expression has type:   fun((dynamic(), dynamic()) -> dynamic())
+                                           |         | Context expected type: 'a'
                                            |         |
 -spec test_12_pos(                         |         |
     atom(), atom(), atom()) -> fun().      |         |
 test_12_pos(M, F, A) ->                    | ERROR   |
-fun M:F/A.                                 |         | M:F/A.
-                                           |         | Dynamic calls of unknown functions are not supported.
+fun M:F/A.                                 |         | A.
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()
                                            |         |
 -spec test_13_neg(                         |         |
     atom(), atom(), atom()) -> a.          |         |
 test_13_neg(M, F, A) ->                    | ERROR   |
-fun M:F/A.                                 |         | M:F/A.
-                                           |         | Dynamic calls of unknown functions are not supported.
+fun M:F/A.                                 |         | A.
+                                           |         | Expression has type:   atom()
+                                           |         | Context expected type: number()

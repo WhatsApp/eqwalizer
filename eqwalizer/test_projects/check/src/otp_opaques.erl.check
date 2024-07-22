@@ -81,8 +81,7 @@ uniques4(Elems1, Elems2) ->                | OK      |
 -spec empty() -> gb_sets:set(term()).      |         |
 %% gb_set:empty() is unbound               |         |
 %% because it have an unbound type var     |         |
-empty() -> gb_set:empty().                 | ERROR   | Unbound var: gb_set:empty/0
-
+empty() -> gb_set:empty().                 | OK      |
                                            |         |
 -spec is_member(                           |         |
     atom(), [boolean()]                    |         |

@@ -270,13 +270,11 @@ named_3() ->                               | ERROR   |
                                            |         | Context expected type: 'a'
                                            |         |
 -spec named_4() -> nok.                    |         |
-named_4() ->                               | ERROR   |
+named_4() ->                               | OK      |
     lists:map(                             |         |
         fun Fib(N) when N < 2 -> 1;        |         |
             Fib(N) ->                      |         |
-                Fib(N - 2) + Fib(N - 1)    |         | _ - _.
-                                           |         | Expression has type:   number()
-                                           |         | Context expected type: none()
+                Fib(N - 2) + Fib(N - 1)    |         |
         end,                               |         |
         [1, 2, 3]                          |         |
     ),                                     |         |
@@ -287,10 +285,8 @@ named_4() ->                               | ERROR   |
 % so `F` should be of type `none()`        |         |
 % but we treat it as `number()`            |         |
 -spec named_match() -> whatevs.            |         |
-named_match() ->                           | ERROR   |
-    (fun F() -> F = 1, F end)().           |         | F.
-                                           |         | Expression has type:   number()
-                                           |         | Context expected type: 'whatevs'
+named_match() ->                           | OK      |
+    (fun F() -> F = 1, F end)().           |         |
                                            |         |
 % Understanding auto-import funs           |         |
 -spec atoms_to_binaries(                   |         |
@@ -312,13 +308,12 @@ ints([F | Fs]) ->                          |         |
     end.                                   |         |
                                            |         |
 -spec lambda_app() -> number().            |         |
-lambda_app() ->                            | ERROR   |
+lambda_app() ->                            | OK      |
     Res = (fun                             |         |
         Fib(N) when N < 2 ->               |         |
             1;                             |         |
         Fib(N) ->                          |         |
-            Fib(N - 2) + Fib(N - 1)        |         | Unbound var: Fib
-
+            Fib(N - 2) + Fib(N - 1)        |         |
     end)(4),                               |         |
     Res.                                   |         |
                                            |         |
@@ -347,44 +342,22 @@ getter3(F) ->                              | OK      |
                                            |         |
 -spec getter4_neg                          |         |
     (fun((atom()) -> A)) -> ((fun((atom())……         |
-getter4_neg(F) ->                          | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expression has type:   fun((none()) -> term())
-                                           |         | Context expected type: fun((atom()) -> A) | fun((term()) -> 'ok')
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not compatible with fun((atom()) -> A) | fun((term()) -> 'ok')
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun((atom()) -> A)
-                                           |         |   because
-                                           |         |   term() is not compatible with A
+getter4_neg(F) ->                          | OK      |
+    fun(A) ->                              |         |
         F(A)                               |         |
     end.                                   |         |
                                            |         |
 -spec getter5_neg                          |         |
     (fun((atom()) -> A)) -> ((fun ((term()……         |
-getter5_neg(F) ->                          | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expression has type:   fun((none()) -> term())
-                                           |         | Context expected type: fun((term()) -> 'ok') | fun((atom()) -> A)
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not compatible with fun((term()) -> 'ok') | fun((atom()) -> A)
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun((term()) -> 'ok')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'ok'
+getter5_neg(F) ->                          | OK      |
+    fun(A) ->                              |         |
         F(A)                               |         |
     end.                                   |         |
                                            |         |
 -spec getter6_neg                          |         |
     (fun((atom()) -> _)) -> ((fun()) | (fu……         |
-getter6_neg(F) ->                          | ERROR   |
-    fun(A) ->                              |         | fun.
-                                           |         | Expression has type:   fun((none()) -> term())
-                                           |         | Context expected type: fun() | fun((term()) -> 'ok')
-                                           |         | 
-                                           |         |   fun((none()) -> term()) is not compatible with fun() | fun((term()) -> 'ok')
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun()
+getter6_neg(F) ->                          | OK      |
+    fun(A) ->                              |         |
         F(A)                               |         |
     end.                                   |         |
                                            |         |
@@ -432,10 +405,4 @@ wrap_id(P) -> id_predicate(P).             | OK      |
 hd_invariant([F | _]) -> F.                | OK      |
                                            |         |
 -spec test_invariant() -> (fun((atom()) ->……         |
-test_invariant() -> hd_invariant([]).      | ERROR   | hd_invariant([]).
-                                           |         | Expression has type:   fun((none()) -> none())
-                                           |         | Context expected type: fun((atom()) -> atom())
-                                           |         | 
-                                           |         |   fun((none()) -> none()) is not compatible with fun((atom()) -> atom())
-                                           |         |   because
-                                           |         |   atom() is not compatible with none()
+test_invariant() -> hd_invariant([]).      | OK      |

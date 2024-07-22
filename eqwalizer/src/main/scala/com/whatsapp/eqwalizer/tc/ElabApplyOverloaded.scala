@@ -6,11 +6,10 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.Exprs.{Expr, Lambda}
+import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.Forms.OverloadedFunSpec
-import com.whatsapp.eqwalizer.ast.{AstListener, RemoteId, Traverse}
+import com.whatsapp.eqwalizer.ast.RemoteId
 import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType, NoneType, Type}
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{NoSpecialType, NotSupportedLambdaInOverloadedCall}
 
 class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val check = pipelineCtx.check
@@ -19,13 +18,9 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private val elabApply = pipelineContext.elabApply
   private val narrow = pipelineContext.narrow
-  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def elabOverloaded(expr: Expr, remoteId: RemoteId, args: List[Expr], env: Env): (Type, Env) = {
-    if (!pipelineCtx.gradualTyping && hasLambda(args)) {
-      diagnosticsInfo.add(NotSupportedLambdaInOverloadedCall(expr.pos, expr))
-    }
     val depFunSpec = util.getOverloadedSpec(remoteId).get
     val (argTys, env1) = elab.elabExprs(args, env)
     selectTypes(depFunSpec, argTys) match {
@@ -33,24 +28,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
         val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
         (resTy, env1)
       case _ =>
-        if (!pipelineCtx.gradualTyping || pipelineCtx.overloadedSpecDynamicResult)
-          diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
         (DynamicType, env1)
-    }
-  }
-
-  private def hasLambda(args: List[Expr]): Boolean = {
-    val listener = new LambdaListener()
-    val traverse = new Traverse(listener)
-    args.foreach(traverse.traverseExpr)
-    listener.hasLambda
-  }
-
-  private class LambdaListener() extends AstListener {
-    var hasLambda: Boolean = false
-    override def enterExpr(e: Expr): Unit = e match {
-      case Lambda(_) => hasLambda = true
-      case _         =>
     }
   }
 

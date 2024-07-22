@@ -319,19 +319,17 @@ test52_pos() ->                            | OK      |
 test53_pos() ->                            | OK      |
     fun misc:test47_neg/0.                 |         |
                                            |         |
-test54_unspecced() -> ok.                  | NO SPEC |
+test54_unspecced() -> ok.                  | OK      |
                                            |         |
 -spec test55_neg() ->                      |         |
     fun(() -> number()).                   |         |
-test55_neg() ->                            | ERROR   |
-    fun misc:test54_unspecced/0.           |         | Unbound var: misc:test54_unspecced/0
-
+test55_neg() ->                            | OK      |
+    fun misc:test54_unspecced/0.           |         |
                                            |         |
 -spec test56_neg() ->                      |         |
     fun(() -> number()).                   |         |
-test56_neg() ->                            | ERROR   |
-    fun test54_unspecced/0.                |         | Unbound var: test54_unspecced/0
-
+test56_neg() ->                            | OK      |
+    fun test54_unspecced/0.                |         |
                                            |         |
 -spec test57_pos() -> {atom(), number()}.  |         |
 test57_pos() ->                            | OK      |
@@ -360,15 +358,13 @@ test60_pos() ->                            | OK      |
     X.                                     |         |
                                            |         |
 -spec test61_neg() -> number().            |         |
-test61_neg() ->                            | ERROR   |
-    X = misc:test54_unspecced(),           |         | Unbound var: misc:test54_unspecced/0
-
+test61_neg() ->                            | OK      |
+    X = misc:test54_unspecced(),           |         |
     X.                                     |         |
                                            |         |
 -spec test62_neg() -> number().            |         |
-test62_neg() ->                            | ERROR   |
-    X = test54_unspecced(),                |         | Unbound var: test54_unspecced/0
-
+test62_neg() ->                            | OK      |
+    X = test54_unspecced(),                |         |
     X.                                     |         |
                                            |         |
 -spec test63_pos() ->                      |         |
@@ -421,10 +417,8 @@ test69_pos([H | T]) -> [H | T].            | OK      |
                                            |         |
 -spec test70_neg() ->                      |         |
     [atom() | number()].                   |         |
-test70_neg() ->                            | ERROR   |
-    catch test69_pos([atom]).              |         | catch.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: [atom() | number()]
+test70_neg() ->                            | OK      |
+    catch test69_pos([atom]).              |         |
                                            |         |
 -spec test71_neg() ->                      |         |
     [atom() | number()].                   |         |
@@ -475,9 +469,7 @@ test76_pos(_) ->                           |         |
     erlang:throw({error, not_an_atom}).    |         |
                                            |         |
 -spec test77_neg(term()) -> atom().        |         |
-test77_neg(A) -> catch(test76_pos(A)).     | ERROR   | catch.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: atom()
+test77_neg(A) -> catch(test76_pos(A)).     | OK      |
                                            |         |
 -spec test78_pos() -> term().              |         |
 test78_pos() ->                            | OK      |
@@ -486,20 +478,18 @@ test78_pos() ->                            | OK      |
     end.                                   |         |
                                            |         |
 -spec test79_neg() -> atom().              |         |
-test79_neg() ->                            | ERROR   |
+test79_neg() ->                            | OK      |
     receive                                |         |
-        X -> X                             |         | X.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: atom()
+        X -> X                             |         |
     end.                                   |         |
                                            |         |
 -spec test80_neg(term()) -> atom().        |         |
 test80_neg(Timeout) ->                     | ERROR   |
     receive                                |         |
-        X -> X                             |         | X.
+        X -> X                             |         |
+    after Timeout ->                       |         | Timeout.
                                            |         | Expression has type:   term()
-                                           |         | Context expected type: atom()
-    after Timeout ->                       |         |
+                                           |         | Context expected type: timeout()
         default                            |         |
     end.                                   |         |
                                            |         |
@@ -522,7 +512,7 @@ test82_pos() ->                            | ERROR   |
         default                            |         |
     end,                                   |         |
     {Msg}.                                 |         | {Msg}.
-                                           |         | Expression has type:   {'default' | 'atom'}
+                                           |         | Expression has type:   {'default' | dynamic('atom')}
                                            |         | Context expected type: atom()
                                            |         |
 -spec test83_pos(integer()) -> atom().     |         |
@@ -741,10 +731,8 @@ slice_tuple_atom({_, El})                  |         |
                                            |         |
 -spec slice_tuple_neg                      |         |
     (tuple()) -> none().                   |         |
-slice_tuple_neg({_, El}) ->                | ERROR   |
-    El.                                    |         | El.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: none()
+slice_tuple_neg({_, El}) ->                | OK      |
+    El.                                    |         |
                                            |         |
 -spec start([A]) -> [A].                   |         |
 start([] ++ X) -> X.                       | OK      |
@@ -796,10 +784,8 @@ catch_env_neg_1(X) ->                      | ERROR   |
                                            |         | Context expected type: number()
                                            |         |
 -spec catch_env_neg_2(term()) -> number(). |         |
-catch_env_neg_2(X) ->                      | ERROR   |
-    catch case X of                        |         | catch.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: number()
+catch_env_neg_2(X) ->                      | OK      |
+    catch case X of                        |         |
             X when is_number(X) -> X       |         |
         end.                               |         |
                                            |         |
@@ -809,7 +795,7 @@ catch_env_neg_2(X) ->                      | ERROR   |
 }.                                         |         |
 badspec(_) -> ok.                          | ERROR   | 'ok'.
                                            |         | Expression has type:   'ok'
-                                           |         | Context expected type: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Context expected type: #D{dynamic() => dynamic()}
                                            |         |
 -spec test86_neg() -> term().              |         |
 test86_neg() ->                            | ERROR   |
@@ -834,9 +820,8 @@ test89_neg() ->                            | OK      |
                                            |         |
 % cannot reference invalid specs from othe……         |
 -spec test90_neg() -> term().              |         |
-test90_neg() ->                            | ERROR   |
-fun generics_with_unions:test_03_neg/3.    |         | Unbound var: generics_with_unions:test_03_neg/3
-
+test90_neg() ->                            | OK      |
+fun generics_with_unions:test_03_neg/3.    |         |
                                            |         |
 -spec list_with_vars_neg                   |         |
 (number(), number()) -> pid().             |         |
@@ -972,9 +957,8 @@ use_contra_neg(X) -> X.                    | OK      |
                                            |         |
 -spec use_spec_from_behaviour() ->         |         |
     ok | stop.                             |         |
-use_spec_from_behaviour() ->               | ERROR   |
-    {Res, _} = callbacks1_pos:init({}),    |         | Unbound var: callbacks1_pos:init/1
-
+use_spec_from_behaviour() ->               | OK      |
+    {Res, _} = callbacks1_pos:init({}),    |         |
     Res.                                   |         |
                                            |         |
 -type x_cycle() ::                         | INVALID | recursive type x_cycle/0 is not productive
@@ -988,7 +972,7 @@ fun(() -> {ok, integer()} | error).        |         |
     opaque:opair(a, x:y())) ->             |         | Unknown id: x:y/0
 
     opaque:opair(a, x:y()).                |         |
-use_opaque_w_bad_arg_neg(X) ->             | NO SPEC |
+use_opaque_w_bad_arg_neg(X) ->             |         |
     X.                                     |         |
                                            |         |
 -type set() :: [].                         |         |
@@ -1253,7 +1237,7 @@ orelse5_neg(Validator) ->                  | ERROR   |
                                            |         |
 -spec non_exported_id(any_fun_type:f1()) -…… INVALID | Type exists but is not exported: any_fun_type:f1/0
 
-non_exported_id(F) -> F.                   | NO SPEC |
+non_exported_id(F) -> F.                   |         |
                                            |         |
 -type non_exported_id_t() :: any_fun_type:…… INVALID | Type exists but is not exported: any_fun_type:f1/0
 

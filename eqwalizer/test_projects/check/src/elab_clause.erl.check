@@ -94,12 +94,12 @@ catch_foo2_neg(X) ->                       | ERROR   |
             _:_:Stack  -> Stack            |         |
         end,                               |         |
     Res.                                   |         | Res.
-                                           |         | Expression has type:   number() | [term()]
+                                           |         | Expression has type:   number() | [dynamic()]
                                            |         | Context expected type: number()
                                            |         | 
-                                           |         |   number() | [term()] is not compatible with number()
+                                           |         |   number() | [dynamic()] is not compatible with number()
                                            |         |   because
-                                           |         |   [term()] is not compatible with number()
+                                           |         |   [dynamic()] is not compatible with number()
                                            |         |
 -spec catch_foo3_neg(term()) -> number().  |         |
 catch_foo3_neg(X) ->                       | ERROR   |
@@ -117,6 +117,6 @@ catch_foo4_neg(X) ->                       | ERROR   |
     of {_Y, _} -> 1                        |         |
     catch                                  |         |
         Class:_:Stack  -> {Class, Stack}   |         | {Class, Stack}.
-                                           |         | Expression has type:   {'error' | 'exit' | 'throw', [term()]}
+                                           |         | Expression has type:   {'error' | 'exit' | 'throw', [dynamic()]}
                                            |         | Context expected type: number()
     end.                                   |         |

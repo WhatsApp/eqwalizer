@@ -9,4 +9,4 @@
 -behaviour(nonexistent).                   | ERROR   | Behaviour does not exist: nonexistent
 
                                            |         |
-unspecced() -> ok.                         | NO SPEC |
+unspecced() -> ok.                         | OK      |

@@ -207,7 +207,7 @@ use_o_cycle2(X) -> X.                      | OK      |
 -spec use_contra_neg(fun((ok) -> ok))      | INVALID | use_contra_neg/1 references type with invalid definition: contravariant/1
 
       -> contravariant(ok).                |         |
-use_contra_neg(X) -> X.                    | NO SPEC |
+use_contra_neg(X) -> X.                    |         |
                                            |         |
 -spec test23_wip(misc:o()) -> {ok}.        |         |
 test23_wip(X)                              | ERROR   |

@@ -58,14 +58,10 @@ mapdeep({F}, [H|T]) ->                     |         |
 test_deep_lambda1() ->                     | ERROR   |
     X = mapdeep(                           |         |
         {fun(X) -> X + 1 end},             |         |
-        [1, 2, 3]),                        |         | [1, 2, 3].
-                                           |         | Expression has type:   [number()]
-                                           |         | Context expected type: [none()]
-                                           |         | 
-                                           |         |   [number()] is not compatible with [none()]
-                                           |         |   because
-                                           |         |   number() is not compatible with none()
-    X.                                     |         |
+        [1, 2, 3]),                        |         |
+    X.                                     |         | X.
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: number()
                                            |         |
 -spec mapboth(                             |         |
     fun((T1) -> U1),                       |         |

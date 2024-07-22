@@ -15,12 +15,12 @@
 -spec uses_ty_w_unbound_var(_A, _B) ->     | INVALID | uses_ty_w_unbound_var/2 references type with invalid definition: w_unbound_var/0
 
     w_unbound_var().                       |         |
-uses_ty_w_unbound_var(A, B) -> {A, B}.     | NO SPEC |
+uses_ty_w_unbound_var(A, B) -> {A, B}.     |         |
                                            |         |
 -spec uses_trans_unbound_var(_A, _B) ->    | INVALID | uses_trans_unbound_var/2 references type with invalid definition: trans_unbound_var/0
 
     trans_unbound_var().                   |         |
-uses_trans_unbound_var(A, B) -> {A, B}.    | NO SPEC |
+uses_trans_unbound_var(A, B) -> {A, B}.    |         |
                                            |         |
 -type w_unbound_var2()                     | INVALID | _A: Type variable is unbound.
 
@@ -29,7 +29,7 @@ uses_trans_unbound_var(A, B) -> {A, B}.    | NO SPEC |
 -spec uses_ty_w_unbound_var2() ->          | INVALID | uses_ty_w_unbound_var2/0 references type with invalid definition: w_unbound_var2/0
 
     w_unbound_var2().                      |         |
-uses_ty_w_unbound_var2() -> 1.             | NO SPEC |
+uses_ty_w_unbound_var2() -> 1.             |         |
                                            |         |
 -type repeated(T, T) :: T.                 | INVALID | T. Type vars in type declarations must be distinct
 
@@ -37,19 +37,19 @@ uses_ty_w_unbound_var2() -> 1.             | NO SPEC |
 -spec test_repeated1_neg(a, b) ->          | INVALID | test_repeated1_neg/2 references type with invalid definition: repeated/2
 
     repeated(a, b).                        |         |
-test_repeated1_neg(b, a) -> a.             | NO SPEC |
+test_repeated1_neg(b, a) -> a.             |         |
                                            |         |
 -spec test_repeated2_neg(a, b) ->          | INVALID | test_repeated2_neg/2 references type with invalid definition: repeated/2
 
     repeated(a, b).                        |         |
-test_repeated2_neg(a, b) -> b.             | NO SPEC |
+test_repeated2_neg(a, b) -> b.             |         |
                                            |         |
 %% see T102518744                          |         |
 -spec test_use_bad_type                    | INVALID | test_use_bad_type/1 references type with invalid definition: w_unbound_var/0
 
 (undefined | w_unbound_var()) ->           |         |
     w_unbound_var() | undefined.           |         |
-test_use_bad_type(X) ->                    | NO SPEC |
+test_use_bad_type(X) ->                    |         |
     X.                                     |         |
                                            |         |
 -spec ttt(T, T) -> T.                      |         |
@@ -60,7 +60,7 @@ ttt(X, X) -> X.                            | OK      |
     w_unbound_var(),                       |         |
     undefined | w_unbound_var()) ->        |         |
         term().                            |         |
-test_use_bad_type_gen(X, Union) ->         | NO SPEC |
+test_use_bad_type_gen(X, Union) ->         |         |
     ttt(X, Union).                         |         |
                                            |         |
 -type tup_w_unbound(T)                     | INVALID | _A: Type variable is unbound.
@@ -71,34 +71,34 @@ test_use_bad_type_gen(X, Union) ->         | NO SPEC |
 
     tup_w_unbound(T)                       |         |
 ) -> T.                                    |         |
-unpack_tup_w_unbound({X, _}) ->            | NO SPEC |
+unpack_tup_w_unbound({X, _}) ->            |         |
     X.                                     |         |
                                            |         |
 -spec test_use_unpack_tup_w_unbound(       | INVALID | test_use_unpack_tup_w_unbound/1 references type with invalid definition: tup_w_unbound/1
 
     tup_w_unbound(a)) -> a.                |         |
-test_use_unpack_tup_w_unbound(X) ->        | NO SPEC |
+test_use_unpack_tup_w_unbound(X) ->        |         |
     unpack_tup_w_unbound(X).               |         |
                                            |         |
 -spec test_use_tup_w_unbound_cov(          | INVALID | test_use_tup_w_unbound_cov/1 references type with invalid definition: tup_w_unbound/1
 
     tup_w_unbound(a)) ->                   |         |
     tup_w_unbound(a | b) .                 |         |
-test_use_tup_w_unbound_cov(X) ->           | NO SPEC |
+test_use_tup_w_unbound_cov(X) ->           |         |
     X.                                     |         |
                                            |         |
 -spec test_use_tup_w_unbound_contra_neg(   | INVALID | test_use_tup_w_unbound_contra_neg/1 references type with invalid definition: tup_w_unbound/1
 
     tup_w_unbound(a | b)) ->               |         |
     tup_w_unbound(a) .                     |         |
-test_use_tup_w_unbound_contra_neg(X) ->    | NO SPEC |
+test_use_tup_w_unbound_contra_neg(X) ->    |         |
     X.                                     |         |
                                            |         |
 -spec test_use_tup_w_unbound_contra_neg2(  | INVALID | test_use_tup_w_unbound_contra_neg2/1 references types with invalid definitions: tup_w_unbound/1, w_unbound_var/0
 
     tup_w_unbound(a | b)) ->               |         |
     tup_w_unbound(a) | w_unbound_var().    |         |
-test_use_tup_w_unbound_contra_neg2(X) ->   | NO SPEC |
+test_use_tup_w_unbound_contra_neg2(X) ->   |         |
     X.                                     |         |
                                            |         |
 -type loop() :: loop().                    | INVALID | recursive type loop/0 is not productive
@@ -129,4 +129,4 @@ convert(#rec1{l = L1}, #rec2{l = L2}) ->   | ERROR   | Unbound rec: rec1
 
    bad_inside()                            |         |
 ) -> bad_inside().                         |         |
-use_bad_inside_neg(X) -> X.                | NO SPEC |
+use_bad_inside_neg(X) -> X.                |         |

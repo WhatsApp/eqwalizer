@@ -38,9 +38,7 @@ to_f_any_pos(F) -> F.                      | OK      |
 -spec to_f_any_neg1(                       |         |
     fun((atom()) -> pid())                 |         |
 ) -> fun().                                |         |
-to_f_any_neg1(F) -> F.                     | ERROR   | F.
-                                           |         | Expression has type:   fun((atom()) -> pid())
-                                           |         | Context expected type: fun()
+to_f_any_neg1(F) -> F.                     | OK      |
                                            |         |
 -spec to_f_any_neg2(                       |         |
     f0 | fun((atom()) -> pid()) | f1       |         |
@@ -117,9 +115,9 @@ f5_to_f4_cov_neg(F) -> F.                  | ERROR   | F.
 f5_or_f6_to_f4(F) -> F.                    | OK      |
                                            |         |
 -spec apply_f4_neg(f4(number())) -> boolea……         |
-apply_f4_neg(F) -> F(a).                   | ERROR   | F.
-                                           |         | Expected fun type with arity 1
-                                           |         | Got: f4(number())
+apply_f4_neg(F) -> F(a).                   | ERROR   | F('a').
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: boolean()
                                            |         |
 -spec f4_id_T(f4(T)) -> f4(T).             |         |
 f4_id_T(F) -> F.                           | OK      |
@@ -136,13 +134,7 @@ apply_f4_id(F) -> f4_id_T(F).              | ERROR   | f4_id_T(F).
                                            |         |   fun((...) -> 'a') is not compatible with fun((...) -> 'a' | 'b')
                                            |         |
 -spec fun_to_f4_neg(fun()) -> f4(term()).  |         |
-fun_to_f4_neg(F) -> F.                     | ERROR   | F.
-                                           |         | Expression has type:   fun()
-                                           |         | Context expected type: f4(term())
-                                           |         | 
-                                           |         |   fun() is not compatible with f4(term())
-                                           |         |   because
-                                           |         |   fun() is not compatible with fun((...) -> term())
+fun_to_f4_neg(F) -> F.                     | OK      |
                                            |         |
 -spec fun2_to_f4(fun((term()) -> a)) -> f4……         |
 fun2_to_f4(F) -> F.                        | OK      |
@@ -161,13 +153,7 @@ fun3_to_f4_neg(F) -> F.                    | ERROR   | F.
                                            |         |   'b' is not compatible with 'a'
                                            |         |
 -spec f4_to_fun_neg(f4(a)) -> fun((term())……         |
-f4_to_fun_neg(F) -> F.                     | ERROR   | F.
-                                           |         | Expression has type:   f4('a')
-                                           |         | Context expected type: fun((term()) -> 'a' | 'b')
-                                           |         | 
-                                           |         |   f4('a') is not compatible with fun((term()) -> 'a' | 'b')
-                                           |         |   because
-                                           |         |   fun((...) -> 'a') is not compatible with fun((term()) -> 'a' | 'b')
+f4_to_fun_neg(F) -> F.                     | OK      |
                                            |         |
 -spec map_f1(fun((term()) -> atom()), [ter……         |
 map_f1(F, Ts) -> lists:map(F, Ts).         | OK      |
@@ -176,14 +162,10 @@ map_f1(F, Ts) -> lists:map(F, Ts).         | OK      |
 map_f2(F, Ts) -> lists:map(F, Ts).         | OK      |
                                            |         |
 -spec map_f3_neg(fun((...) -> atom()), [te……         |
-map_f3_neg(F, Ts) -> lists:map(F, Ts).     | ERROR   | F.
-                                           |         | Expression has type:   fun((...) -> atom())
-                                           |         | Context expected type: fun((term()) -> atom())
+map_f3_neg(F, Ts) -> lists:map(F, Ts).     | OK      |
                                            |         |
 -spec map_f4_neg(fun((...) -> A), [term()]……         |
-map_f4_neg(F, Ts) -> lists:map(F, Ts).     | ERROR   | F.
-                                           |         | Expression has type:   fun((...) -> A)
-                                           |         | Context expected type: fun((term()) -> A)
+map_f4_neg(F, Ts) -> lists:map(F, Ts).     | OK      |
                                            |         |
 -spec map_f5(fun((term()) -> atom()), [ter……         |
 map_f5(F, Ts) -> map_f4_neg(F, Ts).        | OK      |

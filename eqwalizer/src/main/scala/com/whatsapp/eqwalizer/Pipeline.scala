@@ -47,10 +47,7 @@ object Pipeline {
             case (_, Some(overloadedSpec)) =>
               checkOverloadedFun(ctx, f, overloadedSpec)
             case _ =>
-              if (ctx.gradualTyping)
-                checkFun(ctx, f, getDynamicFunSpecType(f))
-              else
-                NoSpecFuncDecl(f.id)(f.pos)
+              checkFun(ctx, f, getDynamicFunSpecType(f))
           }
           if (noCheckFuns.contains(f.id)) {
             result.addOne(applyNowarnToFun(f, checkedF, noCheckFuns(f.id)))
@@ -75,11 +72,6 @@ object Pipeline {
         // skipping things from header files
       }
     result.toList
-  }
-
-  def traverseForms(forms: List[ExternalForm], listener: AstListener): Unit = {
-    val traverse = new Traverse(listener)
-    traverse.traverseForms(forms)
   }
 
   private def getDynamicFunSpecType(f: FunDecl): FunSpec =

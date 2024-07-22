@@ -13,9 +13,9 @@
 -behavior(gen_server).                     | ERROR   | Parameter 1 in implementation of gen_server:format_status/2 has no overlap with expected parameter type. Expected: 'normal' | 'terminate', Got: 'bad'.
 
                                            |         |
-init([]) -> {ok, []}.                      | NO SPEC |
+init([]) -> {ok, []}.                      | OK      |
                                            |         |
-handle_call(_, _From, State) ->            | NO SPEC |
+handle_call(_, _From, State) ->            | OK      |
   {reply, ok, State}.                      |         |
                                            |         |
 -spec handle_cast(ok, ok) ->               |         |

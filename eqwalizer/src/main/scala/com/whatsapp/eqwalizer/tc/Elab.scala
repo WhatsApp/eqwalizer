@@ -159,7 +159,7 @@ final class Elab(pipelineContext: PipelineContext) {
           return (DynamicType, env1)
         }
         l.name match {
-          case Some(name) if pipelineCtx.gradualTyping =>
+          case Some(name) =>
             val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), DynamicType)
             val env2 = env.updated(name, funType)
             check.checkExpr(l, funType, env2)
@@ -176,13 +176,8 @@ final class Elab(pipelineContext: PipelineContext) {
             (subtype.join(resTys), env1)
         }
       case DynCall(dynRemoteFun: DynRemoteFun, args) =>
-        if (pipelineContext.gradualTyping) {
-          val (_argTys, env1) = elabExprs(args, env)
-          (DynamicType, env1)
-        } else {
-          diagnosticsInfo.add(NoDynamicRemoteFun(dynRemoteFun.pos, dynRemoteFun))
-          (DynamicType, env)
-        }
+        val (_argTys, env1) = elabExprs(args, env)
+        (DynamicType, env1)
       case DynCall(f, args) =>
         val (ty, env1) = elabExpr(f, env)
         val expArity = args.size
@@ -205,22 +200,17 @@ final class Elab(pipelineContext: PipelineContext) {
       case DynRemoteFun(mod, name) =>
         throw new IllegalStateException(s"unexpected $expr")
       case DynRemoteFunArity(mod, name, arityExpr) =>
-        if (pipelineContext.gradualTyping) {
-          val env1 = check.checkExpr(mod, AtomType, env)
-          val env2 = check.checkExpr(name, AtomType, env1)
-          val env3 = check.checkExpr(arityExpr, NumberType, env2)
-          val funType =
-            arityExpr match {
-              case IntLit(Some(arity)) =>
-                FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
-              case _ =>
-                AnyFunType
-            }
-          (funType, env3)
-        } else {
-          diagnosticsInfo.add(NoDynamicRemoteFun(expr.pos, expr))
-          (DynamicType, env)
-        }
+        val env1 = check.checkExpr(mod, AtomType, env)
+        val env2 = check.checkExpr(name, AtomType, env1)
+        val env3 = check.checkExpr(arityExpr, NumberType, env2)
+        val funType =
+          arityExpr match {
+            case IntLit(Some(arity)) =>
+              FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
+            case _ =>
+              AnyFunType
+          }
+        (funType, env3)
       case RemoteCall(RemoteId("eqwalizer", "reveal_type", 1), List(expr)) =>
         val (t, env1) = elabExpr(expr, env)
         diagnosticsInfo.add(RevealTypeHint(t)(expr.pos)(pipelineContext))
@@ -260,13 +250,9 @@ final class Elab(pipelineContext: PipelineContext) {
         }
       case lambda @ Lambda(clauses) =>
         val arity = clauses.head.pats.length
-        val funType = if (pipelineContext.gradualTyping) {
-          FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
-        } else {
-          FunType(Nil, List.fill(arity)(NoneType), AnyType)
-        }
+        val funType = FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
         val env1 = lambda.name match {
-          case Some(name) if pipelineCtx.gradualTyping =>
+          case Some(name) =>
             env.updated(name, funType)
           case _ =>
             env
@@ -323,7 +309,7 @@ final class Elab(pipelineContext: PipelineContext) {
           val (ts, envs) = clauses.map(elabClause(_, List.empty, env, effVars)).unzip
           (subtype.join(ts), subtype.joinEnvs(envs))
         }
-      case Match(mPat @ Pats.PatVar(_), l: Lambda) if pipelineContext.gradualTyping =>
+      case Match(mPat @ Pats.PatVar(_), l: Lambda) =>
         val arity = l.clauses.head.pats.size
         val gradualFunType = FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)
         val env1 =
@@ -446,11 +432,11 @@ final class Elab(pipelineContext: PipelineContext) {
         (BinaryType, envAcc)
       case Catch(cExpr) =>
         val (strictType, _) = elabExpr(cExpr, env)
-        val resultType = if (pipelineContext.gradualTyping) UnionType(Set(strictType, DynamicType)) else AnyType
+        val resultType = UnionType(Set(strictType, DynamicType))
         (resultType, env)
       case TryCatchExpr(tryBody, catchClauses, afterBody) =>
         val (tryT, _) = elabBody(tryBody, env)
-        val stackType = if (pipelineContext.gradualTyping) clsExnStackTypeDynamic else clsExnStackType
+        val stackType = clsExnStackTypeDynamic
         val (catchTs, _) = catchClauses.map(elabClause(_, List(stackType), env, Set.empty)).unzip
         val env1 = afterBody match {
           case Some(block) => elabBody(block, env)._2
@@ -459,7 +445,7 @@ final class Elab(pipelineContext: PipelineContext) {
         (subtype.join(tryT :: catchTs), env1)
       case TryOfCatchExpr(tryBody, tryClauses, catchClauses, afterBody) =>
         val (tryT, tryEnv) = elabBody(tryBody, env)
-        val stackType = if (pipelineContext.gradualTyping) clsExnStackTypeDynamic else clsExnStackType
+        val stackType = clsExnStackTypeDynamic
         if (occurrence.eqwater(tryClauses)) {
           val tryEnvs = occurrence.clausesEnvs(tryClauses, List(tryT), tryEnv)
           val (tryTs, _) =
@@ -484,7 +470,7 @@ final class Elab(pipelineContext: PipelineContext) {
         }
       case Receive(clauses) =>
         val effVars = Vars.clausesVars(clauses)
-        val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+        val argType = DynamicType
         val (ts, envs) = clauses.map(elabClause(_, List(argType), env, effVars)).unzip
         (subtype.join(ts), subtype.joinEnvs(envs))
       case ReceiveWithTimeout(List(), timeout, timeoutBlock) =>
@@ -492,7 +478,7 @@ final class Elab(pipelineContext: PipelineContext) {
         elabBody(timeoutBlock, env1)
       case ReceiveWithTimeout(clauses, timeout, timeoutBlock) =>
         val effVars = Vars.clausesAndBlockVars(clauses, timeoutBlock)
-        val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+        val argType = DynamicType
         val (ts, envs) = clauses.map(elabClause(_, List(argType), env, effVars)).unzip
         val env1 = check.checkExpr(timeout, builtinTypes("timeout"), env)
         val (timeoutT, timeoutEnv) = elabBody(timeoutBlock, env1)
@@ -565,7 +551,7 @@ final class Elab(pipelineContext: PipelineContext) {
         elabMaybeBody(body, env)
       case MaybeElse(body, elseClauses) =>
         val (bodyType, _) = elabBody(body, env)
-        val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+        val argType = DynamicType
         val (ts, _) = elseClauses.map(elabClause(_, List(argType), env, Set.empty)).unzip
         (subtype.join(bodyType :: ts), env)
     }

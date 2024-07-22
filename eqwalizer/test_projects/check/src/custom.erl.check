@@ -24,7 +24,7 @@ element_2_basic_1(Tup) ->                  | OK      |
 -spec element_2_basic_2_neg({atom(), numbe……         |
 element_2_basic_2_neg(Tup) ->              | ERROR   |
     element(4, Tup).                       |         | erlang:element(4, Tup).
-                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Expression has type:   #D{dynamic() => dynamic()}
                                            |         | Context expected type: atom()
                                            |         |
 -spec element_2_basic_3_neg({atom(), numbe……         |
@@ -42,17 +42,17 @@ element_2_union_1(Tup) ->                  | OK      |
 element_2_union_2_neg(Tup) ->              | ERROR   |
     element(2, Tup).                       |         | erlang:element(2, Tup).
                                            |         | Expression has type:   number() | string() | atom()
-                                           |         | Context expected type: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Context expected type: #D{dynamic() => dynamic()}
                                            |         |
 -spec element_2_union_3_neg({atom(), strin……         |
 element_2_union_3_neg(Tup) ->              | ERROR   |
     element(2, Tup).                       |         | Tup.
-                                           |         | Expression has type:   {atom(), string()} | [eqwalizer:dynamic()]
+                                           |         | Expression has type:   {atom(), string()} | [dynamic()]
                                            |         | Context expected type: tuple()
                                            |         | 
-                                           |         |   {atom(), string()} | [eqwalizer:dynamic()] is not compatible with tuple()
+                                           |         |   {atom(), string()} | [dynamic()] is not compatible with tuple()
                                            |         |   because
-                                           |         |   [eqwalizer:dynamic()] is not compatible with tuple()
+                                           |         |   [dynamic()] is not compatible with tuple()
                                            |         |
 -spec element_2_union_4_neg({c, d, e, f} |……         |
 element_2_union_4_neg(Tup) ->              | ERROR   |
@@ -65,7 +65,7 @@ element_2_union_4_neg(Tup) ->              | ERROR   |
 element_2_dynindex_1_neg(N, Tup) ->        | ERROR   |
     element(N, Tup).                       |         | erlang:element(N, Tup).
                                            |         | Expression has type:   atom() | number() | string()
-                                           |         | Context expected type: #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
+                                           |         | Context expected type: #D{dynamic() => dynamic()}
                                            |         |
 -spec element_2_dynindex_2_neg(pos_integer……         |
 element_2_dynindex_2_neg(N, Tup) ->        | ERROR   |
@@ -80,16 +80,18 @@ element_2_dynindex_2_neg(N, Tup) ->        | ERROR   |
 % element/2 - tuple() examples             |         |
                                            |         |
 -spec element_2_anytuple_1_neg(tuple()) ->……         |
-element_2_anytuple_1_neg(Tup) ->           | ERROR   |
-    element(1, Tup).                       |         | erlang:element(1, Tup).
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: atom()
+element_2_anytuple_1_neg(Tup) ->           | OK      |
+    element(1, Tup).                       |         |
                                            |         |
 -spec element_2_anytuple_2_neg(tuple() | {……         |
 element_2_anytuple_2_neg(Tup) ->           | ERROR   |
     element(1, Tup).                       |         | erlang:element(1, Tup).
-                                           |         | Expression has type:   term() | number()
+                                           |         | Expression has type:   dynamic() | number()
                                            |         | Context expected type: atom()
+                                           |         | 
+                                           |         |   dynamic() | number() is not compatible with atom()
+                                           |         |   because
+                                           |         |   number() is not compatible with atom()
                                            |         |
 % element/2 - record examples              |         |
                                            |         |
@@ -411,16 +413,10 @@ maps_filter_2_3_neg() ->                   | ERROR   |
 %  lambdas assigned to vars                |         |
 -spec maps_filter_2_4_wip()                |         |
         -> #{number() => atom()}.          |         |
-maps_filter_2_4_wip() ->                   | ERROR   |
+maps_filter_2_4_wip() ->                   | OK      |
     M = #{1 => a, 2 => b},                 |         |
     F = fun (K, V) -> K =:= V end,         |         |
-    maps:filter(F, M).                     |         | F.
-                                           |         | Expression has type:   fun((none(), none()) -> term())
-                                           |         | Context expected type: fun((number(), 'a' | 'b') -> boolean())
-                                           |         | 
-                                           |         |   fun((none(), none()) -> term()) is not compatible with fun((number(), 'a' | 'b') -> boolean())
-                                           |         |   because
-                                           |         |   term() is not compatible with boolean()
+    maps:filter(F, M).                     |         |
                                            |         |
                                            |         |
 -spec maps_filter_2_5_neg()                |         |
@@ -527,16 +523,10 @@ maps_map_2_3_neg() ->                      | ERROR   |
 %  lambdas assigned to vars                |         |
 -spec maps_map_2_4_wip()                   |         |
         -> #{number() => boolean()}.       |         |
-maps_map_2_4_wip() ->                      | ERROR   |
+maps_map_2_4_wip() ->                      | OK      |
     M = #{1 => a, 2 => b},                 |         |
     F = fun (K, V) -> K =:= V end,         |         |
-    maps:map(F, M).                        |         | F.
-                                           |         | Expression has type:   fun((none(), none()) -> term())
-                                           |         | Context expected type: fun((number(), 'a' | 'b') -> term())
-                                           |         | 
-                                           |         |   fun((none(), none()) -> term()) is not compatible with fun((number(), 'a' | 'b') -> term())
-                                           |         |   because
-                                           |         |   number() is not compatible with none()
+    maps:map(F, M).                        |         |
                                            |         |
                                            |         |
 -spec maps_map_2_5_neg()                   |         |
@@ -1066,11 +1056,11 @@ queue_filter_9_neg() ->                    | ERROR   |
     queue:filter(                          |         |
         fun list_to_atom/1,                |         | erlang:list_to_atom/1.
                                            |         | Expression has type:   fun((string()) -> atom())
-                                           |         | Context expected type: fun((none()) -> boolean() | [none()])
+                                           |         | Context expected type: fun((dynamic()) -> boolean() | [dynamic()])
                                            |         | 
-                                           |         |   fun((string()) -> atom()) is not compatible with fun((none()) -> boolean() | [none()])
+                                           |         |   fun((string()) -> atom()) is not compatible with fun((dynamic()) -> boolean() | [dynamic()])
                                            |         |   because
-                                           |         |   atom() is not compatible with boolean() | [none()]
+                                           |         |   atom() is not compatible with boolean() | [dynamic()]
                                            |         |   because
                                            |         |   atom() is not compatible with boolean()
         ab_queue()                         |         |
@@ -1568,16 +1558,8 @@ test_plists_lookup2_neg() ->               | ERROR   |
                                            |         |
 -spec test_plists_lookup3()                |         |
         -> none | {a, true} | {b, true}.   |         |
-test_plists_lookup3() ->                   | ERROR   |
-proplists:lookup(self(), [a, {b, true}]).  |         | proplists:lookup(erlang:self(), ['a', {'b', 'true'}]).
-                                           |         | Expression has type:   'none' | tuple()
-                                           |         | Context expected type: 'none' | {'a', 'true'} | {'b', 'true'}
-                                           |         | 
-                                           |         |   'none' | tuple() is not compatible with 'none' | {'a', 'true'} | {'b', 'true'}
-                                           |         |   because
-                                           |         |   tuple() is not compatible with 'none' | {'a', 'true'} | {'b', 'true'}
-                                           |         |   because
-                                           |         |   tuple() is not compatible with 'none'
+test_plists_lookup3() ->                   | OK      |
+proplists:lookup(self(), [a, {b, true}]).  |         |
                                            |         |
 -spec test_plists_lookup4()                |         |
         -> none.                           |         |
@@ -1592,14 +1574,8 @@ test_plists_lookup4() ->                   | ERROR   |
                                            |         |
 -spec test_plists_lookup_all1_neg()        |         |
         -> [{b, true}].                    |         |
-test_plists_lookup_all1_neg() ->           | ERROR   |
-    proplists:lookup_all(                  |         | proplists:lookup_all(erlang:self(), ['a', {'b', 'true'}]).
-                                           |         | Expression has type:   [tuple()]
-                                           |         | Context expected type: [{'b', 'true'}]
-                                           |         | 
-                                           |         |   [tuple()] is not compatible with [{'b', 'true'}]
-                                           |         |   because
-                                           |         |   tuple() is not compatible with {'b', 'true'}
+test_plists_lookup_all1_neg() ->           | OK      |
+    proplists:lookup_all(                  |         |
         self(),                            |         |
         [a, {b, true}]                     |         |
     ).                                     |         |
@@ -1613,16 +1589,8 @@ test_plists_lookup_all2_neg() ->           | ERROR   |
                                            |         |
 -spec test_plists_lookup_all3()            |         |
         -> [{a, true} | {b, true}].        |         |
-test_plists_lookup_all3() ->               | ERROR   |
-    proplists:lookup_all(                  |         | proplists:lookup_all(erlang:self(), ['a', {'b', 'true'}]).
-                                           |         | Expression has type:   [tuple()]
-                                           |         | Context expected type: [{'a', 'true'} | {'b', 'true'}]
-                                           |         | 
-                                           |         |   [tuple()] is not compatible with [{'a', 'true'} | {'b', 'true'}]
-                                           |         |   because
-                                           |         |   tuple() is not compatible with {'a', 'true'} | {'b', 'true'}
-                                           |         |   because
-                                           |         |   tuple() is not compatible with {'a', 'true'}
+test_plists_lookup_all3() ->               | OK      |
+    proplists:lookup_all(                  |         |
         self(),                            |         |
         [a, {b, true}]                     |         |
     ).                                     |         |
@@ -1721,48 +1689,20 @@ test_plists_to_map2_neg() ->               | OK      |
                                            |         |
 -spec test_plists_to_map3_neg()            |         |
         -> #{a |d => b | pid()}.           |         |
-test_plists_to_map3_neg() ->               | ERROR   |
-    proplists:to_map(                      |         | proplists:to_map([{'a', 'b'}, 'c', {'d', erlang:self()}]).
-                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
-                                           |         | Context expected type: #D{'a' | 'd' => 'b' | pid()}
-                                           |         | 
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with #D{'a' | 'd' => 'b' | pid()}
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with 'a' | 'd'
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a' | 'd'
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+test_plists_to_map3_neg() ->               | OK      |
+    proplists:to_map(                      |         |
         [{a, b}, c, {d, self()}]).         |         |
                                            |         |
 -spec test_plists_to_map4()                |         |
     -> #{a | c |d => b | true | pid()}.    |         |
-test_plists_to_map4() ->                   | ERROR   |
-    proplists:to_map(                      |         | proplists:to_map([{'a', 'b'}, 'c', {'d', erlang:self()}]).
-                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
-                                           |         | Context expected type: #D{'a' | 'c' | 'd' => 'b' | 'true' | pid()}
-                                           |         | 
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with #D{'a' | 'c' | 'd' => 'b' | 'true' | pid()}
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with 'a' | 'c' | 'd'
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a' | 'c' | 'd'
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+test_plists_to_map4() ->                   | OK      |
+    proplists:to_map(                      |         |
         [{a, b}, c, {d, self()}]).         |         |
                                            |         |
 -spec test_plists_to_map5()                |         |
         -> #{none() => none()}.            |         |
-test_plists_to_map5() ->                   | ERROR   |
-    proplists:to_map([]).                  |         | proplists:to_map([]).
-                                           |         | Expression has type:   #D{eqwalizer:dynamic() => eqwalizer:dynamic()}
-                                           |         | Context expected type: #D{none() => none()}
-                                           |         | 
-                                           |         |   #D{eqwalizer:dynamic() => eqwalizer:dynamic()} is not compatible with #D{none() => none()}
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with none()
-                                           |         |   because
-                                           |         |   term() is not compatible with none()
+test_plists_to_map5() ->                   | OK      |
+    proplists:to_map([]).                  |         |
                                            |         |
 -spec test_plists_from_map1() ->           |         |
     plist(a | pid(), b | true).            |         |
@@ -1812,45 +1752,27 @@ test_plists_from_map2_neg() ->             | ERROR   |
                                            |         |   term() is not compatible with 'true'
                                            |         |
 -spec app_env1_strict() -> number().       |         |
-app_env1_strict() ->                       | ERROR   |
+app_env1_strict() ->                       | OK      |
     Res = application:get_env(app1),       |         |
     case Res of                            |         |
         undefined -> 0;                    |         |
-        {ok, N} -> N                       |         | N.
-                                           |         | Expression has type:   eqwalizer:dynamic()
-                                           |         | Context expected type: number()
-                                           |         | 
-                                           |         |   eqwalizer:dynamic() is not compatible with number()
-                                           |         |   because
-                                           |         |   term() is not compatible with number()
+        {ok, N} -> N                       |         |
     end.                                   |         |
                                            |         |
 -spec app_env2_strict() -> number().       |         |
-app_env2_strict() ->                       | ERROR   |
+app_env2_strict() ->                       | OK      |
     Res = application:get_env(app1, key1), |         |
     case Res of                            |         |
         undefined -> 0;                    |         |
-        {ok, N} -> N                       |         | N.
-                                           |         | Expression has type:   eqwalizer:dynamic()
-                                           |         | Context expected type: number()
-                                           |         | 
-                                           |         |   eqwalizer:dynamic() is not compatible with number()
-                                           |         |   because
-                                           |         |   term() is not compatible with number()
+        {ok, N} -> N                       |         |
     end.                                   |         |
                                            |         |
 -spec app_env3_strict() -> number().       |         |
-app_env3_strict() ->                       | ERROR   |
+app_env3_strict() ->                       | OK      |
     A = app1,                              |         |
     K = key,                               |         |
     U = undefined,                         |         |
-    application:get_env(A, K, U).          |         | application:get_env(A, K, U).
-                                           |         | Expression has type:   eqwalizer:dynamic()
-                                           |         | Context expected type: number()
-                                           |         | 
-                                           |         |   eqwalizer:dynamic() is not compatible with number()
-                                           |         |   because
-                                           |         |   term() is not compatible with number()
+    application:get_env(A, K, U).          |         |
                                            |         |
 -spec flatten1_strict() -> [atom()].       |         |
 flatten1_strict() ->                       | OK      |
@@ -1864,22 +1786,14 @@ flatten2_strict() ->                       | OK      |
     lists:flatten(In, Tail).               |         |
                                            |         |
 -spec file_consult_neg1() -> [anything].   |         |
-file_consult_neg1() ->                     | ERROR   |
+file_consult_neg1() ->                     | OK      |
     {ok, Res} = file:consult(some_file),   |         |
-    Res.                                   |         | Res.
-                                           |         | Expression has type:   [eqwalizer:dynamic()]
-                                           |         | Context expected type: ['anything']
-                                           |         | 
-                                           |         |   [eqwalizer:dynamic()] is not compatible with ['anything']
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with 'anything'
-                                           |         |   because
-                                           |         |   term() is not compatible with 'anything'
+    Res.                                   |         |
                                            |         |
 -spec file_consult_neg2() -> nok.          |         |
 file_consult_neg2() ->                     | ERROR   |
     file:consult(some_file).               |         | file:consult('some_file').
-                                           |         | Expression has type:   {'ok', [eqwalizer:dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
+                                           |         | Expression has type:   {'ok', [dynamic()]} | {'error', {number(), atom(), term()} | 'terminated' | 'badarg' | file:posix() | 'system_limit'}
                                            |         | Context expected type: 'nok'
                                            |         |
 -spec keysort() -> [{a | b, c | d}].       |         |
@@ -2128,23 +2042,13 @@ tc1_neg() ->                               | ERROR   |
                                            |         |
 -spec ets_lookup_1_neg(term()) ->          |         |
     [{whatev} | {2}].                      |         |
-ets_lookup_1_neg(Any) ->                   | ERROR   |
-    ets:lookup(tab, Any).                  |         | ets:lookup('tab', Any).
-                                           |         | Expression has type:   [eqwalizer:dynamic()]
-                                           |         | Context expected type: [{'whatev'} | {number()}]
-                                           |         | 
-                                           |         |   [eqwalizer:dynamic()] is not compatible with [{'whatev'} | {number()}]
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with {'whatev'} | {number()}
-                                           |         |   because
-                                           |         |   term() is not compatible with {'whatev'} | {number()}
-                                           |         |   because
-                                           |         |   term() is not compatible with {'whatev'}
+ets_lookup_1_neg(Any) ->                   | OK      |
+    ets:lookup(tab, Any).                  |         |
                                            |         |
 -spec ets_lookup_2_neg(term()) -> pid().   |         |
 ets_lookup_2_neg(Any) ->                   | ERROR   |
     ets:lookup(tab, Any).                  |         | ets:lookup('tab', Any).
-                                           |         | Expression has type:   [eqwalizer:dynamic()]
+                                           |         | Expression has type:   [dynamic()]
                                            |         | Context expected type: pid()
                                            |         |
 -spec ets_lookup_3_neg(term()) -> pid().   |         |
@@ -2155,16 +2059,8 @@ ets_lookup_3_neg(Any) ->                   | ERROR   |
                                            |         |
 -spec ets_lookup_4_neg(term()) ->          |         |
     [tuple()].                             |         |
-ets_lookup_4_neg(Any) ->                   | ERROR   |
-    ets:lookup(tab, Any).                  |         | ets:lookup('tab', Any).
-                                           |         | Expression has type:   [eqwalizer:dynamic()]
-                                           |         | Context expected type: [tuple()]
-                                           |         | 
-                                           |         |   [eqwalizer:dynamic()] is not compatible with [tuple()]
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with tuple()
-                                           |         |   because
-                                           |         |   term() is not compatible with tuple()
+ets_lookup_4_neg(Any) ->                   | OK      |
+    ets:lookup(tab, Any).                  |         |
                                            |         |
 -spec ets_lookup_5(term()) ->              |         |
     [term()].                              |         |
@@ -2173,31 +2069,13 @@ ets_lookup_5(Any) ->                       | OK      |
                                            |         |
 -spec ets_tab2list_1_neg(atom()) ->        |         |
     [tuple()].                             |         |
-ets_tab2list_1_neg(Atom) ->                | ERROR   |
-    ets:tab2list(Atom).                    |         | ets:tab2list(Atom).
-                                           |         | Expression has type:   [eqwalizer:dynamic()]
-                                           |         | Context expected type: [tuple()]
-                                           |         | 
-                                           |         |   [eqwalizer:dynamic()] is not compatible with [tuple()]
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with tuple()
-                                           |         |   because
-                                           |         |   term() is not compatible with tuple()
+ets_tab2list_1_neg(Atom) ->                | OK      |
+    ets:tab2list(Atom).                    |         |
                                            |         |
 -spec ets_tab2list_2_neg(atom()) ->        |         |
     [{whatev} | {2}].                      |         |
-ets_tab2list_2_neg(Atom) ->                | ERROR   |
-    ets:tab2list(Atom).                    |         | ets:tab2list(Atom).
-                                           |         | Expression has type:   [eqwalizer:dynamic()]
-                                           |         | Context expected type: [{'whatev'} | {number()}]
-                                           |         | 
-                                           |         |   [eqwalizer:dynamic()] is not compatible with [{'whatev'} | {number()}]
-                                           |         |   because
-                                           |         |   eqwalizer:dynamic() is not compatible with {'whatev'} | {number()}
-                                           |         |   because
-                                           |         |   term() is not compatible with {'whatev'} | {number()}
-                                           |         |   because
-                                           |         |   term() is not compatible with {'whatev'}
+ets_tab2list_2_neg(Atom) ->                | OK      |
+    ets:tab2list(Atom).                    |         |
                                            |         |
 -spec ets_tab2list_3_neg() -> term().      |         |
 ets_tab2list_3_neg() ->                    | ERROR   |
@@ -2509,9 +2387,8 @@ use_custom_overloaded2(B) ->               | OK      |
                                            |         |
 -spec used_custom_overloaded3_neg          |         |
     (term()) -> term().                    |         |
-used_custom_overloaded3_neg(X) ->          | ERROR   |
-    custom_overloaded(X).                  |         | custom_overloaded(X).
-                                           |         | Not enough info to branch. Arg types: term()
+used_custom_overloaded3_neg(X) ->          | OK      |
+    custom_overloaded(X).                  |         |
                                            |         |
 -spec maps_find_1(                         |         |
     pid(), #{pid() => atom()}              |         |

@@ -72,9 +72,8 @@ test_08_neg() ->                           | ERROR   |
                                            |         | Got: fun(() -> 'ok')
                                            |         |
 -spec test_09_neg() -> term().             |         |
-test_09_neg() ->                           | ERROR   |
-    F = fun unspecced/0,                   |         | Unbound var: unspecced/0
-
+test_09_neg() ->                           | OK      |
+    F = fun unspecced/0,                   |         |
     F().                                   |         |
                                            |         |
 -spec test_10_neg() -> ok.                 |         |
@@ -192,4 +191,4 @@ test_15e_neg(F) ->                         | ERROR   |
 -spec ret_ok() -> ok.                      |         |
 ret_ok() -> ok.                            | OK      |
                                            |         |
-unspecced() -> ok.                         | NO SPEC |
+unspecced() -> ok.                         | OK      |

@@ -174,21 +174,21 @@ test15_neg(F, Shape) ->                    | ERROR   |
     tuple()                                |         |
 ) -> false.                                |         |
 test16_neg(F, Tuple) ->                    | ERROR   |
-    F(Tuple).                              |         | Tuple.
-                                           |         | Expression has type:   tuple()
-                                           |         | Context expected type: {X}
+    F(Tuple).                              |         | F(Tuple).
+                                           |         | Expression has type:   X
+                                           |         | Context expected type: 'false'
                                            |         |
 -spec test17_neg(fun()) -> ok.             |         |
 test17_neg(F) ->                           | ERROR   |
-    lmap(F, [2, 4]).                       |         | F.
-                                           |         | Expression has type:   fun()
-                                           |         | Context expected type: fun((A) -> B)
+    lmap(F, [2, 4]).                       |         | lmap(F, [2, 4]).
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: 'ok'
                                            |         |
 -spec test17b_neg(fun()) -> ok.            |         |
 test17b_neg(F) ->                          | ERROR   |
-    mapl([2, 4], F).                       |         | F.
-                                           |         | Expression has type:   fun()
-                                           |         | Context expected type: fun((number()) -> B)
+    mapl([2, 4], F).                       |         | mapl([2, 4], F).
+                                           |         | Expression has type:   [dynamic()]
+                                           |         | Context expected type: 'ok'
                                            |         |
 -type kv(K, V) :: #{K => V}.               |         |
                                            |         |

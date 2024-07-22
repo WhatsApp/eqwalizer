@@ -12,7 +12,7 @@
 ]).                                        |         |
 -behavior(gen_server).                     |         |
                                            |         |
-init([]) -> {ok, []}.                      | NO SPEC |
+init([]) -> {ok, []}.                      | OK      |
 -spec handle_call                          |         |
     ({a, atom()}, term(), term())          |         |
       -> {reply, term(), term()};          |         |

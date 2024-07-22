@@ -13,9 +13,8 @@
 use_invalid() -> ok.                       | OK      |
                                            |         |
 % unspecced                                |         |
-use_invalid2() -> ok.                      | NO SPEC |
+use_invalid2() -> ok.                      | OK      |
                                            |         |
 -spec use_use_invalid2_neg() -> ok.        |         |
-use_use_invalid2_neg() ->                  | ERROR   |
-  use_invalid2().                          |         | Unbound var: use_invalid2/0
-
+use_use_invalid2_neg() ->                  | OK      |
+  use_invalid2().                          |         |

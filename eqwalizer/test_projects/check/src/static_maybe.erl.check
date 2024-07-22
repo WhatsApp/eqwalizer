@@ -34,14 +34,12 @@ maybe_02_neg(T) ->                         | ERROR   |
 % are mapped to term()                     |         |
 -spec maybe_03_neg({term(), atom()})       |         |
     -> atom().                             |         |
-maybe_03_neg(T) ->                         | ERROR   |
+maybe_03_neg(T) ->                         | OK      |
     maybe                                  |         |
         {ok, A} ?= T,                      |         |
         A                                  |         |
     else                                   |         |
-        B -> B                             |         | B.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: atom()
+        B -> B                             |         |
     end.                                   |         |
                                            |         |
 -spec maybe_04_neg({term(), atom()})       |         |
@@ -70,15 +68,13 @@ maybe_05(T) ->                             | OK      |
 % Occurrence typing is not supported       |         |
 -spec maybe_06_neg({term(), atom()})       |         |
     -> atom().                             |         |
-maybe_06_neg(T) ->                         | ERROR   |
+maybe_06_neg(T) ->                         | OK      |
     maybe                                  |         |
         {ok, A} ?= T,                      |         |
         A                                  |         |
     else                                   |         |
         B when not is_atom(B) -> err;      |         |
-        Atom -> Atom                       |         | Atom.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: atom()
+        Atom -> Atom                       |         |
     end.                                   |         |
                                            |         |
 -spec maybe_07                             |         |

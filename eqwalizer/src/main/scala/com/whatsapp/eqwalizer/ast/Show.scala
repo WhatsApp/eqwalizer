@@ -116,8 +116,8 @@ case class Show(pipelineContext: Option[PipelineContext]) {
           if !forceShowModule &&
             ((rid.module == "erlang" && builtinTypes.contains(rid.name)) ||
               rid.module == ctx.module ||
-              (ctx.gradualTyping && rid == RemoteId("eqwalizer", "dynamic", 0)) ||
-              (ctx.gradualTyping && rid == RemoteId("eqwalizer", "dynamic", 1))) =>
+              (rid == RemoteId("eqwalizer", "dynamic", 0)) ||
+              (rid == RemoteId("eqwalizer", "dynamic", 1))) =>
         rid.name
       case _ => s"${rid.module}:${rid.name}"
     }

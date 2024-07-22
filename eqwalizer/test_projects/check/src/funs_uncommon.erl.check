@@ -9,30 +9,19 @@
 % Uncommon uses of lambdas                 |         |
                                            |         |
 -spec test_01(number()) -> number().       |         |
-test_01(N) ->                              | ERROR   |
+test_01(N) ->                              | OK      |
   F = case N of                            |         |
         0 -> fun (_) -> 1 end;             |         |
         _ -> fun (X) -> X + 1 end          |         |
       end,                                 |         |
-  F(1).                                    |         | 1.
-                                           |         | Expression has type:   number()
-                                           |         | Context expected type: none()
+  F(1).                                    |         |
                                            |         |
 -record(rectup, {field :: {fun((a) -> a), ……         |
                                            |         |
 -spec test_02() -> #rectup{}.              |         |
-test_02() ->                               | ERROR   |
+test_02() ->                               | OK      |
   #rectup{                                 |         |
-    field = {fun(X) -> X end, an_atom}     |         | {fun, 'an_atom'}.
-                                           |         | Expression has type:   {fun((none()) -> term()), 'an_atom'}
-                                           |         | Context expected type: {fun(('a') -> 'a'), atom()}
-                                           |         | 
-                                           |         |   at tuple index 1:
-                                           |         |   {fun((none()) -> term()), 'an_atom'} is not compatible with {fun(('a') -> 'a'), atom()}
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun(('a') -> 'a')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+    field = {fun(X) -> X end, an_atom}     |         |
   }.                                       |         |
                                            |         |
 -record(rec, {field :: fun((a) -> a)}).    |         |
@@ -47,96 +36,42 @@ test_03() ->                               | OK      |
 test_04(R) ->                              | ERROR   |
   R#rec{                                   |         |
     field = {fun(X) -> X end, an_atom}     |         | {fun, 'an_atom'}.
-                                           |         | Expression has type:   {fun((none()) -> term()), 'an_atom'}
+                                           |         | Expression has type:   {fun((dynamic()) -> dynamic()), 'an_atom'}
                                            |         | Context expected type: fun(('a') -> 'a')
   }.                                       |         |
                                            |         |
 -spec test_05() -> #{key := fun((a) -> a)}……         |
-test_05() ->                               | ERROR   |
-  #{key => fun(X) -> X end}.               |         | #{..}.
-                                           |         | Expression has type:   #S{key := fun((none()) -> term())}
-                                           |         | Context expected type: #S{key := fun(('a') -> 'a')}
-                                           |         | 
-                                           |         |   at shape key 'key':
-                                           |         |   #S{key := fun((none()) -> term())} is not compatible with #S{key := fun(('a') -> 'a')}
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun(('a') -> 'a')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+test_05() ->                               | OK      |
+  #{key => fun(X) -> X end}.               |         |
                                            |         |
 -spec test_06(                             |         |
    #{key := fun((a) -> a)}                 |         |
 ) -> #{key := fun((a) -> a)}.              |         |
-test_06(M) ->                              | ERROR   |
-  M#{key => fun(X) -> X end}.              |         | ..#{..}.
-                                           |         | Expression has type:   #S{key := fun((none()) -> term())}
-                                           |         | Context expected type: #S{key := fun(('a') -> 'a')}
-                                           |         | 
-                                           |         |   at shape key 'key':
-                                           |         |   #S{key := fun((none()) -> term())} is not compatible with #S{key := fun(('a') -> 'a')}
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun(('a') -> 'a')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+test_06(M) ->                              | OK      |
+  M#{key => fun(X) -> X end}.              |         |
                                            |         |
 -spec test_07() -> {fun((a) -> a)}.        |         |
-test_07() ->                               | ERROR   |
-  {fun(X) -> X end}.                       |         | {fun}.
-                                           |         | Expression has type:   {fun((none()) -> term())}
-                                           |         | Context expected type: {fun(('a') -> 'a')}
-                                           |         | 
-                                           |         |   at tuple index 1:
-                                           |         |   {fun((none()) -> term())} is not compatible with {fun(('a') -> 'a')}
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun(('a') -> 'a')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+test_07() ->                               | OK      |
+  {fun(X) -> X end}.                       |         |
                                            |         |
 -spec test_08() -> {fun((a) -> a)}.        |         |
-test_08() ->                               | ERROR   |
+test_08() ->                               | OK      |
   Res = {fun(X) -> X end},                 |         |
-  Res.                                     |         | Res.
-                                           |         | Expression has type:   {fun((none()) -> term())}
-                                           |         | Context expected type: {fun(('a') -> 'a')}
-                                           |         | 
-                                           |         |   at tuple index 1:
-                                           |         |   {fun((none()) -> term())} is not compatible with {fun(('a') -> 'a')}
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun(('a') -> 'a')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+  Res.                                     |         |
                                            |         |
 -spec test_09() -> b.                      |         |
-test_09() ->                               | ERROR   |
+test_09() ->                               | OK      |
   {F, _} = {fun(X) -> X end, a},           |         |
-  F(b).                                    |         | 'b'.
-                                           |         | Expression has type:   'b'
-                                           |         | Context expected type: none()
+  F(b).                                    |         |
                                            |         |
 -spec test_10() -> [fun((a) -> a)].        |         |
-test_10() ->                               | ERROR   |
-  [fun(X) -> X end, fun(X) -> X end].      |         | [fun, fun].
-                                           |         | Expression has type:   [fun((none()) -> term())]
-                                           |         | Context expected type: [fun(('a') -> 'a')]
-                                           |         | 
-                                           |         |   [fun((none()) -> term())] is not compatible with [fun(('a') -> 'a')]
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun(('a') -> 'a')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+test_10() ->                               | OK      |
+  [fun(X) -> X end, fun(X) -> X end].      |         |
                                            |         |
 -spec test_11() -> [fun((a, b) -> a)].     |         |
-test_11() ->                               | ERROR   |
+test_11() ->                               | OK      |
   Res = [fun(X, _) -> X end],              |         |
-  Res.                                     |         | Res.
-                                           |         | Expression has type:   [fun((none(), none()) -> term())]
-                                           |         | Context expected type: [fun(('a', 'b') -> 'a')]
-                                           |         | 
-                                           |         |   [fun((none(), none()) -> term())] is not compatible with [fun(('a', 'b') -> 'a')]
-                                           |         |   because
-                                           |         |   fun((none(), none()) -> term()) is not compatible with fun(('a', 'b') -> 'a')
-                                           |         |   because
-                                           |         |   term() is not compatible with 'a'
+  Res.                                     |         |
                                            |         |
 -spec test_12(a) -> fun((b, c) ->          |         |
                       {a, b, c}).          |         |
@@ -145,16 +80,8 @@ test_12(a) ->                              | OK      |
                                            |         |
 -spec test_13() ->                         |         |
   [fun((number()) -> number())].           |         |
-test_13() ->                               | ERROR   |
-  [                                        |         | [ || ].
-                                           |         | Expression has type:   [fun((none()) -> term())]
-                                           |         | Context expected type: [fun((number()) -> number())]
-                                           |         | 
-                                           |         |   [fun((none()) -> term())] is not compatible with [fun((number()) -> number())]
-                                           |         |   because
-                                           |         |   fun((none()) -> term()) is not compatible with fun((number()) -> number())
-                                           |         |   because
-                                           |         |   term() is not compatible with number()
+test_13() ->                               | OK      |
+  [                                        |         |
     fun(X) -> X * Y end                    |         |
     || Y <- [1, 2, 3]                      |         |
   ].                                       |         |
@@ -177,17 +104,13 @@ test15() ->                                | OK      |
   ok.                                      |         |
                                            |         |
 -spec test16() -> number().                |         |
-test16() ->                                | ERROR   |
+test16() ->                                | OK      |
   F = fun(X) -> X end,                     |         |
-  _ = F(2),                                |         | 2.
-                                           |         | Expression has type:   number()
-                                           |         | Context expected type: none()
+  _ = F(2),                                |         |
   F(3).                                    |         |
                                            |         |
 -spec test17() -> number().                |         |
-test17() ->                                | ERROR   |
+test17() ->                                | OK      |
   F = fun(X) -> X end,                     |         |
-  _ = F(an_atom),                          |         | 'an_atom'.
-                                           |         | Expression has type:   'an_atom'
-                                           |         | Context expected type: none()
+  _ = F(an_atom),                          |         |
   F(3).                                    |         |

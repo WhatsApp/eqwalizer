@@ -152,7 +152,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val expFunTy = FunType(Nil, argTys, expResTy)
     val env1 =
       lambda.name match {
-        case Some(name) if pipelineCtx.gradualTyping =>
+        case Some(name) =>
           val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), DynamicType)
           env.updated(name, funType)
         case _ =>
@@ -171,7 +171,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val argTys = ft.argTys.map(Subst.subst(varToType, _))
     val env1 =
       lambda.name match {
-        case Some(name) if pipelineCtx.gradualTyping =>
+        case Some(name) =>
           val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), DynamicType)
           env.updated(name, funType)
         case _ =>

@@ -17,18 +17,18 @@ class CheckSpec extends SnapshotSpec {
 
   testDir(srcDir = "test_projects/check/src")
   testDir(srcDir = "test_projects/check/test")
-  testDir(srcDir = "test_projects/check_gradual/src", options = Options(gradualTyping = Some(true)))
+  testDir(srcDir = "test_projects/check_gradual/src")
   testDir(srcDir = "test_projects/debug/src")
   testDir(srcDir = "test_projects/elm_core/src", codeWidth = 80)
   testDir(srcDir = "test_projects/eqwater/src")
   testDir(srcDir = "test_projects/options/src", options = Options(checkRedundantGuards = Some(true)))
   testDir(
     srcDir = "test_projects/fault_tolerance/src",
-    options = Options(gradualTyping = Some(true), eqwater = Some(true), tolerateErrors = Some(true)),
+    options = Options(eqwater = Some(true), tolerateErrors = Some(true)),
   )
   testDir(
     srcDir = "test_projects/fault_tolerance/src",
-    options = Options(gradualTyping = Some(true), eqwater = Some(true), tolerateErrors = Some(true)),
+    options = Options(eqwater = Some(true), tolerateErrors = Some(true)),
     json = true,
   )
 

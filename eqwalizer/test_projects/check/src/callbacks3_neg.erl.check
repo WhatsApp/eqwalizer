@@ -15,9 +15,9 @@
                                            |         |   because
                                            |         |   'wrong_ret' is not compatible with {'noreply', term()}
                                            |         |
-init([]) -> {ok, []}.                      | NO SPEC |
+init([]) -> {ok, []}.                      | OK      |
                                            |         |
-handle_call(_, _From, State) ->            | NO SPEC |
+handle_call(_, _From, State) ->            | OK      |
     {reply, ok, State}.                    |         |
                                            |         |
 -spec handle_cast(ok, ok) -> wrong_ret.    |         |

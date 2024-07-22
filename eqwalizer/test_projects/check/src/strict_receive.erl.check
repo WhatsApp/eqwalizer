@@ -9,32 +9,26 @@
                                            |         |
 -spec receive_number1()                    |         |
       -> number().                         |         |
-receive_number1() ->                       | ERROR   |
+receive_number1() ->                       | OK      |
   receive                                  |         |
-    {number, N} -> N;                      |         | N.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: number()
+    {number, N} -> N;                      |         |
     N when is_number(N) -> N               |         |
   end.                                     |         |
                                            |         |
 -spec receive_number2()                    |         |
       -> number().                         |         |
-receive_number2() ->                       | ERROR   |
+receive_number2() ->                       | OK      |
   Res = receive                            |         |
     {number, N} -> N;                      |         |
     N when is_number(N) -> N               |         |
   end,                                     |         |
-  Res.                                     |         | Res.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: number()
+  Res.                                     |         |
                                            |         |
 -spec receive_number_timeout1()            |         |
       -> number().                         |         |
-receive_number_timeout1() ->               | ERROR   |
+receive_number_timeout1() ->               | OK      |
   receive                                  |         |
-    {number, N} -> N;                      |         | N.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: number()
+    {number, N} -> N;                      |         |
     N when is_number(N) -> N               |         |
   after 100 ->                             |         |
     0                                      |         |
@@ -42,16 +36,14 @@ receive_number_timeout1() ->               | ERROR   |
                                            |         |
 -spec receive_number_timeout2()            |         |
       -> number().                         |         |
-receive_number_timeout2() ->               | ERROR   |
+receive_number_timeout2() ->               | OK      |
   Res = receive                            |         |
     {number, N} -> N;                      |         |
     N when is_number(N) -> N               |         |
   after 100 ->                             |         |
     0                                      |         |
   end,                                     |         |
-  Res.                                     |         | Res.
-                                           |         | Expression has type:   term()
-                                           |         | Context expected type: number()
+  Res.                                     |         |
                                            |         |
 -spec sleep1(pos_integer()) -> ok.         |         |
 sleep1(T) ->                               | OK      |

@@ -21,28 +21,20 @@ mk_fun_wrap1a() ->                         | OK      |
   }.                                       |         |
                                            |         |
 -spec mk_fun_wrap1b() -> #fun_wrap1{}.     |         |
-mk_fun_wrap1b() ->                         | ERROR   |
+mk_fun_wrap1b() ->                         | OK      |
   #fun_wrap1{inner_fun =                   |         |
-    fun lists:filter/2                     |         | lists:filter/2.
-                                           |         | Expression has type:   fun((fun((T) -> boolean()), [T]) -> [T])
-                                           |         | Context expected type: fun()
+    fun lists:filter/2                     |         |
   }.                                       |         |
                                            |         |
 -spec mk_fun_wrap2(fun()) ->               |         |
   #fun_wrap2{}.                            |         |
-mk_fun_wrap2(F) ->                         | ERROR   |
-  #fun_wrap2{inner_fun = F}.               |         | F.
-                                           |         | Expression has type:   fun()
-                                           |         | Context expected type: fun((atom()) -> atom())
+mk_fun_wrap2(F) ->                         | OK      |
+  #fun_wrap2{inner_fun = F}.               |         |
                                            |         |
 -spec filter_any(fun(), list()) -> list(). |         |
-filter_any(F, L) ->                        | ERROR   |
-  lists:filter(F, L).                      |         | F.
-                                           |         | Expression has type:   fun()
-                                           |         | Context expected type: fun((T) -> boolean())
+filter_any(F, L) ->                        | OK      |
+  lists:filter(F, L).                      |         |
                                            |         |
 -spec fun_apply(fun(), atom()) -> atom().  |         |
-fun_apply(F, A) ->                         | ERROR   |
-  F(A).                                    |         | F.
-                                           |         | Expected fun type with arity 1
-                                           |         | Got: fun()
+fun_apply(F, A) ->                         | OK      |
+  F(A).                                    |         |

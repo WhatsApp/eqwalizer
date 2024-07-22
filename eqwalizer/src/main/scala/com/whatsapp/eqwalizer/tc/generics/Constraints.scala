@@ -330,11 +330,11 @@ class Constraints(pipelineContext: PipelineContext) {
 
   private def constraintToType(c: Constraint, variance: Variance): Type = variance match {
     case Constant | Covariant =>
-      if (subtype.isNoneType(c.lower) && pipelineCtx.gradualTyping) DynamicType
+      if (subtype.isNoneType(c.lower)) DynamicType
       else c.lower
     case Invariant =>
       // Safe because we check all argument types against param types once we have a substitution.
-      if (subtype.isNoneType(c.lower) && pipelineCtx.gradualTyping) DynamicType
+      if (subtype.isNoneType(c.lower)) DynamicType
       else c.lower
     case Contravariant =>
       c.upper

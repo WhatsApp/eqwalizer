@@ -740,10 +740,8 @@ occ26_neg(T) -> T.                         |         | T.
 -spec occ27_neg                            |         |
   (fun() | {term()}) ->                    |         |
   {term()}.                                |         |
-occ27_neg(T) when is_tuple(T) -> T;        | ERROR   |
-occ27_neg(F) -> F().                       |         | F.
-                                           |         | Expected fun type with arity 0
-                                           |         | Got: fun() | none()
+occ27_neg(T) when is_tuple(T) -> T;        | OK      |
+occ27_neg(F) -> F().                       |         |
                                            |         |
 -spec occ28_neg                            |         |
 (tuple() | atom()) -> atom().              |         |

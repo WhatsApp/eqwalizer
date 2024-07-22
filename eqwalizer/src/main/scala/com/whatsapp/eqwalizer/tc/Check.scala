@@ -245,7 +245,7 @@ final class Check(pipelineContext: PipelineContext) {
             return env1
           }
           l.name match {
-            case Some(name) if pipelineCtx.gradualTyping =>
+            case Some(name) =>
               val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), resTy)
               val env2 = env.updated(name, funType)
               checkExpr(l, funType, env2)
@@ -261,14 +261,9 @@ final class Check(pipelineContext: PipelineContext) {
           }
           env1
         case DynCall(dynRemoteFun: DynRemoteFun, args) =>
-          if (pipelineContext.gradualTyping) {
-            val (_argTys, env1) = elab.elabExprs(args, env)
-            // dynamic is subtype of everything, - no need to double-check
-            env1
-          } else {
-            diagnosticsInfo.add(NoDynamicRemoteFun(dynRemoteFun.pos, dynRemoteFun))
-            env
-          }
+          val (_argTys, env1) = elab.elabExprs(args, env)
+          // dynamic is subtype of everything, - no need to double-check
+          env1
         case DynCall(f, args) =>
           val (ty, env1) = elab.elabExpr(f, env)
           val expArity = args.size
@@ -374,7 +369,7 @@ final class Check(pipelineContext: PipelineContext) {
           elab.elabExprAndCheck(expr, env, resTy)._2
         case TryCatchExpr(tryBody, catchClauses, afterBody) =>
           checkBody(tryBody, resTy, env)
-          val stackType = if (pipelineContext.gradualTyping) clsExnStackTypeDynamic else clsExnStackType
+          val stackType = clsExnStackTypeDynamic
           catchClauses.map(checkClause(_, List(stackType), resTy, env, Set.empty))
           afterBody match {
             case Some(block) => elab.elabBody(block, env)._2
@@ -382,7 +377,7 @@ final class Check(pipelineContext: PipelineContext) {
           }
         case TryOfCatchExpr(tryBody, tryClauses, catchClauses, afterBody) =>
           val (tryBodyT, tryEnv) = elab.elabBody(tryBody, env)
-          val stackType = if (pipelineContext.gradualTyping) clsExnStackTypeDynamic else clsExnStackType
+          val stackType = clsExnStackTypeDynamic
           if (occurrence.eqwater(tryClauses)) {
             val tryEnvs = occurrence.clausesEnvs(tryClauses, List(tryBodyT), tryEnv)
             tryClauses
@@ -399,7 +394,7 @@ final class Check(pipelineContext: PipelineContext) {
           }
         case Receive(clauses) =>
           val effVars = Vars.clausesVars(clauses)
-          val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+          val argType = DynamicType
           val envs1 = clauses.map(checkClause(_, List(argType), resTy, env, effVars))
           subtype.joinEnvs(envs1)
         case ReceiveWithTimeout(List(), timeout, timeoutBlock) =>
@@ -407,7 +402,7 @@ final class Check(pipelineContext: PipelineContext) {
           checkBody(timeoutBlock, resTy, env1)
         case ReceiveWithTimeout(clauses, timeout, timeoutBlock) =>
           val effVars = Vars.clausesAndBlockVars(clauses, timeoutBlock)
-          val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+          val argType = DynamicType
           val envs1 = clauses.map(checkClause(_, List(argType), resTy, env, effVars))
           val tEnv1 = checkExpr(timeout, builtinTypes("timeout"), env)
           val tEnv2 = checkBody(timeoutBlock, resTy, tEnv1)
@@ -497,7 +492,7 @@ final class Check(pipelineContext: PipelineContext) {
           checkMaybeBody(body, resTy, env)
         case MaybeElse(body, elseClauses) =>
           checkBody(body, resTy, env)
-          val argType = if (pipelineContext.gradualTyping) DynamicType else AnyType
+          val argType = DynamicType
           elseClauses.foreach(checkClause(_, List(argType), resTy, env, Set.empty))
           env
         case _: MapCreate | _: MapUpdate | _: Cons =>

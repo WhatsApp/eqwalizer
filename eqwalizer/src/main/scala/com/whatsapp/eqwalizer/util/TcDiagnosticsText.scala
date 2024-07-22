@@ -125,10 +125,9 @@ case class TcDiagnosticsText(width: Int = config.codeWidth, lineNumbers: Boolean
         if (invalidSpecIds(id)) ()
         else if (errors.nonEmpty) diags += form -> ErrorStatus
         else diags += form -> OkStatus
-      case _: MisBehaviour   => diags += form -> ErrorStatus
-      case _: InvalidForm    => diags += form -> InvalidStatus
-      case _: NoSpecFuncDecl => diags += form -> NoSpecStatus
-      case _                 =>
+      case _: MisBehaviour => diags += form -> ErrorStatus
+      case _: InvalidForm  => diags += form -> InvalidStatus
+      case _               =>
     }
     diags.map { case (form, status) => Lines.asLine(form.pos, lineBreaks) -> status }
   }

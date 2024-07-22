@@ -113,7 +113,7 @@ subtype6_neg(C) -> C.                      | ERROR   | C.
 -spec non_prod_id(non_prod()) ->           | INVALID | non_prod_id/1 references type with invalid definition: non_prod/0
 
     non_prod() | number().                 |         |
-non_prod_id(N) -> N.                       | NO SPEC |
+non_prod_id(N) -> N.                       |         |
                                            |         |
                                            |         |
                                            |         |
@@ -280,19 +280,19 @@ use_un_pchain_2(X) ->                      | OK      |
 -spec to_mu_bad_neg() ->                   | INVALID | to_mu_bad_neg/0 references type with invalid definition: mu_bad/0
 
   mu_bad().                                |         |
-to_mu_bad_neg() -> {a}.                    | NO SPEC |
+to_mu_bad_neg() -> {a}.                    |         |
                                            |         |
 -spec test_mu_bad_neg(mu_bad()) ->         | INVALID | test_mu_bad_neg/1 references type with invalid definition: mu_bad/0
 
   pid().                                   |         |
-test_mu_bad_neg({X}) -> X.                 | NO SPEC |
+test_mu_bad_neg({X}) -> X.                 |         |
                                            |         |
 -type mu(A) :: {mu, mu(mu(A))}.            | INVALID | recursive type mu/1 is not productive
 
                                            |         |
 -spec test2_neg(mu(A)) -> mu(mu(A)).       | INVALID | test2_neg/1 references type with invalid definition: mu/1
 
-test2_neg(M) -> M.                         | NO SPEC |
+test2_neg(M) -> M.                         |         |
                                            |         |
 -type mu2() :: {mu, atom() | mu2()}.       |         |
                                            |         |
@@ -386,12 +386,12 @@ test_af_abstract_expr_ok() ->              | OK      |
 -spec to_mu_bad3_neg(mu_bad2()) ->         | INVALID | to_mu_bad3_neg/1 references types with invalid definitions: mu_bad3/0, mu_bad2/0
 
     mu_bad3().                             |         |
-to_mu_bad3_neg(X) -> X.                    | NO SPEC |
+to_mu_bad3_neg(X) -> X.                    |         |
                                            |         |
 -spec to_mu_bad2b_neg(mu_bad2()) ->        | INVALID | to_mu_bad2b_neg/1 references types with invalid definitions: mu_bad2b/0, mu_bad2/0
 
   mu_bad2b().                              |         |
-to_mu_bad2b_neg(X) -> X.                   | NO SPEC |
+to_mu_bad2b_neg(X) -> X.                   |         |
                                            |         |
 -type indirect2() :: mutual2().            | INVALID | recursive type indirect2/0 is not productive
 
@@ -408,7 +408,7 @@ to_mu_bad2b_neg(X) -> X.                   | NO SPEC |
 -spec test_mutual_neg(mutual1()) ->        | INVALID | test_mutual_neg/1 references types with invalid definitions: mutual2/0, mutual1/0
 
     mutual2().                             |         |
-test_mutual_neg(X) -> X.                   | NO SPEC |
+test_mutual_neg(X) -> X.                   |         |
                                            |         |
 -type mu_tuple(T) :: {T}                   |         |
   | {mu_tuple(ok)}.                        |         |
@@ -440,7 +440,7 @@ test_mu5() -> ok.                          | OK      |
 
     mu_bad5()                              |         |
 ) -> mu_bad5b().                           |         |
-test_mu_bad5(X) -> X.                      | NO SPEC |
+test_mu_bad5(X) -> X.                      |         |
                                            |         |
 -spec test_non_productive_ty_var_use_neg   |         |
     () -> opaque_id(nok).                  |         |
@@ -490,13 +490,13 @@ to_tree4() ->                              | OK      |
 % should not infinite-loop, see D30103144  |         |
 -spec un_recur_neg(recur()) -> ok.         | INVALID | un_recur_neg/1 references type with invalid definition: recur/0
 
-un_recur_neg({X}) ->                       | NO SPEC |
+un_recur_neg({X}) ->                       |         |
   un_recur_neg(X).                         |         |
                                            |         |
 -spec term_to_recur_neg(term()) ->         | INVALID | term_to_recur_neg/1 references type with invalid definition: recur/0
 
   recur().                                 |         |
-term_to_recur_neg(X) -> X.                 | NO SPEC |
+term_to_recur_neg(X) -> X.                 |         |
                                            |         |
 -type foo4(T) :: {T, T}.                   |         |
                                            |         |

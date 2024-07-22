@@ -26,7 +26,7 @@ mk_bin_tree(A) -> {leaf, A}.               | OK      |
 -spec mk_bin_tree_typo(atom())             | INVALID |
     -> types1:bin_tree_typo().             |         | Unknown id: types1:bin_tree_typo/0
 
-mk_bin_tree_typo(A) -> {leaf, A}.          | NO SPEC |
+mk_bin_tree_typo(A) -> {leaf, A}.          |         |
                                            |         |
 -spec tuple_box(Tuple) -> TupleBox when    |         |
     Tuple :: {A, B}, TupleBox :: {box(A), ……         |
@@ -35,7 +35,7 @@ tuple_box({A, B}) -> {{box, A}, {box, B}}. | OK      |
 -spec fun_with_rec_constraints() ->        | INVALID |
     Rec when Rec :: {rec, Rec}.            |         | Recursive constraint: Rec
 
-fun_with_rec_constraints() ->              | NO SPEC |
+fun_with_rec_constraints() ->              |         |
     {rec, fun_with_rec_constraints()}.     |         |
                                            |         |
 -record(rec_box, {box :: box(atom())}).    |         |
@@ -50,12 +50,12 @@ fun_with_rec_constraints() ->              | NO SPEC |
 -spec uses_ty_w_unbound_var(_A, _B) ->     | INVALID | uses_ty_w_unbound_var/2 references type with invalid definition: w_unbound_var/0
 
     w_unbound_var().                       |         |
-uses_ty_w_unbound_var(A, B) -> {A, B}.     | NO SPEC |
+uses_ty_w_unbound_var(A, B) -> {A, B}.     |         |
                                            |         |
 -spec uses_trans_unbound_var(_A, _B) ->    | INVALID | uses_trans_unbound_var/2 references type with invalid definition: trans_unbound_var/0
 
     trans_unbound_var().                   |         |
-uses_trans_unbound_var(A, B) -> {A, B}.    | NO SPEC |
+uses_trans_unbound_var(A, B) -> {A, B}.    |         |
                                            |         |
 -type w_unbound_var2()                     | INVALID | _A: Type variable is unbound.
 
@@ -64,7 +64,7 @@ uses_trans_unbound_var(A, B) -> {A, B}.    | NO SPEC |
 -spec uses_ty_w_unbound_var2() ->          | INVALID | uses_ty_w_unbound_var2/0 references type with invalid definition: w_unbound_var2/0
 
     w_unbound_var2().                      |         |
-uses_ty_w_unbound_var2() -> 1.             | NO SPEC |
+uses_ty_w_unbound_var2() -> 1.             |         |
                                            |         |
 -record(bad_ref, {                         | INVALID |
     ref :: undefined_mod:ref()             |         | Unknown id: undefined_mod:ref/0
@@ -80,9 +80,10 @@ uses_ty_w_unbound_var2() -> 1.             | NO SPEC |
 
 -spec mk_bad_rec() -> #bad_rec{}.          | INVALID | mk_bad_rec/0 references type with invalid definition: #bad_rec{}
 
-mk_bad_rec() -> #bad_rec{}.                | NO SPEC |
+mk_bad_rec() -> #bad_rec{}.                |         | Unbound rec: bad_rec
+
                                            |         |
 -spec double_constrain(Thing) -> Thing     | INVALID | Type variable 'Thing' is constrained multiple times, please remove the extra constraints
 
   when Thing :: pid(), Thing :: atom().    |         |
-double_constrain(X) -> X.                  | NO SPEC |
+double_constrain(X) -> X.                  |         |
