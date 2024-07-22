@@ -59,8 +59,7 @@ must contain a mapping *for every* atomic key, or *at least one* mapping with
 an atomic key. Similarly, one can define heterogeneous maps such as
 `#{a => binary(), atom() => atom()}`, in which case it is not clear what can
 be stated about a map such as `#{a => ok}`. To avoid such questions, eqWAlizer
-interprets all such maps as the dictionary `#D{term() => term()}` in strict mode,
-or `#D{dynamic() => dynamic()}` in gradual mode.
+interprets all such maps as the dictionary `#D{dynamic() => dynamic()}`.
 
 
 ### List types

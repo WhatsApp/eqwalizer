@@ -4,11 +4,11 @@ To make eqWAlizer adoption practical, it features several mechanisms to make
 the type checker less strict, or to bypass it entirely.
 
 
-### Type `eqwalizer:dynamic()`
+### Type `dynamic()`
 
-Gradual mode and the type `eqwalizer:dynamic()` (provided in app `eqwalizer_support`
+The built-in type `dynamic()` as well as `eqwalizer:dynamic/1` (provided in app `eqwalizer_support`
 for the open source release) are a good way to make the type-checker more lenient
-while still providing some signal. See [gradual and strict modes](./modes.md).
+while still providing some signal. See [gradual typing](./gradual.md).
 
 
 ### Ignoring errors for a function completely

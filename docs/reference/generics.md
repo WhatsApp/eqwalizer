@@ -135,7 +135,7 @@ Reversed = lists:foldl(Lambda, [], [1, 2, 3])
 ```
 In such a setting, eqWAlizer will not be able to use information such as the
 spec of `foldl` to infer the type of `Lambda`, and will perform much more
-optimistic type-checking. In gradual mode, it will simply assume for `Lambda`
+optimistic type-checking. It will simply assume for `Lambda`
 the type `(dynamic(), dynamic()) -> dynamic()`. Therefore, the type-checking
 of `foldl` will be very optimistic, and eqWAlizer will deduce for `Reversed`
 the type `dynamic()`, which is much less precise than `[number()]`.

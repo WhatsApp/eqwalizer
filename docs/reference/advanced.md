@@ -92,13 +92,8 @@ eqWAlizer in most settings. For example, consider the following code:
 apply_neg(B) -> negb(B).
 ```
 Since `B` has type `boolean()`, eqWAlizer cannot decide which sub-spec of
-`negb` to use to decide the type of `negb(B)`. Its behaviour depends on
-which setting is in use:
-
-- in strict mode, eqWAlizer will report an error stating it does not have
-enough info to branch;
-- in gradual mode, eqWAlizer will simply assume type `eqwalizer:dynamic()`
-for the result of `negb(B)`, disregarding the spec.
+`negb` to use to decide the type of `negb(B)`. eqWAlizer will simply assume
+type `eqwalizer:dynamic()` for the result of `negb(B)`, disregarding the spec.
 
 Hence, to get better signal in this case, `negb` should simply be
 specced as `(boolean()) -> boolean()`.
@@ -150,11 +145,6 @@ Some features of eqWAlizer are disabled by default as they are experimental
 or not meant for casual use. They can be enabled by setting the corresponding
 environment variable when calling `elp eqwalize`, e.g.,
 `EQWALIZER_CHECK_REDUNDANT_GUARDS=1 elp eqwalize-all`.
-
-### Gradual and strict mode
-
-Enable strict mode with `EQWALIZER_GRADUAL_TYPING=false`. By default, eqWAlizer
-uses gradual mode. See [gradual and strict typing modes](./modes.md).
 
 ### Occurrence typing
 

@@ -2,7 +2,7 @@
 
 - ### [Syntax of types and specs in eqWAlizer](./reference/types.md)
 
-- ### [Gradual and strict modes](./reference/modes.md)
+- ### [Gradual typing](./reference/gradual.md)
 
 - ### [Narrowing and occurrence typing](./reference/narrowing.md)
 

@@ -42,7 +42,7 @@ In this case, the refined record type `#bar{a :: number()}` is a subtype of `#ba
 
 ### Dynamic
 
-In gradual mode, the dynamic type `eqwalizer:dynamic()` is, in essence, both a subtype
+The dynamic type `dynamic()` is, in essence, both a subtype
 and a supertype of every other type. That is, a value of type `dynamic()` can be used
 in any context, and a function whose return type is `dynamic()` can return anything.
 This differs from the interpretation of `term()`, which is a supertype but not a
@@ -68,6 +68,8 @@ now it would not be possible to write `binary_to_atom(get_a(M))`, since it
 specifies that `get_a(M)` *can* return `err`, which is not of type `binary()` and
 cannot be passed to `binary_to_atom`. In this case, it is necessary to perform
 some kind of check (e.g., pattern-matching) to handle the `err` case separately.
+
+More info can be [found here](./gradual.md).
 
 
 ### Opaque types
