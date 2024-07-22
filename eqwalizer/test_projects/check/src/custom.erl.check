@@ -787,6 +787,38 @@ maps_to_list_7_neg(Num) -> maps:to_list(Nu…… ERROR   | Num.
                                            |         | Expression has type:   number()
                                            |         | Context expected type: #D{term() => term()}
                                            |         |
+-spec maps_merge_1(#{a => string(), b => n……         |
+    #{a => string(), b => number(), c => a……         |
+maps_merge_1(M1, M2) -> maps:merge(M1, M2)…… OK      |
+                                           |         |
+-spec maps_merge_2(#{a => string(), b => n……         |
+    #{a => string(), b => number() | boole……         |
+maps_merge_2(M1, M2) -> maps:merge(M1, M2)…… OK      |
+                                           |         |
+-spec maps_merge_3(#{a := string(), b => n……         |
+    #{a := string(), b := boolean(), c => ……         |
+maps_merge_3(M1, M2) -> maps:merge(M1, M2)…… OK      |
+                                           |         |
+-spec maps_merge_4(#{a => string(), b => n……         |
+    #{atom() => boolean() | string() | num……         |
+maps_merge_4(M1, M2) -> maps:merge(M1, M2)…… OK      |
+                                           |         |
+-spec maps_merge_5(#{string() => number()}……         |
+    #{string() | atom() => boolean() | num……         |
+maps_merge_5(M1, M2) -> maps:merge(M1, M2)…… OK      |
+                                           |         |
+-spec maps_merge_6(#{a => binary()}, map()……         |
+maps_merge_6(M1, M2) -> maps:merge(M1, M2)…… OK      |
+                                           |         |
+-spec maps_merge_7_neg(#{a => binary()}, n……         |
+maps_merge_7_neg(M1, M2) -> maps:merge(M1,…… ERROR   | M2.
+                                           |         | Expression has type:   number()
+                                           |         | Context expected type: #D{term() => term()}
+                                           |         |
+-spec maps_merge_8(#{a := atom()}, #{b := ……         |
+    #{a := atom(), b := number()} | #{a :=……         |
+maps_merge_8(M1, M2) -> maps:merge(M1, M2)…… OK      |
+                                           |         |
 -spec lists_filtermap_1() -> [number()].   |         |
 lists_filtermap_1() ->                     | OK      |
     lists:filtermap(                       |         |

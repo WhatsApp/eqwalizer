@@ -50,7 +50,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "with", 2),
       RemoteId("maps", "without", 2),
       RemoteId(CompilerMacro.fake_module, "record_info", 2),
-    )
+    ) ++ experimentalCustom
+
+  private def experimentalCustom: Set[RemoteId] =
+    if (pipelineContext.customMapsMerge) Set(RemoteId("maps", "merge", 2))
+    else Set()
 
   private lazy val customPredicate: Set[RemoteId] =
     Set(RemoteId("lists", "member", 2))
@@ -457,6 +461,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         }
         val pairTys = narrow.asMapType(coerce(args.head, argTys.head, anyMapTy))
         (mapToList(pairTys), env1)
+
+      case RemoteId("maps", "merge", 2) =>
+        val List(mapTy1, mapTy2) = args
+          .zip(argTys)
+          .map { case (arg, ty) => narrow.asMapType(coerce(arg, ty, anyMapTy)) }
+        val resMapTys = util
+          .cartesianProduct(mapTy1, mapTy2)
+          .map { case (ty1, ty2) => narrow.joinAndMergeShapes(List(ty1, ty2), true) }
+        (subtype.join(resMapTys), env1)
 
       case RemoteId("maps", "with", 2) =>
         @tailrec

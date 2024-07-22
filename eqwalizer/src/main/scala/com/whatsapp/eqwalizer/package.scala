@@ -48,6 +48,7 @@ package object eqwalizer {
       checkRedundantGuards: Boolean,
       clauseCoverage: Boolean,
       overloadedSpecDynamicResult: Boolean,
+      customMapsMerge: Boolean,
       mode: Mode.Mode,
       errorDepth: Int,
   ) {
@@ -80,6 +81,7 @@ package object eqwalizer {
       checkRedundantGuards = config.getBoolean("check_redundant_guards"),
       clauseCoverage = config.getBoolean("clause_coverage"),
       overloadedSpecDynamicResult = config.getBoolean("overloaded_spec_dynamic_result"),
+      customMapsMerge = config.getBoolean("custom_maps_merge"),
       mode,
       errorDepth = config.getInt("error_depth"),
     )

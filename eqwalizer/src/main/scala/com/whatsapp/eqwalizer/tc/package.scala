@@ -74,5 +74,6 @@ package object tc {
       options.errorDepth.getOrElse(config.errorDepth)
     val clauseCoverage: Boolean = config.clauseCoverage
     val overloadedSpecDynamicResult: Boolean = config.overloadedSpecDynamicResult
+    val customMapsMerge: Boolean = config.customMapsMerge
   }
 }

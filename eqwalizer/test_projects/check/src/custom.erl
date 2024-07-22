@@ -646,6 +646,36 @@ maps_to_list_6(M) -> maps:to_list(M).
 -spec maps_to_list_7_neg(number()) -> dynamic().
 maps_to_list_7_neg(Num) -> maps:to_list(Num).
 
+-spec maps_merge_1(#{a => string(), b => number()}, #{b => number(), c => atom()}) ->
+    #{a => string(), b => number(), c => atom()}.
+maps_merge_1(M1, M2) -> maps:merge(M1, M2).
+
+-spec maps_merge_2(#{a => string(), b => number()}, #{b => boolean(), c => atom()}) ->
+    #{a => string(), b => number() | boolean(), c => atom()}.
+maps_merge_2(M1, M2) -> maps:merge(M1, M2).
+
+-spec maps_merge_3(#{a := string(), b => number()}, #{b := boolean(), c => atom()}) ->
+    #{a := string(), b := boolean(), c => atom()}.
+maps_merge_3(M1, M2) -> maps:merge(M1, M2).
+
+-spec maps_merge_4(#{a => string(), b => number()}, #{atom() => boolean()}) ->
+    #{atom() => boolean() | string() | number()}.
+maps_merge_4(M1, M2) -> maps:merge(M1, M2).
+
+-spec maps_merge_5(#{string() => number()}, #{atom() => boolean()}) ->
+    #{string() | atom() => boolean() | number()}.
+maps_merge_5(M1, M2) -> maps:merge(M1, M2).
+
+-spec maps_merge_6(#{a => binary()}, map()) -> map().
+maps_merge_6(M1, M2) -> maps:merge(M1, M2).
+
+-spec maps_merge_7_neg(#{a => binary()}, number()) -> term().
+maps_merge_7_neg(M1, M2) -> maps:merge(M1, M2).
+
+-spec maps_merge_8(#{a := atom()}, #{b := number()} | #{}) ->
+    #{a := atom(), b := number()} | #{a := atom()}.
+maps_merge_8(M1, M2) -> maps:merge(M1, M2).
+
 -spec lists_filtermap_1() -> [number()].
 lists_filtermap_1() ->
     lists:filtermap(

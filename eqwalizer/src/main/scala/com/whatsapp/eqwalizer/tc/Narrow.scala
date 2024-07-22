@@ -10,8 +10,6 @@ import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
 import com.whatsapp.eqwalizer.ast.{RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
 
-import scala.collection.mutable
-
 class Narrow(pipelineContext: PipelineContext) {
   private val subtype = pipelineContext.subtype
   private val util = pipelineContext.util
@@ -606,30 +604,32 @@ class Narrow(pipelineContext: PipelineContext) {
       case _ => None
     }
 
-  private def mergeShapes(s1: ShapeMap, s2: ShapeMap): ShapeMap = {
-    var optProps = mutable.HashMap.empty[String, Type]
-    var reqProps = mutable.HashMap.empty[String, Type]
-    val commonReqKeys = s1.props.collect { case ReqProp(key, _) => key }.toSet & s2.props.collect {
-      case ReqProp(key, _) => key
-    }.toSet
-    for (p <- s1.props.toSet ++ s2.props.toSet) {
-      p match {
-        case OptProp(key, tp) => optProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
-        case ReqProp(key, tp) =>
-          if (commonReqKeys.contains(key)) {
-            reqProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
-          } else {
-            optProps.updateWith(key)(ty => Some(subtype.join(tp, ty.getOrElse(NoneType))))
-          }
-      }
+  private def mergeShapes(s1: ShapeMap, s2: ShapeMap, inOrder: Boolean): ShapeMap = {
+    ShapeMap {
+      (s1.props ++ s2.props)
+        .groupBy(_.key)
+        .values
+        .map {
+          // prop is only defined in one of the maps
+          case List(p) if inOrder => p
+          case List(p)            => OptProp(p.key, p.tp)
+          // prop is optional on both sides
+          case List(OptProp(key, tp1), OptProp(_, tp2)) => OptProp(key, subtype.join(tp1, tp2))
+          // prop is required on both sides
+          case List(ReqProp(key, tp1), ReqProp(_, tp2)) if inOrder => ReqProp(key, tp2)
+          case List(ReqProp(key, tp1), ReqProp(_, tp2))            => ReqProp(key, subtype.join(tp1, tp2))
+          // prop is required on one side and optional on the other
+          case List(OptProp(key, tp1), ReqProp(_, tp2)) if inOrder => ReqProp(key, tp2)
+          case List(ReqProp(key, tp1), OptProp(_, tp2)) if inOrder => ReqProp(key, subtype.join(tp1, tp2))
+          case List(p1, p2)                                        => OptProp(p1.key, subtype.join(p1.tp, p2.tp))
+
+          case _ => throw new IllegalStateException()
+        }
+        .toList
     }
-    val allProps = optProps.map { case (k, t) => OptProp(k, t) }.toList ++ reqProps.map { case (k, t) =>
-      ReqProp(k, t)
-    }.toList
-    ShapeMap(allProps)
   }
 
-  def joinAndMergeShapes(tys: Iterable[Type]): Type = {
+  def joinAndMergeShapes(tys: Iterable[Type], inOrder: Boolean = false): Type = {
     val (shapes, notShapes) = tys.partition {
       case s: ShapeMap => true
       case _           => false
@@ -640,7 +640,7 @@ class Narrow(pipelineContext: PipelineContext) {
       joinedNotShapes
     } else {
       subtype.join(
-        shapesCoerced.tail.foldLeft(shapesCoerced.head)((acc, shape) => mergeShapes(acc, shape)),
+        shapesCoerced.tail.foldLeft(shapesCoerced.head)((acc, shape) => mergeShapes(acc, shape, inOrder)),
         joinedNotShapes,
       )
     }

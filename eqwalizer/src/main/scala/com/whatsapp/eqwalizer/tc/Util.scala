@@ -139,4 +139,12 @@ class Util(pipelineContext: PipelineContext) {
     case BoundedDynamicType(_) => true
     case _                     => false
   }
+
+  def cartesianProduct(ty1: Type, ty2: Type): List[(Type, Type)] = {
+    def expand(ty: Type): List[Type] = ty match {
+      case UnionType(tys) => tys.toList.flatMap(expand)
+      case ty             => List(ty)
+    }
+    for (t1 <- expand(ty1); t2 <- expand(ty2)) yield (t1, t2)
+  }
 }
