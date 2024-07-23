@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.stub.DbApi
-import com.whatsapp.eqwalizer.util.{ELPDiagnostics, TcDiagnosticsText}
+import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -25,30 +25,8 @@ object Main {
     )
 
     cmd match {
-      case "check" => check(args1, json)
-      case "ipc"   => ipc(args1)
-      case _       => help()
-    }
-  }
-
-  def check(checkArgs: Array[String], json: Boolean): Unit = {
-    if (checkArgs.length != 2) {
-      help()
-      return
-    }
-
-    val module = checkArgs(1)
-    DbApi.getAstStorage(module) match {
-      case None =>
-        throw new IllegalArgumentException(s"Cannot locate ast file for module `$module`")
-      case Some(astStorage) =>
-        val feedback =
-          if (json)
-            ELPDiagnostics.getDiagnosticsString(module, astStorage)
-          else
-            TcDiagnosticsText().checkFile(astStorage).mkString("", "\n", "\n")
-        Console.println(feedback)
-        Console.flush()
+      case "ipc" => ipc(args1)
+      case _     => help()
     }
   }
 

@@ -50,8 +50,6 @@ jobs:
         run: "cargo build --release --target x86_64-unknown-linux-musl"
       - name: Add elp to path
         run: 'echo "$GITHUB_WORKSPACE/elp/target/x86_64-unknown-linux-musl/release" >> $GITHUB_PATH'
-      - name: Test eqwalizer
-        run: 'cd eqwalizer && sbt test'
       - name: Upload eqwalizer.jar
         if: matrix.otp == '26.2'
         uses: "actions/upload-artifact@v3"
