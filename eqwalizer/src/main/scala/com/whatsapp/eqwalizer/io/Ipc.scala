@@ -16,13 +16,7 @@ object Ipc {
   sealed trait ASTFormat {
     val jsonName: String
   }
-  case object RawForms extends ASTFormat { val jsonName = "RawForms" }
   case object ConvertedForms extends ASTFormat { val jsonName = "ConvertedForms" }
-  case object RawStub extends ASTFormat { val jsonName = "RawStub" }
-  case object ConvertedStub extends ASTFormat { val jsonName = "ConvertedStub" }
-  case object ExpandedStub extends ASTFormat { val jsonName = "ExpandedStub" }
-  case object ContractiveStub extends ASTFormat { val jsonName = "ContractiveStub" }
-  case object CovariantStub extends ASTFormat { val jsonName = "CovariantStub" }
   case object TransitiveStub extends ASTFormat { val jsonName = "TransitiveStub" }
 
   def getAstBytes(module: String, kind: ASTFormat): Option[Array[Byte]] = {
