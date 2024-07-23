@@ -7,21 +7,9 @@
 package com.whatsapp.eqwalizer.ast.stub
 
 import com.whatsapp.eqwalizer.ast.Forms._
-import com.whatsapp.eqwalizer.ast.{App, ExtModuleStub, Id}
-import java.nio.file.Path
+import com.whatsapp.eqwalizer.ast.Id
 
 object DbApi {
-
-  sealed trait AstStorage
-  sealed trait AstBeamEtfStorage extends AstStorage
-  case class AstBeam(path: Path) extends AstBeamEtfStorage
-  case class AstEtfFile(path: Path) extends AstBeamEtfStorage
-
-  /** The AST will be fetched in Erlang Term Format over inter-process communication
-    */
-  case class AstEtfIpc(module: String) extends AstBeamEtfStorage
-
-  case class AstJsonIpc(module: String) extends AstStorage
 
   def getCallbacks(module: String): (List[Callback], Set[Id]) =
     Db.getModuleStub(module) match {
@@ -60,44 +48,14 @@ object DbApi {
   def getPrivateOpaque(module: String, id: Id): Option[TypeDecl] =
     Db.getModuleStub(module).flatMap(_.privateOpaques.get(id))
 
-  def getPublicOpaque(module: String, id: Id): Option[OpaqueTypeDecl] =
-    Db.getModuleStub(module).flatMap(_.publicOpaques.get(id))
-
   def getRecord(module: String, record: String): Option[RecDecl] =
     Db.getModuleStub(module).flatMap(_.records.get(record))
 
   def getInvalidForms(module: String): Option[List[InvalidForm]] =
     Db.getModuleStub(module).map(_.invalidForms)
 
-  def otpApps: Map[String, App] =
-    Db.otpApps
-
-  def otpModules: Set[String] =
-    Db.otpModules
-
-  def projectApps: Map[String, App] =
-    Db.projectApps
-
-  def depApps: Map[String, App] =
-    Db.depApps
-
-  def apps: Map[String, App] =
-    Db.apps
-
-  def loadStubForms(module: String): Option[List[ExternalForm]] =
-    Db.loadStubForms(module)
-
-  def getExtModuleStub(module: String): Option[ExtModuleStub] =
-    Db.getExtModuleStub(module)
-
-  def getAstStorage(module: String): Option[AstStorage] =
-    Db.getAstStorage(module)
-
   def isKnownModule(module: String): Boolean =
     Db.getModuleStub(module).isDefined
-
-  def fromBeam(module: String): Boolean =
-    Db.fromBeam(module)
 
   def loadedModules(): Set[String] =
     Db.getLoadedModules()

@@ -27,15 +27,12 @@ object ELPDiagnostics {
       diagnostic: Diagnostic.Diagnostic,
   )
 
-  def getDiagnosticsString(module: String, astStorage: DbApi.AstStorage, options: Options = noOptions): String =
-    toJsonObj(Map(module -> getDiagnostics(module, astStorage, options))).render(indent = 2)
-
-  def getDiagnosticsIpc(modulesAndStorages: Iterable[(String, DbApi.AstStorage)]): Unit =
+  def getDiagnosticsIpc(modules: Iterable[String]): Unit =
     try {
-      for { (module, astStorage) <- modulesAndStorages } {
+      for { module <- modules } {
         if (Ipc.shouldEqwalize(module)) {
           Ipc.sendEqwalizingStart(module)
-          val diagnostics = getDiagnostics(module, astStorage, noOptions)
+          val diagnostics = getDiagnostics(module, noOptions)
           Ipc.sendEqwalizingDone(module)
           Ipc.finishEqwalization(Map(module -> diagnostics), DbApi.loadedModules().toList)
         }
@@ -45,13 +42,13 @@ object ELPDiagnostics {
       case Ipc.Terminated => Ipc.sendDone(Map.empty)
     }
 
-  private def getDiagnostics(module: String, astStorage: DbApi.AstStorage, options: Options): List[Error] = {
+  private def getDiagnostics(module: String, options: Options): List[Error] = {
     val invalidForms = DbApi.getInvalidForms(module).get
-    val forms = Pipeline.checkForms(astStorage, options) ++ invalidForms
-    formsToErrors(module, forms).sortBy(_.position.productElement(0).asInstanceOf[Int])
+    val forms = Pipeline.checkForms(module, options) ++ invalidForms
+    formsToErrors(forms).sortBy(_.position.productElement(0).asInstanceOf[Int])
   }
 
-  private def formsToErrors(module: String, forms: List[InternalForm]): List[Error] = {
+  private def formsToErrors(forms: List[InternalForm]): List[Error] = {
     val elpMetadata = forms.collectFirst { case elpMetadata: ElpMetadata =>
       elpMetadata
     }

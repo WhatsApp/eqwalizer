@@ -6,7 +6,6 @@
 
 package com.whatsapp.eqwalizer
 
-import com.whatsapp.eqwalizer.ast.Forms._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
 package object ast {
@@ -19,23 +18,9 @@ package object ast {
 
   sealed trait Pos extends Product
   case class TextRange(startByte: Int, endByte: Int) extends Pos
-  object TextRange { val fake = TextRange(0, 100) }
+  object TextRange
   case class LineAndColumn(line: Int, column: Int) extends Pos
-  object LineAndColumn { val fake = LineAndColumn(1, 100) }
-
-  case class App(
-      name: String,
-      /** Dir for ebins corresponding to modules in rebar3 "src_dirs".
-       * Does not include files in rebar3 "extra_src_dirs", such as tests
-       */
-      ebinDir: String,
-      modules: List[String],
-  )
-
-  case class ExtModuleStub(
-      module: String,
-      forms: List[ExternalForm],
-  )
+  object LineAndColumn
 
   object Id {
     implicit val keyCodec: JsonKeyCodec[Id] = new JsonKeyCodec[Id] {

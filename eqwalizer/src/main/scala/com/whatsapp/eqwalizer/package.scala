@@ -7,14 +7,10 @@
 package com.whatsapp
 
 import com.typesafe.config.ConfigFactory
-import com.whatsapp.eqwalizer.io.BuildInfo
-import com.whatsapp.eqwalizer.io.BuildInfo.AppInfo
 
 package object eqwalizer {
   object Mode {
     sealed trait Mode
-
-    case object Standalone extends Mode
 
     case object Shell extends Mode
 
@@ -24,21 +20,15 @@ package object eqwalizer {
 
     def fromString(str: String): Option[Mode] = {
       str match {
-        case "standalone" => Some(Standalone)
-        case "shell"      => Some(Shell)
-        case "elp_cli"    => Some(ElpCli)
-        case "elp_ide"    => Some(ElpIde)
-        case _            => None
+        case "shell"   => Some(Shell)
+        case "elp_cli" => Some(ElpCli)
+        case "elp_ide" => Some(ElpIde)
+        case _         => None
       }
     }
   }
 
   case class Config(
-      otpLibRoot: String,
-      sourceRoot: String,
-      apps: Map[String, AppInfo],
-      deps: Map[String, AppInfo],
-      depApps: Set[String],
       codeWidth: Int,
       astDir: Option[String],
       approximateComplexTypes: Boolean,
@@ -50,27 +40,13 @@ package object eqwalizer {
       customMapsMerge: Boolean,
       mode: Mode.Mode,
       errorDepth: Int,
-  ) {
-    def useElp(): Boolean = {
-      mode match {
-        case Mode.Shell | Mode.ElpCli | Mode.ElpIde => true
-        case Mode.Standalone                        => false
-      }
-    }
-  }
+  )
 
   lazy val config: Config = {
     val config = ConfigFactory.load().getConfig("eqwalizer")
-    val buildInfoPath = config.getString("build_info")
-    val buildInfo = BuildInfo.load(buildInfoPath)
     val modeStr = config.getString("mode")
     val mode = Mode.fromString(modeStr).getOrElse(throw new IllegalArgumentException(s"Unknown mode ${modeStr}"))
     Config(
-      otpLibRoot = buildInfo.otpLibRoot,
-      sourceRoot = buildInfo.sourceRoot,
-      apps = buildInfo.apps,
-      deps = buildInfo.deps,
-      depApps = buildInfo.deps.keySet,
       codeWidth = config.getInt("code_width"),
       astDir = if (config.hasPath("ast_dir")) Some(config.getString("ast_dir")) else None,
       approximateComplexTypes = config.getBoolean("approximate_complex_types"),

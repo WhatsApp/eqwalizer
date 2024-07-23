@@ -6,12 +6,10 @@
 
 package com.whatsapp.eqwalizer.ast
 
-import com.ericsson.otp.erlang._
 import com.whatsapp.eqwalizer.ast.Exprs.{Clause, Expr}
 import com.whatsapp.eqwalizer.ast.ExternalTypes._
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.stub.DbApi
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{BehaviourError, TypeError}
 import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
@@ -83,28 +81,10 @@ object Forms {
   case class FuncDecl(id: Id, errors: List[TypeError])(val pos: Pos) extends InternalForm
   case class MisBehaviour(te: BehaviourError)(val pos: Pos) extends InternalForm
 
-  def load(astStorage: DbApi.AstStorage): List[ExternalForm] = {
-    import com.whatsapp.eqwalizer.io.AstLoader
-    import com.whatsapp.eqwalizer.io.EData.EList
-
-    astStorage match {
-      case storage: DbApi.AstBeamEtfStorage =>
-        val Some(EList(rawForms, None)) = AstLoader.loadAbstractForms(storage)
-        val isBeam = storage match {
-          case _: DbApi.AstBeam => true
-          case _                => false
-        }
-        val noAutoImport = rawForms.flatMap(new ConvertAst(isBeam).extractNoAutoImport).flatten.toSet
-        rawForms.flatMap(new ConvertAst(isBeam, noAutoImport).convertForm)
-      case DbApi.AstJsonIpc(module) =>
-        val bytes = Ipc.getAstBytes(module, Ipc.ConvertedForms).get
-        readFromArray[List[ExternalForm]](bytes)
-    }
+  def load(module: String): List[ExternalForm] = {
+    val bytes = Ipc.getAstBytes(module, Ipc.ConvertedForms).get
+    readFromArray[List[ExternalForm]](bytes)
   }
-
-  private val functionAtom = new OtpErlangAtom("function")
-  def isFunForm(o: OtpErlangObject): Boolean =
-    o.asInstanceOf[OtpErlangTuple].elementAt(0).equals(functionAtom)
 
   implicit val codec: JsonValueCodec[List[ExternalForm]] = JsonCodecMaker.make(
     CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
