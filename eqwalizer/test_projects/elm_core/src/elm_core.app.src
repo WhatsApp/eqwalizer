@@ -1,3 +1,0 @@
-{application, elm_core,
-    [{description, "elm_core"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
-}.

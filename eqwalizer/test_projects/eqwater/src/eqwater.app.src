@@ -1,3 +1,0 @@
-{application, eqwater,
-    [{description, "eqwater"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
-}.

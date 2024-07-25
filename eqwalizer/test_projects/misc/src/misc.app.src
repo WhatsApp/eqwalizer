@@ -1,3 +1,0 @@
-{application, misc,
-  [{description, "misc"}, {vsn, "inplace"}, {applications, [kernel, stdlib]}]
-}.

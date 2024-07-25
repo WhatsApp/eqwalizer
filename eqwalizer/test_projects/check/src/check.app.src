@@ -1,3 +1,0 @@
-{application, check,
-  [{description, "check"}, {vsn, "inplace"}, {applications, [eqwalizer, kernel, stdlib]}]
-}.

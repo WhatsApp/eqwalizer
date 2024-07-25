@@ -1,3 +1,0 @@
-{application, options,
-  [{description, "options"}, {vsn, "inplace"}, {applications, [eqwalizer, kernel, stdlib]}]
-}.
