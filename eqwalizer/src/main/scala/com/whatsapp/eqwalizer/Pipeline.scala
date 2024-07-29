@@ -24,7 +24,7 @@ object Pipeline {
   def checkForms(moduleName: String, options: Options = noOptions): List[InternalForm] = {
     import scala.collection.mutable.ListBuffer
 
-    val forms = Forms.load(moduleName).collect { case f: InternalForm => f }
+    val forms = Forms.load(moduleName)
     val module = forms.collectFirst { case Module(m) => m }.get
     val erlFile = forms.collectFirst { case File(f, _) => f }.get
     val noCheckFuns = forms.collect { case f: EqwalizerNowarnFunction => (f.id, f.pos) }.toMap
