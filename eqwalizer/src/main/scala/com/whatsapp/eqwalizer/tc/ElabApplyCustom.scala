@@ -139,14 +139,10 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case lambda: Lambda =>
             check.checkLambda(lambda, expFunTy, env)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
-            if (occurrence.eqwater(lambda.clauses)) {
-              val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(elemTy), lamEnv)
-              lambda.clauses
-                .lazyZip(clauseEnvs)
-                .map((clause, occEnv) => elab.elabClause(clause, List(elemTy), occEnv, Set.empty)._1)
-            } else {
-              lambda.clauses.map(elab.elabClause(_, List(elemTy), lamEnv, Set.empty)).map(_._1)
-            }
+            val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(elemTy), lamEnv)
+            lambda.clauses
+              .lazyZip(clauseEnvs)
+              .map((clause, occEnv) => elab.elabClause(clause, List(elemTy), occEnv, Set.empty)._1)
           case _ =>
             if (!subtype.subType(funArgTy, expFunTy)) {
               diagnosticsInfo.add(ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy))
@@ -391,14 +387,10 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case lambda: Lambda =>
             check.checkLambda(lambda, expFunTy, env)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
-            if (occurrence.eqwater(lambda.clauses)) {
-              val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy), lamEnv)
-              lambda.clauses
-                .lazyZip(clauseEnvs)
-                .map((clause, occEnv) => elab.elabClause(clause, List(keyTy, valTy), occEnv, Set.empty)._1)
-            } else {
-              lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), lamEnv, Set.empty)).map(_._1)
-            }
+            val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy), lamEnv)
+            lambda.clauses
+              .lazyZip(clauseEnvs)
+              .map((clause, occEnv) => elab.elabClause(clause, List(keyTy, valTy), occEnv, Set.empty)._1)
           case _ =>
             val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
             narrow.asFunType(funArgCoercedTy, 2).get.map(_.resTy)

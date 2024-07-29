@@ -33,36 +33,23 @@ final class Check(pipelineContext: PipelineContext) {
   def checkFun(f: FunDecl, spec: FunSpec): Unit = {
     val ft = freshen(spec.ty)
     val FunType(_, argTys, resTy) = ft
-    if (occurrence.eqwater(f.clauses)) {
-      val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Map.empty)
-      f.clauses
-        .lazyZip(1 to f.clauses.length)
-        .lazyZip(clauseEnvs)
-        .foreach((clause, index, occEnv) =>
-          checkClause(clause, argTys, resTy, occEnv, Set.empty, checkCoverage = (index != f.clauses.length))
-        )
-    } else {
-      f.clauses
-        .lazyZip(1 to f.clauses.length)
-        .foreach((clause, index) =>
-          checkClause(clause, argTys, resTy, Env.empty, Set.empty, checkCoverage = (index != f.clauses.length))
-        )
-    }
+    val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Map.empty)
+    f.clauses
+      .lazyZip(1 to f.clauses.length)
+      .lazyZip(clauseEnvs)
+      .foreach((clause, index, occEnv) =>
+        checkClause(clause, argTys, resTy, occEnv, Set.empty, checkCoverage = (index != f.clauses.length))
+      )
   }
 
   def checkOverloadedFun(f: FunDecl, overloadedSpec: OverloadedFunSpec): Unit = {
-    val occTyping = occurrence.eqwater(f.clauses)
     overloadedSpec.tys.foreach { funTy =>
       val ft = freshen(funTy)
       val FunType(_, argTys, resTy) = ft
-      if (occTyping) {
-        val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Env.empty)
-        f.clauses
-          .lazyZip(clauseEnvs)
-          .map((clause, occEnv) => checkClauseOverloadedClause(clause, argTys, resTy, occEnv))
-      } else {
-        f.clauses.map(checkClauseOverloadedClause(_, argTys, resTy, Env.empty))
-      }
+      val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Env.empty)
+      f.clauses
+        .lazyZip(clauseEnvs)
+        .map((clause, occEnv) => checkClauseOverloadedClause(clause, argTys, resTy, occEnv))
     }
   }
 
@@ -250,14 +237,10 @@ final class Check(pipelineContext: PipelineContext) {
               val env2 = env.updated(name, funType)
               checkExpr(l, funType, env2)
             case _ =>
-              if (occurrence.eqwater(l.clauses)) {
-                val envs = occurrence.clausesEnvs(l.clauses, argTys, env1)
-                l.clauses
-                  .lazyZip(envs)
-                  .map((clause, occEnv) => checkClause(clause, argTys, resTy, occEnv, Set.empty))
-              } else {
-                l.clauses.foreach(checkClause(_, argTys, resTy, env1, Set.empty))
-              }
+              val envs = occurrence.clausesEnvs(l.clauses, argTys, env1)
+              l.clauses
+                .lazyZip(envs)
+                .map((clause, occEnv) => checkClause(clause, argTys, resTy, occEnv, Set.empty))
           }
           env1
         case DynCall(dynRemoteFun: DynRemoteFun, args) =>
@@ -378,16 +361,11 @@ final class Check(pipelineContext: PipelineContext) {
         case TryOfCatchExpr(tryBody, tryClauses, catchClauses, afterBody) =>
           val (tryBodyT, tryEnv) = elab.elabBody(tryBody, env)
           val stackType = clsExnStackTypeDynamic
-          if (occurrence.eqwater(tryClauses)) {
-            val tryEnvs = occurrence.clausesEnvs(tryClauses, List(tryBodyT), tryEnv)
-            tryClauses
-              .lazyZip(tryEnvs)
-              .map((clause, occEnv) => checkClause(clause, List(tryBodyT), resTy, occEnv, Set.empty))
-            catchClauses.map(checkClause(_, List(stackType), resTy, env, Set.empty))
-          } else {
-            tryClauses.map(checkClause(_, List(tryBodyT), resTy, tryEnv, Set.empty))
-            catchClauses.map(checkClause(_, List(stackType), resTy, env, Set.empty))
-          }
+          val tryEnvs = occurrence.clausesEnvs(tryClauses, List(tryBodyT), tryEnv)
+          tryClauses
+            .lazyZip(tryEnvs)
+            .map((clause, occEnv) => checkClause(clause, List(tryBodyT), resTy, occEnv, Set.empty))
+          catchClauses.map(checkClause(_, List(stackType), resTy, env, Set.empty))
           afterBody match {
             case Some(block) => elab.elabBody(block, env)._2
             case None        => env
@@ -516,14 +494,10 @@ final class Check(pipelineContext: PipelineContext) {
       case _ =>
         env
     }
-    if (occurrence.eqwater(lambda.clauses)) {
-      val envs = occurrence.clausesEnvs(lambda.clauses, fParamTys, env1)
-      lambda.clauses
-        .lazyZip(envs)
-        .map((clause, occEnv) => checkClause(clause, fParamTys, fResTy, occEnv, Set.empty))
-    } else {
-      lambda.clauses.foreach(checkClause(_, fParamTys, fResTy, env1, exportedVars = Set.empty))
-    }
+    val envs = occurrence.clausesEnvs(lambda.clauses, fParamTys, env1)
+    lambda.clauses
+      .lazyZip(envs)
+      .map((clause, occEnv) => checkClause(clause, fParamTys, fResTy, occEnv, Set.empty))
     env
   }
 

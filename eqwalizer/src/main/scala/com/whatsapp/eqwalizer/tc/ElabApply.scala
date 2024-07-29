@@ -178,15 +178,12 @@ class ElabApply(pipelineContext: PipelineContext) {
           env
       }
 
+    val envs = occurrence.clausesEnvs(lambda.clauses, argTys, env1)
     val clauseTys =
-      if (occurrence.eqwater(lambda.clauses)) {
-        val envs = occurrence.clausesEnvs(lambda.clauses, argTys, env1)
-        lambda.clauses
-          .lazyZip(envs)
-          .map((clause, occEnv) => elab.elabClause(clause, argTys, occEnv, Set.empty))
-          .map(_._1)
-      } else
-        lambda.clauses.map(elab.elabClause(_, argTys, env1, Set.empty)).map(_._1)
+      lambda.clauses
+        .lazyZip(envs)
+        .map((clause, occEnv) => elab.elabClause(clause, argTys, occEnv, Set.empty))
+        .map(_._1)
 
     val resTy = subtype.join(clauseTys)
     ft.copy(argTys = argTys, resTy = resTy)

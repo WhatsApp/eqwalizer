@@ -282,6 +282,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
   }
 
   def clausesEnvs(clauses: List[Clause], argTys: List[Type], env: Env): List[Env] = {
+    val accumulateNegProps = eqwater(clauses)
     var propsAcc = List.empty[Prop]
     val clauseEnvs = ListBuffer.empty[Env]
 
@@ -308,7 +309,9 @@ final class Occurrence(pipelineContext: PipelineContext) {
           patNeg.foreach(allNeg.addOne)
         }
         val (testPos, testNeg) = guardsProps(clause.guards, aMap)
-        val clauseProps = combine((allPos ++ testPos).toList, propsAcc)
+        val clauseProps =
+          if (accumulateNegProps) combine((allPos ++ testPos).toList, propsAcc)
+          else (allPos ++ testPos).toList
         val clauseEnv = batchSelect(env1, clauseProps, aMap)
         clauseEnvs.addOne(clauseEnv)
         propsAcc = {

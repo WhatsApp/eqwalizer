@@ -165,14 +165,12 @@ final class Elab(pipelineContext: PipelineContext) {
             check.checkExpr(l, funType, env2)
             (DynamicType, env1)
           case _ =>
-            val (resTys, _) = if (occurrence.eqwater(l.clauses)) {
-              val envs = occurrence.clausesEnvs(l.clauses, argTys, env1)
+            val envs = occurrence.clausesEnvs(l.clauses, argTys, env1)
+            val (resTys, _) =
               l.clauses
                 .lazyZip(envs)
                 .map((clause, occEnv) => elabClause(clause, argTys, occEnv, Set.empty))
                 .unzip
-            } else
-              l.clauses.map(elabClause(_, argTys, env1, Set.empty)).unzip
             (subtype.join(resTys), env1)
         }
       case DynCall(dynRemoteFun: DynRemoteFun, args) =>
@@ -446,28 +444,18 @@ final class Elab(pipelineContext: PipelineContext) {
       case TryOfCatchExpr(tryBody, tryClauses, catchClauses, afterBody) =>
         val (tryT, tryEnv) = elabBody(tryBody, env)
         val stackType = clsExnStackTypeDynamic
-        if (occurrence.eqwater(tryClauses)) {
-          val tryEnvs = occurrence.clausesEnvs(tryClauses, List(tryT), tryEnv)
-          val (tryTs, _) =
-            tryClauses
-              .lazyZip(tryEnvs)
-              .map((clause, occEnv) => elabClause(clause, List(tryT), occEnv, Set.empty))
-              .unzip
-          val (catchTs, _) = catchClauses.map(elabClause(_, List(stackType), env, Set.empty)).unzip
-          val env1 = afterBody match {
-            case Some(block) => elabBody(block, env)._2
-            case None        => env
-          }
-          (subtype.join(tryTs ::: catchTs), env1)
-        } else {
-          val (tryTs, _) = tryClauses.map(elabClause(_, List(tryT), tryEnv, Set.empty)).unzip
-          val (catchTs, _) = catchClauses.map(elabClause(_, List(stackType), env, Set.empty)).unzip
-          val env1 = afterBody match {
-            case Some(block) => elabBody(block, env)._2
-            case None        => env
-          }
-          (subtype.join(tryTs ::: catchTs), env1)
+        val tryEnvs = occurrence.clausesEnvs(tryClauses, List(tryT), tryEnv)
+        val (tryTs, _) =
+          tryClauses
+            .lazyZip(tryEnvs)
+            .map((clause, occEnv) => elabClause(clause, List(tryT), occEnv, Set.empty))
+            .unzip
+        val (catchTs, _) = catchClauses.map(elabClause(_, List(stackType), env, Set.empty)).unzip
+        val env1 = afterBody match {
+          case Some(block) => elabBody(block, env)._2
+          case None        => env
         }
+        (subtype.join(tryTs ::: catchTs), env1)
       case Receive(clauses) =>
         val effVars = Vars.clausesVars(clauses)
         val argType = DynamicType
