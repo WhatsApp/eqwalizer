@@ -483,8 +483,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
           .map(obj => (Pos(obj, tp), Neg(obj, tp)))
           .getOrElse(Unknown, Unknown)
       case TestUnOp("not", test) =>
-        val (p1, p2) = testProps(test, aMap)
-        (negateGuardProp(p1), negateGuardProp(p2))
+        testProps(test, aMap).swap
       case TestBinOp("and" | "andalso", test1, test2) =>
         val (pos1, neg1) = testProps(test1, aMap)
         val (pos2, neg2) = testProps(test2, aMap)
@@ -506,24 +505,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
         (Unknown, Unknown)
     }
   }
-
-  private def negateGuardProp(prop: Prop): Prop =
-    prop match {
-      case True =>
-        False
-      case False =>
-        True
-      case Unknown =>
-        Unknown
-      case And(props) =>
-        or(props.map(negateGuardProp))
-      case Or(props) =>
-        and(props.map(negateGuardProp))
-      case Pos(obj, t) =>
-        Neg(obj, t)
-      case Neg(obj, t) =>
-        Pos(obj, t)
-    }
 
   private def patProps(x: String, path: Path, pat: Pat, env: Env): Option[(Prop, Prop)] = {
     pat match {
