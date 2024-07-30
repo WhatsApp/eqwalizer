@@ -10,6 +10,7 @@ import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.Forms.OverloadedFunSpec
 import com.whatsapp.eqwalizer.ast.RemoteId
 import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType, NoneType, Type}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.NoSpecialType
 
 class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val check = pipelineCtx.check
@@ -18,6 +19,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private val elabApply = pipelineContext.elabApply
   private val narrow = pipelineContext.narrow
+  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def elabOverloaded(expr: Expr, remoteId: RemoteId, args: List[Expr], env: Env): (Type, Env) = {
@@ -28,6 +30,8 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
         val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
         (resTy, env1)
       case _ =>
+        if (pipelineCtx.overloadedSpecDynamicResult)
+          diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
         (DynamicType, env1)
     }
   }

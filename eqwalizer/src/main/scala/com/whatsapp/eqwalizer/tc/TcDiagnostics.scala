@@ -37,6 +37,13 @@ object TcDiagnostics {
     def errorName = "expected_fun_type"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
+  case class NoSpecialType(pos: Pos, expr: Expr, argTys: List[Type])(implicit val pipelineContext: PipelineContext)
+      extends TypeError {
+    private val argTysString = argTys.map(show).mkString(", ")
+    override val msg: String = s"Not enough info to branch. Arg types: $argTysString"
+    def errorName = "not_enough_info_to_branch"
+    override def erroneousExpr: Option[Expr] = Some(expr)
+  }
   case class LambdaArityMismatch(pos: Pos, expr: Expr, lambdaArity: Int, argsArity: Int) extends TypeError {
     override val msg: String = s"fun with arity $lambdaArity used as fun with $argsArity arguments"
     def errorName = "fun_arity_mismatch"
