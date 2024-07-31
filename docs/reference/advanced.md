@@ -144,7 +144,7 @@ convert(B) when is_binary(B) ->
 Some features of eqWAlizer are disabled by default as they are experimental
 or not meant for casual use. They can be enabled by setting the corresponding
 environment variable when calling `elp eqwalize`, e.g.,
-`EQWALIZER_CHECK_REDUNDANT_GUARDS=1 elp eqwalize-all`.
+`EQWALIZER_CLAUSE_COVERAGE=true elp eqwalize-all`.
 
 ### Occurrence typing
 
@@ -157,11 +157,6 @@ contains too many clauses). See [occurrence typing](./narrowing.md#occurrence-ty
 Disable error tolerance with `EQWALIZER_TOLERATE_ERRORS=false`. By default, eqWAlizer
 attempts to recover from type errors, to provide as much signal as possible for
 a given function or module.
-
-### Redundant type checks detection
-
-Enable with `EQWALIZER_CHECK_REDUNDANT_GUARDS=true`. With this setting, eqWAlizer will
-attempt to detect and report redundant type assertions. See [redundant_guard error](./errors.md#redundant_guard).
 
 ### Spec coverage of function clauses
 

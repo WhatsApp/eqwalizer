@@ -123,15 +123,6 @@ object TcDiagnostics {
     def errorName = "redundant_nowarn_function"
     override def erroneousExpr: Option[Expr] = None
   }
-  case class RedundantGuard(pos: Pos, variable: String, test: Type, got: Type)(implicit
-      val
-      pipelineContext: PipelineContext
-  ) extends TypeError {
-    override val msg: String =
-      s"Redundant type test.\nVariable ${variable} has type ${show(got)} which is always a subtype of ${show(test)}"
-    def errorName = "redundant_guard"
-    override def erroneousExpr: Option[Expr] = None
-  }
   case class AmbiguousUnion(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit
       val pipelineContext: PipelineContext
   ) extends TypeError {

@@ -20,7 +20,6 @@ package object tc {
       eqwater: Option[Boolean] = None,
       tolerateErrors: Option[Boolean] = None,
       unlimitedRefinement: Option[Boolean] = None,
-      checkRedundantGuards: Option[Boolean] = None,
       errorDepth: Option[Int] = None,
   )
 
@@ -61,8 +60,6 @@ package object tc {
     }
     val variance: Variance =
       new Variance(this)
-    val checkRedundantGuards: Boolean =
-      options.checkRedundantGuards.getOrElse(config.checkRedundantGuards)
     val typeInfo: TypeInfo =
       new TypeInfo(this)
     val diagnosticsInfo: DiagnosticsInfo =

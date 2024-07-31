@@ -322,7 +322,7 @@ final class Elab(pipelineContext: PipelineContext) {
         (patTy, patEnv)
       case Match(Pats.PatAtom("true"), mExp) if Filters.asTest(mExp).isDefined =>
         val test = Filters.asTest(mExp).get
-        val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)(checkRedundancy = true)
+        val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)
         (AtomLitType("true"), env1)
       case Match(mPat, mExp) =>
         val (ty, env1) = elabExpr(mExp, env)
@@ -342,7 +342,7 @@ final class Elab(pipelineContext: PipelineContext) {
       case BinOp("orelse", testArg, RemoteCall(RemoteId("erlang", "throw" | "error" | "exit", _), _))
           if Filters.asTest(testArg).isDefined =>
         val test = Filters.asTest(testArg).get
-        val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)(checkRedundancy = true)
+        val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)
         (AtomLitType("true"), env1)
       case BinOp(
             "orelse",
