@@ -92,10 +92,13 @@ class Util(pipelineContext: PipelineContext) {
       case _ =>
     }
     val id = Id(remoteId.name, remoteId.arity)
-    def applyType(decl: TypeDecl): Type = {
-      val subst = decl.params.zip(args).map { case (VarType(n), ty) => n -> ty }.toMap
-      Subst.subst(subst, decl.body)
-    }
+    def applyType(decl: TypeDecl): Type =
+      if (id.arity == 0)
+        decl.body
+      else {
+        val subst = decl.params.zip(args).map { case (VarType(n), ty) => n -> ty }.toMap
+        Subst.subst(subst, decl.body)
+      }
 
     DbApi
       .getType(remoteId.module, id)
