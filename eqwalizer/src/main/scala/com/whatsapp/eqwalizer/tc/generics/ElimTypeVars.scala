@@ -28,6 +28,8 @@ object ElimTypeVars {
       case FunType(forall, args, resType) =>
         val args1 = args.map(elimTypeVars(_, switchMode(mode), vars))
         FunType(forall, args1, elim(resType))
+      case AnyArityFunType(resType) =>
+        AnyArityFunType(elim(resType))
       case TupleType(params) =>
         TupleType(params.map(elim))
       case ListType(elemT) =>

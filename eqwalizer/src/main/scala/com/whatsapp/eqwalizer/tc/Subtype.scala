@@ -159,6 +159,8 @@ class Subtype(pipelineContext: PipelineContext) {
         subTypePol(resTy1, resTy2, seen)
       case (AnyArityFunType(resTy1), FunType(_, _, resTy2)) =>
         subTypePol(resTy1, resTy2, seen)
+      case (AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
+        subTypePol(resTy1, resTy2, seen)
       case (TupleType(tys1), TupleType(tys2)) if tys1.size == tys2.size =>
         tys1.lazyZip(tys2).forall(subTypePol(_, _, seen))
       case (NilType, ListType(_)) =>
