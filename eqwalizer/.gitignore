@@ -8,7 +8,6 @@ dumps/
 target/
 tools/
 *.iml
-*.build_info
 rebar.lock
 metals.sbt
 elp-ast/

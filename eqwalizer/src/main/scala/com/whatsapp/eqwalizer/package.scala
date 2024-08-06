@@ -29,9 +29,6 @@ package object eqwalizer {
   }
 
   case class Config(
-      codeWidth: Int,
-      astDir: Option[String],
-      approximateComplexTypes: Boolean,
       eqwater: Boolean,
       tolerateErrors: Boolean,
       clauseCoverage: Boolean,
@@ -46,9 +43,6 @@ package object eqwalizer {
     val modeStr = config.getString("mode")
     val mode = Mode.fromString(modeStr).getOrElse(throw new IllegalArgumentException(s"Unknown mode ${modeStr}"))
     Config(
-      codeWidth = config.getInt("code_width"),
-      astDir = if (config.hasPath("ast_dir")) Some(config.getString("ast_dir")) else None,
-      approximateComplexTypes = config.getBoolean("approximate_complex_types"),
       eqwater = config.getBoolean("eqwater"),
       tolerateErrors = config.getBoolean("tolerate_errors"),
       clauseCoverage = config.getBoolean("clause_coverage"),
