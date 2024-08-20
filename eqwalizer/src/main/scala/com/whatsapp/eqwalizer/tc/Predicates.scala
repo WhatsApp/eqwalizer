@@ -54,4 +54,24 @@ object Predicates {
         (clause2, clause1)
     }
   }
+
+  def booleanReturnClauses(clauses: List[Clause]): Boolean =
+    clauses match {
+      case List(Clause(_, _, Body(List(expr1))), Clause(_, _, Body(List(expr2)))) =>
+        (expr1, expr2) match {
+          case (AtomLit("true"), AtomLit("false")) => true
+          case (AtomLit("false"), AtomLit("true")) => true
+          case (_, _)                              => false
+        }
+      case _ =>
+        false
+    }
+
+  def getTrueFalseReturnClauses(clauses: List[Clause]): (Clause, Clause) = {
+    val List(clause1 @ Clause(_, _, Body(List(expr1))), clause2 @ Clause(_, _, Body(List(expr2)))) = clauses
+    (expr1, expr2) match {
+      case (AtomLit("true"), AtomLit("false")) => (clause1, clause2)
+      case (_, _)                              => (clause2, clause1)
+    }
+  }
 }
