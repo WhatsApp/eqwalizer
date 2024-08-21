@@ -161,9 +161,9 @@ class Constraints(pipelineContext: PipelineContext) {
           constrainSeq(state, tys.map((_, upperBound)))
         // when the upper bound is a union, see if there is only one potential match, use it for constraint generation
         case (_, UnionType(tys)) =>
+          val elimmedLower = ElimTypeVars.elimTypeVars(lowerBound, ElimTypeVars.Demote, toSolve ++ varsToElim)
           val candidates = tys.filter { ty =>
             val elimmedUpper = ElimTypeVars.elimTypeVars(ty, ElimTypeVars.Promote, toSolve ++ varsToElim)
-            val elimmedLower = ElimTypeVars.elimTypeVars(lowerBound, ElimTypeVars.Demote, toSolve ++ varsToElim)
             subtype.subType(elimmedLower, elimmedUpper)
           }.toList
           val (varTypes, others) = candidates.partition {
