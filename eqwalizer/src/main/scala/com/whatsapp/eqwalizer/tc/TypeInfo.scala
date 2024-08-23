@@ -17,10 +17,10 @@ import scala.collection.mutable
 class TypeInfo(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private val moduleTypeInfo = TypeInfo.info.getOrElseUpdate(pipelineContext.module, mutable.Map.empty)
-  private var collect: Boolean = true
+  private var collect: Int = 1
 
   def add(pos: Pos, resTy: Type): Unit = {
-    if (config.mode == Mode.ElpIde && collect) {
+    if (config.mode == Mode.ElpIde && collect > 0) {
       moduleTypeInfo.updateWith(pos) {
         case Some(ty) => Some(subtype.join(ty, resTy))
         case None     => Some(resTy)
@@ -28,9 +28,11 @@ class TypeInfo(pipelineContext: PipelineContext) {
     }
   }
 
-  def setCollect(c: Boolean): Unit = {
-    collect = c
-  }
+  def setCollect(c: Boolean): Unit =
+    if (c)
+      collect += 1
+    else
+      collect -= 1
 
   def clear(pos: Pos): Unit = {
     pos match {
