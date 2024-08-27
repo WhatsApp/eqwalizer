@@ -13,6 +13,8 @@ import com.whatsapp.eqwalizer.tc.TcDiagnostics.ExpectedSubtype
 import com.whatsapp.eqwalizer.tc.generics.Constraints
 import com.whatsapp.eqwalizer.tc.generics.Constraints.ConstraintSeq
 
+import scala.collection.mutable.ListBuffer
+
 /** Implement Pierce and Turner "Local Type Inference" with the following tweaks:
   * - special handling for functions applied to lambdas, see `synthesizeWithLambdas`
   * - instantiation of generic functions through eta-expansion - see `etaExpand`
@@ -83,19 +85,43 @@ class ElabApply(pipelineContext: PipelineContext) {
     val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
 
     val variances = variance.toVariances(ft)
-    val cs1 = nonLambdaArgs.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
+    val delayed: ListBuffer[Arg] = ListBuffer.empty
+    val cs0 = nonLambdaArgs.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
+      try
+        constraints.constraintGen(
+          toSolve,
+          cs = cs,
+          variances = variances,
+          lowerBound = arg.argTy,
+          upperBound = arg.paramTy,
+          constraintLoc = arg,
+          tolerateUnion = true,
+        )
+      catch {
+        case Constraints.UnionFailure() =>
+          delayed.addOne(arg)
+          cs
+      }
+    }
+
+    // We generate constraints from the non-lambda args and find a substitution that minimizes type vars in ft.resTy
+    val m0 = constraints.meetAllConstraints(cs0, variances, Map.empty)
+    val subst0 = constraints.constraintsToSubst(m0, variances)
+
+    val cs1 = delayed.toList.foldLeft(cs0) { case (cs, arg) =>
       constraints.constraintGen(
         toSolve,
         cs = cs,
         variances = variances,
         lowerBound = arg.argTy,
-        upperBound = arg.paramTy,
+        upperBound = Subst.subst(subst0, arg.paramTy),
         constraintLoc = arg,
+        tolerateUnion = false,
       )
     }
 
-    // We generate constraints from the non-lambda args and find a substitution that minimizes type vars in ft.resTy
-    val subst1 = constraints.constraintsSeqToSubst(cs1, variances, toSolve)
+    val m1 = constraints.meetAllConstraints(cs1, variances, m0)
+    val subst1 = constraints.constraintsToSubst(m1, variances, toSolve)
 
     // Then we check the lambdas and use the inferred return types of the lambdas for a final round of constraint generation
     def inferenceRound(cs: ConstraintSeq, subst: Map[Var, Type]): (ConstraintSeq, Map[Var, Type]) = {
@@ -108,6 +134,7 @@ class ElabApply(pipelineContext: PipelineContext) {
           lowerBound = resolved.resTy,
           upperBound = lambdaArg.paramTy.resTy,
           constraintLoc = lambdaArg.copy(argTy = resolved),
+          tolerateUnion = false,
         )
       }
       val subst1 = constraints.constraintsSeqToSubst(cs1, variances, toSolve)
