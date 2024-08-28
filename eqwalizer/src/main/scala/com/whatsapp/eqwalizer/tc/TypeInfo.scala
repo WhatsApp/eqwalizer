@@ -18,6 +18,7 @@ class TypeInfo(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private val moduleTypeInfo = TypeInfo.info.getOrElseUpdate(pipelineContext.module, mutable.Map.empty)
   private var collect: Int = 1
+  private var collectLambdas: Int = 1
 
   def add(pos: Pos, resTy: Type): Unit = {
     if (config.mode == Mode.ElpIde && collect > 0) {
@@ -33,6 +34,15 @@ class TypeInfo(pipelineContext: PipelineContext) {
       collect += 1
     else
       collect -= 1
+
+  def setCollectLambdas(c: Boolean): Unit =
+    if (c)
+      collectLambdas += 1
+    else
+      collectLambdas -= 1
+
+  def isCollectLambdas: Boolean =
+    collectLambdas > 0
 
   def clear(pos: Pos): Unit = {
     pos match {

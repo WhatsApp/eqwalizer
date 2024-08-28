@@ -142,7 +142,9 @@ final class Elab(pipelineContext: PipelineContext) {
         } else
           util.getFunType(module, id) match {
             case Some(ft) =>
+              typeInfo.setCollectLambdas(false)
               val (argTys, env1) = elabExprs(args, env)
+              typeInfo.setCollectLambdas(true)
               var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
               if (customReturn.isCustomReturn(funId))
                 resTy = customReturn.customizeResultType(funId, args, argTys, resTy)
@@ -221,7 +223,9 @@ final class Elab(pipelineContext: PipelineContext) {
         } else
           util.getFunType(fqn) match {
             case Some(ft) =>
+              typeInfo.setCollectLambdas(false)
               val (argTys, env1) = elabExprs(args, env)
+              typeInfo.setCollectLambdas(true)
               var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
               if (customReturn.isCustomReturn(fqn))
                 resTy = customReturn.customizeResultType(fqn, args, argTys, resTy)
@@ -260,7 +264,11 @@ final class Elab(pipelineContext: PipelineContext) {
           val resTy = subtype.join(clauseTys)
           (FunType(Nil, Nil, resTy), env)
         } else {
+          if (!typeInfo.isCollectLambdas)
+            typeInfo.setCollect(false)
           check.checkExpr(lambda, funType, env1)
+          if (!typeInfo.isCollectLambdas)
+            typeInfo.setCollect(true)
           (funType, env)
         }
       case Block(block) =>

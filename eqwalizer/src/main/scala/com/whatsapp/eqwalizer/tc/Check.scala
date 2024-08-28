@@ -519,7 +519,9 @@ final class Check(pipelineContext: PipelineContext) {
   }
 
   private def checkApply(funId: RemoteId, expr: Expr, ft: FunType, args: List[Expr], resTy: Type, env: Env): Env = {
+    typeInfo.setCollectLambdas(false)
     val (argTys, env1) = elab.elabExprs(args, env)
+    typeInfo.setCollectLambdas(true)
     var ftResTy = elabApply.elabApply(ft, args, argTys, env1)
     if (customReturn.isCustomReturn(funId))
       ftResTy = customReturn.customizeResultType(funId, args, argTys, ftResTy)
