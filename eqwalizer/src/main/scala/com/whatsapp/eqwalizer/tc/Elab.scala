@@ -44,9 +44,9 @@ final class Elab(pipelineContext: PipelineContext) {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env0, patVars)
     // see D29637051 for why we elabGuard twice
-    typeInfo.setCollect(false)
-    val env2 = elabGuard.elabGuards(clause.guards, env1)
-    typeInfo.setCollect(true)
+    val env2 = typeInfo.withoutTypeCollection {
+      elabGuard.elabGuards(clause.guards, env1)
+    }
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
     val (eType, env5) = elabBody(clause.body, env4)
@@ -142,9 +142,9 @@ final class Elab(pipelineContext: PipelineContext) {
         } else
           util.getFunType(module, id) match {
             case Some(ft) =>
-              typeInfo.setCollectLambdas(false)
-              val (argTys, env1) = elabExprs(args, env)
-              typeInfo.setCollectLambdas(true)
+              val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
+                elabExprs(args, env)
+              }
               var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
               if (customReturn.isCustomReturn(funId))
                 resTy = customReturn.customizeResultType(funId, args, argTys, resTy)
@@ -223,9 +223,9 @@ final class Elab(pipelineContext: PipelineContext) {
         } else
           util.getFunType(fqn) match {
             case Some(ft) =>
-              typeInfo.setCollectLambdas(false)
-              val (argTys, env1) = elabExprs(args, env)
-              typeInfo.setCollectLambdas(true)
+              val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
+                elabExprs(args, env)
+              }
               var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
               if (customReturn.isCustomReturn(fqn))
                 resTy = customReturn.customizeResultType(fqn, args, argTys, resTy)
@@ -264,11 +264,9 @@ final class Elab(pipelineContext: PipelineContext) {
           val resTy = subtype.join(clauseTys)
           (FunType(Nil, Nil, resTy), env)
         } else {
-          if (!typeInfo.isCollectLambdas)
-            typeInfo.setCollect(false)
-          check.checkExpr(lambda, funType, env1)
-          if (!typeInfo.isCollectLambdas)
-            typeInfo.setCollect(true)
+          typeInfo.processLambda {
+            check.checkExpr(lambda, funType, env1)
+          }
           (funType, env)
         }
       case Block(block) =>

@@ -29,20 +29,46 @@ class TypeInfo(pipelineContext: PipelineContext) {
     }
   }
 
-  def setCollect(c: Boolean): Unit =
+  private def setCollect(c: Boolean): Unit =
     if (c)
       collect += 1
     else
       collect -= 1
 
-  def setCollectLambdas(c: Boolean): Unit =
+  private def setCollectLambdas(c: Boolean): Unit =
     if (c)
       collectLambdas += 1
     else
       collectLambdas -= 1
 
-  def isCollectLambdas: Boolean =
+  private def isCollectLambdas: Boolean =
     collectLambdas > 0
+
+  def withoutTypeCollection[Body](body: => Body): Body = {
+    setCollect(false)
+    val result = body
+    setCollect(true)
+    result
+  }
+
+  def withoutLambdaTypeCollection[Body](body: => Body): Body = {
+    setCollectLambdas(false)
+    val result = body
+    setCollectLambdas(true)
+    result
+  }
+
+  def processLambda[Body](body: => Body): Body = {
+    if (!isCollectLambdas)
+      setCollect(false)
+
+    val result = body
+
+    if (!isCollectLambdas)
+      setCollect(true)
+
+    result
+  }
 
   def clear(pos: Pos): Unit = {
     pos match {

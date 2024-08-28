@@ -141,14 +141,14 @@ class ElabApply(pipelineContext: PipelineContext) {
       (cs1, subst1)
     }
 
-    typeInfo.setCollect(false)
-    val (cs2, subst2) = inferenceRound(cs1, subst1)
-    val subst2Merged = subst2.map {
-      case (v, UnionType(tys)) => (v, narrow.joinAndMergeShapes(tys))
-      case (v, ty)             => (v, ty)
+    val (cs3, subst3) = typeInfo.withoutTypeCollection {
+      val (cs2, subst2) = inferenceRound(cs1, subst1)
+      val subst2Merged = subst2.map {
+        case (v, UnionType(tys)) => (v, narrow.joinAndMergeShapes(tys))
+        case (v, ty)             => (v, ty)
+      }
+      inferenceRound(cs2, subst2Merged)
     }
-    val (cs3, subst3) = inferenceRound(cs2, subst2Merged)
-    typeInfo.setCollect(true)
 
     // Then we check the lambdas and use the inferred return types of the lambdas for a final round of constraint generation
 

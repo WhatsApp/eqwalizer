@@ -95,10 +95,10 @@ final class Check(pipelineContext: PipelineContext) {
   ): Env = {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env0, patVars)
-    typeInfo.setCollect(false)
     // see D29637051 for why we elabGuard twice
-    val env2 = elabGuard.elabGuards(clause.guards, env1)
-    typeInfo.setCollect(true)
+    val env2 = typeInfo.withoutTypeCollection {
+      elabGuard.elabGuards(clause.guards, env1)
+    }
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
     if (pipelineContext.clauseCoverage && checkCoverage && env4.exists { case (_, ty) => subtype.isNoneType(ty) }) {
@@ -116,9 +116,9 @@ final class Check(pipelineContext: PipelineContext) {
   ): Unit = {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env, patVars)
-    typeInfo.setCollect(false)
-    val env2 = elabGuard.elabGuards(clause.guards, env1)
-    typeInfo.setCollect(true)
+    val env2 = typeInfo.withoutTypeCollection {
+      elabGuard.elabGuards(clause.guards, env1)
+    }
     val (patTys, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val reachable = !patTys.exists(subtype.isNoneType)
     if (reachable) {
@@ -519,9 +519,9 @@ final class Check(pipelineContext: PipelineContext) {
   }
 
   private def checkApply(funId: RemoteId, expr: Expr, ft: FunType, args: List[Expr], resTy: Type, env: Env): Env = {
-    typeInfo.setCollectLambdas(false)
-    val (argTys, env1) = elab.elabExprs(args, env)
-    typeInfo.setCollectLambdas(true)
+    val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
+      elab.elabExprs(args, env)
+    }
     var ftResTy = elabApply.elabApply(ft, args, argTys, env1)
     if (customReturn.isCustomReturn(funId))
       ftResTy = customReturn.customizeResultType(funId, args, argTys, ftResTy)
