@@ -19,6 +19,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private val elabApply = pipelineContext.elabApply
   private val narrow = pipelineContext.narrow
+  private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
@@ -30,7 +31,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
         val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
         (resTy, env1)
       case _ =>
-        if (pipelineCtx.overloadedSpecDynamicResult)
+        if (pipelineCtx.overloadedSpecDynamicResult && typeInfo.isCollect)
           diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
         (DynamicType, env1)
     }

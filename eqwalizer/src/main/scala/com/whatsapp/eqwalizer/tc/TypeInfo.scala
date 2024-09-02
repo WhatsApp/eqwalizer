@@ -44,6 +44,9 @@ class TypeInfo(pipelineContext: PipelineContext) {
   private def isCollectLambdas: Boolean =
     collectLambdas > 0
 
+  def isCollect: Boolean =
+    collect > 0
+
   def withoutTypeCollection[Body](body: => Body): Body = {
     setCollect(false)
     val result = body
