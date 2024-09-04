@@ -59,6 +59,7 @@ object Forms {
   case class InvalidFunSpec(id: Id, te: Invalid)(val pos: Pos) extends InvalidForm
   case class InvalidRecDecl(name: String, te: Invalid)(val pos: Pos) extends InvalidForm
   case class InvalidConvertTypeInRecDecl(name: String, te: Invalid)(val pos: Pos) extends InvalidForm
+  case class InvalidMapType(te: Invalid)(val pos: Pos) extends InvalidForm
 
   case class FuncDecl(id: Id, errors: List[TypeError])(val pos: Pos) extends InternalForm
   case class MisBehaviour(te: BehaviourError)(val pos: Pos) extends InternalForm

@@ -163,3 +163,8 @@ a given function or module.
 Disable checks of proper coverage of function clauses by specs using `EQWALIZER_CLAUSE_COVERAGE=false`.
 By default, eqWAlizer will check coverage of function clauses by the corresponding spec,
 ensuring all clauses are properly checked.
+
+### Reporting approximated map types
+
+Enable reporting of ill-formed map types approximated to `#{dynamic() => dynamic()}` using `EQWALIZER_REPORT_BAD_MAPS=true`.
+By default, all such types are silently approximated.

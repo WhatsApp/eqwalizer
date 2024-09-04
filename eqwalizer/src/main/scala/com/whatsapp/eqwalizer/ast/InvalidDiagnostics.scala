@@ -75,8 +75,14 @@ object InvalidDiagnostics {
     }
     def errorName = "type_var_in_parameter_position"
   }
-  case class BadMapKey(pos: Pos) extends Invalid {
-    val msg = "Bad map key"
+  case class BadMapKey(pos: Pos, required: Boolean) extends Invalid {
+    val msg: String = {
+      if (required) {
+        s"Required map key should always be a singular atom. Map type will be approximated to #{dynamic() => dynamic()}."
+      } else {
+        s"With multiple assocations, all keys should be singular atoms. Map type will be approximated to #{dynamic() => dynamic()}."
+      }
+    }
     def errorName = "bad_map_key"
   }
 

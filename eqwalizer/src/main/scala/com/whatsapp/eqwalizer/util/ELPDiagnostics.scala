@@ -6,8 +6,8 @@
 
 package com.whatsapp.eqwalizer.util
 
-import com.whatsapp.eqwalizer.{Pipeline, ast}
-import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, InvalidForm, MisBehaviour}
+import com.whatsapp.eqwalizer.{Pipeline, ast, config}
+import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, InvalidForm, MisBehaviour, InvalidMapType}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
 import com.whatsapp.eqwalizer.ast.stub.DbApi
@@ -54,6 +54,8 @@ object ELPDiagnostics {
     }
     val (forms1, redundantFixmes) = Pipeline.applyFixmes(forms, elpMetadata)
     val errors = forms1.collect {
+      case ef: InvalidMapType if !config.reportBadMaps =>
+        List()
       case ef: InvalidForm =>
         List(ef.te)
       case MisBehaviour(te) =>
