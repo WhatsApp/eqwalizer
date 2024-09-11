@@ -93,7 +93,7 @@ apply_neg(B) -> negb(B).
 ```
 Since `B` has type `boolean()`, eqWAlizer cannot decide which sub-spec of
 `negb` to use to decide the type of `negb(B)`. eqWAlizer will simply assume
-type `eqwalizer:dynamic()` for the result of `negb(B)`, disregarding the spec.
+type `dynamic()` for the result of `negb(B)`, disregarding the spec.
 
 Hence, to get better signal in this case, `negb` should simply be
 specced as `(boolean()) -> boolean()`.
