@@ -802,6 +802,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
         restrict(body, t2)
+      case (BoundedDynamicType(t), s) =>
+        BoundedDynamicType(restrict(t, s))
       case (OpaqueType(_, _), _) =>
         t1
       case (_, _) =>
@@ -825,6 +827,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
         t1
       case (UnionType(ts), s) =>
         UnionType(ts.map(remove(_, s)))
+      case (BoundedDynamicType(t), s) =>
+        BoundedDynamicType(remove(t, s))
       case (t, _) =>
         t
     }
@@ -878,6 +882,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
         update(body, path, pol, s)
       case (UnionType(ts), _) =>
         UnionType(ts.map(update(_, path, pol, s)))
+      case (BoundedDynamicType(t), _) =>
+        BoundedDynamicType(update(t, path, pol, s))
       case (TupleType(ts), TupleField(pos, Some(arity)) :: path) if ts.size == arity =>
         val t = ts(pos)
         val t1 = update(t, path, pol, s)
