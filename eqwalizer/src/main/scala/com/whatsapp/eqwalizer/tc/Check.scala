@@ -257,7 +257,7 @@ final class Check(pipelineContext: PipelineContext) {
             } else {
               ty
             }
-          val funTys = narrow.asFunType(funTy, args.size).get
+          val funTys = narrow.extractFunTypes(funTy, args.size)
           val (argTys, env2) = elab.elabExprs(args, env1)
           if (funTys.nonEmpty) {
             funTys.foreach { ft =>

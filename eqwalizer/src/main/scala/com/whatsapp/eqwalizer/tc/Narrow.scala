@@ -232,38 +232,6 @@ class Narrow(pipelineContext: PipelineContext) {
         List()
     }
 
-  def asFunType(ty: Type, arity: Int): Option[List[FunType]] =
-    asFunTypeAux(ty, arity)
-
-  def asFunTypeAux(ty: Type, arity: Int): Option[List[FunType]] = ty match {
-    case DynamicType =>
-      Some(List(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)))
-    case BoundedDynamicType(bound) =>
-      asFunTypeAux(bound, arity).map(fts =>
-        fts.map(ft => FunType(ft.forall, ft.argTys.map(BoundedDynamicType), BoundedDynamicType(ft.resTy)))
-      )
-    case AnyFunType =>
-      Some(List(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)))
-    case AnyArityFunType(resTy) =>
-      Some(List(FunType(List.empty, List.fill(arity)(DynamicType), resTy)))
-    case _ if subtype.isNoneType(ty) =>
-      Some(List())
-    case ft: FunType =>
-      if (ft.argTys.size == arity) Some(List(ft))
-      else None
-    case UnionType(tys) =>
-      val subResults = tys.map(asFunTypeAux(_, arity))
-      if (subResults.exists(_.isEmpty)) None
-      else Some(subResults.toList.flatMap(_.get))
-    case RemoteType(rid, args) =>
-      val body = util.getTypeDeclBody(rid, args)
-      asFunTypeAux(body, arity)
-    case OpaqueType(rid, _) =>
-      None
-    case _ =>
-      None
-  }
-
   def extractFunTypes(ty: Type, arity: Int): Set[FunType] = ty match {
     case DynamicType =>
       Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))

@@ -150,7 +150,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
               diagnosticsInfo.add(ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy))
               List(DynamicType)
             } else
-              narrow.asFunType(funArgTy, 1).get.map(_.resTy)
+              narrow.extractFunTypes(funArgTy, 1).map(_.resTy)
         }
         def funResultsToItemTy(tys: Iterable[Type], defaultTy: Type, pos: Pos): Type =
           tys.foldLeft(NoneType: Type)((memo, ty) => subtype.join(memo, funResultToItemTy(ty, defaultTy, pos)))
@@ -285,7 +285,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case _ =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), AnyType)
             val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
-            val vTys = narrow.asFunType(funArgCoercedTy, 3).get.map(_.resTy)
+            val vTys = narrow.extractFunTypes(funArgCoercedTy, 3).map(_.resTy).toList
             accTy1 :: vTys
         }
         def validateAccumulatorTy(accTy: Type): Unit = funArg match {
@@ -385,7 +385,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             subtype.join(vTys)
           case _ =>
             val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
-            val vTys = narrow.asFunType(funArgCoercedTy, 2).get.map(_.resTy)
+            val vTys = narrow.extractFunTypes(funArgCoercedTy, 2).map(_.resTy)
             subtype.join(vTys)
         }
         def mapValueType(argMapTy: Type, argValTy: Type): Type = argMapTy match {
@@ -418,7 +418,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
               .map((clause, occEnv) => elab.elabClause(clause, List(keyTy, valTy), occEnv, Set.empty)._1)
           case _ =>
             val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
-            narrow.asFunType(funArgCoercedTy, 2).get.map(_.resTy)
+            narrow.extractFunTypes(funArgCoercedTy, 2).map(_.resTy)
         }
         def funResultsToValTy(tys: Iterable[Type], defaultTy: Type, pos: Pos): Type =
           tys.foldLeft(NoneType: Type)((memo, ty) => subtype.join(memo, funResultToValTy(ty, defaultTy, pos)))

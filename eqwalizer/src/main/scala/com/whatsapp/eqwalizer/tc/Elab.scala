@@ -188,7 +188,7 @@ final class Elab(pipelineContext: PipelineContext) {
           } else {
             ty
           }
-        val funTys = narrow.asFunType(funTy, args.size).get
+        val funTys = narrow.extractFunTypes(funTy, args.size)
         if (funTys.isEmpty) {
           val (_, env2) = elabExprs(args, env1)
           (NoneType, env2)
