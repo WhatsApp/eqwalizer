@@ -477,7 +477,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case NoneType =>
         NoneType
       case _ =>
-        throw new IllegalStateException()
+        NoneType
     }
 
   def setAllFieldsOptional(mapT: Type, newValTy: Option[Type] = None): Type =
@@ -502,7 +502,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case NoneType =>
         NoneType
       case _ =>
-        throw new IllegalStateException()
+        NoneType
     }
 
   def getRecordField(recDecl: RecDeclTyped, recTy: Type, fieldName: String): Type = {
