@@ -10,7 +10,7 @@ import scala.annotation.tailrec
 import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, IntLit, Lambda, NilLit, Var}
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundVar, UnboundRecord}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundRecord}
 import com.whatsapp.eqwalizer.ast.CompilerMacro
 
 class ElabApplyCustom(pipelineContext: PipelineContext) {
@@ -77,57 +77,52 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
     val (argTys, env1) = elab.elabExprs(args, env)
     remoteId match {
       case fqn @ RemoteId("file", "open", 2) =>
-        util.getFunType(fqn) match {
-          case Some(ft) =>
-            val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
-            val resTyPrecise = {
-              val modeArg = args(1)
-              def collectModes(expr: Expr): List[Option[String]] = {
-                expr match {
-                  case NilLit() =>
-                    Nil
-                  case Cons(AtomLit(s), t) =>
-                    Some(s) :: collectModes(t)
-                  case Cons(Exprs.Tuple(List(AtomLit(s), _)), t) =>
-                    Some(s) :: collectModes(t)
-                  case _ =>
-                    List(None)
-                }
-              }
-              val modes = collectModes(modeArg)
-              if (modes.forall(_.isDefined)) {
-                val literalModes = modes.flatten
-                val fd = literalModes.contains("raw") || literalModes.contains("ram")
-                val deviceT =
-                  if (fd)
-                    RemoteType(RemoteId("file", "fd", 0), List())
-                  else
-                    PidType
-                UnionType(
-                  Set(
-                    TupleType(List(AtomLitType("ok"), deviceT)),
-                    TupleType(
-                      List(
-                        AtomLitType("error"),
-                        UnionType(
-                          Set(
-                            RemoteType(RemoteId("file", "posix", 0), List()),
-                            AtomLitType("badarg"),
-                            AtomLitType("system_limit"),
-                          )
-                        ),
+        val ft = util.getFunType(fqn)
+        val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+        val resTyPrecise = {
+          val modeArg = args(1)
+          def collectModes(expr: Expr): List[Option[String]] = {
+            expr match {
+              case NilLit() =>
+                Nil
+              case Cons(AtomLit(s), t) =>
+                Some(s) :: collectModes(t)
+              case Cons(Exprs.Tuple(List(AtomLit(s), _)), t) =>
+                Some(s) :: collectModes(t)
+              case _ =>
+                List(None)
+            }
+          }
+          val modes = collectModes(modeArg)
+          if (modes.forall(_.isDefined)) {
+            val literalModes = modes.flatten
+            val fd = literalModes.contains("raw") || literalModes.contains("ram")
+            val deviceT =
+              if (fd)
+                RemoteType(RemoteId("file", "fd", 0), List())
+              else
+                PidType
+            UnionType(
+              Set(
+                TupleType(List(AtomLitType("ok"), deviceT)),
+                TupleType(
+                  List(
+                    AtomLitType("error"),
+                    UnionType(
+                      Set(
+                        RemoteType(RemoteId("file", "posix", 0), List()),
+                        AtomLitType("badarg"),
+                        AtomLitType("system_limit"),
                       )
                     ),
                   )
-                )
-              } else
-                resTy
-            }
-            (resTyPrecise, env1)
-          case None =>
-            diagnosticsInfo.add(UnboundVar(callPos, fqn.toString))
-            (DynamicType, env)
+                ),
+              )
+            )
+          } else
+            resTy
         }
+        (resTyPrecise, env1)
       case RemoteId("lists", "filtermap", 2) =>
         val List(funArg, collection) = args
         val List(funArgTy, collectionTy) = argTys
@@ -366,7 +361,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val resTy = narrow.adjustMapType(mapCoercedTy, AtomLitType(keyAtom), valTy)
             (resTy, env1)
           case _ =>
-            val ft = util.getFunType(fqn).get
+            val ft = util.getFunType(fqn)
             val resTy = elabApply.elabApply(ft, args, argTys, env1)
             (resTy, env1)
         }

@@ -186,14 +186,10 @@ final class Check(pipelineContext: PipelineContext) {
             if (!subtype.subType(callTy, resTy))
               diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy))
             env1
-          } else
-            util.getFunType(module, id) match {
-              case Some(ft) =>
-                checkApply(funId, expr, freshen(ft), args, resTy, env)
-              case None =>
-                diagnosticsInfo.add(UnboundVar(expr.pos, id.toString))
-                env
-            }
+          } else {
+            val ft = util.getFunType(module, id)
+            checkApply(funId, expr, freshen(ft), args, resTy, env)
+          }
         case DynRemoteFun(mod, name) =>
           throw new IllegalStateException(s"unexpected $expr")
         case dFun: DynRemoteFunArity =>
@@ -216,14 +212,10 @@ final class Check(pipelineContext: PipelineContext) {
             if (!subtype.subType(callTy, resTy))
               diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = callTy))
             env1
-          } else
-            util.getFunType(fqn) match {
-              case Some(ft) =>
-                checkApply(fqn, expr, freshen(ft), args, resTy, env)
-              case None =>
-                diagnosticsInfo.add(UnboundVar(expr.pos, fqn.toString))
-                env
-            }
+          } else {
+            val ft = util.getFunType(fqn)
+            checkApply(fqn, expr, freshen(ft), args, resTy, env)
+          }
         case DynCall(l: Lambda, args) =>
           val arity = lambdaArity(l)
           val (argTys, env1) = elab.elabExprs(args, env)
@@ -268,24 +260,16 @@ final class Check(pipelineContext: PipelineContext) {
           }
           env2
         case LocalFun(id) =>
-          util.getFunType(module, id) match {
-            case Some(ft) =>
-              val ft1 = freshen(ft)
-              if (!subtype.subType(ft1, resTy))
-                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
-            case None =>
-              diagnosticsInfo.add(UnboundVar(expr.pos, id.toString))
-          }
+          val ft = util.getFunType(module, id)
+          val ft1 = freshen(ft)
+          if (!subtype.subType(ft1, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
           env
         case RemoteFun(fqn) =>
-          util.getFunType(fqn) match {
-            case Some(ft) =>
-              val ft1 = freshen(ft)
-              if (!subtype.subType(ft1, resTy))
-                diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
-            case None =>
-              diagnosticsInfo.add(UnboundVar(expr.pos, fqn.toString))
-          }
+          val ft = util.getFunType(fqn)
+          val ft1 = freshen(ft)
+          if (!subtype.subType(ft1, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
           env
         case lambda: Lambda =>
           checkLambda(lambda, resTy, env)

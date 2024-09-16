@@ -23,7 +23,7 @@ class Util(pipelineContext: PipelineContext) {
     RemoteId(hostModule, id.name, id.arity)
   }
 
-  def getFunType(module: String, id: Id): Option[FunType] =
+  def getFunType(module: String, id: Id): FunType =
     getFunType(globalFunId(module, id))
 
   private def typeAndGetRecord(module: String, name: String): Option[RecDeclTyped] =
@@ -57,13 +57,13 @@ class Util(pipelineContext: PipelineContext) {
     RecFieldTyped(f.name, tp, f.defaultValue, f.refinable)
   }
 
-  def getFunType(fqn: RemoteId): Option[FunType] = {
-    val funType = DbApi.getSpec(fqn.module, Id(fqn.name, fqn.arity)).map(_.ty)
-    if (funType.isEmpty) {
-      val arity = fqn.arity
-      Some(FunType(Nil, List.fill(arity)(DynamicType), DynamicType))
-    } else {
-      funType
+  def getFunType(fqn: RemoteId): FunType = {
+    DbApi.getSpec(fqn.module, Id(fqn.name, fqn.arity)).map(_.ty) match {
+      case Some(funType) =>
+        funType
+      case None =>
+        val arity = fqn.arity
+        FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
     }
   }
 

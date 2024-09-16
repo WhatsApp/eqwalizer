@@ -139,20 +139,16 @@ final class Elab(pipelineContext: PipelineContext) {
           elabApplyCustom.elabCustom(funId, args, env, expr.pos)
         } else if (elabApplyOverloaded.isOverloadedFun(funId)) {
           elabApplyOverloaded.elabOverloaded(expr, funId, args, env)
-        } else
-          util.getFunType(module, id) match {
-            case Some(ft) =>
-              val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
-                elabExprs(args, env)
-              }
-              var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
-              if (customReturn.isCustomReturn(funId))
-                resTy = customReturn.customizeResultType(funId, args, argTys, resTy)
-              (resTy, env1)
-            case None =>
-              diagnosticsInfo.add(UnboundVar(expr.pos, id.toString))
-              (DynamicType, env)
+        } else {
+          val ft = util.getFunType(module, id)
+          val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
+            elabExprs(args, env)
           }
+          var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+          if (customReturn.isCustomReturn(funId))
+            resTy = customReturn.customizeResultType(funId, args, argTys, resTy)
+          (resTy, env1)
+        }
       case DynCall(l: Lambda, args) =>
         val arity = l.clauses.head.pats.size
         val (argTys, env1) = elabExprs(args, env)
@@ -220,36 +216,22 @@ final class Elab(pipelineContext: PipelineContext) {
           elabApplyCustom.elabCustom(fqn, args, env, expr.pos)
         } else if (elabApplyOverloaded.isOverloadedFun(fqn)) {
           elabApplyOverloaded.elabOverloaded(expr, fqn, args, env)
-        } else
-          util.getFunType(fqn) match {
-            case Some(ft) =>
-              val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
-                elabExprs(args, env)
-              }
-              var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
-              if (customReturn.isCustomReturn(fqn))
-                resTy = customReturn.customizeResultType(fqn, args, argTys, resTy)
-              (resTy, env1)
-            case None =>
-              diagnosticsInfo.add(UnboundVar(expr.pos, fqn.toString))
-              (DynamicType, env)
+        } else {
+          val ft = util.getFunType(fqn)
+          val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
+            elabExprs(args, env)
           }
+          var resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+          if (customReturn.isCustomReturn(fqn))
+            resTy = customReturn.customizeResultType(fqn, args, argTys, resTy)
+          (resTy, env1)
+        }
       case LocalFun(id) =>
-        util.getFunType(module, id) match {
-          case Some(ft) =>
-            (check.freshen(ft), env)
-          case None =>
-            diagnosticsInfo.add(UnboundVar(expr.pos, id.toString))
-            (DynamicType, env)
-        }
+        val ft = util.getFunType(module, id)
+        (check.freshen(ft), env)
       case RemoteFun(fqn) =>
-        util.getFunType(fqn) match {
-          case Some(ft) =>
-            (check.freshen(ft), env)
-          case None =>
-            diagnosticsInfo.add(UnboundVar(expr.pos, fqn.toString))
-            (DynamicType, env)
-        }
+        val ft = util.getFunType(fqn)
+        (check.freshen(ft), env)
       case lambda @ Lambda(clauses) =>
         val arity = clauses.head.pats.length
         val funType = FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
