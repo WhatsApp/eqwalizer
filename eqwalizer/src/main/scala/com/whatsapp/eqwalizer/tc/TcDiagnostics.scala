@@ -46,7 +46,7 @@ object TcDiagnostics {
   }
   case class IgnoredOverloadedSpec(pos: Pos) extends TypeError {
     override val msg: String = s"dynamic() -> dynamic() is used"
-    def errorName = "not_enough_info_to_branch"
+    def errorName = "ignored_overloaded_spec"
     override def erroneousExpr: Option[Expr] = None
   }
   case class LambdaArityMismatch(pos: Pos, expr: Expr, lambdaArity: Int, argsArity: Int) extends TypeError {

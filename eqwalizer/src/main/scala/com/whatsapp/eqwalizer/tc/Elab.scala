@@ -227,10 +227,17 @@ final class Elab(pipelineContext: PipelineContext) {
           (resTy, env1)
         }
       case LocalFun(id) =>
-        val ft = util.getFunType(module, id)
+        val fqn = util.globalFunId(module, id)
+        if (pipelineCtx.ignoredOverloadedSpec && util.getOverloadedSpec(fqn).isDefined) {
+          diagnosticsInfo.add(IgnoredOverloadedSpec(expr.pos))
+        }
+        val ft = util.getFunType(fqn)
         (check.freshen(ft), env)
       case RemoteFun(fqn) =>
         val ft = util.getFunType(fqn)
+        if (pipelineCtx.ignoredOverloadedSpec && util.getOverloadedSpec(fqn).isDefined) {
+          diagnosticsInfo.add(IgnoredOverloadedSpec(expr.pos))
+        }
         (check.freshen(ft), env)
       case lambda @ Lambda(clauses) =>
         val arity = clauses.head.pats.length

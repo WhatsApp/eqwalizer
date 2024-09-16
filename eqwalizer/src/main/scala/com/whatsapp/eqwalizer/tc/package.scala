@@ -69,5 +69,6 @@ package object tc {
     val clauseCoverage: Boolean = config.clauseCoverage
     val overloadedSpecDynamicResult: Boolean = config.overloadedSpecDynamicResult
     val customMapsMerge: Boolean = config.customMapsMerge
+    val ignoredOverloadedSpec: Boolean = config.ignoredOverloadedSpec
   }
 }

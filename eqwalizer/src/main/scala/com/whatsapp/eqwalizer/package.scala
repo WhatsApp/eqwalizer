@@ -37,6 +37,7 @@ package object eqwalizer {
       customMapsMerge: Boolean,
       mode: Mode.Mode,
       errorDepth: Int,
+      ignoredOverloadedSpec: Boolean,
   )
 
   lazy val config: Config = {
@@ -52,6 +53,7 @@ package object eqwalizer {
       customMapsMerge = config.getBoolean("custom_maps_merge"),
       mode,
       errorDepth = config.getInt("error_depth"),
+      ignoredOverloadedSpec = config.getBoolean("ignored_overloaded_spec"),
     )
   }
 }

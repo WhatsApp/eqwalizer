@@ -260,13 +260,20 @@ final class Check(pipelineContext: PipelineContext) {
           }
           env2
         case LocalFun(id) =>
-          val ft = util.getFunType(module, id)
+          val fqn = util.globalFunId(module, id)
+          if (pipelineCtx.ignoredOverloadedSpec && util.getOverloadedSpec(fqn).isDefined) {
+            diagnosticsInfo.add(IgnoredOverloadedSpec(expr.pos))
+          }
+          val ft = util.getFunType(fqn)
           val ft1 = freshen(ft)
           if (!subtype.subType(ft1, resTy))
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
           env
         case RemoteFun(fqn) =>
           val ft = util.getFunType(fqn)
+          if (pipelineCtx.ignoredOverloadedSpec && util.getOverloadedSpec(fqn).isDefined) {
+            diagnosticsInfo.add(IgnoredOverloadedSpec(expr.pos))
+          }
           val ft1 = freshen(ft)
           if (!subtype.subType(ft1, resTy))
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
