@@ -32,7 +32,7 @@ class Variance(pipelineContext: PipelineContext) {
     }
   }
 
-  def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Option[Variance.Variance] =
+  private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Option[Variance.Variance] =
     getVarianceOf(ty, tv, isPositivePosition)(history = Set())
 
   private def getVarianceOf(ty: Type, tv: Var, isPositivePosition: Boolean)(implicit
@@ -42,11 +42,9 @@ class Variance(pipelineContext: PipelineContext) {
       if (isPositivePosition) Some(Covariant)
       else Some(Contravariant)
     case FunType(forall, argTys, resTy) =>
-      val variancesInArgTys = if (forall.contains(tv)) {
-        Nil
-      } else {
-        argTys.map(getVarianceOf(_, tv, !isPositivePosition))
-      }
+      // forall can only be non-empty only for top-level fun types
+      // corresponding to generic specs
+      val variancesInArgTys = argTys.map(getVarianceOf(_, tv, !isPositivePosition))
       val variances = getVarianceOf(resTy, tv, isPositivePosition) :: variancesInArgTys
       combineVariances(variances)
     case t @ RemoteType(rid, args) =>
@@ -74,7 +72,7 @@ class Variance(pipelineContext: PipelineContext) {
         }
     }
 
-  def combineVariances(variances: List[Option[Variance.Variance]]): Option[Variance.Variance] =
+  private def combineVariances(variances: List[Option[Variance.Variance]]): Option[Variance.Variance] =
     variances.foldLeft(None: Option[Variance.Variance])((v1Opt, v2Opt) =>
       (v1Opt, v2Opt) match {
         case (None, Some(v))                  => Some(v)
