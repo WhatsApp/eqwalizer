@@ -33,12 +33,27 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
       case _ =>
         if (pipelineCtx.overloadedSpecDynamicResult && typeInfo.isCollect)
           diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
+        if (pipelineContext.overloadedSpecDomainCheck)
+          toFunType(depFunSpec).foreach(ft => elabApply.elabApply(check.freshen(ft), args, argTys, env1))
         (DynamicType, env1)
     }
   }
 
   def isOverloadedFun(remoteId: RemoteId): Boolean =
     util.getOverloadedSpec(remoteId).isDefined
+
+  private def toFunType(depFunSpec: OverloadedFunSpec): Option[FunType] = {
+    // If a sub-spec has generic vars, - transforming it to a FunType is tricky in general case.
+    // Skipping overloaded specs with generic vars for now (for simplicity).
+    if (depFunSpec.tys.forall(_.forall.isEmpty)) {
+      val result = depFunSpec.tys.reduce { (acc, elem) =>
+        val argTys = acc.argTys.zip(elem.argTys).map { case (t1, t2) => subtype.join(t1, t2) }
+        FunType(Nil, argTys, DynamicType)
+      }
+      Some(result)
+    } else
+      None
+  }
 
   private def mightOverlap(t1: Type, t2: Type): Boolean = {
     val approxMeet = narrow.meet(t1, t2)
