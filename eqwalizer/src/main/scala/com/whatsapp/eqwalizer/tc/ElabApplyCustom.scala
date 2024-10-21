@@ -257,10 +257,10 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val List(keyTy, mapTy) = argTys
         val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val mapType = narrow.asMapType(mapCoercedTy)
-        val valTy = keyTy match {
-          case AtomLitType(key) =>
+        val valTy = Key.fromType(keyTy) match {
+          case Some(key) =>
             narrow.getValType(key, mapType)
-          case _ =>
+          case None =>
             narrow.getValType(mapType)
         }
         val resTy = UnionType(Set(TupleType(List(AtomLitType("ok"), valTy)), AtomLitType("error")))
@@ -291,7 +291,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             coerce(funArg, funArgTy, expFunTy)
         }
         val accTys2 = getAccumulatorTys(accTy1)
-        val accTy3 = subtype.join(getAccumulatorTys(narrow.joinAndMergeShapes(accTys2)))
+        val accTy3 = subtype.join(getAccumulatorTys(narrow.joinAndMergeMaps(accTys2)))
         validateAccumulatorTy(accTy3)
         (accTy3, env1)
 
@@ -300,7 +300,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val List(keyTy, mapTy) = argTys
         val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val mapType = narrow.asMapType(mapCoercedTy)
-        val atomKeys = narrow.asAtomLits(keyTy)
+        val atomKeys = narrow.asKeys(keyTy)
         atomKeys match {
           case Some(atoms) =>
             val valTys = atoms.map(narrow.getValType(_, mapType))
@@ -341,7 +341,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val List(keyTy, mapTy, defaultValTy) = argTys
         val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val mapType = narrow.asMapType(mapCoercedTy)
-        val atomKeys = narrow.asAtomLits(keyTy)
+        val atomKeys = narrow.asKeys(keyTy)
         atomKeys match {
           case Some(atoms) =>
             val valTys = atoms.map(narrow.getValType(_, mapType))
@@ -356,8 +356,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         key match {
           case AtomLit(keyAtom) =>
             val List(_, valTy, mapTy) = argTys
-            val anyMap = DictMap(AnyType, AnyType)
-            val mapCoercedTy = coerce(map, mapTy, anyMap)
+            val mapCoercedTy = coerce(map, mapTy, anyMapTy)
             val resTy = narrow.adjustMapType(mapCoercedTy, AtomLitType(keyAtom), valTy)
             (resTy, env1)
           case _ =>
@@ -383,16 +382,19 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val vTys = narrow.extractFunTypes(funArgCoercedTy, 2).map(_.resTy)
             subtype.join(vTys)
         }
-        def mapValueType(argMapTy: Type, argValTy: Type): Type = argMapTy match {
-          case ShapeMap(props) =>
-            ShapeMap(props.map {
-              case ReqProp(key, ty) => ReqProp(key, argValTy)
-              case OptProp(key, ty) => OptProp(key, argValTy)
-            })
-          case UnionType(tys) => subtype.join(tys.map(mapValueType(_, argValTy)))
-          case _              => DictMap(keyTy, resValTy)
+        def mapValueType(argMapTy: Type): Type = argMapTy match {
+          case MapType(props, kt, vt) =>
+            MapType(
+              props.map { case (key, Prop(req, _)) =>
+                (key, Prop(req, resValTy))
+              },
+              kt,
+              resValTy,
+            )
+          case UnionType(tys) => subtype.join(tys.map(mapValueType))
+          case _              => MapType(Map(), keyTy, resValTy)
         }
-        (mapValueType(mapType, resValTy), env1)
+        (mapValueType(mapType), env1)
 
       case RemoteId("maps", "filtermap", 2) =>
         val List(funArg, map) = args
@@ -436,19 +438,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val List(keyArg, map) = args
         val List(keyTy, mapTy) = argTys
         val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val key = Key.fromType(keyTy)
         def remove(mapTy: Type): Type = mapTy match {
-          case shape: ShapeMap =>
-            keyTy match {
-              case AtomLitType(key) =>
-                val props = shape.props.filter(_.key != key)
-                shape.copy(props = props)
-              case _ =>
-                ShapeMap(shape.props.map { case ReqProp(k, v) => OptProp(k, v); case prop => prop })
+          case mapType: MapType =>
+            key match {
+              case Some(k) => mapType.copy(props = mapType.props.removed(k))
+              case _       => narrow.setAllFieldsOptional(mapType, None)
             }
           case UnionType(tys) =>
             subtype.join(tys.map(remove))
-          case dict: DictMap =>
-            dict
           case NoneType =>
             NoneType
           case unexpected =>
@@ -460,10 +458,13 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
 
       case RemoteId("maps", "to_list", 1) =>
         def mapToList(ty: Type): Type = ty match {
-          case ShapeMap(props) =>
-            ListType(UnionType(props.map { prop => TupleType(List(AtomLitType(prop.key), prop.tp)) }.toSet))
-          case DictMap(keysTy, valuesTy) =>
-            ListType(TupleType(List(keysTy, valuesTy)))
+          case MapType(props, kt, vt) =>
+            ListType(
+              subtype.join(
+                TupleType(List(kt, vt)),
+                props.map { case (k, prop) => TupleType(List(Key.asType(k), prop.tp)) },
+              )
+            )
           case UnionType(tys) =>
             subtype.join(tys.map(mapToList))
           case NoneType =>
@@ -480,23 +481,20 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           .map { case (arg, ty) => narrow.asMapType(coerce(arg, ty, anyMapTy)) }
         val resMapTys = util
           .cartesianProduct(mapTy1, mapTy2)
-          .map { case (ty1, ty2) => narrow.joinAndMergeShapes(List(ty1, ty2), true) }
+          .map { case (ty1, ty2) => narrow.joinAndMergeMaps(List(ty1, ty2), inOrder = true) }
         (subtype.join(resMapTys), env1)
 
       case RemoteId("maps", "with", 2) =>
         @tailrec
-        def toKey(ty: Type)(implicit pos: Pos): Option[String] = ty match {
-          case AtomLitType(key) => Some(key)
-          case UnionType(_) =>
-            None
+        def toKey(ty: Type)(implicit pos: Pos): Option[Key] = ty match {
           case RemoteType(rid, argTys) =>
             // Note: this won't infinite-loop since we don't continue under type constructors
             toKey(util.getTypeDeclBody(rid, argTys))
           case _ =>
-            None
+            Key.fromType(ty)
         }
         @tailrec
-        def getKeysToKeep(e: Expr, keys: List[String]): Option[List[String]] = {
+        def getKeysToKeep(e: Expr, keys: List[Key]): Option[List[Key]] = {
           e match {
             case Exprs.NilLit() =>
               Some(keys)
@@ -515,14 +513,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val expKeysTy = ListType(AnyType)
         val _ = coerce(keysArg, keysTy, expKeysTy)
-        def `with`(mapTy: Type, keysToKeep: Set[String]): Type = mapTy match {
-          case shape: ShapeMap =>
-            val props = shape.props.filter(prop => keysToKeep(prop.key))
-            shape.copy(props = props)
+        def `with`(mapTy: Type, keysToKeep: Set[Key]): Type = mapTy match {
+          case map: MapType =>
+            val props = map.props.removedAll(map.props.keySet -- keysToKeep)
+            map.copy(props = props)
           case UnionType(tys) =>
             subtype.join(tys.map(`with`(_, keysToKeep)))
-          case dict: DictMap =>
-            dict
           case NoneType =>
             NoneType
           case unexpected =>
@@ -536,18 +532,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
 
       case RemoteId("maps", "without", 2) =>
         @tailrec
-        def toKey(ty: Type)(implicit pos: Pos): Option[String] = ty match {
-          case AtomLitType(key) => Some(key)
-          case UnionType(_) =>
-            None
+        def toKey(ty: Type)(implicit pos: Pos): Option[Key] = ty match {
           case RemoteType(rid, argTys) =>
             // Note: this won't infinite-loop since we don't continue under type constructors
             toKey(util.getTypeDeclBody(rid, argTys))
           case _ =>
-            None
+            Key.fromType(ty)
         }
         @tailrec
-        def getKeysToRemove(e: Expr, keys: List[String]): Option[List[String]] = {
+        def getKeysToRemove(e: Expr, keys: List[Key]): Option[List[Key]] = {
           e match {
             case Exprs.NilLit() =>
               Some(keys)
@@ -566,14 +559,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val expKeysTy = ListType(AnyType)
         val _ = coerce(keysArg, keysTy, expKeysTy)
-        def without(mapTy: Type, keysToRemove: Set[String]): Type = mapTy match {
-          case shape: ShapeMap =>
-            val props = shape.props.filterNot(prop => keysToRemove(prop.key))
-            shape.copy(props = props)
+        def without(mapTy: Type, keysToRemove: Set[Key]): Type = mapTy match {
+          case mapType: MapType =>
+            val props = mapType.props.removedAll(keysToRemove)
+            mapType.copy(props = props)
           case UnionType(tys) =>
             subtype.join(tys.map(without(_, keysToRemove)))
-          case dict: DictMap =>
-            dict
           case NoneType =>
             NoneType
           case unexpected =>
@@ -629,7 +620,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
     }
   }
 
-  private lazy val anyMapTy = DictMap(AnyType, AnyType)
+  private lazy val anyMapTy = MapType(Map(), AnyType, AnyType)
 
   private def unpackMapTy(ty: Type): Option[(Type, Type)] =
     if (!subtype.subType(ty, anyMapTy)) None

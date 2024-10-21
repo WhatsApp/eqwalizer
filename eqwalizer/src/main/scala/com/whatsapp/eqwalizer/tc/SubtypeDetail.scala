@@ -6,6 +6,7 @@
 
 package com.whatsapp.eqwalizer.tc
 
+import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{RemoteId, Show, TypeVars}
 
@@ -13,46 +14,6 @@ object SubtypeDetail {
   lazy val nonVerboseRids = builtinTypes.keys.map(RemoteId("erlang", _, 0)).toSet
 
   private case class Detail(t1: Type, t2: Type, reasonPrefix: Option[String], reasonPostfix: Option[String])
-
-  private def propDiff(props1: List[Prop], props2: List[Prop]): Option[String] = {
-    val props1Map = props1.map { prop => prop.key -> prop }.toMap
-    val props2Map = props2.map { prop => prop.key -> prop }.toMap
-    val allkeys = (props1 ++ props2).map(_.key).distinct.sorted
-
-    val padTo = allkeys.map(_.length).max
-    def showProp(prop: Prop): String = prop match {
-      case ReqProp(key, tp) => s"${key.padTo(padTo, ' ')} := ..."
-      case OptProp(key, tp) => s"${key.padTo(padTo, ' ')} => ..."
-    }
-
-    def showMinus(prop: Prop): String = s"\n-    ${showProp(prop)}"
-    def showPlus(prop: Prop): String = s"\n+    ${showProp(prop)}"
-
-    var hasMore = false
-
-    val diff = new StringBuilder()
-    for (key <- allkeys) (props1Map.get(key), props2Map.get(key)) match {
-      case (None, Some(prop2: ReqProp)) =>
-        diff ++= showMinus(prop2)
-      case (Some(prop1: OptProp), Some(prop2: ReqProp)) =>
-        diff ++= showMinus(prop2)
-        diff ++= showPlus(prop1)
-      case (Some(prop1), None) =>
-        diff ++= showPlus(prop1)
-      case (_, Some(_)) =>
-        hasMore = true
-      case (None, None) =>
-        throw new IllegalStateException()
-    }
-
-    if (diff.isEmpty) None
-    else {
-      if (hasMore) {
-        diff ++= s"\n     ..."
-      }
-      Some(s"These associations do not match:\n\n  #S{${diff.toString}\n  }")
-    }
-  }
 }
 
 class SubtypeDetail(pipelineContext: PipelineContext) {
@@ -254,33 +215,77 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
           case Some((FunType(_, args1, res1), FunType(_, args2, res2))) =>
             recurSeq((res1, res2) :: args2.zip(args1))
         }
-      case (DictMap(kT1, vT1), DictMap(kT2, vT2)) =>
-        recurSeq((kT1, kT2) :: (vT1, vT2) :: Nil)
-      case (ShapeMap(props), DictMap(kT, vT)) =>
-        val shapeDomain = subtype.join(props.map(prop => AtomLitType(prop.key)))
-        val shapeCodomain = subtype.join(props.map(_.tp))
-        recurSeq((shapeDomain, kT) :: (shapeCodomain, vT) :: Nil)
-      case (ShapeMap(props1), ShapeMap(props2)) =>
-        propDiff(props1, props2) match {
-          case reasonPostfix @ Some(_) =>
-            Detail(t1, t2, None, reasonPostfix) :: stack0
-          case None =>
-            val kvs2 = props2.map(prop => prop.key -> prop.tp).toMap
-            for (prop1 <- props1) {
-              val key = prop1.key
-              val ty1 = prop1.tp
-              val ty2 = kvs2(prop1.key)
-              val reasonPrefix = s"at shape key '$key':"
-              val stackWithReason = Detail(t1, t2, Some(reasonPrefix), None) :: stack0
-              findMismatchAux(ty1, ty2, stackWithReason, seen) match {
+      case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
+        val tolerantSubtype = subtype.isDynamicType(kT1) && subtype.isDynamicType(vT1)
+        // Required keys don't match
+        val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
+        val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
+        if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) {
+          val missingReqKeys = reqKeys2.removedAll(reqKeys1).map { s => s"`$s`" }.toList.sorted
+          val reasonPostfix =
+            if (missingReqKeys.size == 1)
+              s"key ${missingReqKeys.head} is declared as required in the latter but not in the former"
+            else
+              s"keys ${missingReqKeys.mkString(", ")} are declared as required in the latter but not in the former"
+          return Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
+        }
+        // A key in the LHS doesn't match the RHS
+        for ((key1, prop1) <- props1) {
+          props2.get(key1) match {
+            case Some(prop2) =>
+              val reasonPrefix = s"at key `${key1}`:"
+              val stackWithReason = Detail(t1, t2, Some(reasonPrefix), None) :: stack
+              findMismatchAux(prop1.tp, prop2.tp, stackWithReason, seen) match {
                 case Nil     => ()
                 case details => return details
               }
-            }
-            Nil
+            case None =>
+              val reasonBegin = s"key `${key1}` is declared in the former but not in the latter"
+              if (kT2 == NoneType) {
+                val reasonEnd = " and the latter map has no default association"
+                return Detail(t1, t2, None, Some(reasonBegin ++ reasonEnd)) :: stack0
+              } else {
+                val reasonEnd =
+                  s" and key `${key1}` isn't compatible with the default association of the latter map"
+                val stackWithReason = Detail(t1, t2, None, Some(reasonBegin ++ reasonEnd)) :: stack
+                (
+                  findMismatchAux(asType(key1), kT2, stackWithReason, seen),
+                  findMismatchAux(prop1.tp, vT2, stackWithReason, seen),
+                ) match {
+                  case (details, _) if details.nonEmpty => return details
+                  case (_, details) if details.nonEmpty => return details
+                  case _                                => ()
+                }
+              }
+          }
         }
-      case (DictMap(kT, vT), ShapeMap(_)) if subtype.isDynamicType(kT) && subtype.isDynamicType(vT) =>
-        Nil
+        // A new key in the second map is not compatible with the default association of the first map
+        val onlyProps2 = props2.removedAll(props1.keySet).toList
+        val onlyCompatProps2 = onlyProps2.filter { case (key2, _) => subtype.subType(asType(key2), kT1) }
+        for ((key2, prop2) <- onlyCompatProps2) {
+          val reasonPostfix =
+            s"key ${key2} is not present in the former map but is incompatible with its default association"
+          val stackWithReason = Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
+          (recur(asType(key2), kT1), findMismatchAux(vT1, prop2.tp, stackWithReason, seen)) match {
+            case (l, details) if (l.isEmpty && details.nonEmpty) => return details
+            case (_, _)                                          => ()
+          }
+        }
+        // Default associations don't match
+        if (kT2 == NoneType && vT2 == NoneType && (recur(kT1, kT2).nonEmpty || recur(vT1, vT2).nonEmpty)) {
+          val reasonPostfix = "the latter map has no default association while the first map has one"
+          return Detail(t1, t2, None, Some(reasonPostfix)) :: stack
+        }
+        val reasonPostfix = "the default associations are not compatible"
+        val stackWithReason = Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
+        val domain2 = subtype.join(kT2, onlyCompatProps2.map(kp => asType(kp._1)))
+        (
+          findMismatchAux(kT1, domain2, stackWithReason, seen),
+          findMismatchAux(vT1, vT2, stackWithReason, seen),
+        ) match {
+          case (details, _) if details.nonEmpty => details
+          case (_, details)                     => details
+        }
       case _ =>
         stack
     }

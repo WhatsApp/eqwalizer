@@ -7,7 +7,6 @@
 package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.BinarySpecifiers
-import com.whatsapp.eqwalizer.ast.Guards.TestAtom
 import com.whatsapp.eqwalizer.ast.Pats._
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{UnboundRecord, UnhandledOp}
@@ -150,8 +149,8 @@ final class ElabPat(pipelineContext: PipelineContext) {
         var refinedMapType = mapType
         var envAcc = env
         for ((keyTest, valPat) <- kvs) {
-          keyTest match {
-            case TestAtom(key) =>
+          Key.fromTest(keyTest) match {
+            case Some(key) =>
               val (_, env1) = elabPat(valPat, narrow.getValType(key, mapType), envAcc)
               refinedMapType = narrow.withRequiredProp(key, mapType)
               envAcc = env1

@@ -37,8 +37,6 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         s"$prefix${argTys.map(show).mkString("(", ", ", ")")}"
       case vt: VarType =>
         vt.name
-      case DictMap(kt, vt) =>
-        s"#D{${show(kt)} => ${show(vt)}}"
       case AnyType =>
         "term()"
       case AtomType =>
@@ -67,8 +65,14 @@ case class Show(pipelineContext: Option[PipelineContext]) {
               }
               .mkString(s"#${r.name}{", ", ", "}")
         }
-      case ShapeMap(props) =>
-        props.sortBy(_.key).map(showProp).mkString("#S{", ", ", "}")
+      case MapType(props, NoneType, _) =>
+        props.toList.map(showMapField).sorted.mkString("#{", ", ", "}")
+      case MapType(props, kt, vt) if props.isEmpty =>
+        s"#{${show(kt)} => ${show(vt)}}"
+      case MapType(props, kt, vt) =>
+        val propsStr = props.toList.map(showMapField).sorted.mkString(", ")
+        val kvStr = s"${show(kt)} => ${show(vt)}"
+        List(propsStr, kvStr).mkString("#{", ", ", "}")
       case AnyTupleType =>
         "tuple()"
       case AnyFunType =>
@@ -95,20 +99,19 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         s"$prefix1${argTys1.map(show).mkString("(", ", ", ")")}",
         s"$prefix2${argTys2.map(show).mkString("(", ", ", ")")}",
       )
-    case (dt: DictMap, st: ShapeMap) =>
-      (s"dict  map ${show(dt)}", s"shape map ${show(st)}")
 
     case _ =>
       (show(t1), show(t2))
   }
 
-  private def showProp(prop: Prop): String =
-    prop match {
-      case ReqProp(key, tp) =>
-        s"$key := ${show(tp)}"
-      case OptProp(key, tp) =>
-        s"$key => ${show(tp)}"
+  private def showMapField(field: (Key, Prop)): String = {
+    val (key, prop) = field
+    if (prop.req) {
+      s"$key := ${show(prop.tp)}"
+    } else {
+      s"$key => ${show(prop.tp)}"
     }
+  }
 
   private def showRid(rid: RemoteId, forceShowModule: Boolean = false): String = {
     pipelineContext match {

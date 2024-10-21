@@ -394,7 +394,7 @@ final class Check(pipelineContext: PipelineContext) {
           val qEnv = elab.elabQualifiers(qualifiers, env)
           val (kType, _) = elab.elabExpr(kTemplate, qEnv)
           val (vType, _) = elab.elabExpr(vTemplate, qEnv)
-          val elabType = DictMap(kType, vType)
+          val elabType = MapType(Map(), kType, vType)
           if (!subtype.subType(elabType, resTy))
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType))
           env

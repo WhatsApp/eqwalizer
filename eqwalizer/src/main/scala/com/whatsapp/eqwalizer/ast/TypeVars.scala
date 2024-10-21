@@ -41,8 +41,7 @@ object TypeVars {
     case UnionType(tys)               => tys.toList
     case RemoteType(_, tys)           => tys
     case OpaqueType(_, tys)           => tys
-    case ShapeMap(props)              => props.map(_.tp)
-    case DictMap(kType, vType)        => kType :: vType :: Nil
+    case MapType(props, kType, vType) => kType :: vType :: props.values.map(_.tp).toList
     case ListType(ty)                 => ty :: Nil
     case RefinedRecordType(_, fields) => fields.toList.map(_._2)
     case BoundedDynamicType(bound)    => bound :: Nil
@@ -135,22 +134,12 @@ object TypeVars {
         OpaqueType(id, params.map(r))
       case vt: VarType if toIncr.contains(vt.n) => VarType(vt.n + incr)(vt.name)
       case _: VarType                           => t
-      case DictMap(kt, vt) =>
-        DictMap(r(kt), r(vt))
-      case ShapeMap(props) =>
-        ShapeMap(props.map(incrInProp(_, toIncr, incr)))
+      case MapType(props, kt, vt) =>
+        MapType(props.map { case (name, Prop(req, tp)) => (name, Prop(req, r(tp))) }, r(kt), r(vt))
       case RefinedRecordType(recType, fields) =>
         RefinedRecordType(recType, fields.map(f => f._1 -> r(f._2)))
       case _ =>
         t
     }
   }
-
-  private def incrInProp(prop: Prop, toIncr: Set[Int], incr: Int): Prop =
-    prop match {
-      case ReqProp(key, tp) =>
-        ReqProp(key, incrVars(tp, toIncr, incr))
-      case OptProp(key, tp) =>
-        OptProp(key, incrVars(tp, toIncr, incr))
-    }
 }

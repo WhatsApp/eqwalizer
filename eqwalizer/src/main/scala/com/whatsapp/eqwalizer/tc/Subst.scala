@@ -29,20 +29,12 @@ object Subst {
         OpaqueType(id, params.map(sub))
       case VarType(n) =>
         s.getOrElse(n, t)
-      case ShapeMap(props)                    => ShapeMap(props.map(substInProp(s, _)))
-      case DictMap(kTy, vTy)                  => DictMap(sub(kTy), sub(vTy))
+      case MapType(props, kTy, vTy) =>
+        MapType(props.map { case (key, prop) => (key, Prop(prop.req, sub(prop.tp))) }, sub(kTy), sub(vTy))
       case RefinedRecordType(recType, fields) => RefinedRecordType(recType, fields.map(f => f._1 -> sub(f._2)))
       case BoundedDynamicType(bound)          => BoundedDynamicType(sub(bound))
       case _ =>
         t
     }
   }
-
-  private def substInProp(s: Map[Int, Type], prop: Prop): Prop =
-    prop match {
-      case ReqProp(key, tp) =>
-        ReqProp(key, subst(s, tp))
-      case OptProp(key, tp) =>
-        OptProp(key, subst(s, tp))
-    }
 }

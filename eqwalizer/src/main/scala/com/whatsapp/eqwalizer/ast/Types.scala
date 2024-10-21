@@ -6,7 +6,10 @@
 
 package com.whatsapp.eqwalizer.ast
 
+import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Expr, Tuple}
 import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
+import com.whatsapp.eqwalizer.ast.Guards.{Test, TestAtom, TestTuple}
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object Types {
   sealed trait Type
@@ -29,17 +32,30 @@ object Types {
   case class VarType(n: Int)(val name: String) extends Type
   case class RecordType(name: String)(val module: String) extends Type
   case class RefinedRecordType(recType: RecordType, fields: Map[String, Type]) extends Type
-  case class DictMap(kType: Type, vType: Type) extends Type
-  case class ShapeMap(props: List[Prop]) extends Type
-  case object BinaryType extends Type
+  case class MapType(props: Map[Key, Prop], kType: Type, vType: Type) extends Type
 
-  sealed trait Prop {
-    val key: String
-    val tp: Type
+  object MapType {
+    def apply(props: Map[Key, Prop], kType: Type, vType: Type) = {
+      Key.fromType(kType) match {
+        case Some(key) => new MapType(props + (key -> Prop(req = false, vType)), NoneType, NoneType)
+        case None =>
+          if (kType == NoneType) new MapType(props, NoneType, NoneType)
+          else new MapType(props, kType, vType)
+      }
+    }
   }
-  case class ReqProp(key: String, tp: Type) extends Prop
-  case class OptProp(key: String, tp: Type) extends Prop
 
+  sealed trait Key
+  case class TupleKey(keys: List[Key]) extends Key {
+    override def toString: String = keys.map(_.toString).mkString("{", ", ", "}")
+  }
+  case class AtomKey(name: String) extends Key {
+    override def toString: String = name
+  }
+
+  case class Prop(req: Boolean, tp: Type)
+
+  case object BinaryType extends Type
   case object AnyType extends Type
   case object AtomType extends Type
   case object DynamicType extends Type
@@ -135,4 +151,99 @@ object Types {
       "no_return" -> NoneType,
       "nonempty_string" -> stringType,
     ) ++ builtinTypeAliases
+
+  object Key {
+    def asType(k: Key): Type = {
+      k match {
+        case TupleKey(keys) => TupleType(keys.map(asType))
+        case AtomKey(atom)  => AtomLitType(atom)
+      }
+    }
+
+    def fromType(t: Type): Option[Key] = {
+      t match {
+        case AtomLitType(atom) => Some(AtomKey(atom))
+        case TupleType(kts) =>
+          var keys: List[Key] = List()
+          for (kt <- kts) {
+            fromType(kt) match {
+              case None      => return None
+              case Some(key) => keys = keys :+ key
+            }
+          }
+          Some(TupleKey(keys))
+        case _ => None
+      }
+    }
+
+    def fromExpr(e: Expr): Option[Key] = {
+      e match {
+        case AtomLit(atom) => Some(AtomKey(atom))
+        case Tuple(exprs) =>
+          var keys: List[Key] = List()
+          for (expr <- exprs) {
+            fromExpr(expr) match {
+              case None    => return None
+              case Some(k) => keys = keys :+ k
+            }
+          }
+          Some(TupleKey(keys))
+        case _ => None
+      }
+    }
+
+    def fromTest(t: Test): Option[Key] = {
+      t match {
+        case TestAtom(atom) => Some(AtomKey(atom))
+        case TestTuple(exprs) =>
+          var keys: List[Key] = List()
+          for (expr <- exprs) {
+            fromTest(expr) match {
+              case None    => return None
+              case Some(k) => keys = keys :+ k
+            }
+          }
+          Some(TupleKey(keys))
+        case _ => None
+      }
+    }
+
+    private def parse(str: String): Key = {
+      def split(str: String): List[String] = {
+        if (str.isEmpty) return List()
+        var cur = ""
+        var inBraces = 0
+        var res: List[String] = List()
+        for (c <- str) {
+          if (c == '{') inBraces += 1
+          else if (c == '}') inBraces -= 1
+          if (c == ',' && inBraces == 0) {
+            res = cur.strip() :: res
+            cur = ""
+          } else {
+            cur = cur + c
+          }
+        }
+        res = cur.strip() :: res
+        res.reverse
+      }
+      if (str.charAt(0) == '{') {
+        val substrs = split(str.substring(1, str.length - 1))
+        TupleKey(substrs.map(parse))
+      } else {
+        AtomKey(str)
+      }
+    }
+
+    implicit val keyCodec: JsonKeyCodec[Key] = new JsonKeyCodec[Key] {
+      override def decodeKey(in: JsonReader): Key = {
+        val key = in.readKeyAsString()
+        parse(key)
+      }
+
+      override def encodeKey(k: Key, out: JsonWriter): Unit = {
+        out.writeKey(k.toString)
+      }
+    }
+  }
 }

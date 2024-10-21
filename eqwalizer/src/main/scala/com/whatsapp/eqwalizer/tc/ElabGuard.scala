@@ -33,13 +33,13 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     case "is_pid"       => PidType
     case "is_port"      => PortType
     case "is_reference" => ReferenceType
-    case "is_map"       => DictMap(AnyType, AnyType)
+    case "is_map"       => MapType(Map(), AnyType, AnyType)
     case "is_tuple"     => AnyTupleType
   }
 
   private val elabPredicateType21: PartialFunction[(String, Test), Type] = {
     case ("is_map_key", _) =>
-      DictMap(AnyType, AnyType)
+      MapType(Map(), AnyType, AnyType)
     case ("element", _) =>
       AnyTupleType
   }
@@ -182,7 +182,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         }
         envAcc
       case TestMapUpdate(map, _) =>
-        val ty = DictMap(AnyType, AnyType)
+        val ty = MapType(Map(), AnyType, AnyType)
         elabTestT(map, ty, env)
     }
   }

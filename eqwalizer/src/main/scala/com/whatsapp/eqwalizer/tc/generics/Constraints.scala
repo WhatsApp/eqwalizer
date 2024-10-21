@@ -7,6 +7,7 @@
 package com.whatsapp.eqwalizer.tc.generics
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.TypeVars
+import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousUnion, ExpectedSubtype}
 import com.whatsapp.eqwalizer.tc.generics.Variance._
@@ -229,37 +230,29 @@ class Constraints(pipelineContext: PipelineContext) {
           constrainSeq(state, leftTys.zip(rightTys), tolerateUnion)
         case (ListType(leftElemTy), ListType(rightElemTy)) =>
           constrain(state, leftElemTy, rightElemTy, tolerateUnion)
-        case (DictMap(leftKeyTy, leftValTy), DictMap(rKeyTy, rValTy)) =>
-          constrainSeq(state, List((leftKeyTy, rKeyTy), (leftValTy, rValTy)), tolerateUnion)
-        case (ShapeMap(props), DictMap(kT, vT)) =>
+        case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
           // adapted from subtype.subtype
-          val shapeDomain = subtype.join(props.map(prop => AtomLitType(prop.key)))
-          val shapeCodomain = subtype.join(props.map(_.tp))
-          constrainSeq(state, List((shapeDomain, kT), (shapeCodomain, vT)), tolerateUnion)
-        case (ShapeMap(props1), ShapeMap(props2)) =>
-          // adapted from subtype.subtype
-          val keys1 = props1.map(_.key).toSet
-          val keys2 = props2.map(_.key).toSet
-          if (!keys1.subsetOf(keys2)) failSubtype()
-          val reqKeys1 = props1.collect { case ReqProp(k, _) => k }.toSet
-          val reqKeys2 = props2.collect { case ReqProp(k, _) => k }.toSet
+          var constraints: List[(Type, Type)] = List()
+          val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
+          val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
           if (!reqKeys2.subsetOf(reqKeys1)) failSubtype()
-          val kvs2 = props2.map(prop => prop.key -> prop.tp).toMap
-          val uppersAndLowers = for {
-            prop1 <- props1
-            t1 = prop1.tp
-            t2 = kvs2(prop1.key)
-          } yield (t1, t2)
-          constrainSeq(state, uppersAndLowers, tolerateUnion)
-        case (DictMap(kT, vT), ShapeMap(props)) =>
-          val (reqProps, optProps) = props.partition {
-            case ReqProp(_, _) => true
-            case OptProp(_, _) => false
+          for ((key1, prop1) <- props1) {
+            props2.get(key1) match {
+              case Some(prop2) =>
+                constraints = (prop1.tp, prop2.tp) :: constraints
+              case None =>
+                constraints = (asType(key1), kT2) :: (prop1.tp, vT2) :: constraints
+              case _ =>
+            }
           }
-          if (reqProps.nonEmpty) failSubtype()
-          val shapeDomain = subtype.join(optProps.map(prop => AtomLitType(prop.key)))
-          val codomainConstraints = props.map(p => (vT, p.tp))
-          constrainSeq(state, (kT, shapeDomain) :: codomainConstraints, tolerateUnion)
+          val elimmedkT1 = ElimTypeVars.elimTypeVars(kT1, ElimTypeVars.Promote, toSolve ++ varsToElim)
+          for ((key2, prop2) <- props2.removedAll(props1.keySet)) {
+            if (subtype.subType(asType(key2), elimmedkT1)) {
+              constraints = (asType(key2), kT1) :: (vT1, prop2.tp) :: constraints
+            }
+          }
+          constraints = (kT1, kT2) :: (vT1, vT2) :: constraints
+          constrainSeq(state, constraints, tolerateUnion)
         case _ =>
           if (!subtype.subType(lowerBound, upperBound)) failSubtype()
           else state

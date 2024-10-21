@@ -478,7 +478,7 @@ final class Elab(pipelineContext: PipelineContext) {
         val qEnv = elabQualifiers(qualifiers, env)
         val (kType, _) = elabExpr(kTemplate, qEnv)
         val (vType, _) = elabExpr(vTemplate, qEnv)
-        (DictMap(kType, vType), env)
+        (MapType(Map(), kType, vType), env)
       case rCreate: RecordCreate =>
         elabRecordCreate(rCreate, env)
       case rUpdate: RecordUpdate =>
@@ -496,28 +496,26 @@ final class Elab(pipelineContext: PipelineContext) {
       case RecordIndex(_, _) =>
         (NumberType, env)
       case MapCreate(kvs) =>
-        val isShape = kvs.forall(_._1.isInstanceOf[AtomLit])
         var envAcc = env
-        if (isShape) {
-          val props = kvs.collect { case (AtomLit(key), value) =>
-            val (valT, env1) = elabExpr(value, envAcc)
-            envAcc = env1
-            ReqProp(key, valT)
+        val (props, kts) = kvs.partitionMap { case (kExpr, vExpr) =>
+          Key.fromExpr(kExpr) match {
+            case Some(key) =>
+              val (valT, env1) = elabExpr(vExpr, envAcc)
+              envAcc = env1
+              Left(key -> Prop(req = true, valT))
+            case None =>
+              val (keyT, env1) = elabExpr(kExpr, envAcc)
+              val (valT, env2) = elabExpr(vExpr, env1)
+              envAcc = env2
+              Right(keyT, valT)
           }
-          (ShapeMap(props), envAcc)
-        } else {
-          val (keyTs, valTs) = kvs.map { case (key, value) =>
-            val (keyT, env1) = elabExpr(key, envAcc)
-            val (valT, env2) = elabExpr(value, env1)
-            envAcc = env2
-            (keyT, valT)
-          }.unzip
-          val domain = keyTs.reduce(subtype.join)
-          val codomain = valTs.reduce(subtype.join)
-          (DictMap(domain, codomain), envAcc)
         }
+        val (keyTs, valTs) = kts.unzip
+        val domain = subtype.join(keyTs)
+        val codomain = subtype.join(valTs)
+        (MapType(props.toMap, domain, codomain), envAcc)
       case MapUpdate(map, kvs) =>
-        val (mapT, env1) = elabExprAndCheck(map, env, DictMap(AnyType, AnyType))
+        val (mapT, env1) = elabExprAndCheck(map, env, MapType(Map(), AnyType, AnyType))
         var envAcc = env1
         var resT = mapT
         for ((key, value) <- kvs) {
@@ -665,7 +663,7 @@ final class Elab(pipelineContext: PipelineContext) {
         val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
         envAcc = pEnv
       case MGenerate(gkPat, gvPat, gExpr) =>
-        val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, DictMap(AnyType, AnyType))
+        val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, MapType(Map(), AnyType, AnyType))
         val mapT = narrow.asMapType(gT)
         val kT = narrow.getKeyType(mapT)
         val vT = narrow.getValType(mapT)

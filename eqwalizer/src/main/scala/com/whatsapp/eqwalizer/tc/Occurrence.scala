@@ -71,7 +71,7 @@ object Occurrence {
   sealed trait Field
   case class TupleField(index: Int, arity: Option[Int]) extends Field
   case class RecordField(field: String, recName: String) extends Field
-  case class ShapeField(field: String) extends Field
+  case class MapField(field: Key) extends Field
   case object ListHead extends Field
   case object ListTail extends Field
 
@@ -104,7 +104,7 @@ object Occurrence {
       "is_pid" -> PidType,
       "is_port" -> PortType,
       "is_reference" -> ReferenceType,
-      "is_map" -> DictMap(AnyType, AnyType),
+      "is_map" -> MapType(Map(), AnyType, AnyType),
       "is_tuple" -> AnyTupleType,
     )
 
@@ -129,7 +129,7 @@ object Occurrence {
       Some(FunKind)
     case NilType | ListType(_) =>
       Some(ListKind)
-    case DictMap(_, _) | ShapeMap(_) =>
+    case MapType(_, _, _) =>
       Some(MapKind)
     case NumberType =>
       Some(NumberKind)
@@ -398,9 +398,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case PatMatch(pat1, pat2) =>
         aliases(x, path, pat1, env) ++ aliases(x, path, pat2, env)
       case PatMap(pats) =>
-        pats.collect { case (TestAtom(key), patR) =>
-          val pathI = path ++ List(ShapeField(key))
-          aliases(x, pathI, patR, env)
+        pats.flatMap { case (patKey, patR) =>
+          Key.fromTest(patKey).map { key =>
+            val pathI = path ++ List(MapField(key))
+            aliases(x, pathI, patR, env)
+          }
         }.flatten
       case PatCons(hpat, tpat) =>
         aliases(x, path ++ List(ListHead), hpat, env) ++ aliases(x, path ++ List(ListTail), tpat, env)
@@ -581,17 +583,19 @@ final class Occurrence(pipelineContext: PipelineContext) {
         }
       case PatMap(pats) =>
         val obj = mkObj(x, path)
-        val posThis = Pos(obj, DictMap(AnyType, AnyType))
-        val negThis = Neg(obj, DictMap(AnyType, AnyType))
-        val fields = pats.map {
-          case (TestAtom(field), pat) => (field, pat)
-          case _                      => return Some(posThis, Unknown)
+        val posThis = Pos(obj, MapType(Map(), AnyType, AnyType))
+        val negThis = Neg(obj, MapType(Map(), AnyType, AnyType))
+        val fields = pats.map { case (patK, patV) =>
+          Key.fromTest(patK) match {
+            case Some(key) => (key, patV)
+            case None      => return Some(posThis, Unknown)
+          }
         }
         val (posThat, negThat) = fields.flatMap { case (field, pat) =>
-          patProps(x, path :+ ShapeField(field), pat, env)
+          patProps(x, path :+ MapField(field), pat, env)
         }.unzip
         val (posFields, negFields) = fields.map { case (field, _) =>
-          val objField = mkObj(x, path :+ ShapeField(field))
+          val objField = mkObj(x, path :+ MapField(field))
           (Pos(objField, AnyType), Neg(objField, AnyType))
         }.unzip
         val pos = and(posThis :: posFields ::: posThat)
@@ -839,21 +843,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
     else
       TupleType(elems)
 
-  private def ShapeMap_*(props: List[Types.Prop]): Type = {
-    val hasPropEmpty =
-      props.exists {
-        case ReqProp(_, tp) => subtype.isNoneType(tp)
-        case _              => false
-      }
-    val propsNonEmpty =
-      props.filter {
-        case OptProp(_, tp) if subtype.isNoneType(tp) => false
-        case _                                        => true
-      }
+  private def MapType_*(props: Map[Types.Key, Types.Prop], kTy: Type, vTy: Type): Type = {
+    val hasPropEmpty = props.values.exists { case Prop(req, tp) => req && subtype.isNoneType(tp) }
+    val propsNonEmpty = props.filter { case (_, Prop(req, tp)) => req || !subtype.isNoneType(tp) }
     if (hasPropEmpty)
       NoneType
     else
-      ShapeMap(propsNonEmpty)
+      MapType(propsNonEmpty, kTy, vTy)
   }
 
   private def refineRecord(t: Type, field: String, refined: Type): Type = {
@@ -910,22 +906,19 @@ final class Occurrence(pipelineContext: PipelineContext) {
             case None => rt
           }
         }
-      case (ShapeMap(props), ShapeField(field) :: path) =>
-        if (props.exists(_.key == field)) {
-          val refinedProps = props.map {
-            case ReqProp(key, tp) if key == field =>
-              ReqProp(key, update(tp, path, pol, s))
-            case OptProp(key, tp) if key == field =>
-              if (pol == +) ReqProp(key, update(tp, path, pol, s))
-              else OptProp(key, update(tp, path, pol, s))
-            case p => p
+      case (MapType(props, kTy, vTy), MapField(field) :: path) =>
+        if (props.contains(field) || (subtype.subType(Key.asType(field), kTy) && pol == +)) {
+          val refinedProps = props.updatedWith(field) {
+            case Some(Prop(req, tp)) => Some(Prop((pol == +) || req, update(tp, path, pol, s)))
+            case None                => Some(Prop(req = true, update(vTy, path, pol, s)))
           }
-          ShapeMap_*(refinedProps)
-        } else
+          MapType_*(refinedProps, kTy, vTy)
+        } else {
           pol match {
             case + => NoneType
             case - => t
           }
+        }
       case (ListType(lt), ListHead :: path) =>
         if (subtype.isNoneType(update(lt, path, pol, s)))
           NoneType
@@ -1068,14 +1061,12 @@ final class Occurrence(pipelineContext: PipelineContext) {
             .map(typePathRef(_, path1))
             .getOrElse(AnyType)
         }
-      case (ShapeMap(props), ShapeField(field) :: path1) =>
-        props
-          .find(_.key == field)
+      case (MapType(props, _, vTy), MapField(field) :: path1) =>
+        val ty = props
+          .get(field)
           .map(_.tp)
-          .map(typePathRef(_, path1))
-          .getOrElse(AnyType)
-      case (DictMap(_, vTy), ShapeField(_) :: path1) =>
-        typePathRef(vTy, path1)
+          .getOrElse(vTy)
+        typePathRef(ty, path1)
       case (RemoteType(rid, args), path) =>
         val body = util.getTypeDeclBody(rid, args)
         typePathRef(body, path)

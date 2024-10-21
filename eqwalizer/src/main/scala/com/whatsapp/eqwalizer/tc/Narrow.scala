@@ -71,22 +71,26 @@ class Narrow(pipelineContext: PipelineContext) {
           }
         case (AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
           AnyArityFunType(meetAux(resTy1, resTy2, seen))
-        case (DictMap(kT1, vT1), DictMap(kT2, vT2)) =>
-          DictMap(meetAux(kT1, kT2, seen), meetAux(vT1, vT2, seen))
-        case (ShapeMap(props1), ShapeMap(props2)) =>
-          val keys1 = props1.map(_.key).toSet
-          val keys2 = props2.map(_.key).toSet
-          if (keys1 != keys2) return NoneType
-          val reqKeys1 = props1.collect { case ReqProp(k, _) => k }.toSet
-          val reqKeys2 = props2.collect { case ReqProp(k, _) => k }.toSet
-          val allReqKeys = reqKeys1.union(reqKeys2)
-          val allOptKeys = keys1.diff(allReqKeys)
-          val kvs1 = props1.map(prop => prop.key -> prop.tp).toMap
-          val kvs2 = props2.map(prop => prop.key -> prop.tp).toMap
-          val reqProps = allReqKeys.toList.sorted.map(k => ReqProp(k, meetAux(kvs1(k), kvs2(k), seen)))
-          val optProps = allOptKeys.toList.sorted.map(k => OptProp(k, meetAux(kvs1(k), kvs2(k), seen)))
-          if (promoteNone && reqProps.exists(p => subtype.isNoneType(p.tp))) NoneType
-          else ShapeMap(reqProps ++ optProps)
+        case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
+          var props: Map[Key, Prop] = Map()
+          val keys = props1.keySet ++ props2.keySet
+          for (key <- keys) {
+            val prop1 = props1.get(key)
+            val prop2 = props2.get(key)
+            val keyT = Key.asType(key)
+            if ((prop1.isEmpty && !subtype.subType(keyT, kT1)) || (prop2.isEmpty && !subtype.subType(keyT, kT2))) {
+              return NoneType
+            }
+            val propT1 = prop1.map(_.tp).getOrElse(kT1)
+            val propT2 = prop2.map(_.tp).getOrElse(kT2)
+            val req = prop1.exists(_.req) || prop2.exists(_.req)
+            val meetType = meetAux(propT1, propT2, seen)
+            if (promoteNone && req && subtype.isNoneType(meetType)) {
+              return NoneType
+            }
+            props += (key -> Prop(req, meetType))
+          }
+          MapType(props, meetAux(kT1, kT2, seen), meetAux(vT1, vT2, seen))
         case (rt: RefinedRecordType, t: RecordType) if t == rt.recType => rt
         case (t: RecordType, rt: RefinedRecordType) if t == rt.recType => rt
         case (rt1: RefinedRecordType, rt2: RefinedRecordType) if rt1.recType == rt2.recType =>
@@ -100,8 +104,6 @@ class Narrow(pipelineContext: PipelineContext) {
           else RefinedRecordType(rt1.recType, fieldsMeet)
 
         // "Non-refinable" types. - Using the main type
-        case (DictMap(_, _), ShapeMap(_))           => t1
-        case (ShapeMap(_), DictMap(_, _))           => t1
         case (VarType(_), _)                        => t1
         case (_, VarType(_))                        => t1
         case (AnyFunType, FunType(_, _, _))         => t1
@@ -125,12 +127,14 @@ class Narrow(pipelineContext: PipelineContext) {
 
   private def dynamicMap(t: Type): Type =
     t match {
-      case DictMap(kType, vType) => DictMap(BoundedDynamicType(kType), BoundedDynamicType(vType))
-      case ShapeMap(props) =>
-        ShapeMap(props.map {
-          case OptProp(key, tp) => OptProp(key, BoundedDynamicType(tp))
-          case ReqProp(key, tp) => ReqProp(key, BoundedDynamicType(tp))
-        })
+      case MapType(props, kType, vType) =>
+        MapType(
+          props.map { case (key, Prop(req, tp)) =>
+            (key, Prop(req, BoundedDynamicType(tp)))
+          },
+          BoundedDynamicType(kType),
+          BoundedDynamicType(vType),
+        )
       case UnionType(tys) => UnionType(tys.map(dynamicMap))
       case NoneType       => NoneType
       case _              => throw new IllegalStateException()
@@ -139,66 +143,61 @@ class Narrow(pipelineContext: PipelineContext) {
   def asMapType(t: Type): Type =
     t match {
       case DynamicType =>
-        DictMap(DynamicType, DynamicType)
+        MapType(Map(), DynamicType, DynamicType)
       case BoundedDynamicType(bound) =>
         dynamicMap(asMapType(bound))
       case AnyType | VarType(_) =>
-        DictMap(AnyType, AnyType)
-      case dictMap: DictMap =>
-        dictMap
-      case shapeMap: ShapeMap =>
-        shapeMap
+        MapType(Map(), AnyType, AnyType)
+      case mapType: MapType =>
+        mapType
       case UnionType(ts) =>
         subtype.join(ts.map(asMapType))
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
         asMapType(body)
       case OpaqueType(rid, _) =>
-        DictMap(AnyType, AnyType)
+        MapType(Map(), AnyType, AnyType)
       case _ => NoneType
     }
 
   def getKeyType(t: Type): Type =
     t match {
-      case DictMap(kt, _) => kt
-      case ShapeMap(Nil)  => NoneType
-      case ShapeMap(kvs)  => UnionType(Set(kvs.map(kv => AtomLitType(kv.key)): _*))
-      case UnionType(ts)  => subtype.join(ts.map(getKeyType))
-      case NoneType       => NoneType
-      case _              => throw new IllegalStateException()
+      case MapType(props, kType, _) if props.isEmpty => kType
+      case MapType(props, kType, _)                  => subtype.join(kType, UnionType(props.keySet.map(Key.asType)))
+      case UnionType(ts)                             => subtype.join(ts.map(getKeyType))
+      case NoneType                                  => NoneType
+      case _                                         => throw new IllegalStateException()
     }
 
   def getValType(t: Type): Type =
     t match {
-      case DictMap(_, vt)  => vt
-      case ShapeMap(props) => subtype.join(props.map(_.tp))
-      case UnionType(ts)   => subtype.join(ts.map(getValType))
-      case NoneType        => NoneType
-      case _               => throw new IllegalStateException()
+      case MapType(props, _, vType) => subtype.join(vType, props.values.map(_.tp))
+      case UnionType(ts)            => subtype.join(ts.map(getValType))
+      case NoneType                 => NoneType
+      case _                        => throw new IllegalStateException()
     }
 
-  def getValType(key: String, t: Type): Type =
+  def getValType(key: Key, t: Type): Type =
     t match {
-      case DictMap(_, vt)  => vt
-      case ShapeMap(props) => props.find(_.key == key).map(_.tp).getOrElse(NoneType)
-      case UnionType(ts)   => subtype.join(ts.map(getValType(key, _)))
-      case NoneType        => NoneType
-      case _               => throw new IllegalStateException()
+      case MapType(props, _, vType) => props.get(key).map(_.tp).getOrElse(vType)
+      case UnionType(ts)            => subtype.join(ts.map(getValType(key, _)))
+      case NoneType                 => NoneType
+      case _                        => throw new IllegalStateException()
     }
 
-  def withRequiredProp(k: String, t: Type): Type =
+  def withRequiredProp(k: Key, t: Type): Type =
     t match {
-      case DynamicType | DictMap(_, _) =>
+      case DynamicType =>
         t
       case BoundedDynamicType(bound) =>
         BoundedDynamicType(withRequiredProp(k, bound))
-      case ShapeMap(props) if props.exists(_.key == k) =>
-        ShapeMap(props.map {
-          case OptProp(`k`, v) =>
-            ReqProp(k, v)
-          case prop =>
-            prop
-        })
+      case MapType(props, kType, vType) =>
+        props.get(k) match {
+          case Some(Prop(_, tp)) => MapType(props.updated(k, Prop(req = true, tp)), kType, vType)
+          case None if subtype.subType(Key.asType(k), kType) =>
+            MapType(props.updated(k, Prop(req = true, vType)), kType, vType)
+          case _ => NoneType
+        }
       case UnionType(ts) =>
         subtype.join(ts.map(withRequiredProp(k, _)))
       case _ =>
@@ -441,34 +440,21 @@ class Narrow(pipelineContext: PipelineContext) {
       TupleType(elemTys)
     }
 
-  private def adjustShapeMap(t: ShapeMap, keyT: Type, valT: Type): Type =
-    keyT match {
-      case AtomLitType(key) =>
-        val oldProps = t.props.filterNot(_.key == key)
-        val newProps = ReqProp(key, valT) :: oldProps
-        ShapeMap(newProps)
-      case _ =>
-        if (t.props.isEmpty)
-          DictMap(keyT, valT)
-        else
-          DictMap(subtype.join(AtomType, keyT), t.props.map(_.tp).fold(valT)(subtype.join))
-    }
-
-  private def adjustDictMap(dictMap: DictMap, keyT: Type, valT: Type): Type =
-    DictMap(subtype.join(dictMap.kType, keyT), subtype.join(dictMap.vType, valT))
-
   def adjustMapType(mapT: Type, keyT: Type, valT: Type): Type =
     mapT match {
       case DynamicType =>
         DynamicType
       case BoundedDynamicType(bound) =>
         BoundedDynamicType(adjustMapType(bound, keyT, valT))
-      case shapeMap: ShapeMap =>
-        adjustShapeMap(shapeMap, keyT, valT)
-      case DictMap(kT, vT) if subtype.isDynamicType(kT) && subtype.isDynamicType(vT) =>
-        DictMap(kT, vT)
-      case dictMap: DictMap =>
-        adjustDictMap(dictMap, keyT, valT)
+      case mapType: MapType =>
+        Key.fromType(keyT) match {
+          case Some(key) =>
+            MapType(mapType.props.updated(key, Prop(req = true, valT)), mapType.kType, mapType.vType)
+          case None if subtype.isDynamicType(mapType.kType) && subtype.isDynamicType(mapType.vType) =>
+            mapType
+          case None =>
+            MapType(mapType.props, subtype.join(mapType.kType, keyT), subtype.join(mapType.vType, valT))
+        }
       case UnionType(elems) =>
         subtype.join(elems.map(adjustMapType(_, keyT, valT)))
       case RemoteType(rid, args) =>
@@ -486,13 +472,12 @@ class Narrow(pipelineContext: PipelineContext) {
         DynamicType
       case BoundedDynamicType(bound) =>
         BoundedDynamicType(setAllFieldsOptional(bound, newValTy))
-      case shapeMap: ShapeMap =>
-        ShapeMap(shapeMap.props.map {
-          case ReqProp(key, tp) => OptProp(key, newValTy.getOrElse(tp))
-          case OptProp(key, tp) => OptProp(key, newValTy.getOrElse(tp))
-        })
-      case dictMap: DictMap =>
-        DictMap(dictMap.kType, newValTy.getOrElse(dictMap.vType))
+      case mapType: MapType =>
+        MapType(
+          mapType.props.map { case (key, Prop(_, tp)) => (key, Prop(false, newValTy.getOrElse(tp))) },
+          mapType.kType,
+          newValTy.getOrElse(mapType.vType),
+        )
       case UnionType(elems) =>
         val allMaps = elems.map(setAllFieldsOptional(_, newValTy))
         subtype.join(allMaps)
@@ -534,59 +519,47 @@ class Narrow(pipelineContext: PipelineContext) {
   }
 
   // Recursion is sound since we don't unfold under constructors
-  def asAtomLits(t: Type): Option[Set[String]] =
+  def asKeys(t: Type): Option[Set[Key]] =
     t match {
-      case AtomLitType(s) => Some(Set(s))
       case BoundedDynamicType(bound) =>
-        asAtomLits(bound)
+        asKeys(bound)
       case UnionType(ts) =>
-        ts.foldLeft[Option[Set[String]]](Some(Set())) { (acc, ty) =>
-          acc.flatMap(atoms => asAtomLits(ty).map(atoms2 => atoms ++ atoms2))
+        ts.foldLeft[Option[Set[Key]]](Some(Set())) { (acc, ty) =>
+          acc.flatMap(keys => asKeys(ty).map(keys2 => keys ++ keys2))
         }
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
-        asAtomLits(body)
-      case _ => None
+        asKeys(body)
+      case _ => Key.fromType(t).map(Set(_))
     }
 
-  private def mergeShapes(s1: ShapeMap, s2: ShapeMap, inOrder: Boolean): ShapeMap = {
-    ShapeMap {
-      (s1.props ++ s2.props)
-        .groupBy(_.key)
-        .values
-        .map {
-          // prop is only defined in one of the maps
-          case List(p) if inOrder => p
-          case List(p)            => OptProp(p.key, p.tp)
-          // prop is optional on both sides
-          case List(OptProp(key, tp1), OptProp(_, tp2)) => OptProp(key, subtype.join(tp1, tp2))
-          // prop is required on both sides
-          case List(ReqProp(key, tp1), ReqProp(_, tp2)) if inOrder => ReqProp(key, tp2)
-          case List(ReqProp(key, tp1), ReqProp(_, tp2))            => ReqProp(key, subtype.join(tp1, tp2))
-          // prop is required on one side and optional on the other
-          case List(OptProp(key, tp1), ReqProp(_, tp2)) if inOrder => ReqProp(key, tp2)
-          case List(ReqProp(key, tp1), OptProp(_, tp2)) if inOrder => ReqProp(key, subtype.join(tp1, tp2))
-          case List(p1, p2)                                        => OptProp(p1.key, subtype.join(p1.tp, p2.tp))
-
-          case _ => throw new IllegalStateException()
-        }
-        .toList
-    }
+  private def mergeMaps(s1: MapType, s2: MapType, inOrder: Boolean): MapType = {
+    MapType(
+      (s1.props.keySet ++ s2.props.keySet).map { key =>
+        val prop1 = s1.props.getOrElse(key, Prop(req = false, NoneType))
+        val prop2 = s2.props.getOrElse(key, Prop(req = false, NoneType))
+        val req = (inOrder && (prop1.req || prop2.req)) || (prop1.req && prop2.req)
+        val tp = if (inOrder && prop2.req) prop2.tp else subtype.join(prop1.tp, prop2.tp)
+        (key -> Prop(req, tp))
+      }.toMap,
+      subtype.join(s1.kType, s2.kType),
+      subtype.join(s1.vType, s2.vType),
+    )
   }
 
-  def joinAndMergeShapes(tys: Iterable[Type], inOrder: Boolean = false): Type = {
-    val (shapes, notShapes) = tys.partition {
-      case s: ShapeMap => true
-      case _           => false
+  def joinAndMergeMaps(tys: Iterable[Type], inOrder: Boolean = false): Type = {
+    val (maps, notMaps) = tys.partition {
+      case m: MapType => true
+      case _          => false
     }
-    val joinedNotShapes = subtype.join(notShapes)
-    val shapesCoerced = shapes.collect { case s: ShapeMap => s }
-    if (shapesCoerced.isEmpty) {
-      joinedNotShapes
+    val joinedNotMaps = subtype.join(notMaps)
+    val mapsCoerced = maps.collect { case s: MapType => s }
+    if (mapsCoerced.isEmpty) {
+      joinedNotMaps
     } else {
       subtype.join(
-        shapesCoerced.tail.foldLeft(shapesCoerced.head)((acc, shape) => mergeShapes(acc, shape, inOrder)),
-        joinedNotShapes,
+        mapsCoerced.tail.foldLeft(mapsCoerced.head)((acc, map) => mergeMaps(acc, map, inOrder)),
+        joinedNotMaps,
       )
     }
   }

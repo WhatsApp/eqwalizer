@@ -144,7 +144,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val (cs3, subst3) = typeInfo.withoutTypeCollection {
       val (cs2, subst2) = inferenceRound(cs1, subst1)
       val subst2Merged = subst2.map {
-        case (v, UnionType(tys)) => (v, narrow.joinAndMergeShapes(tys))
+        case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
         case (v, ty)             => (v, ty)
       }
       inferenceRound(cs2, subst2Merged)

@@ -52,22 +52,13 @@ object ElimTypeVars {
         modeToType(mode)
       case vt: VarType =>
         vt
-      case DictMap(kt, vt) =>
-        DictMap(elim(kt), elim(vt))
-      case ShapeMap(props) =>
-        ShapeMap(props.map(elimVarsInProp(_, mode, vars)))
+      case MapType(props, kt, vt) =>
+        MapType(props.map { case (key, Prop(req, tp)) => (key, Prop(req, elim(tp))) }, elim(kt), elim(vt))
       case BoundedDynamicType(bound) =>
         BoundedDynamicType(elim(bound))
       case _ =>
         ty
     }
-  }
-
-  private def elimVarsInProp(prop: Prop, mode: VarElimMode, vars: Set[Int])(implicit
-      pipelineContext: PipelineContext
-  ): Prop = prop match {
-    case ReqProp(key, ty) => ReqProp(key, elimTypeVars(ty, mode, vars))
-    case OptProp(key, ty) => OptProp(key, elimTypeVars(ty, mode, vars))
   }
 
   private def modeToType(mode: VarElimMode): Type = mode match {
