@@ -9,7 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
 import com.whatsapp.eqwalizer.ast.Forms.OverloadedFunSpec
 import com.whatsapp.eqwalizer.ast.RemoteId
-import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType, NoneType, Type}
+import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType, Type}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.NoSpecialType
 
 class ElabApplyOverloaded(pipelineContext: PipelineContext) {
@@ -26,7 +26,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   def elabOverloaded(expr: Expr, remoteId: RemoteId, args: List[Expr], env: Env): (Type, Env) = {
     val depFunSpec = util.getOverloadedSpec(remoteId).get
     val (argTys, env1) = elab.elabExprs(args, env)
-    selectTypes(depFunSpec, argTys) match {
+    selectFunTypes(depFunSpec, argTys) match {
       case List(ft: FunType) =>
         val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
         (resTy, env1)
@@ -55,11 +55,11 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
       None
   }
 
-  private def mightOverlap(t1: Type, t2: Type): Boolean = {
+  private def mayOverlap(t1: Type, t2: Type): Boolean = {
     val approxMeet = narrow.meet(t1, t2)
-    !subtype.subType(approxMeet, NoneType)
+    !subtype.isNoneType(approxMeet)
   }
 
-  private def selectTypes(depFunSpec: OverloadedFunSpec, argTys: List[Type]): List[FunType] =
-    depFunSpec.tys.filter(ft => argTys.lazyZip(ft.argTys).forall(mightOverlap))
+  private def selectFunTypes(depFunSpec: OverloadedFunSpec, argTys: List[Type]): List[FunType] =
+    depFunSpec.tys.filter(ft => argTys.lazyZip(ft.argTys).forall(mayOverlap))
 }
