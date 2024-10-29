@@ -39,6 +39,7 @@ package object eqwalizer {
       errorDepth: Int,
       ignoredOverloadedSpec: Boolean,
       overloadedSpecDomainCheck: Boolean,
+      reportDynamicLambdas: Boolean,
   )
 
   lazy val config: Config = {
@@ -56,6 +57,7 @@ package object eqwalizer {
       errorDepth = config.getInt("error_depth"),
       ignoredOverloadedSpec = config.getBoolean("ignored_overloaded_spec"),
       overloadedSpecDomainCheck = config.getBoolean("overloaded_spec_domain_check"),
+      reportDynamicLambdas = config.getBoolean("report_dynamic_lambdas"),
     )
   }
 }

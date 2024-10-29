@@ -71,5 +71,6 @@ package object tc {
     val customMapsMerge: Boolean = config.customMapsMerge
     val ignoredOverloadedSpec: Boolean = config.ignoredOverloadedSpec
     val overloadedSpecDomainCheck: Boolean = config.overloadedSpecDomainCheck
+    val reportDynamicLambdas: Boolean = config.reportDynamicLambdas
   }
 }

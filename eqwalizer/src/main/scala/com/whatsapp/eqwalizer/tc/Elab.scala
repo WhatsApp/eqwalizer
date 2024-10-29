@@ -159,6 +159,9 @@ final class Elab(pipelineContext: PipelineContext) {
         l.name match {
           case Some(name) =>
             val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), DynamicType)
+            if (arity > 0 && pipelineCtx.reportDynamicLambdas && typeInfo.isCollect) {
+              diagnosticsInfo.add(DynamicLambda(l.pos))
+            }
             val env2 = env.updated(name, funType)
             check.checkExpr(l, funType, env2)
             (DynamicType, env1)
@@ -254,6 +257,9 @@ final class Elab(pipelineContext: PipelineContext) {
           (FunType(Nil, Nil, resTy), env)
         } else {
           typeInfo.processLambda {
+            if (pipelineCtx.reportDynamicLambdas && typeInfo.isCollect) {
+              diagnosticsInfo.add(DynamicLambda(lambda.pos))
+            }
             check.checkExpr(lambda, funType, env1)
           }
           (funType, env)
@@ -313,6 +319,9 @@ final class Elab(pipelineContext: PipelineContext) {
               env
           }
         check.checkExpr(l, gradualFunType, env1)
+        if (arity > 0 && pipelineCtx.reportDynamicLambdas && typeInfo.isCollect) {
+          diagnosticsInfo.add(DynamicLambda(l.pos))
+        }
         val (patTy, patEnv) = elabPat.elabPat(mPat, gradualFunType, env)
         (patTy, patEnv)
       case Match(Pats.PatAtom("true"), mExp) if Filters.asTest(mExp).isDefined =>

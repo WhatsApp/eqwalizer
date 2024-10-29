@@ -49,6 +49,11 @@ object TcDiagnostics {
     def errorName = "ignored_overloaded_spec"
     override def erroneousExpr: Option[Expr] = None
   }
+  case class DynamicLambda(pos: Pos) extends TypeError {
+    override val msg: String = s"Lambda without context: parameters are dynamic()"
+    def errorName = "dynamic_lambda"
+    override def erroneousExpr: Option[Expr] = None
+  }
   case class LambdaArityMismatch(pos: Pos, expr: Expr, lambdaArity: Int, argsArity: Int) extends TypeError {
     override val msg: String = s"fun with arity $lambdaArity used as fun with $argsArity arguments"
     def errorName = "fun_arity_mismatch"
