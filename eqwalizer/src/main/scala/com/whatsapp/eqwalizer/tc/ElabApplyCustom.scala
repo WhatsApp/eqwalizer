@@ -23,6 +23,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val util = pipelineContext.util
   private lazy val occurrence = pipelineCtx.occurrence
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
+  private lazy val typeInfo = pipelineCtx.typeInfo
   implicit val pipelineCtx = pipelineContext
 
   def isCustom(remoteId: RemoteId): Boolean =
@@ -74,7 +75,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
   }
 
   def elabCustom(remoteId: RemoteId, args: List[Expr], env: Env, callPos: Pos): (Type, Env) = {
-    val (argTys, env1) = elab.elabExprs(args, env)
+    val (argTys, env1) = typeInfo.withoutLambdaTypeCollection { elab.elabExprs(args, env) }
     remoteId match {
       case fqn @ RemoteId("file", "open", 2) =>
         val ft = util.getFunType(fqn)
