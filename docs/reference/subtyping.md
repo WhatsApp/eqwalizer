@@ -93,12 +93,12 @@ on the left hand side of a function type in a type alias. For example, the type
 since it is not covariant in `X`.
 
 
-### Shapes and dictionaries
+### Maps
 
-In eqWAlizer, the fields of a shape must match the fields specified in its type, with some
+In eqWAlizer, the fields of a map must match the fields specified in its type, with some
 exceptions regarding optional fields. For example, the following function
-does not type-check, since the shape `M` has two fields `a` and `b`, and we expect
-the function to return a shape with only a single field `a`:
+does not type-check, since the map `M` has two fields `a` and `b`, and we expect
+the function to return a map with only a single field `a`:
 ```erlang
 -spec forget_key(#{a := term(), b := number()}) -> #{a := term()}.
 forget_key(M) -> M.
@@ -115,12 +115,11 @@ function type-checks:
 maybe_keys(M) -> M.
 ```
 
-Shapes are automatically upcast to dictionaries when needed, or when eqWAlizer
-is unable to deduce precise enough information. For example, given a shape `M`
-`#S{a := number()}`, if one writes `maps:put(A, 42, M)` where `A` is of type
-`atom()` but the precise atom cannot be known, the result will be a dictionary
-of type `#D{atom() => number()}`.
-
-This also means that shapes can be used when dictionaries are expected. For
-example, a shape of type `#S{a := integer(), b := float()}` can be used as
-a dictionary of type `#D{atom() => number()}`.
+Is is also possible to "forget" any number of keys by introducing a default association
+containing them:
+```erlang
+-spec forget_keys(#{a := term(), b := atom(), c => number()}) -> #{a := term(), atom() => atom() | number()}.
+forget_keys(M) -> M.
+```
+Here, the default association `atom() => atom() | number()` supersedes both associations `b := atom()`
+and `c => number()`, making the types compatible.

@@ -21,45 +21,34 @@ All numeric types (`integer()`, `float()`, integer ranges, `byte()`, etc)
 are all converted into type `number()` before type-checking.
 
 
-### Maps: shapes and dictionaries
+### Maps
 
-To make eqWAlizer more expressive, Erlang maps are separated into two
-categories: shapes and dictionaries.
+Map types in eqWAlizer contain two parts: a set of associations whose keys are
+statically-defined singleton types, and a default association. Both are optional:
+a map type can contain one or the other, both, or none (in which case it will just be `#{}`).
 
-#### Shapes
+The first part is composed of keys that are statically-defined atoms or nested tuples
+of such atoms. For example, the atom `a`, and the tuple `{a, {b, c}}` are such keys.
+Corresponding associations can be marked as optional `=>` or mandatory `:=`, for example,
+`#{a => atom(), {a, {b, c}} := binary()}`.
 
-Shapes are maps whose keys are all explicitly defined atoms. For example,
-the type `-type my_map :: #{a => term(), b := number()}` is interpreted by eqWAlizer
-as the type of shapes with an optional association `a => term()` and a
-mandatory association `b := number()`. To emphasize the fact that it is
-understood as a shape, eqWAlizer will report this type as
-`#S{a => term(), b := number()}`.
-
-EqWAlizer attempts to track the type of shapes as precisely as possible on a
-best-effort basis, with several OTP functions having a custom implementation
-in eqWAlizer to produce more accurate types. For example, given a shape `M` of
-type `my_map` above, `maps:put(c, 42, M)` will return a shape of type
-`#S{a => term(), b := number(), c := number()}`.
-
-
-#### Dictionaries
-
-A map whose keys are not all explicitly defined atoms is a dictionary.
-If eqWAlizer is not able to precisely deduce the atoms associated to the
-keys of a map, then it attempts to understand it as a dictionary.
-A dictionary in eqWAlizer is a map containing exactly one optional association,
-from a type to another type, such as `#D{atom() => number()}` for the type
-of dictionaries mapping atoms to numbers. EqWAlizer differentiates dictionaries
-from shapes by printing them using `#D` instead of `#S`.
+The second part is the so-called "default association", which is necessarily marked as
+optional, and can contain any key/value combination, e.g. `#{atom() => binary()}`.
+For complexity reasons and to preserve good signal, only one such association is allowed
+per map type. The default association will have the least precedence when understanding
+a map type. For example, the type `#{a => integer(), atom() => binary()}` stands for
+maps that optionally associate the atom `a` to an integer, and any other atom to a
+binary.
 
 Note that the Erlang syntax allows for some ambiguous map types to be defined.
 For example, it is possible to define maps with mandatory associations such as
 `#{atom() := number()}`, in which case it is not clear whether such a map
 must contain a mapping *for every* atomic key, or *at least one* mapping with
-an atomic key. Similarly, one can define heterogeneous maps such as
-`#{a => binary(), atom() => atom()}`, in which case it is not clear what can
-be stated about a map such as `#{a => ok}`. To avoid such questions, eqWAlizer
-interprets all such maps as the dictionary `#D{dynamic() => dynamic()}`.
+an atomic key. Similarly, one can define maps with multiple overlapping default
+associations `#{term() => binary(), atom() => atom()}`, in which case the precedence
+of associations is unclear. To avoid such questions, eqWAlizer
+interprets all such maps as the map type `#{dynamic() => dynamic()}`, issuing
+an error in the process.
 
 
 ### List types

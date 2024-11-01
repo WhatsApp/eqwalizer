@@ -108,29 +108,6 @@ when a function is called with the wrong argument type:
 ```
 
 
-#### Shapes and maps
-
-Another kind of type error occurs when a dictionary map is used where a
-shape map is expected:
-
-```Erlang
--spec test_neg(atom()) -> #{a := v}.
-    test_neg(Atom) -> #{Atom => v}.
-
-% #{..}.
-% Expression has type:   dict map #D{atom() => v}
-% Context expected type: shape map #S{'a' := v}
-```
-
-In this case, either the return type must be modified, or the argument must be
-pattern matched to ensure that `Atom = a`.
-
-For best practices for writing specs, see writing specs.
-For more information about the type system, including dynamic(), term(),
-and shapes, see [Syntax of types and specs in eqWAlizer](./types.md)
-and [Subtyping in eqWAlizer](./subtyping.md).
-
-
 ### not_enough_info_to_branch
 
 This error happens when there is not enough information to know which sub-spec
@@ -170,52 +147,6 @@ test_neg() ->
 
 % fun. fun with arity 0 used as fun with 3 arguments
 ```
-
-
-### fun_in_overload_arg
-
-A fun cannot be used as an argument to an overloaded function. This restriction
-enables eqWAlizer to have predictable behavior for users when type-checking the
-application and calculating which overloaded sub-spec to use.
-
-Example:
-```Erlang
--spec test_bar1() -> b.
-test_bar1() ->
-    Res = bar(fun(a) -> a end),
-    Res.
-
-% bar(fun). Lambdas in overloaded calls are not supported
-```
-
-
-### undefined_key
-
-This error occurs when using `:=` to update a key in a map, but the map is not
-guaranteed to have the key.
-
-Example using a shape map:
-```Erlang
--spec test_neg(#{a := v }) -> nok.
-test_neg(M) ->
-    M#{z := v}, % Error
-    nok.
-
-% M. Undef key `z`. Type: #S{a := 'v'}
-```
-
-- To fix this error when the property is required, add the required property to the spec: #{a := v, z:= v}
-- To fix this error when the property is optional, use an optional property update: M#{z => v}
-
-Example using a dict map:
-```Erlang
--spec test_neg(#{atom() => v }) -> nok.
-test_neg(M) ->
-    M#{z := v}, % Error
-    nok.
-```
-
-In dict maps, all properties are optional. Always use optional property updates with dict maps: M#{z => v}
 
 
 ### undefined_field
@@ -419,7 +350,10 @@ or write the type directly, without using constraint syntax:
 
 ### bad_map_key
 
-This error indicates that a property of a map type is marked as required (`:=`)
+This error indicates that a property of a map type is invalid, which can occur for
+two reasons.
+
+First, a property may be marked as required (`:=`)
 in a place where only an optional property would make sense (`=>`). For example,
 the following code says that `atom()` is required. But code calling the function
 cannot know which atom is required, so the information in the spec is not
@@ -433,10 +367,22 @@ actionable:
 % Bad map key
 ```
 
-The fix is to either:
+Second, the map may contain several "default" associations, i.e., associations
+that are not singleton types (such as atoms and tuples of atoms). An example is the
+following:
 
-- specify an optional property instead of an optional property: `atom() => pid()`;
-- use a specific atom, which would make this map a shape map, for which required keys are allowed: `#{pid := pid()}`.
+```Erlang
+-spec test(_) -> #{
+    atom() => pid(),
+    integer() => binary()       % Error
+}.
+
+% Bad map key
+```
+
+While it may be sound in some examples such as the one above, in the general case,
+the default keys (here `atom()` and `integer()`) may overlap, leading to confusing
+signal. As such, only one default association is allowed per map.
 
 
 ### dyn_remote_fun
