@@ -77,11 +77,14 @@ object InvalidDiagnostics {
   }
   case class BadMapKey(pos: Pos, required: Boolean) extends Invalid {
     val msg: String = {
-      if (required) {
-        s"Required map key should always be composed of statically defined atoms or tuples."
-      } else {
-        s"Only one default association per map is allowed, all other keys should be composed of statically defined atoms or tuples."
+      val reason: String = {
+        if (required) {
+          s"Required map key should always be composed of statically defined atoms or tuples."
+        } else {
+          s"Only one default association per map is allowed, all other keys should be composed of statically defined atoms or tuples."
+        }
       }
+      s"Map type will be approximated to #{dynamic() => dynamic()}, suppressing potential errors.\n${reason}"
     }
     def errorName = "bad_map_key"
   }
