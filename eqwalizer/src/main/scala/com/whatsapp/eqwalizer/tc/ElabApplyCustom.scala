@@ -352,19 +352,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             (subtype.join(valTy, defaultValTy), env1)
         }
 
-      case fqn @ RemoteId("maps", "put", 3) =>
-        val List(key, _, map) = args
-        key match {
-          case AtomLit(keyAtom) =>
-            val List(_, valTy, mapTy) = argTys
-            val mapCoercedTy = coerce(map, mapTy, anyMapTy)
-            val resTy = narrow.adjustMapType(mapCoercedTy, AtomLitType(keyAtom), valTy)
-            (resTy, env1)
-          case _ =>
-            val ft = util.getFunType(fqn)
-            val resTy = elabApply.elabApply(ft, args, argTys, env1)
-            (resTy, env1)
-        }
+      case RemoteId("maps", "put", 3) =>
+        val List(_, _, map) = args
+        val List(keyTy, valTy, mapTy) = argTys
+        val mapCoercedTy = coerce(map, mapTy, anyMapTy)
+        val mapTy1 = narrow.adjustMapType(mapCoercedTy, keyTy, valTy)
+        (mapTy1, env1)
 
       case RemoteId("maps", "map", 2) =>
         val List(funArg, map) = args
