@@ -447,9 +447,17 @@ class Narrow(pipelineContext: PipelineContext) {
       case BoundedDynamicType(bound) =>
         BoundedDynamicType(adjustMapType(bound, keyT, valT))
       case mapType: MapType =>
-        Key.fromType(keyT) match {
-          case Some(key) =>
-            MapType(mapType.props.updated(key, Prop(req = true, valT)), mapType.kType, mapType.vType)
+        asKeys(keyT) match {
+          case Some(keys) if keys.size == 1 =>
+            MapType(mapType.props.updated(keys.head, Prop(req = true, valT)), mapType.kType, mapType.vType)
+          case Some(keys) =>
+            keys.foldLeft(mapType) { case (mapType, key) =>
+              val props = mapType.props.updatedWith(key) {
+                case Some(prop) => Some(Prop(prop.req, subtype.join(valT, prop.tp)))
+                case None       => Some(Prop(req = false, valT))
+              }
+              MapType(props, mapType.kType, mapType.vType)
+            }
           case None if subtype.isDynamicType(mapType.kType) && subtype.isDynamicType(mapType.vType) =>
             mapType
           case None =>
@@ -530,7 +538,8 @@ class Narrow(pipelineContext: PipelineContext) {
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
         asKeys(body)
-      case _ => Key.fromType(t).map(Set(_))
+      case NoneType => Some(Set())
+      case _        => Key.fromType(t).map(Set(_))
     }
 
   private def mergeMaps(s1: MapType, s2: MapType, inOrder: Boolean): MapType = {

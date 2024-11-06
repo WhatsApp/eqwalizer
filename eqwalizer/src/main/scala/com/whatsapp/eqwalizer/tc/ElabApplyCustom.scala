@@ -258,9 +258,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val List(keyTy, mapTy) = argTys
         val mapCoercedTy = coerce(map, mapTy, anyMapTy)
         val mapType = narrow.asMapType(mapCoercedTy)
-        val valTy = Key.fromType(keyTy) match {
-          case Some(key) =>
-            narrow.getValType(key, mapType)
+        val valTy = narrow.asKeys(keyTy) match {
+          case Some(keys) =>
+            subtype.join(keys.map(narrow.getValType(_, mapType)))
           case None =>
             narrow.getValType(mapType)
         }
