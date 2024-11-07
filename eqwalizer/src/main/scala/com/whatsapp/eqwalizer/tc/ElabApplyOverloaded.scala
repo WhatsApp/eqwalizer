@@ -33,8 +33,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
       case _ =>
         if (pipelineCtx.overloadedSpecDynamicResult && typeInfo.isCollect)
           diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
-        if (pipelineContext.overloadedSpecDomainCheck)
-          toFunType(depFunSpec).foreach(ft => elabApply.elabApply(check.freshen(ft), args, argTys, env1))
+        toFunType(depFunSpec).foreach(ft => elabApply.elabApply(check.freshen(ft), args, argTys, env1))
         (DynamicType, env1)
     }
   }
