@@ -46,6 +46,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "fold", 3),
       RemoteId("maps", "get", 2),
       RemoteId("maps", "get", 3),
+      RemoteId("maps", "intersect", 2),
       RemoteId("maps", "map", 2),
       RemoteId("maps", "put", 3),
       RemoteId("maps", "remove", 2),
@@ -266,6 +267,17 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         }
         val resTy = UnionType(Set(TupleType(List(AtomLitType("ok"), valTy)), AtomLitType("error")))
         (resTy, env1)
+
+      case RemoteId("maps", "intersect", 2) =>
+        val List(map1, map2) = args
+        val List(ty1, ty2) = argTys
+        val coercedTy1 = coerce(map1, ty1, anyMapTy)
+        val coercedTy2 = coerce(map2, ty2, anyMapTy)
+        val mapTy1 = narrow.asMapType(coercedTy1)
+        val mapTy2 = narrow.asMapType(coercedTy2)
+        val reqKeys = narrow.getKeyType(mapTy1)(reqOnly = true)
+        val allKeys = narrow.getKeyType(mapTy1)
+        (narrow.selectKeys(reqKeys, allKeys, mapTy2), env1)
 
       case RemoteId("maps", "fold", 3) =>
         val List(funArg, _acc, collection) = args

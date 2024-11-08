@@ -160,8 +160,9 @@ class Narrow(pipelineContext: PipelineContext) {
       case _ => NoneType
     }
 
-  def getKeyType(t: Type): Type =
+  def getKeyType(t: Type)(implicit reqOnly: Boolean = false): Type =
     t match {
+      case MapType(props, _, _) if reqOnly           => subtype.join(props.filter(_._2.req).keySet.map(Key.asType))
       case MapType(props, kType, _) if props.isEmpty => kType
       case MapType(props, kType, _)                  => subtype.join(kType, UnionType(props.keySet.map(Key.asType)))
       case UnionType(ts)                             => subtype.join(ts.map(getKeyType))
@@ -200,6 +201,20 @@ class Narrow(pipelineContext: PipelineContext) {
         }
       case UnionType(ts) =>
         subtype.join(ts.map(withRequiredProp(k, _)))
+      case _ =>
+        NoneType
+    }
+
+  def selectKeys(reqKeyT: Type, optKeyT: Type, mapT: Type): Type =
+    mapT match {
+      case MapType(props, kType, vType) =>
+        val selectProps = props.collect {
+          case (key, Prop(true, tp)) if subtype.subType(Key.asType(key), reqKeyT) => (key, Prop(req = true, tp))
+          case (key, Prop(_, tp)) if subtype.subType(Key.asType(key), optKeyT)    => (key, Prop(req = false, tp))
+        }
+        MapType(selectProps, meet(kType, optKeyT), vType)
+      case UnionType(ts) =>
+        subtype.join(ts.map(selectKeys(reqKeyT, optKeyT, _)))
       case _ =>
         NoneType
     }
