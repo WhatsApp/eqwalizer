@@ -12,7 +12,7 @@ import scala.collection.mutable
 import com.whatsapp.eqwalizer.io.Ipc
 
 private object Db {
-  private val transValidStubs: mutable.Map[String, Option[ModuleStub]] =
+  private val stubs: mutable.Map[String, Option[ModuleStub]] =
     mutable.Map.empty
   private val loadedModules: mutable.Set[String] = mutable.Set.empty
 
@@ -20,12 +20,12 @@ private object Db {
     */
   def getModuleStub(module: String): Option[ModuleStub] = {
     loadedModules.add(module)
-    if (transValidStubs.contains(module))
-      transValidStubs(module)
+    if (stubs.contains(module))
+      stubs(module)
     else {
       val optStub =
         Ipc.getAstBytes(module, Ipc.TransitiveStub).map(readFromArray[ModuleStub](_))
-      transValidStubs.put(module, optStub)
+      stubs.put(module, optStub)
       optStub
     }
   }
