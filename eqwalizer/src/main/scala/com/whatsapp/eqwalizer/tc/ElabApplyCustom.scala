@@ -288,7 +288,12 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case lambda: Lambda =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
-            val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy, accTy), lamEnv, Set.empty)).map(_._1)
+            val occEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy, accTy), lamEnv)
+            val vTys =
+              lambda.clauses
+                .lazyZip(occEnvs)
+                .map((clause, occEnv) => elab.elabClause(clause, List(keyTy, valTy, accTy), occEnv, Set.empty))
+                .map(_._1)
             accTy1 :: vTys
           case _ =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), AnyType)
