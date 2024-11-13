@@ -42,8 +42,11 @@ object DbApi {
   def getImports(module: String): Option[Map[Id, String]] =
     Db.getModuleStub(module).map(_.imports)
 
-  def getType(module: String, id: Id): Option[TypeDecl] =
-    Db.getModuleStub(module).flatMap(_.types.get(id))
+  def getType(module: String, id: Id): Option[TypeDecl] = {
+    CustomTypes.getType(module, id).orElse {
+      Db.getModuleStub(module).flatMap(_.types.get(id))
+    }
+  }
 
   def getPrivateOpaque(module: String, id: Id): Option[TypeDecl] =
     Db.getModuleStub(module).flatMap(_.privateOpaques.get(id))
