@@ -9,20 +9,18 @@ A type-checker for Erlang.
 
 ## Using it with rebar3 projects
 
-1. Use OTP 26
-2. Download the `elp` binary for your system from https://github.com/WhatsApp/erlang-language-platform/releases
+eqWAlizer is integrated and distributed with ELP (Erlang Language Platform).
 
-    > On Mac you will probably get the following message when trying to run the executable the first time: "elp cannot be opened because the developer cannot be verified.".
-    To solve this, go to Preferences > Security and Privacy and add an exception. Alternatively, you can build elp from source.
-
-3. Add `eqwalizer_support` dependency and `eqwalizer_rebar3` plugin
+1. Use OTP 26 or higher.
+2. [Install ELP](https://whatsapp.github.io/erlang-language-platform/docs/get-started/install/).
+3. [Add](https://whatsapp.github.io/erlang-language-platform/docs/get-started/configure-project/rebar3/) `eqwalizer_support` dependency
    to your rebar3 project definition (see below)
 4. From the project directory run:
   - `elp eqwalize <module>` to type-check a single module
   - `elp eqwalize-all` to type-check all `src` modules in the project
 
 
-Adding `eqwalizer_support` and `eqwalizer_rebar3`:
+Adding `eqwalizer_support`:
 
 ```
 {deps, [
@@ -32,48 +30,16 @@ Adding `eqwalizer_support` and `eqwalizer_rebar3`:
         {branch, "main"},
         "eqwalizer_support"}}
 ]}.
-
-{project_plugins, [
-  {eqwalizer_rebar3,
-    {git_subdir,
-        "https://github.com/whatsapp/eqwalizer.git",
-        {branch, "main"},
-        "eqwalizer_rebar3"}}
-]}.
 ```
-
 
 ## Using it with non-rebar projects
 
-1. Use OTP 26 (it will be detected automatically by eqWAlizer)
-2. Download the `elp` binary for your system from https://github.com/WhatsApp/erlang-language-platform/releases
-3. Write a `project.json` file describing your project, see below for the file structure.
-Ensure `eqwalizer_support` is added as a dependency, and that its `ebin` folder is reachable and populated
-with `.beam` files.
+1. Use OTP 26 or higher.
+2. [Install ELP](https://whatsapp.github.io/erlang-language-platform/docs/get-started/install/).
+3. [Write a `project.json`](https://whatsapp.github.io/erlang-language-platform/docs/get-started/configure-project/custom-project/) file describing your project.
 4. From the project directory, assuming your `.json` file is called `project.json` run:
   - `elp eqwalize <module> --project project.json` to type-check a single module
   - `elp eqwalize-all --project project.json` to type-check all `src` modules in the project
-
-The `.json` file should be structured in this way:
-```
-{
-  "apps": [app list],
-  "deps": [app list],      // 3rd party dependencies (not type-checked), defaults to []
-}
-```
-where an `app` is a map structured as such:
-```
-{
-  "name": "app_name",
-  "dir": "path/to/app",                         // Relative to project root
-  "src_dirs": ["path/to/src", ...],             // Relative to app dir, defaults to ["src"]
-  "extra_src_dirs": ["path/to/extra_src", ...], // Relative to app dir, defaults to []
-  "ebin": "path/to/ebin",                       // Relative to app dir, defaults to "ebin"
-  "include_dirs": ["include", ...],             // Relative to app dir, defaults to []
-  "macros": ["MACRO", ...],                     // Defaults to []
-}
-```
-
 
 ## FAQ
 
