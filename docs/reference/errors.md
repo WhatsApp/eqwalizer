@@ -151,7 +151,18 @@ test_neg() ->
 
 ### undefined_field
 
-This error occurs when attempting to create a record with a field that does not exist.
+This error occurs when attempting to create a record without specifying the value for a field
+when the field type doesn't allow `undefined` values.
+
+Example:
+```Erlang
+-record(user, {name :: string(), id :: binary()}).
+
+-spec create_user() -> #user{}.
+create_user() -> #user{id = <<"000">>}.
+
+% #user{...}: name is undefined
+```
 
 
 ### unbound_var
