@@ -8,6 +8,7 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.Guards.Guard
+import com.whatsapp.eqwalizer.ast.Pats.PatVar
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{BinarySpecifiers, Filters, Pats, RemoteId, Vars}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics._
@@ -483,6 +484,20 @@ final class Elab(pipelineContext: PipelineContext) {
         val qEnv = elabQualifiers(qualifiers, env)
         check.checkExpr(template, BinaryType, qEnv)
         (BinaryType, env)
+      case MComprehension(kTemplate, vTemplate, List(MGenerate(gk: PatVar, gv: PatVar, gExpr))) =>
+        val (gT, gEnv) = elabExprAndCheck(gExpr, env, MapType(Map(), AnyType, AnyType))
+        val mapT = narrow.asMapTypes(gT)
+        val kvTys = mapT.flatMap(narrow.getKVType)
+        var mapsAcc: Set[MapType] = Set()
+        for (TupleType(List(kTy, vTy)) <- kvTys) {
+          val (_, kPatEnv) = elabPat.elabPat(gk, kTy, gEnv)
+          val (_, vPatEnv) = elabPat.elabPat(gv, vTy, kPatEnv)
+          val (kType, _) = elabExpr(kTemplate, vPatEnv)
+          val (vType, _) = elabExpr(vTemplate, vPatEnv)
+          val mapTy = MapType(Map(), kType, vType)
+          mapsAcc = mapsAcc + mapTy
+        }
+        (narrow.joinAndMergeMaps(mapsAcc), env)
       case MComprehension(kTemplate, vTemplate, qualifiers) =>
         val qEnv = elabQualifiers(qualifiers, env)
         val (kType, _) = elabExpr(kTemplate, qEnv)

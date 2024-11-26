@@ -390,11 +390,8 @@ final class Check(pipelineContext: PipelineContext) {
           val qEnv = elab.elabQualifiers(qualifiers, env)
           checkExpr(template, BinaryType, qEnv)
           env
-        case MComprehension(kTemplate, vTemplate, qualifiers) =>
-          val qEnv = elab.elabQualifiers(qualifiers, env)
-          val (kType, _) = elab.elabExpr(kTemplate, qEnv)
-          val (vType, _) = elab.elabExpr(vTemplate, qEnv)
-          val elabType = MapType(Map(), kType, vType)
+        case m: MComprehension =>
+          val (elabType, env1) = elab.elabExpr(m, env)
           if (!subtype.subType(elabType, resTy))
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = elabType))
           env
