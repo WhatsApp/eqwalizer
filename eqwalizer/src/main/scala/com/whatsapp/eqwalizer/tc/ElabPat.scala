@@ -145,22 +145,25 @@ final class ElabPat(pipelineContext: PipelineContext) {
         else
           (RefinedRecordType(RecordType(recName)(module), refinedFields), envAcc)
       case PatMap(kvs) =>
-        val mapType = narrow.asMapType(t)
-        var refinedMapType = mapType
+        val mapTypes = narrow.asMapTypes(t)
+        var refinedMapTypes = mapTypes
         var envAcc = env
         for ((keyTest, valPat) <- kvs) {
           Key.fromTest(keyTest) match {
             case Some(key) =>
-              val (_, env1) = elabPat(valPat, narrow.getValType(key, mapType), envAcc)
-              refinedMapType = narrow.withRequiredProp(key, mapType)
+              val valTy = subtype.join(mapTypes.map(narrow.getValType(key, _)))
+              val (_, env1) = elabPat(valPat, valTy, envAcc)
+              refinedMapTypes = refinedMapTypes.flatMap(narrow.withRequiredProp(key, _))
               envAcc = env1
             case _ =>
-              val env1 = pipelineContext.elabGuard.elabTestT(keyTest, narrow.getKeyType(mapType), envAcc)
-              val (_, env2) = elabPat(valPat, narrow.getValType(mapType), env1)
+              val keyTy = subtype.join(mapTypes.map(narrow.getKeyType))
+              val valTy = subtype.join(mapTypes.map(narrow.getValType))
+              val env1 = pipelineContext.elabGuard.elabTestT(keyTest, keyTy, envAcc)
+              val (_, env2) = elabPat(valPat, valTy, env1)
               envAcc = env2
           }
         }
-        (refinedMapType, envAcc)
+        (subtype.join(refinedMapTypes), envAcc)
     }
   }
 

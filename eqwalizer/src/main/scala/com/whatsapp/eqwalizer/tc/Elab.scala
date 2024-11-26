@@ -526,14 +526,14 @@ final class Elab(pipelineContext: PipelineContext) {
       case MapUpdate(map, kvs) =>
         val (mapT, env1) = elabExprAndCheck(map, env, MapType(Map(), AnyType, AnyType))
         var envAcc = env1
-        var resT = mapT
+        var resT = narrow.asMapTypes(mapT)
         for ((key, value) <- kvs) {
           val (keyT, env2) = elabExpr(key, envAcc)
           val (valT, env3) = elabExpr(value, env2)
           envAcc = env3
-          resT = narrow.adjustMapType(resT, keyT, valT)
+          resT = resT.map(narrow.adjustMapType(_, keyT, valT))
         }
-        (resT, envAcc)
+        (subtype.join(resT), envAcc)
       case MaybeMatch(mPat, mExp) =>
         val (mType, env1) = elabExpr(mExp, env)
         elabPat.elabPat(mPat, mType, env1)
@@ -673,9 +673,9 @@ final class Elab(pipelineContext: PipelineContext) {
         envAcc = pEnv
       case MGenerate(gkPat, gvPat, gExpr) =>
         val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, MapType(Map(), AnyType, AnyType))
-        val mapT = narrow.asMapType(gT)
-        val kT = narrow.getKeyType(mapT)
-        val vT = narrow.getValType(mapT)
+        val mapT = narrow.asMapTypes(gT)
+        val kT = subtype.join(mapT.map(narrow.getKeyType))
+        val vT = subtype.join(mapT.map(narrow.getValType))
         val (_, kPatEnv) = elabPat.elabPat(gkPat, kT, gEnv)
         val (_, vPatEnv) = elabPat.elabPat(gvPat, vT, kPatEnv)
         envAcc = vPatEnv

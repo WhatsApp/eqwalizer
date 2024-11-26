@@ -125,99 +125,81 @@ class Narrow(pipelineContext: PipelineContext) {
       case ts  => Some(ListType(subtype.join(ts)))
     }
 
-  private def dynamicMap(t: Type): Type =
-    t match {
-      case MapType(props, kType, vType) =>
-        MapType(
-          props.map { case (key, Prop(req, tp)) =>
-            (key, Prop(req, BoundedDynamicType(tp)))
-          },
-          BoundedDynamicType(kType),
-          BoundedDynamicType(vType),
-        )
-      case UnionType(tys) => UnionType(tys.map(dynamicMap))
-      case NoneType       => NoneType
-      case _              => throw new IllegalStateException()
-    }
+  private def dynamicMap(t: MapType): MapType = {
+    val MapType(props, kType, vType) = t
+    MapType(
+      props.map { case (key, Prop(req, tp)) =>
+        (key, Prop(req, boundedDynamic(tp)))
+      },
+      boundedDynamic(kType),
+      boundedDynamic(vType),
+    )
+  }
 
-  def asMapType(t: Type): Type =
+  private def boundedDynamic(t: Type): Type = {
+    t match {
+      case DynamicType           => DynamicType
+      case BoundedDynamicType(b) => BoundedDynamicType(b)
+      case NoneType              => NoneType
+      case AnyType               => DynamicType
+      case _                     => BoundedDynamicType(t)
+    }
+  }
+
+  def asMapTypes(t: Type): Set[MapType] =
     t match {
       case DynamicType =>
-        MapType(Map(), DynamicType, DynamicType)
+        Set(MapType(Map(), DynamicType, DynamicType))
       case BoundedDynamicType(bound) =>
-        dynamicMap(asMapType(bound))
+        asMapTypes(bound).map(dynamicMap)
       case AnyType | VarType(_) =>
-        MapType(Map(), AnyType, AnyType)
+        Set(MapType(Map(), AnyType, AnyType))
       case mapType: MapType =>
-        mapType
+        Set(mapType)
       case UnionType(ts) =>
-        subtype.join(ts.map(asMapType))
+        ts.flatMap(asMapTypes)
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
-        asMapType(body)
+        asMapTypes(body)
       case OpaqueType(rid, _) =>
-        MapType(Map(), AnyType, AnyType)
-      case _ => NoneType
+        Set(MapType(Map(), AnyType, AnyType))
+      case _ => Set()
     }
 
-  def getKeyType(t: Type)(implicit reqOnly: Boolean = false): Type =
+  def getKVType(t: MapType): Set[TupleType] = {
+    t.props.map { case (key, prop) =>
+      TupleType(List(Key.asType(key), prop.tp))
+    }.toSet + TupleType(List(t.kType, t.vType))
+  }
+
+  def getKeyType(t: MapType)(implicit reqOnly: Boolean = false): Type =
     t match {
       case MapType(props, _, _) if reqOnly           => subtype.join(props.filter(_._2.req).keySet.map(Key.asType))
       case MapType(props, kType, _) if props.isEmpty => kType
       case MapType(props, kType, _)                  => subtype.join(kType, UnionType(props.keySet.map(Key.asType)))
-      case UnionType(ts)                             => subtype.join(ts.map(getKeyType))
-      case NoneType                                  => NoneType
-      case _                                         => throw new IllegalStateException()
     }
 
-  def getValType(t: Type): Type =
-    t match {
-      case MapType(props, _, vType) => subtype.join(vType, props.values.map(_.tp))
-      case UnionType(ts)            => subtype.join(ts.map(getValType))
-      case NoneType                 => NoneType
-      case _                        => throw new IllegalStateException()
+  def getValType(t: MapType): Type =
+    subtype.join(t.vType, t.props.values.map(_.tp))
+
+  def getValType(key: Key, t: MapType): Type =
+    t.props.get(key).map(_.tp).getOrElse(t.vType)
+
+  def withRequiredProp(k: Key, t: MapType): Option[MapType] =
+    t.props.get(k) match {
+      case Some(Prop(_, tp)) => Some(t.copy(props = t.props.updated(k, Prop(req = true, tp))))
+      case None if subtype.subType(Key.asType(k), t.kType) =>
+        Some(t.copy(props = t.props.updated(k, Prop(req = true, t.vType))))
+      case _ => None
     }
 
-  def getValType(key: Key, t: Type): Type =
-    t match {
-      case MapType(props, _, vType) => props.get(key).map(_.tp).getOrElse(vType)
-      case UnionType(ts)            => subtype.join(ts.map(getValType(key, _)))
-      case NoneType                 => NoneType
-      case _                        => throw new IllegalStateException()
+  def selectKeys(reqKeyT: Type, optKeyT: Type, mapT: MapType): Type = {
+    val selectProps = mapT.props.collect {
+      case (key, Prop(true, tp)) if subtype.subType(Key.asType(key), reqKeyT) => (key, Prop(req = true, tp))
+      case (key, Prop(_, tp)) if subtype.subType(Key.asType(key), optKeyT)    => (key, Prop(req = false, tp))
     }
-
-  def withRequiredProp(k: Key, t: Type): Type =
-    t match {
-      case DynamicType =>
-        t
-      case BoundedDynamicType(bound) =>
-        BoundedDynamicType(withRequiredProp(k, bound))
-      case MapType(props, kType, vType) =>
-        props.get(k) match {
-          case Some(Prop(_, tp)) => MapType(props.updated(k, Prop(req = true, tp)), kType, vType)
-          case None if subtype.subType(Key.asType(k), kType) =>
-            MapType(props.updated(k, Prop(req = true, vType)), kType, vType)
-          case _ => NoneType
-        }
-      case UnionType(ts) =>
-        subtype.join(ts.map(withRequiredProp(k, _)))
-      case _ =>
-        NoneType
-    }
-
-  def selectKeys(reqKeyT: Type, optKeyT: Type, mapT: Type): Type =
-    mapT match {
-      case MapType(props, kType, vType) =>
-        val selectProps = props.collect {
-          case (key, Prop(true, tp)) if subtype.subType(Key.asType(key), reqKeyT) => (key, Prop(req = true, tp))
-          case (key, Prop(_, tp)) if subtype.subType(Key.asType(key), optKeyT)    => (key, Prop(req = false, tp))
-        }
-        MapType(selectProps, meet(kType, optKeyT), vType)
-      case UnionType(ts) =>
-        subtype.join(ts.map(selectKeys(reqKeyT, optKeyT, _)))
-      case _ =>
-        NoneType
-    }
+    MapType(selectProps, meet(mapT.kType, optKeyT), mapT.vType)
+  }
 
   private def extractListElem(t: Type): List[Type] =
     t match {
@@ -455,63 +437,30 @@ class Narrow(pipelineContext: PipelineContext) {
       TupleType(elemTys)
     }
 
-  def adjustMapType(mapT: Type, keyT: Type, valT: Type): Type =
-    mapT match {
-      case DynamicType =>
-        DynamicType
-      case BoundedDynamicType(bound) =>
-        BoundedDynamicType(adjustMapType(bound, keyT, valT))
-      case mapType: MapType =>
-        asKeys(keyT) match {
-          case Some(keys) if keys.size == 1 =>
-            MapType(mapType.props.updated(keys.head, Prop(req = true, valT)), mapType.kType, mapType.vType)
-          case Some(keys) =>
-            keys.foldLeft(mapType) { case (mapType, key) =>
-              val props = mapType.props.updatedWith(key) {
-                case Some(prop) => Some(Prop(prop.req, subtype.join(valT, prop.tp)))
-                case None       => Some(Prop(req = false, valT))
-              }
-              MapType(props, mapType.kType, mapType.vType)
-            }
-          case None if subtype.isDynamicType(mapType.kType) && subtype.isDynamicType(mapType.vType) =>
-            mapType
-          case None =>
-            MapType(mapType.props, subtype.join(mapType.kType, keyT), subtype.join(mapType.vType, valT))
+  def adjustMapType(mapType: MapType, keyT: Type, valT: Type): MapType =
+    asKeys(keyT) match {
+      case Some(keys) if keys.size == 1 =>
+        MapType(mapType.props.updated(keys.head, Prop(req = true, valT)), mapType.kType, mapType.vType)
+      case Some(keys) =>
+        keys.foldLeft(mapType) { case (mapType, key) =>
+          val props = mapType.props.updatedWith(key) {
+            case Some(prop) => Some(Prop(prop.req, subtype.join(valT, prop.tp)))
+            case None       => Some(Prop(req = false, valT))
+          }
+          MapType(props, mapType.kType, mapType.vType)
         }
-      case UnionType(elems) =>
-        subtype.join(elems.map(adjustMapType(_, keyT, valT)))
-      case RemoteType(rid, args) =>
-        val body = util.getTypeDeclBody(rid, args)
-        adjustMapType(body, keyT, valT)
-      case NoneType =>
-        NoneType
-      case _ =>
-        NoneType
+      case None if subtype.isDynamicType(mapType.kType) && subtype.isDynamicType(mapType.vType) =>
+        mapType
+      case None =>
+        MapType(mapType.props, subtype.join(mapType.kType, keyT), subtype.join(mapType.vType, valT))
     }
 
-  def setAllFieldsOptional(mapT: Type, newValTy: Option[Type] = None): Type =
-    mapT match {
-      case DynamicType =>
-        DynamicType
-      case BoundedDynamicType(bound) =>
-        BoundedDynamicType(setAllFieldsOptional(bound, newValTy))
-      case mapType: MapType =>
-        MapType(
-          mapType.props.map { case (key, Prop(_, tp)) => (key, Prop(false, newValTy.getOrElse(tp))) },
-          mapType.kType,
-          newValTy.getOrElse(mapType.vType),
-        )
-      case UnionType(elems) =>
-        val allMaps = elems.map(setAllFieldsOptional(_, newValTy))
-        subtype.join(allMaps)
-      case RemoteType(rid, args) =>
-        val body = util.getTypeDeclBody(rid, args)
-        setAllFieldsOptional(body, newValTy)
-      case NoneType =>
-        NoneType
-      case _ =>
-        NoneType
-    }
+  def setAllFieldsOptional(mapType: MapType, newValTy: Option[Type] = None): Type =
+    MapType(
+      mapType.props.map { case (key, Prop(_, tp)) => (key, Prop(req = false, newValTy.getOrElse(tp))) },
+      mapType.kType,
+      newValTy.getOrElse(mapType.vType),
+    )
 
   def getRecordField(recDecl: RecDeclTyped, recTy: Type, fieldName: String): Type = {
     val field = recDecl.fields(fieldName)
