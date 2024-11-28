@@ -517,8 +517,16 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val mapTys = coerceToMaps(map, mapTy)
         val expKeysTy = ListType(AnyType)
         val _ = coerce(keysArg, keysTy, expKeysTy)
-        def `with`(mapTy: MapType, keysToKeep: Set[Key]): Type =
-          mapTy.copy(props = mapTy.props.removedAll(mapTy.props.keySet -- keysToKeep))
+        def `with`(mapTy: MapType, keysToKeep: Set[Key]): Type = {
+          val props = keysToKeep.flatMap { key =>
+            mapTy.props.get(key) match {
+              case Some(vProp)                                           => Some(key -> vProp)
+              case None if subtype.subType(Key.asType(key), mapTy.kType) => Some(key -> Prop(false, mapTy.vType))
+              case None                                                  => None
+            }
+          }
+          MapType(props.toMap, NoneType, NoneType)
+        }
         getKeysToKeep(keysArg, Nil).map(_.toSet) match {
           case None       => (mapTys.map(narrow.setAllFieldsOptional(_)).join(), env1)
           case Some(keys) => (mapTys.map(`with`(_, keys)).join(), env1)
