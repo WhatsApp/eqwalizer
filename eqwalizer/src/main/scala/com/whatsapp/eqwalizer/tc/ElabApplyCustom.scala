@@ -521,6 +521,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           val props = keysToKeep.flatMap { key =>
             mapTy.props.get(key) match {
               case Some(vProp)                                           => Some(key -> vProp)
+              case None if mapTy.kType == DynamicType                    => Some(key -> Prop(true, mapTy.vType))
               case None if subtype.subType(Key.asType(key), mapTy.kType) => Some(key -> Prop(false, mapTy.vType))
               case None                                                  => None
             }
