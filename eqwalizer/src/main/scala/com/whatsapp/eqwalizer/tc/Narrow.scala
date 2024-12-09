@@ -183,7 +183,14 @@ class Narrow(pipelineContext: PipelineContext) {
     subtype.join(t.vType, t.props.values.map(_.tp))
 
   def getValType(key: Key, t: MapType): Type =
-    t.props.get(key).map(_.tp).getOrElse(t.vType)
+    t.props.get(key).map(_.tp).getOrElse {
+      // key represents a literal type
+      // so we can use subtyping for testing non-empty intersection
+      if (subtype.subType(Key.asType(key), t.kType))
+        t.vType
+      else
+        NoneType
+    }
 
   def withRequiredProp(k: Key, t: MapType): Option[MapType] =
     t.props.get(k) match {
