@@ -71,7 +71,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
     else Set()
 
   private lazy val customPredicate: Set[RemoteId] =
-    Set(RemoteId("lists", "member", 2))
+    Set(
+      RemoteId("io_lib", "char_list", 1),
+      RemoteId("io_lib", "latin1_char_list", 1),
+      RemoteId("lists", "member", 2),
+    )
 
   def isCustomPredicate(id: RemoteId): Boolean =
     customPredicate(id)
@@ -604,6 +608,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val ListType(predListTy) = narrow.asListType(listTy1).get
             val posElemT = predListTy
             val posEnv = env1.updated(x, posElemT)
+            (booleanType, posEnv, env1)
+          case _ =>
+            (booleanType, env1, env1)
+        }
+      case RemoteId("io_lib", "char_list" | "latin1_char_list", 1) =>
+        val List(arg) = args
+        arg match {
+          case Var(x) =>
+            val posEnv = env1.updated(x, stringType)
             (booleanType, posEnv, env1)
           case _ =>
             (booleanType, env1, env1)
