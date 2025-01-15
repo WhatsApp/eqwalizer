@@ -808,6 +808,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
         restrict(body, t2)
       case (BoundedDynamicType(t), s) =>
         BoundedDynamicType(restrict(t, s))
+      case (DynamicType, s) =>
+        BoundedDynamicType(s)
       case (OpaqueType(_, _), _) =>
         t1
       case (_, _) =>

@@ -70,7 +70,7 @@ class Subtype(pipelineContext: PipelineContext) {
         subTypePol(t1, bound, seen)
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
-        containsType(t1, t2) || subTypePol(body, t2, seen + ((t1, v1) -> (t2, v2)))
+        containsType(t1, t2, v2) || subTypePol(body, t2, seen + ((t1, v1) -> (t2, v2)))
       case (_, RemoteType(rid, args)) =>
         val body = util.getTypeDeclBody(rid, args)
         subTypePol(t1, body, seen + ((t1, v1) -> (t2, v2)))
@@ -259,12 +259,14 @@ class Subtype(pipelineContext: PipelineContext) {
         false
     })
 
-  private def containsType(t1: Type, t2: Type): Boolean = {
+  private def containsType(t1: Type, t2: Type, v2: Variance): Boolean = {
     t2 match {
       case AnyType       => true
       case _ if t1 == t2 => true
       case UnionType(tys) =>
-        tys.exists(containsType(t1, _))
+        tys.exists(containsType(t1, _, v2))
+      case BoundedDynamicType(bound) if v2 == + =>
+        containsType(t1, bound, v2)
       case _ => false
     }
   }
