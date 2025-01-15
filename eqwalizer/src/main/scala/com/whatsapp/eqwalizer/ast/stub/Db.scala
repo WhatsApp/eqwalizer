@@ -33,6 +33,6 @@ private object Db {
   def getLoadedModules(): Set[String] = {
     val set = loadedModules.toSet
     loadedModules.clear()
-    set
+    set ++ Set("eqwalizer_types", "eqwalizer_specs")
   }
 }
