@@ -79,7 +79,7 @@ object InvalidDiagnostics {
     val msg: String = {
       val reason: String = {
         if (required) {
-          s"Required map key should always be composed of statically defined atoms or tuples."
+          s"Use => instead of := here. Required map key should always be composed of statically defined atoms or tuples."
         } else {
           s"Only one default association per map is allowed, all other keys should be composed of statically defined atoms or tuples."
         }
