@@ -31,8 +31,10 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         "[]"
       case UnionType(elemTys) =>
         elemTys.map(show).mkString(" | ")
-      case _: RemoteType | _: OpaqueType =>
-        val NamedType(rid, argTys) = tp
+      case OpaqueType(rid, argTys) =>
+        val prefix = showRid(rid)
+        s"opaque $prefix${argTys.map(show).mkString("(", ", ", ")")}"
+      case RemoteType(rid, argTys) =>
         val prefix = showRid(rid)
         s"$prefix${argTys.map(show).mkString("(", ", ", ")")}"
       case vt: VarType =>
@@ -112,6 +114,66 @@ case class Show(pipelineContext: Option[PipelineContext]) {
       s"$key => ${show(prop.tp)}"
     }
   }
+
+  def showTruncated(tp: Type): String =
+    tp match {
+      case AtomLitType(atom) =>
+        s"'$atom'"
+      case FunType(_, argTys, _) =>
+        s"""fun()/${argTys.size}"""
+      case AnyArityFunType(_) =>
+        "fun(...)"
+      case TupleType(elems) =>
+        s"""tuple()/${elems.size}"""
+      case ListType(_) =>
+        "[...]"
+      case NilType =>
+        "[]"
+      case UnionType(argTys) =>
+        val argTysTruncated = argTys.toList.take(5).map(showTruncated).mkString(" | ")
+        if (argTys.size > 5) s"$argTysTruncated | ..."
+        else argTysTruncated
+      case _: RemoteType | _: OpaqueType =>
+        val NamedType(rid, argTys) = tp
+        if (argTys.isEmpty)
+          s"""${showRid(rid)}()"""
+        else
+          s"""${showRid(rid)}(.../${argTys.size})"""
+      case vt: VarType =>
+        vt.name
+      case AnyType =>
+        "term()"
+      case AtomType =>
+        "atom()"
+      case NoneType =>
+        "none()"
+      case NumberType =>
+        "number()"
+      case PidType =>
+        "pid()"
+      case PortType =>
+        "port()"
+      case ReferenceType =>
+        "reference()"
+      case BinaryType =>
+        "binary()"
+      case RecordType(n) =>
+        s"#$n{}"
+      case RefinedRecordType(r, _) =>
+        s"#${r.name}{}"
+      case MapType(props, DynamicType, DynamicType) if props.isEmpty =>
+        s"map()"
+      case MapType(_, _, _) =>
+        s"#{...}"
+      case AnyTupleType =>
+        "tuple()"
+      case AnyFunType =>
+        "fun()"
+      case DynamicType =>
+        "dynamic()"
+      case BoundedDynamicType(_) =>
+        "dynamic(...)"
+    }
 
   private def showRid(rid: RemoteId, forceShowModule: Boolean = false): String = {
     pipelineContext match {

@@ -24,10 +24,19 @@ object TcDiagnostics {
     private val (showGot, showExpected) = showNotSubtype(got, expected)
     override lazy val msg: String =
       s"Expression has type:   $showGot\nContext expected type: $showExpected"
+    private val subtypeDetail = pipelineContext.subtypeDetail
+    private val typeMismatch = pipelineContext.typeMismatch
 
     def errorName = "incompatible_types"
     override def erroneousExpr: Option[Expr] = Some(expr)
-    override lazy val explanation = pipelineContext.subtypeDetail.explain(expected = expected, got = got)
+    override lazy val explanation: Option[String] = {
+      val mismatchExplain = typeMismatch.explain(got, expected)
+      val detailsExplain = subtypeDetail.explain(got, expected)
+      val separator = s"\n\n${"-" * 30} Detailed message ${"-" * 30}\n\n"
+      val explanations = List(mismatchExplain, detailsExplain).flatten
+      if (explanations.isEmpty) None
+      else Some(explanations.mkString(separator))
+    }
   }
   case class ExpectedFunType(pos: Pos, expr: Expr, expectedArity: Int, got: Type)(implicit
       val
