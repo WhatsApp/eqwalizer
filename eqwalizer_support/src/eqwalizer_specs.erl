@@ -339,7 +339,7 @@ when
 -spec 'jsone:decode'(binary()) -> eqwalizer:dynamic().
 'jsone:decode'(_) -> error(eqwalizer_specs).
 
--spec 'jsone:decode'(binary(), [jsone:decode_option()]) -> eqwalizer:dynamic().
+-spec 'jsone:decode'(binary(), list()) -> eqwalizer:dynamic().
 'jsone:decode'(_, _) -> error(eqwalizer_specs).
 
 %% -------- lists --------
