@@ -5,6 +5,7 @@
 
 -module(eqwalizer).
 -compile(warn_missing_spec).
+-compile(nowarn_redefined_builtin_type).
 -typing([eqwalizer]).
 
 -export_type([dynamic/0, refinable/1]).
