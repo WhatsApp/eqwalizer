@@ -7,9 +7,9 @@ jobs:
         otp: ['26.2']
     steps:
       - name: Checkout eqWAlizer
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: Checkout ELP
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           repository: WhatsApp/erlang-language-platform
           path: elp
@@ -52,7 +52,7 @@ jobs:
         run: 'echo "$GITHUB_WORKSPACE/elp/target/x86_64-unknown-linux-musl/release" >> $GITHUB_PATH'
       - name: Upload eqwalizer.jar
         if: matrix.otp == '26.2'
-        uses: "actions/upload-artifact@v3"
+        uses: "actions/upload-artifact@v4"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13/eqwalizer.jar
@@ -66,9 +66,9 @@ jobs:
         brew-otp-version: ['26']
     steps:
       - name: Checkout eqWAlizer
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: Checkout ELP
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           repository: WhatsApp/erlang-language-platform
           path: elp
@@ -89,7 +89,7 @@ jobs:
       - name: Set up rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Download eqwalizer.jar
-        uses: "actions/download-artifact@v3"
+        uses: "actions/download-artifact@v4"
         with:
           name: eqwalizer.jar
           path: eqwalizer/target/scala-2.13
