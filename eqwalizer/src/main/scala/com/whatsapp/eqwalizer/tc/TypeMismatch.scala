@@ -434,7 +434,9 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         // Some heuristic to determine map "closeness"
         val commonKeys = props1.keySet.intersect(props2.keySet)
         val allKeys = props1.keySet.union(props2.keySet)
-        val score = 40 + 40 * Math.max(commonKeys.size, 1) / Math.max(allKeys.size, 1)
+        val score =
+          if (allKeys.size == 0) 80
+          else 40 + 40 * commonKeys.size / allKeys.size
         // Required keys don't match
         val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
         val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
