@@ -44,6 +44,7 @@ object TypeMismatch {
   case class MissingKey(key: Key) extends Mismatch
   case object MissingDefault extends Mismatch
   // Recursive cases
+  case class PartialUnionMatch(matches: List[Type], m: Mismatch) extends Mismatch
   case class ArgTyMismatch(argN: Integer, m: Mismatch) extends Mismatch
   case class ResTyMismatch(m: Mismatch) extends Mismatch
   case class RecordFieldMismatch(field: String, m: Mismatch) extends Mismatch
@@ -136,6 +137,22 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         val exp = s"${prefix}Context expects type: #{...} (no default association)"
         val add = s"${prefix}The expected map has no default association while the type of the expression has one."
         List(got, exp, add).mkString("\n")
+      case (PartialUnionMatch(matches, Incompatible), _, _) =>
+        val matchesShow = s"${showLimitChars(subtype.join(matches), chars = 40)}"
+        val explainMatches =
+          s"${prefix}Here the type is a union type with some valid candidates: ${matchesShow}"
+        val explainGot = s"${prefix}However the following candidate: ${showLimitChars(t1, chars = 60)}"
+        val explainExp = s"${prefix}Differs from the expected type:  ${showLimitChars(t2, chars = 60)}"
+        List(explainMatches, explainGot, explainExp).mkString("\n")
+      case (PartialUnionMatch(matches, argMismatch), _, _) if depth == 1 =>
+        val matchesShow = s"${showLimitChars(subtype.join(matches), chars = 40)}"
+        val explainMatches =
+          s"${prefix}The type is a union type with some valid candidates: ${matchesShow}"
+        val explainDiff = s"${prefix}However, the following candidate doesn't match:"
+        val argExplain = explainMismatch(t1, t2, argMismatch, depth)
+        List(explainMatches, explainDiff, argExplain).mkString("\n")
+      case (PartialUnionMatch(_, argMismatch), _, _) =>
+        explainMismatch(t1, t2, argMismatch, depth)
       case (ArgTyMismatch(argN, argMismatch), FunType(_, argTys1, resTy), FunType(_, argTys2, _)) =>
         val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, depth + 1)
         val argsFmt = argTys1.map(showLimitChars(_)).updated(argN, s"\n$argExplain\n$prefix")
@@ -262,8 +279,16 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         val lowest = details.minBy(_.score)
         if (details.forall(_.mismatch.nonEmpty))
           Details(Some(subtype.join(tys1), t2, Incompatible), lowest.score)
-        else
-          lowest
+        else {
+          lowest.mismatch match {
+            case None => lowest
+            case Some((newTy1, newTy2, mismatch)) =>
+              val matches = details.zip(tys1).collect { case (Details(None, _), ty) =>
+                ty
+              }
+              Details(Some(newTy1, newTy2, PartialUnionMatch(matches, mismatch)), lowest.score)
+          }
+        }
       case (_, ut: UnionType) =>
         val tys2 = util.flattenUnions(ut)
         val details = tys2.map(findMismatch(t1, _, seen))
