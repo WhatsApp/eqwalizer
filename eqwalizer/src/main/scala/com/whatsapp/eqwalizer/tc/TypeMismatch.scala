@@ -65,7 +65,7 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         // Do not return a message if it does not add info
         None
       case Some((newT1, newT2, mismatch)) =>
-        val explanation = explainMismatch(newT1, newT2, mismatch, "  ")
+        val explanation = explainMismatch(newT1, newT2, mismatch, 1)
         val intro = "Because in the expression's type:"
         Some(s"$intro\n$explanation")
       case _ =>
@@ -82,7 +82,8 @@ class TypeMismatch(pipelineContext: PipelineContext) {
       fullShow
   }
 
-  private def explainMismatch(t1: Type, t2: Type, mismatch: Mismatch, prefix: String): String = {
+  private def explainMismatch(t1: Type, t2: Type, mismatch: Mismatch, depth: Integer): String = {
+    val prefix = "  " * depth
     (mismatch, t1, t2) match {
       case (Incompatible, _: RemoteType, _) | (Incompatible, _, _: RemoteType) =>
         val got = s"${prefix}Here the type is:     ${showLimitChars(t1, chars = 60)}"
@@ -136,40 +137,40 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         val add = s"${prefix}The expected map has no default association while the type of the expression has one."
         List(got, exp, add).mkString("\n")
       case (ArgTyMismatch(argN, argMismatch), FunType(_, argTys1, resTy), FunType(_, argTys2, _)) =>
-        val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, s"$prefix  ")
+        val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, depth + 1)
         val argsFmt = argTys1.map(showLimitChars(_)).updated(argN, s"\n$argExplain\n$prefix")
         argsFmt.mkString(s"${prefix}fun((", ", ", s") -> ${showLimitChars(resTy)})")
       case (ArgTyMismatch(argN, argMismatch), TupleType(argTys1), TupleType(argTys2)) =>
-        val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, s"$prefix  ")
+        val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, depth + 1)
         val argsFmt = argTys1.map(showLimitChars(_)).updated(argN, s"\n$argExplain\n$prefix")
         argsFmt.mkString(s"$prefix{ ", ", ", "}")
       case (ArgTyMismatch(_, argMismatch), ListType(argTy1), ListType(argTy2)) =>
-        val argExplain = explainMismatch(argTy1, argTy2, argMismatch, s"$prefix  ")
+        val argExplain = explainMismatch(argTy1, argTy2, argMismatch, depth + 1)
         s"$prefix[\n$argExplain\n$prefix]"
       case (ArgTyMismatch(argN, argMismatch), OpaqueType(rid, argTys1), OpaqueType(_, argTys2)) =>
-        val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, s"$prefix  ")
+        val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, depth + 1)
         val argsFmt = argTys1.map(showLimitChars(_)).updated(argN, s"\n$argExplain\n$prefix")
         argsFmt.mkString(s"${prefix}Opaque $rid(", ", ", ")")
       case (ResTyMismatch(resMismatch), FunType(_, argTys, resTy1), FunType(_, _, resTy2)) =>
-        val resExplain = explainMismatch(resTy1, resTy2, resMismatch, s"$prefix  ")
+        val resExplain = explainMismatch(resTy1, resTy2, resMismatch, depth + 1)
         val argsFmt = argTys.map(showLimitChars(_)).mkString("fun((", ", ", ") ->")
         s"$prefix$argsFmt\n$resExplain\n$prefix)"
       case (ResTyMismatch(resMismatch), AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
-        val resExplain = explainMismatch(resTy1, resTy2, resMismatch, s"$prefix  ")
+        val resExplain = explainMismatch(resTy1, resTy2, resMismatch, depth + 1)
         s"${prefix}fun((...) ->\n$resExplain\n$prefix)"
       case (
             RecordFieldMismatch(fieldName, fieldMismatch),
             RefinedRecordType(RecordType(rec), fields1),
             RefinedRecordType(_, fields2),
           ) =>
-        val fieldExplain = explainMismatch(fields1(fieldName), fields2(fieldName), fieldMismatch, s"$prefix  ")
+        val fieldExplain = explainMismatch(fields1(fieldName), fields2(fieldName), fieldMismatch, depth + 1)
         s"$prefix#$rec{$fieldName ::\n$fieldExplain\n$prefix}"
       case (MapKeyMismatch(key, keyMismatch), MapType(_, _, _), MapType(_, kT2, _)) =>
-        val keyExplain = explainMismatch(Key.asType(key), kT2, keyMismatch, s"$prefix  ")
+        val keyExplain = explainMismatch(Key.asType(key), kT2, keyMismatch, depth + 1)
         s"$prefix#{ incompatible map key $key:\n$keyExplain\n$prefix, ... }"
       case (MapPropMismatch(key, propMismatch), MapType(props1, kT1, vT1), MapType(props2, _, vT2)) =>
         if (!props1.contains(key)) {
-          val propExplain = explainMismatch(vT1, props2(key).tp, propMismatch, s"$prefix  ")
+          val propExplain = explainMismatch(vT1, props2(key).tp, propMismatch, depth + 1)
           val assoc =
             if (props2(key).req) ":="
             else "=>"
@@ -177,17 +178,17 @@ class TypeMismatch(pipelineContext: PipelineContext) {
             s"${prefix}The context introduces a new association $key $assoc ${showLimitChars(props2(key).tp, 20)} which is incompatible with the expression's default association."
           s"$prefix#{ ${show.show(kT1)} =>\n$propExplain\n$prefix, ... }\n$add"
         } else if (!props2.contains(key)) {
-          val propExplain = explainMismatch(props1(key).tp, vT2, propMismatch, s"$prefix  ")
+          val propExplain = explainMismatch(props1(key).tp, vT2, propMismatch, depth + 1)
           s"$prefix#{ $key =>\n$propExplain\n$prefix, ... }"
         } else {
-          val propExplain = explainMismatch(props1(key).tp, props2(key).tp, propMismatch, s"$prefix  ")
+          val propExplain = explainMismatch(props1(key).tp, props2(key).tp, propMismatch, depth + 1)
           s"$prefix#{ $key =>\n$propExplain\n$prefix, ... }"
         }
       case (MapDefaultKeyMismatch(keyMismatch), MapType(_, kT1, _), MapType(_, kT2, _)) =>
-        val keyExplain = explainMismatch(kT1, kT2, keyMismatch, s"$prefix  ")
+        val keyExplain = explainMismatch(kT1, kT2, keyMismatch, depth + 1)
         s"$prefix#{ map domains are incompatible:\n$keyExplain\n$prefix, ... }"
       case (MapDefaultValMismatch(valMismatch), MapType(_, kT1, vT1), MapType(_, _, vT2)) =>
-        val valExplain = explainMismatch(vT1, vT2, valMismatch, s"$prefix  ")
+        val valExplain = explainMismatch(vT1, vT2, valMismatch, depth + 1)
         s"$prefix#{ ${show.show(kT1)} =>\n$valExplain\n$prefix, ... }"
       case _ =>
         // Should not happen, but return a basic incompatibility message
