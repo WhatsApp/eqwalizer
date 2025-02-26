@@ -84,6 +84,15 @@ class TypeMismatch(pipelineContext: PipelineContext) {
 
   private def explainMismatch(t1: Type, t2: Type, mismatch: Mismatch, prefix: String): String = {
     (mismatch, t1, t2) match {
+      case (Incompatible, _: RemoteType, _) | (Incompatible, _, _: RemoteType) =>
+        val got = s"${prefix}Here the type is:     ${showLimitChars(t1, chars = 60)}"
+        val exp = s"${prefix}Context expects type: ${showLimitChars(t2, chars = 60)}"
+        List(got, exp).mkString("\n")
+      case (Incompatible, UnionType(_), _) =>
+        val got = s"${prefix}Here the type is:     ${showLimitChars(t1, chars = 60)}"
+        val exp = s"${prefix}Context expects type: ${showLimitChars(t2, chars = 60)}"
+        val add = s"${prefix}No candidate of the expression's type matches the expected type."
+        List(got, exp, add).mkString("\n")
       case (Incompatible, _, UnionType(_)) =>
         val got = s"${prefix}Here the type is:     ${showLimitChars(t1, chars = 60)}"
         val exp = s"${prefix}Context expects type: ${showLimitChars(t2, chars = 60)}"
@@ -249,7 +258,11 @@ class TypeMismatch(pipelineContext: PipelineContext) {
       case (ut: UnionType, _) =>
         val tys1 = util.flattenUnions(ut)
         val details = tys1.map(findMismatch(_, t2, seen))
-        details.minBy(_.score)
+        val lowest = details.minBy(_.score)
+        if (details.forall(_.mismatch.nonEmpty))
+          Details(Some(subtype.join(tys1), t2, Incompatible), lowest.score)
+        else
+          lowest
       case (_, ut: UnionType) =>
         val tys2 = util.flattenUnions(ut)
         val details = tys2.map(findMismatch(t1, _, seen))
