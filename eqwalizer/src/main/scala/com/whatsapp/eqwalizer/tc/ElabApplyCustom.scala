@@ -12,6 +12,7 @@ import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundRecord}
 import com.whatsapp.eqwalizer.ast.CompilerMacro
+import com.whatsapp.eqwalizer.ast.Pats.PatAtom
 
 class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val elab = pipelineContext.elab
@@ -302,7 +303,26 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val mapTys = coerceToMaps(map, mapTy)
         val keyTy = mapTys.map(narrow.getKeyType).join()
         val valTy = mapTys.map(narrow.getValType).join()
+        def isShapeIterator(lambda: Lambda): Boolean = {
+          lambda.clauses.forall { clause =>
+            clause.pats.head match {
+              case PatAtom(_) => true
+              case _          => false
+            }
+          }
+        }
+
         def getAccumulatorTys(accTy: Type): List[Type] = funArg match {
+          case lambda: Lambda if isShapeIterator(lambda) =>
+            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+
+            val vTys = lambda.clauses.map { clause =>
+              val PatAtom(a) = clause.pats.head
+              val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
+              elab.elabClause(clause, List(AtomLitType(a), refinedValTy, accTy), lamEnv, Set.empty)._1
+            }
+            accTy1 :: vTys
           case lambda: Lambda =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
@@ -320,6 +340,14 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             accTy1 :: vTys
         }
         def validateAccumulatorTy(accTy: Type): Unit = funArg match {
+          case lambda: Lambda if isShapeIterator(lambda) =>
+            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            lambda.clauses.map { clause =>
+              val PatAtom(a) = clause.pats.head
+              val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
+              check.checkClause(clause, List(AtomLitType(a), refinedValTy, accTy), accTy, lamEnv, Set.empty)
+            }
           case lambda: Lambda =>
             check.checkLambda(lambda, FunType(Nil, List(keyTy, valTy, accTy), accTy), env)
           case _ =>

@@ -85,7 +85,7 @@ final class Check(pipelineContext: PipelineContext) {
     env
   }
 
-  private def checkClause(
+  def checkClause(
       clause: Clause,
       argTys: List[Type],
       resTy: Type,
