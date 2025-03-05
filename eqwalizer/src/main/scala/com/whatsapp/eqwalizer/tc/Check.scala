@@ -8,8 +8,9 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.Forms.{FunDecl, FunSpec, OverloadedFunSpec}
+import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.{RemoteId, TypeVars, Vars}
+import com.whatsapp.eqwalizer.ast.{Filters, Pats, RemoteId, TypeVars, Vars}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics._
 
 final class Check(pipelineContext: PipelineContext) {
@@ -69,6 +70,11 @@ final class Check(pipelineContext: PipelineContext) {
     val exprs = body.exprs
     for (expr <- exprs) {
       expr match {
+        case MaybeMatch(Pats.PatAtom("true"), mExp) if Filters.asTest(mExp).isDefined =>
+          val test = Filters.asTest(mExp).get
+          val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)
+          lastTy = trueType
+          envAcc = env1
         case MaybeMatch(mPat, mExp) =>
           val (mType, env1) = elab.elabExprAndCheck(mExp, envAcc, resTy)
           val (patTy, env2) = elabPat.elabPat(mPat, mType, env1)
