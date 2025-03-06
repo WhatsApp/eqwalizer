@@ -35,11 +35,19 @@ final class Check(pipelineContext: PipelineContext) {
     val ft = freshen(spec.ty)
     val FunType(_, argTys, resTy) = ft
     val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Map.empty)
+    val singleClause = f.clauses.length == 1
     f.clauses
       .lazyZip(1 to f.clauses.length)
       .lazyZip(clauseEnvs)
       .foreach((clause, index, occEnv) =>
-        checkClause(clause, argTys, resTy, occEnv, Set.empty, checkCoverage = (index != f.clauses.length))
+        checkClause(
+          clause,
+          argTys,
+          resTy,
+          occEnv,
+          Set.empty,
+          checkCoverage = singleClause || (index != f.clauses.length),
+        )
       )
   }
 
