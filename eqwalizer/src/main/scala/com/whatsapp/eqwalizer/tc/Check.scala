@@ -115,7 +115,7 @@ final class Check(pipelineContext: PipelineContext) {
     }
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
-    if (pipelineContext.clauseCoverage && checkCoverage && env4.exists { case (_, ty) => subtype.isNoneType(ty) }) {
+    if (checkCoverage && env4.exists { case (_, ty) => subtype.isNoneType(ty) }) {
       diagnosticsInfo.add(ClauseNotCovered(clause.pos))
     }
     val env5 = checkBody(clause.body, resTy, env4)

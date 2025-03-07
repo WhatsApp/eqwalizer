@@ -31,7 +31,6 @@ package object eqwalizer {
   case class Config(
       eqwater: Boolean,
       tolerateErrors: Boolean,
-      clauseCoverage: Boolean,
       reportBadMaps: Boolean,
       overloadedSpecDynamicResult: Boolean,
       customMapsMerge: Boolean,
@@ -48,7 +47,6 @@ package object eqwalizer {
     Config(
       eqwater = config.getBoolean("eqwater"),
       tolerateErrors = config.getBoolean("tolerate_errors"),
-      clauseCoverage = config.getBoolean("clause_coverage"),
       reportBadMaps = config.getBoolean("report_bad_maps"),
       overloadedSpecDynamicResult = config.getBoolean("overloaded_spec_dynamic_result"),
       customMapsMerge = config.getBoolean("custom_maps_merge"),
