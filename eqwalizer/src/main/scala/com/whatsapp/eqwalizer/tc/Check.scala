@@ -314,7 +314,7 @@ final class Check(pipelineContext: PipelineContext) {
         case c @ Case(sel, clauses) =>
           val (selType, env1) = elab.elabExpr(sel, env)
           val effVars = Vars.clausesVars(clauses)
-          if (occurrence.eqwater(clauses)) {
+          if (occurrence.isEnabled(clauses)) {
             val clauseEnvs = pipelineCtx.occurrence.caseEnvs(c, selType, env1)
             val envs2 = clauses
               .lazyZip(clauseEnvs)
@@ -326,7 +326,7 @@ final class Check(pipelineContext: PipelineContext) {
           }
         case i @ If(clauses) =>
           val effVars = Vars.clausesVars(clauses)
-          if (occurrence.eqwater(clauses)) {
+          if (occurrence.isEnabled(clauses)) {
             val clauseEnvs = pipelineCtx.occurrence.ifEnvs(i, env)
             val envs1 = clauses
               .lazyZip(clauseEnvs)

@@ -26,8 +26,6 @@ package object tc {
   val noOptions: Options = Options()
 
   case class PipelineContext(module: String, options: Options = Options()) {
-    val eqwater: Boolean =
-      options.eqwater.getOrElse(config.eqwater)
     val tolerateErrors: Boolean =
       options.tolerateErrors.getOrElse(config.tolerateErrors)
     val util: Util = new Util(this)

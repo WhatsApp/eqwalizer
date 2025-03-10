@@ -294,7 +294,7 @@ final class Elab(pipelineContext: PipelineContext) {
       case c @ Case(sel, clauses) =>
         val (selTy, env1) = elabExpr(sel, env)
         val effVars = Vars.clausesVars(clauses)
-        if (occurrence.eqwater(clauses)) {
+        if (occurrence.isEnabled(clauses)) {
           val clauseEnvs = occurrence.caseEnvs(c, selTy, env1)
           val (ts, envs) = clauses
             .lazyZip(clauseEnvs)
@@ -307,7 +307,7 @@ final class Elab(pipelineContext: PipelineContext) {
         }
       case i @ If(clauses) =>
         val effVars = Vars.clausesVars(clauses)
-        if (occurrence.eqwater(clauses)) {
+        if (occurrence.isEnabled(clauses)) {
           val clauseEnvs = occurrence.ifEnvs(i, env)
           val (ts, envs) = clauses
             .lazyZip(clauseEnvs)

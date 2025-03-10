@@ -160,11 +160,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
     s"$$$gen"
   }
 
-  def eqwater(clauses: List[Clause]): Boolean = {
+  def isEnabled(clauses: List[Clause]): Boolean = {
     val emptyPatterns = clauses.forall(_.pats.isEmpty)
     val shortGuards = clauses.forall(clause => clause.guards.map(guardSize).sum < 32)
     val smallClauses = pipelineContext.unlimitedRefinement || (clauses.size < 7 && shortGuards)
-    pipelineContext.eqwater && (emptyPatterns || smallClauses)
+    emptyPatterns || smallClauses
   }
 
   private def ignoreNumberRefinement(clause: Clause, aMap: AMap, nextClauses: List[(Clause, AMap)]): Boolean = {
@@ -282,7 +282,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
   }
 
   def clausesEnvs(clauses: List[Clause], argTys: List[Type], env: Env): List[Env] = {
-    val accumulateNegProps = eqwater(clauses)
+    val accumulateNegProps = isEnabled(clauses)
     var propsAcc = List.empty[Prop]
     val clauseEnvs = ListBuffer.empty[Env]
 
