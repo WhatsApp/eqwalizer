@@ -151,6 +151,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
   import Occurrence._
   private lazy val module = pipelineContext.module
   private lazy val subtype = pipelineContext.subtype
+  private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
   private lazy val vars = pipelineContext.vars
   private type Name = String
@@ -894,6 +895,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
             refineRecord(rt, fieldName, t1)
           case _ => rt
         }
+      case (rt: RecordType, TupleField(_, Some(arity)) :: _) =>
+        util.getRecord(rt.module, rt.name) match {
+          case Some(recDecl) if recDecl.fields.size + 1 == arity =>
+            val rTy = narrow.asTupleType(rt, arity).head
+            update(rTy, path, pol, s)
+          case _ => rt
+        }
       case (rt: RefinedRecordType, RecordField(fieldName, recName) :: path) if rt.recType.name == recName =>
         if (rt.fields.contains(fieldName)) {
           val t = rt.fields(fieldName)
@@ -907,6 +915,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
               refineRecord(rt, fieldName, t1)
             case None => rt
           }
+        }
+      case (rt: RefinedRecordType, TupleField(_, Some(arity)) :: _) =>
+        util.getRecord(rt.recType.module, rt.recType.name) match {
+          case Some(recDecl) if recDecl.fields.size + 1 == arity =>
+            val rTy = narrow.asTupleType(rt, arity).head
+            update(rTy, path, pol, s)
+          case _ => rt
         }
       case (MapType(props, kTy, vTy), MapField(field) :: path) =>
         if (props.contains(field) || (subtype.subType(Key.asType(field), kTy) && pol == +)) {
@@ -1053,6 +1068,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
           .map(_.fields(fieldName).tp)
           .map(typePathRef(_, path1))
           .getOrElse(AnyType)
+      case (rTy: RecordType, TupleField(index, Some(arity)) :: path1) =>
+        util.getRecord(rTy.module, rTy.name) match {
+          case Some(recDecl) if recDecl.fields.size + 1 == arity =>
+            val tuple = narrow.asTupleType(rTy, arity).head
+            typePathRef(tuple.argTys(index), path1)
+          case _ => AnyType
+        }
       case (rTy: RefinedRecordType, RecordField(fieldName, recName) :: path1) if rTy.recType.name == recName =>
         if (rTy.fields.contains(fieldName)) {
           typePathRef(rTy.fields(fieldName), path1)
@@ -1062,6 +1084,13 @@ final class Occurrence(pipelineContext: PipelineContext) {
             .map(_.fields(fieldName).tp)
             .map(typePathRef(_, path1))
             .getOrElse(AnyType)
+        }
+      case (rTy: RefinedRecordType, TupleField(index, Some(arity)) :: path1) =>
+        util.getRecord(rTy.recType.module, rTy.recType.name) match {
+          case Some(recDecl) if recDecl.fields.size + 1 == arity =>
+            val tuple = narrow.asTupleType(rTy, arity).head
+            typePathRef(tuple.argTys(index), path1)
+          case _ => AnyType
         }
       case (MapType(props, _, vTy), MapField(field) :: path1) =>
         val ty = props
