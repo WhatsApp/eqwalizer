@@ -21,7 +21,6 @@ package object tc {
   val noOptions: Options = Options()
 
   case class PipelineContext(module: String, options: Options = Options()) {
-    val tolerateErrors: Boolean = config.tolerateErrors
     val util: Util = new Util(this)
     val vars: Vars = new Vars(this)
     val subtype: Subtype = new Subtype(this)

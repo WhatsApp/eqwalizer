@@ -80,19 +80,13 @@ object Pipeline {
   private def checkFun(ctx: PipelineContext, f: FunDecl, spec: FunSpec): FuncDecl = {
     ctx.check.checkFun(f, spec)
     val errors = ctx.diagnosticsInfo.popErrors()
-    if (ctx.tolerateErrors)
-      FuncDecl(f.id, errors)(f.pos)
-    else
-      FuncDecl(f.id, errors.headOption.toList)(f.pos)
+    FuncDecl(f.id, errors)(f.pos)
   }
 
   private def checkOverloadedFun(ctx: PipelineContext, f: FunDecl, overloadedSpec: OverloadedFunSpec): FuncDecl = {
     ctx.check.checkOverloadedFun(f, overloadedSpec)
     val errors = ctx.diagnosticsInfo.popErrors()
-    if (ctx.tolerateErrors)
-      FuncDecl(f.id, errors)(f.pos)
-    else
-      FuncDecl(f.id, errors.headOption.toList)(f.pos)
+    FuncDecl(f.id, errors)(f.pos)
   }
 
   def applyFixmes(
