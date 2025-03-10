@@ -16,18 +16,12 @@ package object tc {
     val empty: Env = Map.empty
   }
 
-  case class Options(
-      eqwater: Option[Boolean] = None,
-      tolerateErrors: Option[Boolean] = None,
-      unlimitedRefinement: Option[Boolean] = None,
-      errorDepth: Option[Int] = None,
-  )
+  case class Options(unlimitedRefinement: Option[Boolean] = None)
 
   val noOptions: Options = Options()
 
   case class PipelineContext(module: String, options: Options = Options()) {
-    val tolerateErrors: Boolean =
-      options.tolerateErrors.getOrElse(config.tolerateErrors)
+    val tolerateErrors: Boolean = config.tolerateErrors
     val util: Util = new Util(this)
     val vars: Vars = new Vars(this)
     val subtype: Subtype = new Subtype(this)
@@ -63,8 +57,7 @@ package object tc {
       new TypeInfo(this)
     val diagnosticsInfo: DiagnosticsInfo =
       new DiagnosticsInfo()
-    val errorDepth: Int =
-      options.errorDepth.getOrElse(config.errorDepth)
+    val errorDepth: Int = config.errorDepth
     val overloadedSpecDynamicResult: Boolean = config.overloadedSpecDynamicResult
     val customMapsMerge: Boolean = config.customMapsMerge
     val ignoredOverloadedSpec: Boolean = config.ignoredOverloadedSpec
