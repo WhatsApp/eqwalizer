@@ -53,11 +53,6 @@ object TcDiagnostics {
     def errorName = "not_enough_info_to_branch"
     override def erroneousExpr: Option[Expr] = Some(expr)
   }
-  case class IgnoredOverloadedSpec(pos: Pos) extends TypeError {
-    override val msg: String = s"dynamic() -> dynamic() is used"
-    def errorName = "ignored_overloaded_spec"
-    override def erroneousExpr: Option[Expr] = None
-  }
   case class DynamicLambda(pos: Pos) extends TypeError {
     override val msg: String = s"Lambda without context: parameters are dynamic()"
     def errorName = "dynamic_lambda"

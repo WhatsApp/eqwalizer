@@ -59,7 +59,6 @@ package object tc {
     val errorDepth: Int = config.errorDepth
     val overloadedSpecDynamicResult: Boolean = config.overloadedSpecDynamicResult
     val customMapsMerge: Boolean = config.customMapsMerge
-    val ignoredOverloadedSpec: Boolean = config.ignoredOverloadedSpec
     val reportDynamicLambdas: Boolean = config.reportDynamicLambdas
   }
 }
