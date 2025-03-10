@@ -29,7 +29,6 @@ package object eqwalizer {
   }
 
   case class Config(
-      reportBadMaps: Boolean,
       overloadedSpecDynamicResult: Boolean,
       customMapsMerge: Boolean,
       mode: Mode.Mode,
@@ -42,7 +41,6 @@ package object eqwalizer {
     val modeStr = config.getString("mode")
     val mode = Mode.fromString(modeStr).getOrElse(throw new IllegalArgumentException(s"Unknown mode ${modeStr}"))
     Config(
-      reportBadMaps = config.getBoolean("report_bad_maps"),
       overloadedSpecDynamicResult = config.getBoolean("overloaded_spec_dynamic_result"),
       customMapsMerge = config.getBoolean("custom_maps_merge"),
       mode,
