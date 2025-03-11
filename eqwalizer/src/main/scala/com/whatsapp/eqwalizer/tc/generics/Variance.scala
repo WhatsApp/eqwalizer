@@ -25,22 +25,22 @@ class Variance(pipelineContext: PipelineContext) {
     val id = Id(remoteId.name, remoteId.arity)
     DbApi.getType(remoteId.module, id) match {
       case Some(tDecl) =>
-        tDecl.params.map(varType => varianceOf(tDecl.body, varType.n, isPositivePosition = true).get)
+        tDecl.params.map(varType => varianceOf(tDecl.body, varType.n, isPositivePosition = true))
       case None =>
         // Opaques are covariant
         DbApi.getPrivateOpaque(remoteId.module, id).get.params.map(_ => Covariant)
     }
   }
 
-  private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Option[Variance.Variance] =
+  private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Variance.Variance =
     getVarianceOf(ty, tv, isPositivePosition)(history = Set())
 
   private def getVarianceOf(ty: Type, tv: Var, isPositivePosition: Boolean)(implicit
       history: Set[(RemoteType, Boolean)]
-  ): Option[Variance.Variance] = ty match {
+  ): Variance.Variance = ty match {
     case VarType(n) if tv == n =>
-      if (isPositivePosition) Some(Covariant)
-      else Some(Contravariant)
+      if (isPositivePosition) Covariant
+      else Contravariant
     case FunType(forall, argTys, resTy) =>
       // forall can only be non-empty only for top-level fun types
       // corresponding to generic specs
@@ -49,7 +49,7 @@ class Variance(pipelineContext: PipelineContext) {
       combineVariances(variances)
     case t @ RemoteType(rid, args) =>
       if (history((t, isPositivePosition))) {
-        Some(Constant)
+        Constant
       } else {
         val body = util.getTypeDeclBody(rid, args)
         getVarianceOf(body, tv, isPositivePosition)(history + ((t, isPositivePosition)))
@@ -61,27 +61,24 @@ class Variance(pipelineContext: PipelineContext) {
 
   private def toTopLevelVariance(ft: FunType, tv: Var): Variance.Variance =
     varianceOf(ft.resTy, tv, isPositivePosition = true) match {
-      case Some(variance) =>
-        variance
-      case None =>
-        combineVariances(ft.argTys.map(varianceOf(_, tv, isPositivePosition = false))).getOrElse(Constant) match {
+      case Constant =>
+        combineVariances(ft.argTys.map(varianceOf(_, tv, isPositivePosition = false))) match {
           case Constant | Covariant | Invariant =>
             Covariant
           case Contravariant =>
             Contravariant
         }
+      case variance =>
+        variance
     }
 
-  private def combineVariances(variances: List[Option[Variance.Variance]]): Option[Variance.Variance] =
-    variances.foldLeft(None: Option[Variance.Variance])((v1Opt, v2Opt) =>
+  private def combineVariances(variances: List[Variance.Variance]): Variance.Variance =
+    variances.foldLeft(Constant: Variance.Variance)((v1Opt, v2Opt) =>
       (v1Opt, v2Opt) match {
-        case (None, Some(v))                  => Some(v)
-        case (Some(v), None)                  => Some(v)
-        case (v, Some(Constant))              => v
-        case (Some(Constant), v)              => v
-        case (None, None)                     => None
-        case (Some(v1), Some(v2)) if v1 == v2 => Some(v1)
-        case (Some(_), Some(_))               => Some(Invariant)
+        case (v, Constant)        => v
+        case (Constant, v)        => v
+        case (v1, v2) if v1 == v2 => v1
+        case (_, _)               => Invariant
       }
     )
 }
