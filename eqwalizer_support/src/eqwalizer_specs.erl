@@ -67,11 +67,6 @@
     | aes_gcm
     | chacha20_poly1305.
 
--type crypto_key_integer() :: integer() | binary().
--type crypto_dh_params() :: [crypto_key_integer()].
--type crypto_ecdh_params() :: [crypto:ec_named_curve() | x25519 | x448].
--type crypto_rsa_params() :: {integer(), crypto_key_integer()}.
-
 -spec 'crypto:crypto_one_time_aead'
     (Cipher, Key, IV, InText, AAD, EncryptTagLength, true) -> EncryptResult when
         Cipher :: crypto_cipher_aead(),
@@ -93,12 +88,6 @@
         DecryptResult :: OutPlainText | error,
         OutPlainText :: binary().
 'crypto:crypto_one_time_aead'(_, _, _, _, _, _, _) -> error(eqwalizer_specs).
-
--spec 'crypto:generate_key'
-    (dh, crypto_dh_params()) -> {binary(), binary()};
-    (ecdh, crypto_ecdh_params()) -> {binary(), binary()};
-    (rsa, crypto_rsa_params()) -> {[binary()], [binary()]}.
-'crypto:generate_key'(_, _) -> error(eqwalizer_specs).
 
 %% -------- epp_dodger --------
 
