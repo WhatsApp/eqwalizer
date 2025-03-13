@@ -105,9 +105,9 @@ class Util(pipelineContext: PipelineContext) {
       .map(applyType)
       .getOrElse({
         if (pipelineContext.module == remoteId.module) {
-          applyType(DbApi.getPrivateOpaque(module, id).get)
+          applyType(DbApi.getOpaque(module, id).get)
         } else {
-          assert(DbApi.getPrivateOpaque(remoteId.module, id).isDefined, s"could not find $remoteId from $module")
+          assert(DbApi.getOpaque(remoteId.module, id).isDefined, s"could not find $remoteId from $module")
           OpaqueType(remoteId, args)
         }
       })

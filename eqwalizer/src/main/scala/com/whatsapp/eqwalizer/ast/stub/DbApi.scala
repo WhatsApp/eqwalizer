@@ -48,8 +48,8 @@ object DbApi {
     }
   }
 
-  def getPrivateOpaque(module: String, id: Id): Option[TypeDecl] =
-    Db.getModuleStub(module).flatMap(_.privateOpaques.get(id))
+  def getOpaque(module: String, id: Id): Option[TypeDecl] =
+    Db.getModuleStub(module).flatMap(_.opaques.get(id))
 
   def getRecord(module: String, record: String): Option[RecDecl] =
     Db.getModuleStub(module).flatMap(_.records.get(record))

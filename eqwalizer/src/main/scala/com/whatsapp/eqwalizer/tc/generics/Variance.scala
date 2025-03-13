@@ -28,7 +28,7 @@ class Variance(pipelineContext: PipelineContext) {
         tDecl.params.map(varType => varianceOf(tDecl.body, varType.n, isPositivePosition = true))
       case None =>
         // Opaques are covariant
-        DbApi.getPrivateOpaque(remoteId.module, id).get.params.map(_ => Covariant)
+        DbApi.getOpaque(remoteId.module, id).get.params.map(_ => Covariant)
     }
   }
 
