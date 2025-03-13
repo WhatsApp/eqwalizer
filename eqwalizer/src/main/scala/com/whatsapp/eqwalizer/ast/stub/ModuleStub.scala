@@ -17,7 +17,6 @@ private case class ModuleStub(
     imports: Map[Id, String],
     exportTypes: Set[Id],
     privateOpaques: Map[Id, TypeDecl],
-    publicOpaques: Map[Id, OpaqueTypeDecl],
     types: Map[Id, TypeDecl],
     specs: Map[Id, FunSpec],
     overloadedSpecs: Map[Id, OverloadedFunSpec],

@@ -48,7 +48,6 @@ object Forms {
   )
   case class RecField(name: String, tp: Option[Type], defaultValue: Option[Expr], refinable: Boolean)
   case class RecFieldTyped(name: String, tp: Type, defaultValue: Option[Expr], refinable: Boolean)
-  case class OpaqueTypeDecl(id: Id, file: Option[String])(val pos: Pos) extends InternalForm
   case class TypeDecl(id: Id, params: List[VarType], body: Type, file: Option[String])(val pos: Pos)
       extends InternalForm
 
