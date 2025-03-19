@@ -35,7 +35,6 @@ private object ModuleStub {
       .withDiscriminatorFieldName(None)
       .withFieldNameMapper {
         case "pos" => "location"
-        case "mod" => "module"
         case s     => JsonCodecMaker.enforce_snake_case(s)
       }
   )

@@ -39,8 +39,8 @@ object Exprs {
   case class RemoteCall(id: RemoteId, args: List[Expr])(val pos: Pos) extends Expr
   case class LocalFun(id: Id)(val pos: Pos) extends Expr
   case class RemoteFun(id: RemoteId)(val pos: Pos) extends Expr
-  case class DynRemoteFun(mod: Expr, name: Expr)(val pos: Pos) extends Expr
-  case class DynRemoteFunArity(mod: Expr, name: Expr, arity: Expr)(val pos: Pos) extends Expr
+  case class DynRemoteFun(module: Expr, name: Expr)(val pos: Pos) extends Expr
+  case class DynRemoteFunArity(module: Expr, name: Expr, arity: Expr)(val pos: Pos) extends Expr
 
   case class Lambda(clauses: List[Clause])(val pos: Pos, val name: Option[String]) extends Expr
 

@@ -92,7 +92,6 @@ object InvalidDiagnostics {
   implicit val codec: JsonValueCodec[Invalid] = JsonCodecMaker.make(
     CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
       case "pos" => "location"
-      case "mod" => "module"
       case s     => JsonCodecMaker.enforce_snake_case(s)
     }
   )
