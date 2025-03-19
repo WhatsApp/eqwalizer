@@ -12,8 +12,6 @@ scalacOptions += "-deprecation"
 scalacOptions += "-Wunused:imports"
 scalacOptions += "-Werror"
 
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
-
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 target := {
@@ -36,10 +34,5 @@ libraryDependencies ++= Seq(
 )
 
 assembly / assemblyJarName := "eqwalizer.jar"
-
-run / javaOptions += "-Xss15M"
-
-run / fork := true
-run / connectInput := true
 
 assembly / mainClass  := Some("com.whatsapp.eqwalizer.Main")
