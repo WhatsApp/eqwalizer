@@ -70,10 +70,9 @@ object Forms {
 
   implicit val codec: JsonValueCodec[List[InternalForm]] = JsonCodecMaker.make(
     CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
-      case "pos"                     => "location"
-      case "mod"                     => "module"
-      case s if !s.charAt(0).isUpper => JsonCodecMaker.enforce_snake_case(s)
-      case s                         => s
+      case "pos" => "location"
+      case "mod" => "module"
+      case s     => JsonCodecMaker.enforce_snake_case(s)
     }
   )
 }
