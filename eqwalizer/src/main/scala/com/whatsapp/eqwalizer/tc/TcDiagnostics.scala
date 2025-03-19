@@ -22,7 +22,7 @@ object TcDiagnostics {
       val pipelineContext: PipelineContext
   ) extends TypeError {
     private val (showGot, showExpected) = showNotSubtype(got, expected)
-    override lazy val msg: String =
+    override val msg: String =
       s"Expression has type:   $showGot\nContext expected type: $showExpected"
     private val subtypeDetail = pipelineContext.subtypeDetail
     private val typeMismatch = pipelineContext.typeMismatch
@@ -97,7 +97,7 @@ object TcDiagnostics {
   case class IncorrectCallbackReturn(behaviourName: String, callback: String, expected: Type, got: Type)(val pos: Pos)(
       implicit val pipelineContext: PipelineContext
   ) extends BehaviourError {
-    override lazy val msg: String =
+    override val msg: String =
       s"Incorrect return type for implementation of $behaviourName:$callback. Expected: ${show(expected)}, Got: ${show(
         got
       )}."
@@ -140,7 +140,7 @@ object TcDiagnostics {
   case class AmbiguousUnion(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit
       val pipelineContext: PipelineContext
   ) extends TypeError {
-    override lazy val msg: String =
+    override val msg: String =
       s"Expression has type ${show(got)} which matches multiple generic types in ${show(expected)}"
     def errorName = "ambiguous_union"
     override def erroneousExpr: Option[Expr] = Some(expr)

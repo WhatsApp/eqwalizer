@@ -25,7 +25,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val occurrence = pipelineCtx.occurrence
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private lazy val typeInfo = pipelineCtx.typeInfo
-  implicit val pipelineCtx = pipelineContext
+  implicit val pipelineCtx: PipelineContext = pipelineContext
 
   implicit class JoinableTypes[T <: Type](tys: Set[T]) {
     def join(): Type = {

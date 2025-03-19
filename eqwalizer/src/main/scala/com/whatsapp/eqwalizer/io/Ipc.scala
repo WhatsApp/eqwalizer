@@ -56,7 +56,7 @@ object Ipc {
   def sendEqwalizingDone(module: String): Unit =
     send(EqwalizingDone(module))
 
-  def send(req: Request): Unit = {
+  private def send(req: Request): Unit = {
     val json = reqToJson(req)
     json.writeBytesTo(Console.out)
     Console.out.println()

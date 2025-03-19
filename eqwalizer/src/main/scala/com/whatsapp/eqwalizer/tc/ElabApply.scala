@@ -33,7 +33,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val variance = pipelineContext.variance
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
-  implicit val pipelineCtx = pipelineContext
+  implicit val pipelineCtx: PipelineContext = pipelineContext
 
   private type Var = Int
 
