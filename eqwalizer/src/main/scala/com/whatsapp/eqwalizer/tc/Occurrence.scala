@@ -455,7 +455,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case TestNumber(_)   => (Some(NumberType), None)
       case TestTuple(tests) =>
         val (pos, neg) = tests.map(cmpTypes).unzip
-        (unzipOpt(pos).map(TupleType), unzipOpt(neg).map(TupleType))
+        (unzipOpt(pos).map(TupleType(_)), unzipOpt(neg).map(TupleType(_)))
       case _ => (None, None)
     }
   }

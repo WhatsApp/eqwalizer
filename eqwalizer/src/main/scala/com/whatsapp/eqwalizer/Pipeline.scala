@@ -133,7 +133,7 @@ object Pipeline {
         }
 
         val redundantFixmePositions = fixmes.filterNot(usedFixmes).map(_.comment)
-        val redundantFixmeErrors = redundantFixmePositions.map(RedundantFixme)
+        val redundantFixmeErrors = redundantFixmePositions.map(RedundantFixme(_))
 
         (forms1.toList, redundantFixmeErrors)
     }

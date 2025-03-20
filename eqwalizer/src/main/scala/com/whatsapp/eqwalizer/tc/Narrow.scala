@@ -212,7 +212,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case DynamicType =>
         List(DynamicType)
       case BoundedDynamicType(bound) =>
-        extractListElem(bound).map(BoundedDynamicType)
+        extractListElem(bound).map(BoundedDynamicType(_))
       case AnyType =>
         List(AnyType)
       case UnionType(tys) =>
@@ -239,7 +239,7 @@ class Narrow(pipelineContext: PipelineContext) {
       Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
     case BoundedDynamicType(bound) =>
       extractFunTypes(bound, arity).map(ft =>
-        FunType(ft.forall, ft.argTys.map(BoundedDynamicType), BoundedDynamicType(ft.resTy))
+        FunType(ft.forall, ft.argTys.map(BoundedDynamicType(_)), BoundedDynamicType(ft.resTy))
       )
     case AnyFunType =>
       Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
@@ -267,7 +267,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case DynamicType =>
         List(TupleType(List.fill(arity)(DynamicType)))
       case BoundedDynamicType(bound) =>
-        asTupleTypeAux(bound, arity).map(tt => TupleType(tt.argTys.map(BoundedDynamicType)))
+        asTupleTypeAux(bound, arity).map(tt => TupleType(tt.argTys.map(BoundedDynamicType(_))))
       case AnyType | VarType(_) =>
         List(TupleType(List.fill(arity)(AnyType)))
       case r: RecordType if arity > 0 =>
