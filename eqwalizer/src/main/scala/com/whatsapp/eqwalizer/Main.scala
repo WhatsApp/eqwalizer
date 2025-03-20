@@ -10,16 +10,15 @@ import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val args1 = args.filterNot(Set("--no-progress"))
-    if (args1.length == 0) {
+    if (args.length == 0) {
       help()
       return
     }
 
-    val cmd = args1(0)
+    val cmd = args(0)
 
     cmd match {
-      case "ipc" => ipc(args1)
+      case "ipc" => ipc(args)
       case _     => help()
     }
   }
@@ -36,8 +35,5 @@ object Main {
     """com.whatsapp.eqwalizer.Main
       |eqWAlizer is meant to be used from ELP
       |""".stripMargin
-    /* undocumented:
-     * `stats <module_name>` # stats for powering dashboards
-     */
   }
 }
