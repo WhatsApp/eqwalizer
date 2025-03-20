@@ -28,7 +28,7 @@ final class Check(pipelineContext: PipelineContext) {
   private lazy val customReturn = pipelineContext.customReturn
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
-  lazy val freshen = new TypeVars.VarFreshener().freshen _
+  lazy val freshen = new TypeVars.VarFreshener().freshen
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def checkFun(f: FunDecl, spec: FunSpec): Unit = {
