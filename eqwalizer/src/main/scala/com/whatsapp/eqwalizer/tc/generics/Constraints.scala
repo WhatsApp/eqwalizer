@@ -242,7 +242,6 @@ class Constraints(pipelineContext: PipelineContext) {
                 constraints = (prop1.tp, prop2.tp) :: constraints
               case None =>
                 constraints = (asType(key1), kT2) :: (prop1.tp, vT2) :: constraints
-              case _ =>
             }
           }
           val elimmedkT1 = ElimTypeVars.elimTypeVars(kT1, ElimTypeVars.Promote, toSolve ++ varsToElim)
