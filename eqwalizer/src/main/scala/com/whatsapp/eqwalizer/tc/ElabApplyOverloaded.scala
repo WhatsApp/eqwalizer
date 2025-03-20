@@ -50,8 +50,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
         FunType(Nil, argTys, DynamicType)
       }
       Some(result)
-    } else
-      None
+    } else None
   }
 
   private def mayOverlap(t1: Type, t2: Type): Boolean = {

@@ -141,8 +141,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
                 ),
               )
             )
-          } else
-            resTy
+          } else resTy
         }
         (resTyPrecise, env1)
       case RemoteId("lists", "filtermap", 2) =>
@@ -166,8 +165,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             if (!subtype.subType(funArgTy, expFunTy)) {
               diagnosticsInfo.add(ExpectedSubtype(funArg.pos, funArg, expected = expFunTy, got = funArgTy))
               List(DynamicType)
-            } else
-              narrow.extractFunTypes(funArgTy, 1).map(_.resTy)
+            } else narrow.extractFunTypes(funArgTy, 1).map(_.resTy)
         }
         def funResultsToItemTy(tys: Iterable[Type], defaultTy: Type, pos: Pos): Type =
           tys.foldLeft(NoneType: Type)((memo, ty) => subtype.join(memo, funResultToItemTy(ty, defaultTy, pos)))
@@ -256,8 +254,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             if (!subtype.subType(predTy, expFunTy)) {
               diagnosticsInfo.add(ExpectedSubtype(pred.pos, pred, expected = expFunTy, got = predTy))
               (TupleType(List(DynamicType, DynamicType)), env1)
-            } else
-              (TupleType(List(ListType(elemTy), ListType(elemTy))), env1)
+            } else (TupleType(List(ListType(elemTy), ListType(elemTy))), env1)
         }
 
       case RemoteId("maps", "filter", 2) =>

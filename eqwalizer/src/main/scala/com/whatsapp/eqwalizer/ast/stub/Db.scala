@@ -20,8 +20,7 @@ private object Db {
     */
   def getModuleStub(module: String): Option[ModuleStub] = {
     loadedModules.add(module)
-    if (stubs.contains(module))
-      stubs(module)
+    if (stubs.contains(module)) stubs(module)
     else {
       val optStub =
         Ipc.getAstBytes(module, Ipc.TransitiveStub).map(readFromArray[ModuleStub](_))

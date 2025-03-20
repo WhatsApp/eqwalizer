@@ -49,8 +49,7 @@ package object ast {
 
     private def parse(str: String): Option[Id] = {
       val splitIndex = str.lastIndexOf('/')
-      if (splitIndex <= 0)
-        None
+      if (splitIndex <= 0) None
       else {
         val (module, arityStr) = str.splitAt(splitIndex)
         arityStr.substring(1).toIntOption.map(Id(module, _))

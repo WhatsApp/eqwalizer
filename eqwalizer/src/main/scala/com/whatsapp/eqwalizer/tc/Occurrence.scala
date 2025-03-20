@@ -413,8 +413,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
   private def guardsProps(guards: List[Guard], aMap: Map[Name, Obj]): (Option[Prop], Option[Prop]) =
     // the same as connecting via OR
-    if (guards.isEmpty)
-      (None, None)
+    if (guards.isEmpty) (None, None)
     else {
       val (pos, neg) = guards.map(guardProp(_, aMap)).unzip
       (Some(or(pos)), Some(and(neg)))
@@ -724,8 +723,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
 
       // tuples and records
       case (TupleType(ts1), TupleType(ts2)) =>
-        if (ts1.size != ts2.size)
-          Some(false)
+        if (ts1.size != ts2.size) Some(false)
         else {
           val overlaps = ts1.lazyZip(ts2).map(overlap)
           if (overlaps.exists(_.isFalse))

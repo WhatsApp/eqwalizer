@@ -93,8 +93,7 @@ class Util(pipelineContext: PipelineContext) {
     }
     val id = Id(remoteId.name, remoteId.arity)
     def applyType(decl: TypeDecl): Type =
-      if (id.arity == 0)
-        decl.body
+      if (id.arity == 0) decl.body
       else {
         val subst = decl.params.zip(args).map { case (VarType(n), ty) => n -> ty }.toMap
         Subst.subst(subst, decl.body)

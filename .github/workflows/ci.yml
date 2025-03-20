@@ -41,7 +41,7 @@ jobs:
       - name: Assemble eqwalizer.jar
         run: "cd eqwalizer; sbt assembly"
       - name: Assemble eqwalizer binary
-        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
+        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-3.6.4/eqwalizer.jar eqwalizer"
       - name: Test elp
         working-directory: elp
         run: "cargo test --no-default-features --workspace --target x86_64-unknown-linux-musl"
@@ -55,7 +55,7 @@ jobs:
         uses: "actions/upload-artifact@v4"
         with:
           name: eqwalizer.jar
-          path: eqwalizer/target/scala-2.13/eqwalizer.jar
+          path: eqwalizer/target/scala-3.6.4/eqwalizer.jar
   macos-ci:
     needs:
       - linux-ci
@@ -92,9 +92,9 @@ jobs:
         uses: "actions/download-artifact@v4"
         with:
           name: eqwalizer.jar
-          path: eqwalizer/target/scala-2.13
+          path: eqwalizer/target/scala-3.6.4
       - name: Assemble eqwalizer binary
-        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-2.13/eqwalizer.jar eqwalizer"
+        run: "cd eqwalizer && native-image -H:IncludeResources=application.conf --no-server --no-fallback -jar target/scala-3.6.4/eqwalizer.jar eqwalizer"
       - name: Test elp
         working-directory: elp
         run: "cargo test --no-default-features --workspace"

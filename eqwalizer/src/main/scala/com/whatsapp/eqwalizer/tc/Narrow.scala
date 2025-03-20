@@ -28,8 +28,7 @@ class Narrow(pipelineContext: PipelineContext) {
           val body = util.getTypeDeclBody(rid, args)
           meetAux(body, t2, seen)
         case (_, RemoteType(rid, args)) =>
-          if (seen(rid) || args.nonEmpty)
-            t1
+          if (seen(rid) || args.nonEmpty) t1
           else {
             val body = util.getTypeDeclBody(rid, args)
             meetAux(t1, body, seen + rid)

@@ -397,8 +397,7 @@ final class Elab(pipelineContext: PipelineContext) {
                 env11
             }
             val t1False = subtype.subType(t1, falseType) && !subtype.subType(t1, trueType)
-            if (t1False)
-              (falseType, env1)
+            if (t1False) (falseType, env1)
             else {
               val (t2, _) = elabExpr(arg2, env1Refined)
               val t1True = subtype.subType(t1, trueType) && !subtype.subType(t1, falseType)
@@ -418,8 +417,7 @@ final class Elab(pipelineContext: PipelineContext) {
             val (arg1Ty, env1) = elabExprAndCheck(arg1, env, ListType(AnyType))
             val (arg2Ty, env2) = elabExprAndCheck(arg2, env1, ListType(AnyType))
             val resTy =
-              if (op == "--")
-                arg1Ty
+              if (op == "--") arg1Ty
               else {
                 val Some(ListType(elem1Ty)) = narrow.asListType(arg1Ty)
                 val Some(ListType(elem2Ty)) = narrow.asListType(arg2Ty)
