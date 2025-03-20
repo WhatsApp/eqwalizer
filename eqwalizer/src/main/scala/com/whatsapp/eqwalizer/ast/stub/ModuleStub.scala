@@ -33,9 +33,6 @@ private object ModuleStub {
       .withSetMaxInsertNumber(65536)
       .withAllowRecursiveTypes(true)
       .withDiscriminatorFieldName(None)
-      .withFieldNameMapper {
-        case "pos" => "location"
-        case s     => JsonCodecMaker.enforce_snake_case(s)
-      }
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
   )
 }

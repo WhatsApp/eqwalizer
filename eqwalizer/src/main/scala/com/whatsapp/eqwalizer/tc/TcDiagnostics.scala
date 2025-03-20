@@ -152,9 +152,9 @@ object TcDiagnostics {
   }
 
   implicit val codec: JsonValueCodec[TypeError] = JsonCodecMaker.make(
-    CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
-      case "pos" => "location"
-      case s     => JsonCodecMaker.enforce_snake_case(s)
-    }
+    CodecMakerConfig
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
   )
 }

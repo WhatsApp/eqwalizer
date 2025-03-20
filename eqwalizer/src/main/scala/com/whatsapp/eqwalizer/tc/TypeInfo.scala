@@ -94,9 +94,9 @@ object TypeInfo {
   }
 
   implicit private val codec: JsonValueCodec[mutable.Map[String, List[(Pos, Type)]]] = JsonCodecMaker.make(
-    CodecMakerConfig.withAllowRecursiveTypes(true).withDiscriminatorFieldName(None).withFieldNameMapper {
-      case "pos" => "location"
-      case s     => JsonCodecMaker.enforce_snake_case(s)
-    }
+    CodecMakerConfig
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
   )
 }
