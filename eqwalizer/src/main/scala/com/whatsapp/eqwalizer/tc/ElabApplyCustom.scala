@@ -205,7 +205,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case 2 =>
             val tail = args(1)
             val tailTy = coerce(tail, argTys(1), anyListTy)
-            val Some(ListType(tailElemTy)) = narrow.asListType(tailTy)
+            val Some(ListType(tailElemTy)) = narrow.asListType(tailTy): @unchecked
             subtype.join(argElemTy, tailElemTy)
         }
         (ListType(elemTy), env1)
@@ -315,7 +315,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
 
             val vTys = lambda.clauses.map { clause =>
-              val PatAtom(a) = clause.pats.head
+              val PatAtom(a) = clause.pats.head: @unchecked
               val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
               elab.elabClause(clause, List(AtomLitType(a), refinedValTy, accTy), lamEnv, Set.empty)._1
             }
@@ -341,7 +341,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
             lambda.clauses.map { clause =>
-              val PatAtom(a) = clause.pats.head
+              val PatAtom(a) = clause.pats.head: @unchecked
               val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
               check.checkClause(clause, List(AtomLitType(a), refinedValTy, accTy), accTy, lamEnv, Set.empty)
             }
@@ -599,8 +599,8 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         }
 
       case RemoteId(CompilerMacro.fake_module, "record_info", 2) =>
-        val List(AtomLit(access), name) = args
-        val AtomLit(recName) = name
+        val List(AtomLit(access), name) = args: @unchecked
+        val AtomLit(recName) = name: @unchecked
 
         access match {
           case "size" => (NumberType, env1)

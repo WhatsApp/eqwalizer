@@ -134,7 +134,7 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         if (argTys.size > 5) s"$argTysTruncated | ..."
         else argTysTruncated
       case _: RemoteType | _: OpaqueType =>
-        val NamedType(rid, argTys) = tp
+        val NamedType(rid, argTys) = tp: @unchecked
         if (argTys.isEmpty)
           s"""${showRid(rid)}()"""
         else

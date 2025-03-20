@@ -419,8 +419,8 @@ final class Elab(pipelineContext: PipelineContext) {
             val resTy =
               if (op == "--") arg1Ty
               else {
-                val Some(ListType(elem1Ty)) = narrow.asListType(arg1Ty)
-                val Some(ListType(elem2Ty)) = narrow.asListType(arg2Ty)
+                val Some(ListType(elem1Ty)) = narrow.asListType(arg1Ty): @unchecked
+                val Some(ListType(elem2Ty)) = narrow.asListType(arg2Ty): @unchecked
                 ListType(subtype.join(elem1Ty, elem2Ty))
               }
             (resTy, env2)
@@ -680,7 +680,7 @@ final class Elab(pipelineContext: PipelineContext) {
     qualifiers.foreach {
       case LGenerate(gPat, gExpr) =>
         val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, ListType(AnyType))
-        val Some(ListType(gElemT)) = narrow.asListType(gT)
+        val Some(ListType(gElemT)) = narrow.asListType(gT): @unchecked
         val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
         envAcc = pEnv
       case BGenerate(gPat, gExpr) =>

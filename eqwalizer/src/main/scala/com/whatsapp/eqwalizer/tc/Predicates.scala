@@ -20,7 +20,7 @@ object Predicates {
   def asIf(e: Case): If = {
     val Case(sel, clauses) = e
     val List(clause1, clause2) = clauses
-    val Some(test) = Filters.asTest(sel)
+    val Some(test) = Filters.asTest(sel): @unchecked
     clause1.pats.head match {
       case PatAtom("true") =>
         val ifClause1 = Clause(List.empty, List(Guard(List(test))), clause1.body)(clause1.pos)
