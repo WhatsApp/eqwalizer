@@ -18,6 +18,8 @@ import scala.collection.immutable.TreeSeqMap
 
 object Forms {
 
+  sealed trait InternalForm { val pos: Pos }
+
   case class Module(name: String)(val pos: Pos) extends InternalForm
   case class Export(funs: List[Id])(val pos: Pos) extends InternalForm
   case class Import(module: String, funs: List[Id])(val pos: Pos) extends InternalForm
@@ -30,9 +32,6 @@ object Forms {
   case class EqwalizerNowarnFunction(id: Id)(val pos: Pos) extends InternalForm
   case class EqwalizerUnlimitedRefinement(id: Id)(val pos: Pos) extends InternalForm
 
-  sealed trait Form
-
-  sealed trait InternalForm extends Form { val pos: Pos }
   case class FunSpec(id: Id, ty: FunType)(val pos: Pos) extends InternalForm
   case class OverloadedFunSpec(id: Id, tys: List[FunType])(val pos: Pos) extends InternalForm
 
