@@ -10,7 +10,7 @@ import com.whatsapp.eqwalizer.{Pipeline, ast}
 import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, InvalidForm, MisBehaviour}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
-import com.whatsapp.eqwalizer.ast.stub.DbApi
+import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.io.Ipc
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.TypeError
 import com.whatsapp.eqwalizer.tc.{Options, noOptions}
@@ -34,7 +34,7 @@ object ELPDiagnostics {
           Ipc.sendEqwalizingStart(module)
           val diagnostics = getDiagnostics(module, noOptions)
           Ipc.sendEqwalizingDone(module)
-          Ipc.finishEqwalization(Map(module -> diagnostics), DbApi.loadedModules().toList)
+          Ipc.finishEqwalization(Map(module -> diagnostics), Db.getLoadedModules().toList)
         }
       }
       Ipc.sendDone(Map.empty)
@@ -43,7 +43,7 @@ object ELPDiagnostics {
     }
 
   private def getDiagnostics(module: String, options: Options): List[Error] = {
-    val invalidForms = DbApi.getInvalidForms(module).get
+    val invalidForms = Db.getInvalidForms(module).get
     val forms = Pipeline.checkForms(module, options) ++ invalidForms
     formsToErrors(forms).sortBy(_.position.productElement(0).asInstanceOf[Int])
   }

@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.stub.DbApi
+import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.tc.TcDiagnostics._
 
 class CheckCallback(pipelineContext: PipelineContext) {
@@ -17,8 +17,8 @@ class CheckCallback(pipelineContext: PipelineContext) {
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def checkImpl(module: String, b: Behaviour, cb: Callback, isOptional: Boolean): Option[InternalForm] =
-    if (DbApi.isExported(module, cb.id)) {
-      DbApi.getSpec(module, cb.id) match {
+    if (Db.isExported(module, cb.id)) {
+      Db.getSpec(module, cb.id) match {
         case Some(FunSpec(_, impl)) =>
           // don't validate invalid callbacks (callback validation is defeasible)
           if (cb.tys.isEmpty) return None

@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.tc.generics
 
 import com.whatsapp.eqwalizer.ast.{Id, RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.stub.DbApi
+import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.tc.PipelineContext
 
 class Variance(pipelineContext: PipelineContext) {
@@ -23,12 +23,12 @@ class Variance(pipelineContext: PipelineContext) {
 
   def paramVariances(remoteId: RemoteId): List[Variance.Variance] = {
     val id = Id(remoteId.name, remoteId.arity)
-    DbApi.getType(remoteId.module, id) match {
+    Db.getType(remoteId.module, id) match {
       case Some(tDecl) =>
         tDecl.params.map(varType => varianceOf(tDecl.body, varType.n, isPositivePosition = true))
       case None =>
         // Opaques are covariant
-        DbApi.getOpaque(remoteId.module, id).get.params.map(_ => Covariant)
+        Db.getOpaque(remoteId.module, id).get.params.map(_ => Covariant)
     }
   }
 

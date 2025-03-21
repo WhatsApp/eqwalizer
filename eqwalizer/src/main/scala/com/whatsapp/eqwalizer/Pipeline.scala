@@ -9,7 +9,7 @@ package com.whatsapp.eqwalizer
 import com.whatsapp.eqwalizer.ast._
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType}
-import com.whatsapp.eqwalizer.ast.stub.DbApi
+import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{
   NonexistentBehaviour,
   RedundantFixme,
@@ -41,7 +41,7 @@ object Pipeline {
           val options1 =
             if (unlimitedRefinementFuns(f.id)) options.copy(unlimitedRefinement = Some(true)) else options
           val ctx = PipelineContext(module, options1)
-          val checkedF = (DbApi.getSpec(module, f.id), DbApi.getOverloadedSpec(module, f.id)) match {
+          val checkedF = (Db.getSpec(module, f.id), Db.getOverloadedSpec(module, f.id)) match {
             case (Some(spec), _) =>
               checkFun(ctx, f, spec)
             case (_, Some(overloadedSpec)) =>
@@ -56,8 +56,8 @@ object Pipeline {
           }
         case b: Behaviour =>
           val ctx = PipelineContext(module, options)
-          if (DbApi.isKnownModule(b.name)) {
-            val (callbacks, optional) = DbApi.getCallbacks(b.name)
+          if (Db.isKnownModule(b.name)) {
+            val (callbacks, optional) = Db.getCallbacks(b.name)
             result.addAll(
               callbacks.flatMap { cb =>
                 ctx.checkCallback.checkImpl(module, b, cb, optional(cb.id))

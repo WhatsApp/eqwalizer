@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.ast.stub.DbApi
+import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.ast.{Id, RemoteId}
 
 import scala.collection.immutable.TreeSeqMap
@@ -18,7 +18,7 @@ class Util(pipelineContext: PipelineContext) {
   private var recordCache: Map[(String, String), Option[RecDeclTyped]] = Map.empty
 
   def globalFunId(module: String, id: Id): RemoteId = {
-    val imports = DbApi.getImports(module).get
+    val imports = Db.getImports(module).get
     val hostModule = imports.getOrElse(id, module)
     RemoteId(hostModule, id.name, id.arity)
   }
@@ -27,7 +27,7 @@ class Util(pipelineContext: PipelineContext) {
     getFunType(globalFunId(module, id))
 
   private def typeAndGetRecord(module: String, name: String): Option[RecDeclTyped] =
-    DbApi.getRecord(module, name) map { rec =>
+    Db.getRecord(module, name) map { rec =>
       var fields: TreeSeqMap[String, RecFieldTyped] = TreeSeqMap.empty
       var refinable: Boolean = false
       rec.fields.map(recField).foreach { f =>
@@ -58,7 +58,7 @@ class Util(pipelineContext: PipelineContext) {
   }
 
   def getFunType(fqn: RemoteId): FunType = {
-    DbApi.getSpec(fqn.module, Id(fqn.name, fqn.arity)).map(_.ty) match {
+    Db.getSpec(fqn.module, Id(fqn.name, fqn.arity)).map(_.ty) match {
       case Some(funType) =>
         funType
       case None =>
@@ -68,7 +68,7 @@ class Util(pipelineContext: PipelineContext) {
   }
 
   def getOverloadedSpec(fqn: RemoteId): Option[OverloadedFunSpec] =
-    DbApi.getOverloadedSpec(fqn.module, Id(fqn.name, fqn.arity))
+    Db.getOverloadedSpec(fqn.module, Id(fqn.name, fqn.arity))
 
   def enterScope(env0: Env, scopeVars: Set[String]): Env = {
     var env = env0
@@ -99,14 +99,14 @@ class Util(pipelineContext: PipelineContext) {
         Subst.subst(subst, decl.body)
       }
 
-    DbApi
+    Db
       .getType(remoteId.module, id)
       .map(applyType)
       .getOrElse({
         if (pipelineContext.module == remoteId.module) {
-          applyType(DbApi.getOpaque(module, id).get)
+          applyType(Db.getOpaque(module, id).get)
         } else {
-          assert(DbApi.getOpaque(remoteId.module, id).isDefined, s"could not find $remoteId from $module")
+          assert(Db.getOpaque(remoteId.module, id).isDefined, s"could not find $remoteId from $module")
           OpaqueType(remoteId, args)
         }
       })
