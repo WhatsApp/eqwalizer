@@ -8,9 +8,9 @@ name := "eqwalizer"
 
 scalaVersion := "3.6.4"
 
-// scalacOptions += "-deprecation"
-// scalacOptions += "-Wunused:imports"
-// scalacOptions += "-Werror"
+scalacOptions += "-deprecation"
+scalacOptions += "-Wunused:imports"
+scalacOptions += "-Werror"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
