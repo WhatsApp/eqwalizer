@@ -9,6 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
 import com.whatsapp.eqwalizer.ast.{RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
+import scala.util.boundary
 
 class Narrow(pipelineContext: PipelineContext) {
   private val subtype = pipelineContext.subtype
@@ -71,25 +72,27 @@ class Narrow(pipelineContext: PipelineContext) {
         case (AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
           AnyArityFunType(meetAux(resTy1, resTy2, seen))
         case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
-          var props: Map[Key, Prop] = Map()
-          val keys = props1.keySet ++ props2.keySet
-          for (key <- keys) {
-            val prop1 = props1.get(key)
-            val prop2 = props2.get(key)
-            val keyT = Key.asType(key)
-            if ((prop1.isEmpty && !subtype.subType(keyT, kT1)) || (prop2.isEmpty && !subtype.subType(keyT, kT2))) {
-              return NoneType
+          boundary {
+            var props: Map[Key, Prop] = Map()
+            val keys = props1.keySet ++ props2.keySet
+            for (key <- keys) {
+              val prop1 = props1.get(key)
+              val prop2 = props2.get(key)
+              val keyT = Key.asType(key)
+              if ((prop1.isEmpty && !subtype.subType(keyT, kT1)) || (prop2.isEmpty && !subtype.subType(keyT, kT2))) {
+                boundary.break(NoneType)
+              }
+              val propT1 = prop1.map(_.tp).getOrElse(kT1)
+              val propT2 = prop2.map(_.tp).getOrElse(kT2)
+              val req = prop1.exists(_.req) || prop2.exists(_.req)
+              val meetType = meetAux(propT1, propT2, seen)
+              if (promoteNone && req && subtype.isNoneType(meetType)) {
+                boundary.break(NoneType)
+              }
+              props += (key -> Prop(req, meetType))
             }
-            val propT1 = prop1.map(_.tp).getOrElse(kT1)
-            val propT2 = prop2.map(_.tp).getOrElse(kT2)
-            val req = prop1.exists(_.req) || prop2.exists(_.req)
-            val meetType = meetAux(propT1, propT2, seen)
-            if (promoteNone && req && subtype.isNoneType(meetType)) {
-              return NoneType
-            }
-            props += (key -> Prop(req, meetType))
+            MapType(props, meetAux(kT1, kT2, seen), meetAux(vT1, vT2, seen))
           }
-          MapType(props, meetAux(kT1, kT2, seen), meetAux(vT1, vT2, seen))
         case (rt: RefinedRecordType, t: RecordType) if t == rt.recType => rt
         case (t: RecordType, rt: RefinedRecordType) if t == rt.recType => rt
         case (rt1: RefinedRecordType, rt2: RefinedRecordType) if rt1.recType == rt2.recType =>

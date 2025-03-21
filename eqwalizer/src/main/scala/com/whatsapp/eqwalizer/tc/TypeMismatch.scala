@@ -9,6 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.{RemoteId, Show, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
+import scala.util.boundary
 
 /**
  * This module operates in two steps: it first finds a mismatch between two types (findMismatch) and then formats it
@@ -469,86 +470,87 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         }
 
       case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
-        val tolerantSubtype = subtype.isDynamicType(kT1) && subtype.isDynamicType(vT1)
-        // Some heuristic to determine map "closeness"
-        val commonKeys = props1.keySet.intersect(props2.keySet)
-        val allKeys = props1.keySet.union(props2.keySet)
-        val score =
-          if (allKeys.size == 0) 80
-          else 40 + 40 * commonKeys.size / allKeys.size
-        // Required keys don't match
-        val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
-        val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
-        if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) {
-          val missingReqKeys = reqKeys2.removedAll(reqKeys1)
-          return Details(Some(t1, t2, MissingReqKeys(missingReqKeys)), score)
-        }
-        // A key in the LHS doesn't match the RHS
-        for ((key1, prop1) <- props1) {
-          props2.get(key1) match {
-            case Some(prop2) =>
-              findMismatch(prop1.tp, prop2.tp, seen).mismatch match {
-                case Some((prop1Ty, prop2Ty, mismatch)) =>
-                  val newTy1 = MapType(props1.updated(key1, Prop(prop1.req, prop1Ty)), kT1, vT1)
-                  val newTy2 = MapType(props2.updated(key1, Prop(prop2.req, prop2Ty)), kT2, vT2)
-                  return Details(Some(newTy1, newTy2, MapPropMismatch(key1, mismatch)), score)
-                case None =>
-              }
-            case None =>
-              // key1 is declared in t1 but not in t2...
-              if (kT2 == NoneType) {
-                // ... and t2 has no default association
-                return Details(Some(t1, t2, MissingKey(key1)), score)
-              } else {
-                // ... and the default association of t2 is not compatible
-                val mismatchKey = findMismatch(asType(key1), kT2, seen).mismatch
-                val mismatchVal = findMismatch(prop1.tp, vT2, seen).mismatch
-                (mismatchKey, mismatchVal) match {
-                  case (Some((_, newKT2, mismatch)), _) =>
-                    val newTy2 = MapType(props2, newKT2, vT2)
-                    return Details(Some(t1, newTy2, MapKeyMismatch(key1, mismatch)), score)
-                  case (_, Some((newProp1Ty, newVT2, mismatch))) =>
-                    val newTy1 = MapType(props1.updated(key1, Prop(prop1.req, newProp1Ty)), kT1, vT1)
-                    val newTy2 = MapType(props2, kT2, newVT2)
-                    return Details(Some(newTy1, newTy2, MapPropMismatch(key1, mismatch)), score)
-                  case (_, _) =>
+        boundary {
+          val tolerantSubtype = subtype.isDynamicType(kT1) && subtype.isDynamicType(vT1)
+          // Some heuristic to determine map "closeness"
+          val commonKeys = props1.keySet.intersect(props2.keySet)
+          val allKeys = props1.keySet.union(props2.keySet)
+          val score =
+            if (allKeys.size == 0) 80
+            else 40 + 40 * commonKeys.size / allKeys.size
+          // Required keys don't match
+          val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
+          val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
+          if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) {
+            val missingReqKeys = reqKeys2.removedAll(reqKeys1)
+            return Details(Some(t1, t2, MissingReqKeys(missingReqKeys)), score)
+          }
+          // A key in the LHS doesn't match the RHS
+          for ((key1, prop1) <- props1) {
+            props2.get(key1) match {
+              case Some(prop2) =>
+                findMismatch(prop1.tp, prop2.tp, seen).mismatch match {
+                  case Some((prop1Ty, prop2Ty, mismatch)) =>
+                    val newTy1 = MapType(props1.updated(key1, Prop(prop1.req, prop1Ty)), kT1, vT1)
+                    val newTy2 = MapType(props2.updated(key1, Prop(prop2.req, prop2Ty)), kT2, vT2)
+                    boundary.break(Details(Some(newTy1, newTy2, MapPropMismatch(key1, mismatch)), score))
+                  case None =>
                 }
-              }
+              case None =>
+                // key1 is declared in t1 but not in t2...
+                if (kT2 == NoneType) {
+                  // ... and t2 has no default association
+                  boundary.break(Details(Some(t1, t2, MissingKey(key1)), score))
+                } else {
+                  // ... and the default association of t2 is not compatible
+                  val mismatchKey = findMismatch(asType(key1), kT2, seen).mismatch
+                  val mismatchVal = findMismatch(prop1.tp, vT2, seen).mismatch
+                  (mismatchKey, mismatchVal) match {
+                    case (Some((_, newKT2, mismatch)), _) =>
+                      val newTy2 = MapType(props2, newKT2, vT2)
+                      boundary.break(Details(Some(t1, newTy2, MapKeyMismatch(key1, mismatch)), score))
+                    case (_, Some((newProp1Ty, newVT2, mismatch))) =>
+                      val newTy1 = MapType(props1.updated(key1, Prop(prop1.req, newProp1Ty)), kT1, vT1)
+                      val newTy2 = MapType(props2, kT2, newVT2)
+                      boundary.break(Details(Some(newTy1, newTy2, MapPropMismatch(key1, mismatch)), score))
+                    case (_, _) =>
+                  }
+                }
+            }
           }
-        }
-        // Default associations don't match
-        val mismatchKey = findMismatch(kT1, kT2, seen).mismatch
-        val mismatchVal = findMismatch(vT1, vT2, seen).mismatch
-        if (kT2 == NoneType && vT2 == NoneType && (mismatchKey.nonEmpty || mismatchVal.nonEmpty))
-          return Details(Some(t1, t2, MissingDefault), score)
-        val onlyProps2 = props2.removedAll(props1.keySet).toList
-        val onlyCompatProps2 = onlyProps2.filter { case (key2, _) => subtype.subType(asType(key2), kT1) }
-        val domain2 = subtype.join(kT2, onlyCompatProps2.map(kp => asType(kp._1)))
-        val mismatchDomain = findMismatch(kT1, domain2, seen).mismatch
-        (mismatchDomain, mismatchVal) match {
-          case (Some((newKT1, newKT2, mismatch)), _) =>
-            val newTy1 = MapType(props1, newKT1, vT1)
-            val newTy2 = MapType(props2, newKT2, vT2)
-            return Details(Some(newTy1, newTy2, MapDefaultKeyMismatch(mismatch)), score)
-          case (_, Some((newVT1, newVT2, mismatch))) =>
-            val newTy1 = MapType(props1, kT1, newVT1)
-            val newTy2 = MapType(props2, kT2, newVT2)
-            return Details(Some(newTy1, newTy2, MapDefaultValMismatch(mismatch)), score)
-          case (_, _) =>
-        }
-        // A new key in the second map is not compatible with the default association of the first map
-        for ((key2, prop2) <- onlyCompatProps2) {
-          val mismatchVal = findMismatch(vT1, prop2.tp, seen).mismatch
-          mismatchVal match {
-            case Some((newVT1, newProp2Ty, mismatch)) =>
+          // Default associations don't match
+          val mismatchKey = findMismatch(kT1, kT2, seen).mismatch
+          val mismatchVal = findMismatch(vT1, vT2, seen).mismatch
+          if (kT2 == NoneType && vT2 == NoneType && (mismatchKey.nonEmpty || mismatchVal.nonEmpty))
+            return Details(Some(t1, t2, MissingDefault), score)
+          val onlyProps2 = props2.removedAll(props1.keySet).toList
+          val onlyCompatProps2 = onlyProps2.filter { case (key2, _) => subtype.subType(asType(key2), kT1) }
+          val domain2 = subtype.join(kT2, onlyCompatProps2.map(kp => asType(kp._1)))
+          val mismatchDomain = findMismatch(kT1, domain2, seen).mismatch
+          (mismatchDomain, mismatchVal) match {
+            case (Some((newKT1, newKT2, mismatch)), _) =>
+              val newTy1 = MapType(props1, newKT1, vT1)
+              val newTy2 = MapType(props2, newKT2, vT2)
+              return Details(Some(newTy1, newTy2, MapDefaultKeyMismatch(mismatch)), score)
+            case (_, Some((newVT1, newVT2, mismatch))) =>
               val newTy1 = MapType(props1, kT1, newVT1)
-              val newTy2 = MapType(props2.updated(key2, Prop(prop2.req, newProp2Ty)), kT2, vT2)
-              return Details(Some(newTy1, newTy2, MapPropMismatch(key2, mismatch)), score)
-            case _ =>
+              val newTy2 = MapType(props2, kT2, newVT2)
+              return Details(Some(newTy1, newTy2, MapDefaultValMismatch(mismatch)), score)
+            case (_, _) =>
           }
+          // A new key in the second map is not compatible with the default association of the first map
+          for ((key2, prop2) <- onlyCompatProps2) {
+            val mismatchVal = findMismatch(vT1, prop2.tp, seen).mismatch
+            mismatchVal match {
+              case Some((newVT1, newProp2Ty, mismatch)) =>
+                val newTy1 = MapType(props1, kT1, newVT1)
+                val newTy2 = MapType(props2.updated(key2, Prop(prop2.req, newProp2Ty)), kT2, vT2)
+                boundary.break(Details(Some(newTy1, newTy2, MapPropMismatch(key2, mismatch)), score))
+              case _ =>
+            }
+          }
+          Details(None, 100)
         }
-        Details(None, 100)
-
       case _ =>
         Details(Some(t1, t2, Incompatible), 0)
     }

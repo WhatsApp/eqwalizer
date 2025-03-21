@@ -9,6 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types._
+import scala.util.boundary
 
 class Subtype(pipelineContext: PipelineContext) {
   val util = pipelineContext.util
@@ -179,37 +180,39 @@ class Subtype(pipelineContext: PipelineContext) {
               .forall(subTypePol(_, _, seen)(negate(polarity)))
         }
       case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
-        val tolerantSubtype = isDynamicType(kT1) && isDynamicType(vT1) && v1 == -
-        val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
-        val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
-        // Verify that all required keys of M2 are also required keys in M1
-        if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) return false
-        // Check subtype of props in M1 to either the corresponding prop in M2, or its default association
-        for ((key1, prop1) <- props1) {
-          props2.get(key1) match {
-            case Some(prop2) if !subTypePol(prop1.tp, prop2.tp, seen) =>
-              return false
-            case None if !subTypePol(asType(key1), kT2, seen) || !subTypePol(prop1.tp, vT2, seen) =>
-              return false
-            case _ =>
+        boundary {
+          val tolerantSubtype = isDynamicType(kT1) && isDynamicType(vT1) && v1 == -
+          val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
+          val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
+          // Verify that all required keys of M2 are also required keys in M1
+          if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) return false
+          // Check subtype of props in M1 to either the corresponding prop in M2, or its default association
+          for ((key1, prop1) <- props1) {
+            props2.get(key1) match {
+              case Some(prop2) if !subTypePol(prop1.tp, prop2.tp, seen) =>
+                boundary.break(false)
+              case None if !subTypePol(asType(key1), kT2, seen) || !subTypePol(prop1.tp, vT2, seen) =>
+                boundary.break(false)
+              case _ =>
+            }
           }
+          // Check that new keys in M2 are compatible with the default association in M1
+          val onlyProps2 = props2.removedAll(props1.keySet).toList
+          val onlyCompatProps2 = onlyProps2.filter { case (key2, _) => subTypePol(asType(key2), kT1, seen) }
+          for ((_, prop2) <- onlyCompatProps2) {
+            if (!subTypePol(kT1, NoneType, seen) && !subTypePol(vT1, prop2.tp, seen))
+              boundary.break(false)
+          }
+          // Finally that the default association in M1 is covered by M2
+          // Either it is fully covered by the compatible props of M2 checked above, in which
+          // case it is a subtype, e.g. #{a | b => atom()} <: #{a => atom(), b => atom()}
+          val domainProps2 = join(onlyCompatProps2.map(kp => asType(kp._1)))
+          if (domainProps2 != NoneType && subTypePol(kT1, domainProps2, seen))
+            return true
+          // Or it must be covered by the compatible props + the default association
+          val domain2 = join(kT2, domainProps2)
+          (subTypePol(kT1, domain2, seen) && subTypePol(vT1, vT2, seen))
         }
-        // Check that new keys in M2 are compatible with the default association in M1
-        val onlyProps2 = props2.removedAll(props1.keySet).toList
-        val onlyCompatProps2 = onlyProps2.filter { case (key2, _) => subTypePol(asType(key2), kT1, seen) }
-        for ((_, prop2) <- onlyCompatProps2) {
-          if (!subTypePol(kT1, NoneType, seen) && !subTypePol(vT1, prop2.tp, seen))
-            return false
-        }
-        // Finally that the default association in M1 is covered by M2
-        // Either it is fully covered by the compatible props of M2 checked above, in which
-        // case it is a subtype, e.g. #{a | b => atom()} <: #{a => atom(), b => atom()}
-        val domainProps2 = join(onlyCompatProps2.map(kp => asType(kp._1)))
-        if (domainProps2 != NoneType && subTypePol(kT1, domainProps2, seen))
-          return true
-        // Or it must be covered by the compatible props + the default association
-        val domain2 = join(kT2, domainProps2)
-        (subTypePol(kT1, domain2, seen) && subTypePol(vT1, vT2, seen))
       case _ =>
         false
     }

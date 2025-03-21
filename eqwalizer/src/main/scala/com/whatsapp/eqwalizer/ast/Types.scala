@@ -11,6 +11,8 @@ import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
 import com.whatsapp.eqwalizer.ast.Guards.{Test, TestAtom, TestTuple}
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
+import scala.util.boundary
+
 object Types {
   sealed trait Type
   case class AtomLitType(atom: String) extends Type
@@ -164,14 +166,16 @@ object Types {
       t match {
         case AtomLitType(atom) => Some(AtomKey(atom))
         case TupleType(kts) =>
-          var keys: List[Key] = List()
-          for (kt <- kts) {
-            fromType(kt) match {
-              case None      => return None
-              case Some(key) => keys = keys :+ key
+          boundary {
+            var keys: List[Key] = List()
+            for (kt <- kts) {
+              fromType(kt) match {
+                case None      => boundary.break(None)
+                case Some(key) => keys = keys :+ key
+              }
             }
+            Some(TupleKey(keys))
           }
-          Some(TupleKey(keys))
         case _ => None
       }
     }
@@ -180,14 +184,16 @@ object Types {
       e match {
         case AtomLit(atom) => Some(AtomKey(atom))
         case Tuple(exprs) =>
-          var keys: List[Key] = List()
-          for (expr <- exprs) {
-            fromExpr(expr) match {
-              case None    => return None
-              case Some(k) => keys = keys :+ k
+          boundary {
+            var keys: List[Key] = List()
+            for (expr <- exprs) {
+              fromExpr(expr) match {
+                case None    => boundary.break(None)
+                case Some(k) => keys = keys :+ k
+              }
             }
+            Some(TupleKey(keys))
           }
-          Some(TupleKey(keys))
         case _ => None
       }
     }
@@ -196,14 +202,16 @@ object Types {
       t match {
         case TestAtom(atom) => Some(AtomKey(atom))
         case TestTuple(exprs) =>
-          var keys: List[Key] = List()
-          for (expr <- exprs) {
-            fromTest(expr) match {
-              case None    => return None
-              case Some(k) => keys = keys :+ k
+          boundary {
+            var keys: List[Key] = List()
+            for (expr <- exprs) {
+              fromTest(expr) match {
+                case None    => boundary.break(None)
+                case Some(k) => keys = keys :+ k
+              }
             }
+            Some(TupleKey(keys))
           }
-          Some(TupleKey(keys))
         case _ => None
       }
     }

@@ -14,6 +14,7 @@ import com.whatsapp.eqwalizer.ast.Types._
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
+import scala.util.boundary
 
 object Occurrence {
   sealed trait Prop
@@ -582,27 +583,29 @@ final class Occurrence(pipelineContext: PipelineContext) {
             patProps(x, path, pat1, env)
         }
       case PatMap(pats) =>
-        val obj = mkObj(x, path)
-        val posThis = Pos(obj, MapType(Map(), AnyType, AnyType))
-        val negThis = Neg(obj, MapType(Map(), AnyType, AnyType))
-        val fields = pats.map { case (patK, patV) =>
-          Key.fromTest(patK) match {
-            case Some(key) => (key, patV)
-            case None      => return Some(posThis, Unknown)
+        boundary {
+          val obj = mkObj(x, path)
+          val posThis = Pos(obj, MapType(Map(), AnyType, AnyType))
+          val negThis = Neg(obj, MapType(Map(), AnyType, AnyType))
+          val fields = pats.map { case (patK, patV) =>
+            Key.fromTest(patK) match {
+              case Some(key) => (key, patV)
+              case None      => boundary.break(Some(posThis, Unknown))
+            }
           }
+          val (posThat, negThat) = fields.flatMap { case (field, pat) =>
+            patProps(x, path :+ MapField(field), pat, env)
+          }.unzip
+          val (posFields, negFields) = fields.map { case (field, _) =>
+            val objField = mkObj(x, path :+ MapField(field))
+            (Pos(objField, AnyType), Neg(objField, AnyType))
+          }.unzip
+          val pos = and(posThis :: posFields ::: posThat)
+          val neg =
+            if (negThat.isEmpty && negFields.isEmpty) negThis
+            else or(List(negThis, and(List(posThis, or(negThat ::: negFields)))))
+          Some(pos, neg)
         }
-        val (posThat, negThat) = fields.flatMap { case (field, pat) =>
-          patProps(x, path :+ MapField(field), pat, env)
-        }.unzip
-        val (posFields, negFields) = fields.map { case (field, _) =>
-          val objField = mkObj(x, path :+ MapField(field))
-          (Pos(objField, AnyType), Neg(objField, AnyType))
-        }.unzip
-        val pos = and(posThis :: posFields ::: posThat)
-        val neg =
-          if (negThat.isEmpty && negFields.isEmpty) negThis
-          else or(List(negThis, and(List(posThis, or(negThat ::: negFields)))))
-        Some(pos, neg)
       case PatNil() =>
         val obj = mkObj(x, path)
         val pos = Pos(obj, NilType)

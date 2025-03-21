@@ -9,6 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.{RemoteId, Show, TypeVars}
+import scala.util.boundary
 
 object SubtypeDetail {
   lazy val nonVerboseRids = builtinTypes.keys.map(RemoteId("erlang", _, 0)).toSet
@@ -192,16 +193,18 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
             stack
         }
       case (TupleType(tys1), TupleType(tys2)) if tys1.size == tys2.size =>
-        for (((itemTy1, indexFrom0), itemTy2) <- tys1.zipWithIndex.lazyZip(tys2)) {
-          val index = indexFrom0 + 1
-          val reasonPrefix = s"at tuple index $index:"
-          val stackWithReason = Detail(t1, t2, Some(reasonPrefix), None) :: stack0
-          findMismatchAux(itemTy1, itemTy2, stackWithReason, seen) match {
-            case Nil     => ()
-            case details => return details
+        boundary {
+          for (((itemTy1, indexFrom0), itemTy2) <- tys1.zipWithIndex.lazyZip(tys2)) {
+            val index = indexFrom0 + 1
+            val reasonPrefix = s"at tuple index $index:"
+            val stackWithReason = Detail(t1, t2, Some(reasonPrefix), None) :: stack0
+            findMismatchAux(itemTy1, itemTy2, stackWithReason, seen) match {
+              case Nil     => ()
+              case details => boundary.break(details)
+            }
           }
+          Nil
         }
-        Nil
       case (NilType, ListType(_)) =>
         Nil
       case (ListType(ty1), NilType) =>
@@ -216,75 +219,77 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
             recurSeq((res1, res2) :: args2.zip(args1))
         }
       case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
-        val tolerantSubtype = subtype.isDynamicType(kT1) && subtype.isDynamicType(vT1)
-        // Required keys don't match
-        val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
-        val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
-        if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) {
-          val missingReqKeys = reqKeys2.removedAll(reqKeys1).map { s => s"`$s`" }.toList.sorted
-          val reasonPostfix =
-            if (missingReqKeys.size == 1)
-              s"key ${missingReqKeys.head} is declared as required in the latter but not in the former"
-            else
-              s"keys ${missingReqKeys.mkString(", ")} are declared as required in the latter but not in the former"
-          return Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
-        }
-        // A key in the LHS doesn't match the RHS
-        for ((key1, prop1) <- props1) {
-          props2.get(key1) match {
-            case Some(prop2) =>
-              val reasonPrefix = s"at key `${key1}`:"
-              val stackWithReason = Detail(t1, t2, Some(reasonPrefix), None) :: stack
-              findMismatchAux(prop1.tp, prop2.tp, stackWithReason, seen) match {
-                case Nil     => ()
-                case details => return details
-              }
-            case None =>
-              val reasonBegin = s"key `${key1}` is declared in the former but not in the latter"
-              if (kT2 == NoneType) {
-                val reasonEnd = " and the latter map has no default association"
-                return Detail(t1, t2, None, Some(reasonBegin ++ reasonEnd)) :: stack0
-              } else {
-                val reasonEnd =
-                  s" and key `${key1}` isn't compatible with the default association of the latter map"
-                val stackWithReason = Detail(t1, t2, None, Some(reasonBegin ++ reasonEnd)) :: stack
-                (
-                  findMismatchAux(asType(key1), kT2, stackWithReason, seen),
-                  findMismatchAux(prop1.tp, vT2, stackWithReason, seen),
-                ) match {
-                  case (details, _) if details.nonEmpty => return details
-                  case (_, details) if details.nonEmpty => return details
-                  case _                                => ()
+        boundary {
+          val tolerantSubtype = subtype.isDynamicType(kT1) && subtype.isDynamicType(vT1)
+          // Required keys don't match
+          val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
+          val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
+          if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) {
+            val missingReqKeys = reqKeys2.removedAll(reqKeys1).map { s => s"`$s`" }.toList.sorted
+            val reasonPostfix =
+              if (missingReqKeys.size == 1)
+                s"key ${missingReqKeys.head} is declared as required in the latter but not in the former"
+              else
+                s"keys ${missingReqKeys.mkString(", ")} are declared as required in the latter but not in the former"
+            return Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
+          }
+          // A key in the LHS doesn't match the RHS
+          for ((key1, prop1) <- props1) {
+            props2.get(key1) match {
+              case Some(prop2) =>
+                val reasonPrefix = s"at key `${key1}`:"
+                val stackWithReason = Detail(t1, t2, Some(reasonPrefix), None) :: stack
+                findMismatchAux(prop1.tp, prop2.tp, stackWithReason, seen) match {
+                  case Nil     => ()
+                  case details => boundary.break(details)
                 }
-              }
+              case None =>
+                val reasonBegin = s"key `${key1}` is declared in the former but not in the latter"
+                if (kT2 == NoneType) {
+                  val reasonEnd = " and the latter map has no default association"
+                  boundary.break(Detail(t1, t2, None, Some(reasonBegin ++ reasonEnd)) :: stack0)
+                } else {
+                  val reasonEnd =
+                    s" and key `${key1}` isn't compatible with the default association of the latter map"
+                  val stackWithReason = Detail(t1, t2, None, Some(reasonBegin ++ reasonEnd)) :: stack
+                  (
+                    findMismatchAux(asType(key1), kT2, stackWithReason, seen),
+                    findMismatchAux(prop1.tp, vT2, stackWithReason, seen),
+                  ) match {
+                    case (details, _) if details.nonEmpty => boundary.break(details)
+                    case (_, details) if details.nonEmpty => boundary.break(details)
+                    case _                                => ()
+                  }
+                }
+            }
           }
-        }
-        // A new key in the second map is not compatible with the default association of the first map
-        val onlyProps2 = props2.removedAll(props1.keySet).toList
-        val onlyCompatProps2 = onlyProps2.filter { case (key2, _) => subtype.subType(asType(key2), kT1) }
-        for ((key2, prop2) <- onlyCompatProps2) {
-          val reasonPostfix =
-            s"key ${key2} is not present in the former map but is incompatible with its default association"
+          // A new key in the second map is not compatible with the default association of the first map
+          val onlyProps2 = props2.removedAll(props1.keySet).toList
+          val onlyCompatProps2 = onlyProps2.filter { case (key2, _) => subtype.subType(asType(key2), kT1) }
+          for ((key2, prop2) <- onlyCompatProps2) {
+            val reasonPostfix =
+              s"key ${key2} is not present in the former map but is incompatible with its default association"
+            val stackWithReason = Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
+            (recur(asType(key2), kT1), findMismatchAux(vT1, prop2.tp, stackWithReason, seen)) match {
+              case (l, details) if (l.isEmpty && details.nonEmpty) => boundary.break(details)
+              case (_, _)                                          => ()
+            }
+          }
+          // Default associations don't match
+          if (kT2 == NoneType && vT2 == NoneType && (recur(kT1, kT2).nonEmpty || recur(vT1, vT2).nonEmpty)) {
+            val reasonPostfix = "the latter map has no default association while the first map has one"
+            return Detail(t1, t2, None, Some(reasonPostfix)) :: stack
+          }
+          val reasonPostfix = "the default associations are not compatible"
           val stackWithReason = Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
-          (recur(asType(key2), kT1), findMismatchAux(vT1, prop2.tp, stackWithReason, seen)) match {
-            case (l, details) if (l.isEmpty && details.nonEmpty) => return details
-            case (_, _)                                          => ()
+          val domain2 = subtype.join(kT2, onlyCompatProps2.map(kp => asType(kp._1)))
+          (
+            findMismatchAux(kT1, domain2, stackWithReason, seen),
+            findMismatchAux(vT1, vT2, stackWithReason, seen),
+          ) match {
+            case (details, _) if details.nonEmpty => details
+            case (_, details)                     => details
           }
-        }
-        // Default associations don't match
-        if (kT2 == NoneType && vT2 == NoneType && (recur(kT1, kT2).nonEmpty || recur(vT1, vT2).nonEmpty)) {
-          val reasonPostfix = "the latter map has no default association while the first map has one"
-          return Detail(t1, t2, None, Some(reasonPostfix)) :: stack
-        }
-        val reasonPostfix = "the default associations are not compatible"
-        val stackWithReason = Detail(t1, t2, None, Some(reasonPostfix)) :: stack0
-        val domain2 = subtype.join(kT2, onlyCompatProps2.map(kp => asType(kp._1)))
-        (
-          findMismatchAux(kT1, domain2, stackWithReason, seen),
-          findMismatchAux(vT1, vT2, stackWithReason, seen),
-        ) match {
-          case (details, _) if details.nonEmpty => details
-          case (_, details)                     => details
         }
       case _ =>
         stack
