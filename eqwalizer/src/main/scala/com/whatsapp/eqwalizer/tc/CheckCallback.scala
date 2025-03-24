@@ -24,7 +24,7 @@ class CheckCallback(pipelineContext: PipelineContext) {
           if (cb.tys.isEmpty) return None
           val expectedResTy = subtype.join(cb.tys.map(_.resTy))
           if (!subtype.subType(impl.resTy, expectedResTy)) {
-            val te = IncorrectCallbackReturn(b.name, cb.id.toString, expectedResTy, impl.resTy)(b.pos)
+            val te = IncorrectCallbackReturn(b.pos, b.name, cb.id.toString, expectedResTy, impl.resTy)
             return Some(MisBehaviour(te)(b.pos))
           }
 
@@ -41,7 +41,7 @@ class CheckCallback(pipelineContext: PipelineContext) {
             case Some((implArgTy, paramIndex)) =>
               val exp = subtype.join(cb.tys.map(_.argTys(paramIndex)))
               val te =
-                IncorrectCallbackParams(b.name, cb.id.toString, paramIndex, expected = exp, got = implArgTy)(b.pos)
+                IncorrectCallbackParams(b.pos, b.name, cb.id.toString, paramIndex, expected = exp, got = implArgTy)
               Some(MisBehaviour(te)(b.pos))
             case None =>
               None
@@ -53,7 +53,7 @@ class CheckCallback(pipelineContext: PipelineContext) {
     } else {
       if (isOptional) None
       else {
-        val te = MissingCallback(b.name, cb.id.toString)(b.pos)
+        val te = MissingCallback(b.pos, b.name, cb.id.toString)
         Some(MisBehaviour(te)(b.pos))
       }
     }

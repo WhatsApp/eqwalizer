@@ -87,12 +87,12 @@ object TcDiagnostics {
     def errorName = "behaviour_does_not_exist"
     override def erroneousExpr: Option[Expr] = None
   }
-  case class MissingCallback(behaviourName: String, callback: String)(val pos: Pos) extends BehaviourError {
+  case class MissingCallback(pos: Pos, behaviourName: String, callback: String) extends BehaviourError {
     override val msg: String = s"Missing implementation for $behaviourName callback $callback"
     def errorName = "missing_cb_implementation"
     override def erroneousExpr: Option[Expr] = None
   }
-  case class IncorrectCallbackReturn(behaviourName: String, callback: String, expected: Type, got: Type)(val pos: Pos)(
+  case class IncorrectCallbackReturn(pos: Pos, behaviourName: String, callback: String, expected: Type, got: Type)(
       implicit val pipelineContext: PipelineContext
   ) extends BehaviourError {
     override val msg: String =
@@ -106,12 +106,13 @@ object TcDiagnostics {
     override def erroneousExpr: Option[Expr] = None
   }
   case class IncorrectCallbackParams(
+      pos: Pos,
       behaviourName: String,
       callback: String,
       paramIndex: Int,
       expected: Type,
       got: Type,
-  )(val pos: Pos)(implicit val pipelineContext: PipelineContext)
+  )(implicit val pipelineContext: PipelineContext)
       extends BehaviourError {
     override val msg: String =
       s"Parameter ${paramIndex + 1} in implementation of $behaviourName:$callback has no overlap with expected parameter type. Expected: ${show(expected)}, Got: ${show(got)}."
