@@ -12,7 +12,7 @@ import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object InvalidDiagnostics {
-  sealed trait Invalid extends Exception with Diagnostic {
+  sealed trait Invalid extends Diagnostic {
     override def erroneousExpr: Option[Exprs.Expr] = None
   }
   case class UnknownId(pos: Pos, id: RemoteId) extends Invalid {
@@ -63,9 +63,7 @@ object InvalidDiagnostics {
     }
     def errorName = "reference_to_invalid_type"
   }
-  case class AliasWithNonCovariantParam(pos: Pos, name: String, typeVar: String, exps: List[Type])
-      extends Exception
-      with Invalid {
+  case class AliasWithNonCovariantParam(pos: Pos, name: String, typeVar: String, exps: List[Type]) extends Invalid {
     val msg: String = {
       val show = new Show(None)
       val expsStr = exps.map(show.show)

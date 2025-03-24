@@ -15,8 +15,6 @@ import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object TcDiagnostics {
-  case class TcDiagnostics(line: Int, msg: String)
-
   sealed trait TypeError extends Diagnostic
   case class ExpectedSubtype(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit
       val pipelineContext: PipelineContext
