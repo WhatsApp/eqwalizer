@@ -312,22 +312,6 @@ final class Elab(pipelineContext: PipelineContext) {
           val (ts, envs) = clauses.map(elabClause(_, List.empty, env, effVars)).unzip
           (subtype.join(ts), subtype.joinEnvs(envs))
         }
-      case Match(mPat @ Pats.PatVar(_), l: Lambda) =>
-        val arity = l.clauses.head.pats.size
-        val gradualFunType = FunType(List.empty, List.fill(arity)(DynamicType), DynamicType)
-        val env1 =
-          l.name match {
-            case Some(name) =>
-              env.updated(name, gradualFunType)
-            case _ =>
-              env
-          }
-        check.checkExpr(l, gradualFunType, env1)
-        if (arity > 0 && pipelineCtx.reportDynamicLambdas && typeInfo.isCollect) {
-          diagnosticsInfo.add(DynamicLambda(l.pos))
-        }
-        val (patTy, patEnv) = elabPat.elabPat(mPat, gradualFunType, env)
-        (patTy, patEnv)
       case Match(Pats.PatAtom("true"), mExp) if Filters.asTest(mExp).isDefined =>
         val test = Filters.asTest(mExp).get
         val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)
