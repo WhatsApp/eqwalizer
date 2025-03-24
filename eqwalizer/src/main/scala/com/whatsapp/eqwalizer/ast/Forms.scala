@@ -34,13 +34,11 @@ object Forms {
 
   // empty tys list is used to represent callback with an invalid type
   case class Callback(id: Id, tys: List[FunType])(val pos: Pos) extends InternalForm
-  case class RecDecl(name: String, fields: List[RecField], refinable: Boolean, file: Option[String])(val pos: Pos)
-      extends InternalForm {
+  case class RecDecl(name: String, fields: List[RecField], refinable: Boolean)(val pos: Pos) extends InternalForm {
     lazy val fMap: Map[String, RecField] = fields.map(f => f.name -> f).toMap
   }
   case class RecField(name: String, tp: Type, defaultValue: Option[Expr], refinable: Boolean)
-  case class TypeDecl(id: Id, params: List[VarType], body: Type, file: Option[String])(val pos: Pos)
-      extends InternalForm
+  case class TypeDecl(id: Id, params: List[VarType], body: Type)(val pos: Pos) extends InternalForm
 
   sealed trait InvalidForm {
     val te: Invalid
