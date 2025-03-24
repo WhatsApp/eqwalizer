@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
+import com.whatsapp.eqwalizer.ast.Forms.RecDecl
 import com.whatsapp.eqwalizer.ast.{RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
 import scala.util.boundary
@@ -277,7 +277,7 @@ class Narrow(pipelineContext: PipelineContext) {
         val rec = util.getRecord(r.module, r.name)
         val recFieldTypes = rec match {
           case Some(recDecl) =>
-            recDecl.fields.values.toList.map(_.tp)
+            recDecl.fields.map(_.tp)
           case None =>
             List.fill(arity - 1)(DynamicType)
         }
@@ -290,7 +290,7 @@ class Narrow(pipelineContext: PipelineContext) {
         val rec = util.getRecord(r.recType.module, r.recType.name)
         val recFieldTypes = rec match {
           case Some(recDecl) =>
-            recDecl.fields.map(f => r.fields.getOrElse(f._1, f._2.tp)).toList
+            recDecl.fields.map(f => r.fields.getOrElse(f.name, f.tp))
           case None =>
             List.fill(arity - 1)(DynamicType)
         }
@@ -442,7 +442,7 @@ class Narrow(pipelineContext: PipelineContext) {
 
   private def refinedRecordToTuple(r: RefinedRecordType): Option[TupleType] =
     util.getRecord(r.recType.module, r.recType.name).map { recDecl =>
-      val elemTys = AtomLitType(r.recType.name) :: recDecl.fields.map(f => r.fields.getOrElse(f._1, f._2.tp)).toList
+      val elemTys = AtomLitType(r.recType.name) :: recDecl.fields.map(f => r.fields.getOrElse(f.name, f.tp))
       TupleType(elemTys)
     }
 
@@ -471,8 +471,8 @@ class Narrow(pipelineContext: PipelineContext) {
       newValTy.getOrElse(mapType.vType),
     )
 
-  def getRecordField(recDecl: RecDeclTyped, recTy: Type, fieldName: String): Type = {
-    val field = recDecl.fields(fieldName)
+  def getRecordField(recDecl: RecDecl, recTy: Type, fieldName: String): Type = {
+    val field = recDecl.fMap(fieldName)
     recTy match {
       case RefinedRecordType(recType, fields) if recDecl.name == recType.name =>
         fields.getOrElse(fieldName, field.tp)
@@ -480,7 +480,7 @@ class Narrow(pipelineContext: PipelineContext) {
         field.tp
       case TupleType(argTys) if argTys.size - 1 == recDecl.fields.size && argTys.head == AtomLitType(recDecl.name) =>
         recDecl.fields.zipWithIndex
-          .collectFirst { case ((n, _), i) if n == fieldName => i + 1 }
+          .collectFirst { case (f, i) if f.name == fieldName => i + 1 }
           .map(argTys(_))
           .getOrElse(field.tp)
       case AnyTupleType | DynamicType | VarType(_) | OpaqueType(_, _) =>

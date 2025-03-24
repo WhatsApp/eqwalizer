@@ -11,11 +11,9 @@ import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.ast.{Id, RemoteId}
 
-import scala.collection.immutable.TreeSeqMap
-
 class Util(pipelineContext: PipelineContext) {
   private val module = pipelineContext.module
-  private var recordCache: Map[(String, String), Option[RecDeclTyped]] = Map.empty
+  private var recordCache: Map[(String, String), Option[RecDecl]] = Map.empty
 
   def globalFunId(module: String, id: Id): RemoteId = {
     val imports = Db.getImports(module).get
@@ -26,35 +24,14 @@ class Util(pipelineContext: PipelineContext) {
   def getFunType(module: String, id: Id): FunType =
     getFunType(globalFunId(module, id))
 
-  private def typeAndGetRecord(module: String, name: String): Option[RecDeclTyped] =
-    Db.getRecord(module, name) map { rec =>
-      var fields: TreeSeqMap[String, RecFieldTyped] = TreeSeqMap.empty
-      var refinable: Boolean = false
-      rec.fields.map(recField).foreach { f =>
-        fields += f.name -> f
-        refinable = refinable || f.refinable
-      }
-      RecDeclTyped(rec.name, fields, refinable, rec.file)
-    }
-
-  def getRecord(module: String, name: String): Option[RecDeclTyped] = {
+  def getRecord(module: String, name: String): Option[RecDecl] = {
     if (recordCache.contains((module, name))) {
       recordCache((module, name))
     } else {
-      val recDecl = typeAndGetRecord(module, name)
+      val recDecl = Db.getRecord(module, name)
       recordCache += ((module, name) -> recDecl)
       recDecl
     }
-  }
-
-  private def recField(f: RecField): RecFieldTyped = {
-    val tp = f.tp match {
-      case Some(tp) =>
-        tp
-      case None =>
-        DynamicType
-    }
-    RecFieldTyped(f.name, tp, f.defaultValue, f.refinable)
   }
 
   def getFunType(fqn: RemoteId): FunType = {

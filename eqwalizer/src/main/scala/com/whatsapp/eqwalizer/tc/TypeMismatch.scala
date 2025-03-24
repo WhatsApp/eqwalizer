@@ -342,7 +342,7 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         util.getRecord(rec.module, rec.name) match {
           case Some(recDecl) =>
             val indexedPairs = refRec.fields.map { case (fieldName, fieldTy) =>
-              ((recDecl.fields(fieldName).tp, fieldTy), fieldName)
+              ((recDecl.fMap(fieldName).tp, fieldTy), fieldName)
             }.toList
             findMismatchWithIndex(indexedPairs) match {
               case None => Details(None, 100)
@@ -359,7 +359,7 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         util.getRecord(rec.module, rec.name) match {
           case Some(recDecl) =>
             val indexedPairs = refRec2.fields.map { case (fieldName, fieldTy2) =>
-              val fieldTy1 = refRec1.fields.getOrElse(fieldName, recDecl.fields(fieldName).tp)
+              val fieldTy1 = refRec1.fields.getOrElse(fieldName, recDecl.fMap(fieldName).tp)
               ((fieldTy1, fieldTy2), fieldName)
             }.toList
             findMismatchWithIndex(indexedPairs) match {

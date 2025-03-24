@@ -130,7 +130,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
         genFieldOpt match {
           case Some(genField) =>
             val usedNames = namedFields.map(_.name)
-            val allNames = recDecl.fields.keySet
+            val allNames = recDecl.fMap.keySet
             val genNames = (allNames -- usedNames).toList.sorted
             for (genName <- genNames) {
               val fieldTy = narrow.getRecordField(recDecl, recType, genName)

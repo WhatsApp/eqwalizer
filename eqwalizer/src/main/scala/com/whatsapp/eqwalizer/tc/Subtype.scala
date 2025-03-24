@@ -128,7 +128,7 @@ class Subtype(pipelineContext: PipelineContext) {
       case (rec: RecordType, refRec: RefinedRecordType) if rec == refRec.recType =>
         util.getRecord(rec.module, rec.name) match {
           case Some(recDecl) =>
-            refRec.fields.forall(f => subTypePol(recDecl.fields(f._1).tp, f._2, seen))
+            refRec.fields.forall(f => subTypePol(recDecl.fMap(f._1).tp, f._2, seen))
           case None =>
             false
         }
@@ -140,7 +140,7 @@ class Subtype(pipelineContext: PipelineContext) {
               if (refRec1.fields.contains(fName))
                 subTypePol(refRec1.fields(fName), fTy, seen)
               else
-                subTypePol(recDecl.fields(fName).tp, fTy, seen)
+                subTypePol(recDecl.fMap(fName).tp, fTy, seen)
             }
         }
       case (AnyTupleType, TupleType(_)) if v1 == - =>

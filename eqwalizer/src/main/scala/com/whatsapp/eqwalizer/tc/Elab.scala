@@ -575,9 +575,9 @@ final class Elab(pipelineContext: PipelineContext) {
 
     genFieldOpt match {
       case Some(genField) =>
-        val genNames = (recDecl.fields.keySet -- namedFields.map(_.name)).toList.sorted
+        val genNames = (recDecl.fMap.keySet -- namedFields.map(_.name)).toList.sorted
         for (genName <- genNames) {
-          val fieldDecl = recDecl.fields(genName)
+          val fieldDecl = recDecl.fMap(genName)
           if (fieldDecl.refinable) {
             val (fTy, fEnv) = elabExprAndCheck(genField.value, envAcc, fieldDecl.tp)
             refinedFields += (fieldDecl.name -> fTy)
@@ -587,9 +587,9 @@ final class Elab(pipelineContext: PipelineContext) {
           }
         }
       case None =>
-        val undefinedFields = (recDecl.fields.keySet -- namedFields.map(_.name)).toList.sorted
+        val undefinedFields = (recDecl.fMap.keySet -- namedFields.map(_.name)).toList.sorted
         for (uField <- undefinedFields) {
-          val fieldDecl = recDecl.fields(uField)
+          val fieldDecl = recDecl.fMap(uField)
           val refinable = fieldDecl.refinable
           fieldDecl.defaultValue match {
             case None =>
@@ -607,7 +607,7 @@ final class Elab(pipelineContext: PipelineContext) {
     }
 
     for (namedField <- namedFields) {
-      val fieldDecl = recDecl.fields(namedField.name)
+      val fieldDecl = recDecl.fMap(namedField.name)
       if (fieldDecl.refinable) {
         val (fTy, fEnv) = elabExprAndCheck(namedField.value, envAcc, fieldDecl.tp)
         refinedFields += (fieldDecl.name -> fTy)
@@ -635,7 +635,7 @@ final class Elab(pipelineContext: PipelineContext) {
     var envAcc = Env.empty
     if (recDecl.refinable) {
       val (refTy, refEnv) = elabExprAndCheck(recExpr, env, recType)
-      val allRefinedFields = recDecl.fields.collect { case (name, f) if f.refinable => name }.toSet
+      val allRefinedFields = recDecl.fields.collect { case f if f.refinable => f.name }.toSet
       val keepFields = allRefinedFields -- fields.map(_.name)
       keepFields.foreach { fieldName =>
         val fieldTy = narrow.getRecordField(recDecl, refTy, fieldName)
@@ -646,7 +646,7 @@ final class Elab(pipelineContext: PipelineContext) {
       envAcc = check.checkExpr(recExpr, recType, env)
     }
     for (field <- fields) {
-      val fieldDecl = recDecl.fields(field.name)
+      val fieldDecl = recDecl.fMap(field.name)
       if (fieldDecl.refinable) {
         val (fTy, fEnv) = elabExprAndCheck(field.value, envAcc, fieldDecl.tp)
         refinedFields += (fieldDecl.name -> fTy)

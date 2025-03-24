@@ -7,9 +7,9 @@
 package com.whatsapp.eqwalizer.ast
 
 import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Expr, Tuple}
-import com.whatsapp.eqwalizer.ast.Forms.RecDeclTyped
+import com.whatsapp.eqwalizer.ast.Forms.RecDecl
 import com.whatsapp.eqwalizer.ast.Guards.{Test, TestAtom, TestTuple}
-import com.github.plokhotnyuk.jsoniter_scala.core._
+import com.github.plokhotnyuk.jsoniter_scala.core.*
 
 import scala.util.boundary
 
@@ -109,13 +109,13 @@ object Types {
     else UnionType(allTys)
   }
 
-  def recordAsTuple(recDecl: RecDeclTyped): TupleType = {
-    val elems = AtomLitType(recDecl.name) :: recDecl.fields.values.toList.map(_.tp)
+  def recordAsTuple(recDecl: RecDecl): TupleType = {
+    val elems = AtomLitType(recDecl.name) :: recDecl.fields.map(_.tp)
     TupleType(elems)
   }
 
-  def refinedRecordAsTuple(recDecl: RecDeclTyped, refinedRecord: RefinedRecordType): TupleType = {
-    val fieldsList = recDecl.fields.map(f => refinedRecord.fields.getOrElse(f._1, f._2.tp)).toList
+  def refinedRecordAsTuple(recDecl: RecDecl, refinedRecord: RefinedRecordType): TupleType = {
+    val fieldsList = recDecl.fields.map(f => refinedRecord.fields.getOrElse(f.name, f.tp))
     TupleType(AtomLitType(refinedRecord.recType.name) :: fieldsList)
   }
 

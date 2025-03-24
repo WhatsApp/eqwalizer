@@ -155,27 +155,27 @@ final class ElabGuard(pipelineContext: PipelineContext) {
           }
         val namedFields = fields.collect { case f: TestRecordFieldNamed => f }
         val optGenField = fields.collectFirst { case f: TestRecordFieldGen => f }
-        val genFields = recDecl.fields.keySet -- namedFields.map(_.name)
+        val genFields = recDecl.fMap.keySet -- namedFields.map(_.name)
         val undefinedFields =
           optGenField match {
             case Some(_) => Set.empty
             case None    => genFields
           }
         for (uField <- undefinedFields) {
-          val fieldDecl = recDecl.fields(uField)
+          val fieldDecl = recDecl.fMap(uField)
           if (fieldDecl.defaultValue.isEmpty && !subtype.subType(undefined, fieldDecl.tp)) {
             diagnosticsInfo.add(UndefinedField(test.pos, recName, uField))
           }
         }
         var envAcc = env
         for (field <- namedFields) {
-          val fieldDecl = recDecl.fields(field.name)
+          val fieldDecl = recDecl.fMap(field.name)
           envAcc = elabTestT(field.value, fieldDecl.tp, envAcc)
         }
         optGenField match {
           case Some(field) =>
             for (genFieldName <- genFields) {
-              val fieldDecl = recDecl.fields(genFieldName)
+              val fieldDecl = recDecl.fMap(genFieldName)
               envAcc = elabTestT(field.value, fieldDecl.tp, envAcc)
             }
           case None => ()

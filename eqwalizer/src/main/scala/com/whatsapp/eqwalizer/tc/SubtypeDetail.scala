@@ -178,7 +178,7 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
       case (rec: RecordType, refRec: RefinedRecordType) if refRec.recType.name == rec.name =>
         util.getRecord(rec.module, rec.name) match {
           case Some(recDecl) =>
-            recurSeq(refRec.fields.toList.map(f => (recDecl.fields(f._1).tp, f._2)))
+            recurSeq(refRec.fields.toList.map(f => (recDecl.fMap(f._1).tp, f._2)))
           case None =>
             stack
         }
@@ -187,7 +187,7 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
           case Some(recDecl) =>
             recurSeq(refRec2.fields.collect {
               case (fName, fTy) if refRec1.fields.contains(fName) => (refRec1.fields(fName), fTy)
-              case (fName, fTy)                                   => (recDecl.fields(fName).tp, fTy)
+              case (fName, fTy)                                   => (recDecl.fMap(fName).tp, fTy)
             }.toList)
           case None =>
             stack

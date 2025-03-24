@@ -14,8 +14,6 @@ import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 import com.whatsapp.eqwalizer.io.Ipc
 
-import scala.collection.immutable.TreeSeqMap
-
 object Forms {
 
   sealed trait InternalForm { val pos: Pos }
@@ -38,15 +36,10 @@ object Forms {
   // empty tys list is used to represent callback with an invalid type
   case class Callback(id: Id, tys: List[FunType])(val pos: Pos) extends InternalForm
   case class RecDecl(name: String, fields: List[RecField], refinable: Boolean, file: Option[String])(val pos: Pos)
-      extends InternalForm
-  case class RecDeclTyped(
-      name: String,
-      fields: TreeSeqMap[String, RecFieldTyped],
-      refinable: Boolean,
-      file: Option[String],
-  )
-  case class RecField(name: String, tp: Option[Type], defaultValue: Option[Expr], refinable: Boolean)
-  case class RecFieldTyped(name: String, tp: Type, defaultValue: Option[Expr], refinable: Boolean)
+      extends InternalForm {
+    lazy val fMap: Map[String, RecField] = fields.map(f => f.name -> f).toMap
+  }
+  case class RecField(name: String, tp: Type, defaultValue: Option[Expr], refinable: Boolean)
   case class TypeDecl(id: Id, params: List[VarType], body: Type, file: Option[String])(val pos: Pos)
       extends InternalForm
 

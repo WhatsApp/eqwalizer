@@ -63,7 +63,7 @@ case class Show(pipelineContext: Option[PipelineContext]) {
           case Some(recDecl) =>
             fields
               .collect {
-                case (name, ty) if recDecl.fields(name).refinable => s"${name} :: ${show(ty)}"
+                case (name, ty) if recDecl.fMap(name).refinable => s"${name} :: ${show(ty)}"
               }
               .mkString(s"#${r.name}{", ", ", "}")
         }

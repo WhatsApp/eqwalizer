@@ -608,7 +608,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             val record = util.getRecord(pipelineContext.module, recName)
             record match {
               case Some(recDecl) =>
-                val fields = recDecl.fields.keys.map(AtomLitType(_))
+                val fields = recDecl.fields.map(f => AtomLitType(f.name))
                 (ListType(UnionType(fields.toSet)), env1)
               case None =>
                 diagnosticsInfo.add(UnboundRecord(name.pos, recName))
