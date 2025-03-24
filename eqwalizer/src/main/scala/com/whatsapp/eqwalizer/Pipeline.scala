@@ -6,8 +6,9 @@
 
 package com.whatsapp.eqwalizer
 
-import com.whatsapp.eqwalizer.ast._
-import com.whatsapp.eqwalizer.ast.Forms._
+import com.whatsapp.eqwalizer.ast.*
+import com.whatsapp.eqwalizer.ast.Forms.*
+import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType}
 import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{
@@ -91,24 +92,18 @@ object Pipeline {
 
   def applyFixmes(
       forms: List[InternalForm],
+      invalids: List[Invalid],
       elpMetadaOpt: Option[ElpMetadata],
-  ): (List[InternalForm], List[RedundantFixme]) =
+  ): (List[InternalForm], List[Invalid], List[RedundantFixme]) =
     elpMetadaOpt match {
       case None =>
-        (forms, Nil)
+        (forms, invalids, Nil)
       case Some(ElpMetadata(fixmes)) =>
         var usedFixmes = Set[Fixme]()
         val forms1 = ListBuffer[InternalForm]()
 
         for (form <- forms) {
           form match {
-            case invalid: InvalidForm =>
-              findFixme(invalid.te.pos, fixmes) match {
-                case Some(fixme) =>
-                  usedFixmes += fixme
-                case None =>
-                  forms1 += invalid
-              }
             case MisBehaviour(te) =>
               findFixme(te.pos, fixmes) match {
                 case Some(fixme) =>
@@ -132,10 +127,20 @@ object Pipeline {
           }
         }
 
+        val invalids1 = ListBuffer[Invalid]()
+        for (invalid <- invalids) {
+          findFixme(invalid.pos, fixmes) match {
+            case Some(fixme) =>
+              usedFixmes += fixme
+            case None =>
+              invalids1 += invalid
+          }
+        }
+
         val redundantFixmePositions = fixmes.filterNot(usedFixmes).map(_.comment)
         val redundantFixmeErrors = redundantFixmePositions.map(RedundantFixme(_))
 
-        (forms1.toList, redundantFixmeErrors)
+        (forms1.toList, invalids1.toList, redundantFixmeErrors)
     }
 
   private def findFixme(pos: Pos, fixmes: List[Fixme]): Option[Fixme] = pos match {

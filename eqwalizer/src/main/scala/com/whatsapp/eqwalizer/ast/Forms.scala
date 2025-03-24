@@ -43,7 +43,7 @@ object Forms {
   case class TypeDecl(id: Id, params: List[VarType], body: Type, file: Option[String])(val pos: Pos)
       extends InternalForm
 
-  sealed trait InvalidForm extends InternalForm {
+  sealed trait InvalidForm {
     val te: Invalid
   }
   case class InvalidTypeDecl(id: Id, te: Invalid)(val pos: Pos) extends InvalidForm

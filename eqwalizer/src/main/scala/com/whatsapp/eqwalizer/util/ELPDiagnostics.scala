@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer.util
 
 import com.whatsapp.eqwalizer.{Pipeline, ast}
-import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, InvalidForm, MisBehaviour}
+import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, MisBehaviour}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
 import com.whatsapp.eqwalizer.ast.stub.Db
@@ -43,24 +43,22 @@ object ELPDiagnostics {
     }
 
   private def getDiagnostics(module: String, options: Options): List[Error] = {
-    val invalidForms = Db.getInvalidForms(module).get
-    val forms = Pipeline.checkForms(module, options) ++ invalidForms
-    formsToErrors(forms).sortBy(_.position.productElement(0).asInstanceOf[Int])
+    val invalids = Db.getInvalidForms(module).get.map(_.te)
+    val forms = Pipeline.checkForms(module, options)
+    formsToErrors(forms, invalids).sortBy(_.position.productElement(0).asInstanceOf[Int])
   }
 
-  private def formsToErrors(forms: List[InternalForm]): List[Error] = {
+  private def formsToErrors(forms: List[InternalForm], invalids: List[Invalid]): List[Error] = {
     val elpMetadata = forms.collectFirst { case elpMetadata: ElpMetadata =>
       elpMetadata
     }
-    val (forms1, redundantFixmes) = Pipeline.applyFixmes(forms, elpMetadata)
+    val (forms1, invalids1, redundantFixmes) = Pipeline.applyFixmes(forms, invalids, elpMetadata)
     val errors = forms1.collect {
-      case ef: InvalidForm =>
-        List(ef.te)
       case MisBehaviour(te) =>
         List(te)
       case FuncDecl(_, errors) =>
         errors
-    }.flatten ++ redundantFixmes
+    }.flatten ++ invalids1 ++ redundantFixmes
     errors.map { te =>
       Error(
         te.pos,
