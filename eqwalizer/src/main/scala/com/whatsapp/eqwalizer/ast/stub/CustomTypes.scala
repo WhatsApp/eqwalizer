@@ -17,7 +17,7 @@ private object CustomTypes {
           .map { case (id, ty) =>
             val Array(module, tyName) = id.name.split(":")
             val id1 = Id(tyName, id.arity)
-            val ty1 = ty.copy(id = id1)(ty.pos)
+            val ty1 = ty.copy(id = id1)
             (module, id1) -> ty1
           }
           .groupBy { case ((module, _), _) => module }

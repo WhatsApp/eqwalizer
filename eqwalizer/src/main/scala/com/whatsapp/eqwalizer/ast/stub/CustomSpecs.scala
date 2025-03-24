@@ -17,7 +17,7 @@ private object CustomSpecs {
           .map { case (id, spec) =>
             val Array(module, funName) = id.name.split(":")
             val id1 = Id(funName, id.arity)
-            val spec1 = spec.copy(id = id1)(spec.pos)
+            val spec1 = spec.copy(id = id1)
             (module, id1) -> spec1
           }
           .groupBy { case ((module, _), _) => module }
@@ -35,7 +35,7 @@ private object CustomSpecs {
           .map { case (id, spec) =>
             val Array(module, funName) = id.name.split(":")
             val id1 = Id(funName, id.arity)
-            val spec1 = spec.copy(id = id1)(spec.pos)
+            val spec1 = spec.copy(id = id1)
             (module, id1) -> spec1
           }
           .groupBy { case ((module, _), _) => module }
