@@ -81,20 +81,19 @@ object TcDiagnostics {
     def errorName = "unbound_record"
     override def erroneousExpr: Option[Expr] = None
   }
-  sealed trait BehaviourError extends TypeError
-  case class NonexistentBehaviour(pos: Pos, name: String) extends BehaviourError {
+  case class NonexistentBehaviour(pos: Pos, name: String) extends TypeError {
     override val msg: String = s"Behaviour does not exist: $name"
     def errorName = "behaviour_does_not_exist"
     override def erroneousExpr: Option[Expr] = None
   }
-  case class MissingCallback(pos: Pos, behaviourName: String, callback: String) extends BehaviourError {
+  case class MissingCallback(pos: Pos, behaviourName: String, callback: String) extends TypeError {
     override val msg: String = s"Missing implementation for $behaviourName callback $callback"
     def errorName = "missing_cb_implementation"
     override def erroneousExpr: Option[Expr] = None
   }
   case class IncorrectCallbackReturn(pos: Pos, behaviourName: String, callback: String, expected: Type, got: Type)(
       implicit val pipelineContext: PipelineContext
-  ) extends BehaviourError {
+  ) extends TypeError {
     override val msg: String =
       s"Incorrect return type for implementation of $behaviourName:$callback. Expected: ${show(expected)}, Got: ${show(
         got
@@ -113,7 +112,7 @@ object TcDiagnostics {
       expected: Type,
       got: Type,
   )(implicit val pipelineContext: PipelineContext)
-      extends BehaviourError {
+      extends TypeError {
     override val msg: String =
       s"Parameter ${paramIndex + 1} in implementation of $behaviourName:$callback has no overlap with expected parameter type. Expected: ${show(expected)}, Got: ${show(got)}."
     def errorName = "incorrect_param_type_in_cb_implementation"
