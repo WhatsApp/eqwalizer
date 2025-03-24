@@ -7,12 +7,11 @@
 package com.whatsapp.eqwalizer.util
 
 import com.whatsapp.eqwalizer.{Pipeline, ast}
-import com.whatsapp.eqwalizer.ast.Forms.{ElpMetadata, FuncDecl, InternalForm, MisBehaviour}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
 import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.io.Ipc
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.TypeError
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{RedundantFixme, TypeError}
 import com.whatsapp.eqwalizer.tc.{Options, noOptions}
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
@@ -43,23 +42,16 @@ object ELPDiagnostics {
     }
 
   private def getDiagnostics(module: String, options: Options): List[Error] = {
-    val invalids = Db.getInvalidForms(module).get.map(_.te)
-    val forms = Pipeline.checkForms(module, options)
-    formsToErrors(forms, invalids).sortBy(_.position.productElement(0).asInstanceOf[Int])
+    val (typeErrors, invalids, redundantFixmes) = Pipeline.checkForms(module, options)
+    toELPErrors(typeErrors, invalids, redundantFixmes).sortBy(_.position.productElement(0).asInstanceOf[Int])
   }
 
-  private def formsToErrors(forms: List[InternalForm], invalids: List[Invalid]): List[Error] = {
-    val elpMetadata = forms.collectFirst { case elpMetadata: ElpMetadata =>
-      elpMetadata
-    }
-    val (forms1, invalids1, redundantFixmes) = Pipeline.applyFixmes(forms, invalids, elpMetadata)
-    val errors = forms1.collect {
-      case MisBehaviour(te) =>
-        List(te)
-      case FuncDecl(_, errors) =>
-        errors
-    }.flatten ++ invalids1 ++ redundantFixmes
-    errors.map { te =>
+  private def toELPErrors(
+      errors: List[TypeError],
+      invalids: List[Invalid],
+      redundantFixmes: List[RedundantFixme],
+  ): List[Error] =
+    (errors ++ invalids ++ redundantFixmes).map { te =>
       Error(
         te.pos,
         te.msg,
@@ -70,7 +62,6 @@ object ELPDiagnostics {
         diagnostic = te,
       )
     }
-  }
 
   def toJsonObj(errorsByModule: collection.Map[String, List[Error]]): ujson.Obj = {
     ujson.Obj.from(errorsByModule.map { case (module, errors) =>

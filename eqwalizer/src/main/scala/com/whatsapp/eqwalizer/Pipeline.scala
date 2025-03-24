@@ -6,43 +6,39 @@
 
 package com.whatsapp.eqwalizer
 
-import com.whatsapp.eqwalizer.ast.*
-import com.whatsapp.eqwalizer.ast.Forms.*
+import com.whatsapp.eqwalizer.ast._
+import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType}
 import com.whatsapp.eqwalizer.ast.stub.Db
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{
-  NonexistentBehaviour,
-  RedundantFixme,
-  RedundantNowarnFunction,
-  TypeError,
-}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics._
 import com.whatsapp.eqwalizer.tc.{Options, PipelineContext, noOptions}
 
 import scala.collection.mutable.ListBuffer
 
 object Pipeline {
-  def checkForms(moduleName: String, options: Options = noOptions): List[InternalForm] = {
-    import scala.collection.mutable.ListBuffer
-
+  def checkForms(
+      moduleName: String,
+      options: Options = noOptions,
+  ): (List[TypeError], List[Invalid], List[RedundantFixme]) = {
+    val invalids = Db.getInvalidForms(moduleName).get.map(_.te)
     val forms = Forms.load(moduleName)
     val module = forms.collectFirst { case Module(m) => m }.get
     val erlFile = forms.collectFirst { case File(f, _) => f }.get
+    val meta = forms.collectFirst { case meta: ElpMetadata => meta }
     val noCheckFuns = forms.collect { case f: EqwalizerNowarnFunction => (f.id, f.pos) }.toMap
     val unlimitedRefinementFuns = forms.collect { case EqwalizerUnlimitedRefinement(id) => id }.toSet
     var currentFile = erlFile
-    val result = ListBuffer.empty[InternalForm]
+    val result = ListBuffer.empty[TypeError]
     for (form <- forms)
       form match {
         case f @ File(path, _) =>
           currentFile = path
-          if (path == erlFile)
-            result.addOne(f)
         case f: FunDecl if currentFile == erlFile =>
           val options1 =
             if (unlimitedRefinementFuns(f.id)) options.copy(unlimitedRefinement = Some(true)) else options
           val ctx = PipelineContext(module, options1)
-          val checkedF = (Db.getSpec(module, f.id), Db.getOverloadedSpec(module, f.id)) match {
+          val fErrors = (Db.getSpec(module, f.id), Db.getOverloadedSpec(module, f.id)) match {
             case (Some(spec), _) =>
               checkFun(ctx, f, spec)
             case (_, Some(overloadedSpec)) =>
@@ -51,10 +47,10 @@ object Pipeline {
               checkFun(ctx, f, getDynamicFunSpecType(f))
           }
           if (noCheckFuns.contains(f.id)) {
-            result.addOne(applyNowarnToFun(f, checkedF, noCheckFuns(f.id)))
-          } else {
-            result.addOne(checkedF)
-          }
+            if (fErrors.isEmpty)
+              result.addOne(RedundantNowarnFunction(noCheckFuns(f.id)))
+          } else
+            result.addAll(fErrors)
         case b: Behaviour =>
           val ctx = PipelineContext(module, options)
           if (Db.isKnownModule(b.name)) {
@@ -65,65 +61,50 @@ object Pipeline {
               }
             )
           } else {
-            result.addOne(MisBehaviour(NonexistentBehaviour(b.pos, b.name))(b.pos))
+            result.addOne(NonexistentBehaviour(b.pos, b.name))
           }
-        case f if currentFile == erlFile =>
-          result.addOne(f)
         case _ =>
         // skipping things from header files
       }
-    result.toList
+    val errors = result.toList
+    applyFixmes(errors, invalids, meta)
   }
 
   private def getDynamicFunSpecType(f: FunDecl): FunSpec =
     FunSpec(f.id, FunType(Nil, List.fill(f.id.arity)(DynamicType), DynamicType))(f.pos)
 
-  private def checkFun(ctx: PipelineContext, f: FunDecl, spec: FunSpec): FuncDecl = {
+  private def checkFun(ctx: PipelineContext, f: FunDecl, spec: FunSpec): List[TypeError] = {
     ctx.check.checkFun(f, spec)
-    val errors = ctx.diagnosticsInfo.popErrors()
-    FuncDecl(f.id, errors)(f.pos)
+    ctx.diagnosticsInfo.popErrors()
   }
 
-  private def checkOverloadedFun(ctx: PipelineContext, f: FunDecl, overloadedSpec: OverloadedFunSpec): FuncDecl = {
+  private def checkOverloadedFun(
+      ctx: PipelineContext,
+      f: FunDecl,
+      overloadedSpec: OverloadedFunSpec,
+  ): List[TypeError] = {
     ctx.check.checkOverloadedFun(f, overloadedSpec)
-    val errors = ctx.diagnosticsInfo.popErrors()
-    FuncDecl(f.id, errors)(f.pos)
+    ctx.diagnosticsInfo.popErrors()
   }
 
-  def applyFixmes(
-      forms: List[InternalForm],
+  private def applyFixmes(
+      errors: List[TypeError],
       invalids: List[Invalid],
       elpMetadaOpt: Option[ElpMetadata],
-  ): (List[InternalForm], List[Invalid], List[RedundantFixme]) =
+  ): (List[TypeError], List[Invalid], List[RedundantFixme]) =
     elpMetadaOpt match {
       case None =>
-        (forms, invalids, Nil)
+        (errors, invalids, Nil)
       case Some(ElpMetadata(fixmes)) =>
         var usedFixmes = Set[Fixme]()
-        val forms1 = ListBuffer[InternalForm]()
+        val errors1 = ListBuffer[TypeError]()
 
-        for (form <- forms) {
-          form match {
-            case MisBehaviour(te) =>
-              findFixme(te.pos, fixmes) match {
-                case Some(fixme) =>
-                  usedFixmes += fixme
-                case None =>
-                  forms1 += form
-              }
-            case decl @ FuncDecl(_, errors) =>
-              val errors1 = ListBuffer[TypeError]()
-              for (error <- errors) {
-                findFixme(error.pos, fixmes) match {
-                  case Some(fixme) =>
-                    usedFixmes += fixme
-                  case None =>
-                    errors1 += error
-                }
-              }
-              forms1 += decl.copy(errors = errors1.toList)(decl.pos)
-            case form =>
-              forms1 += form
+        for (error <- errors) {
+          findFixme(error.pos, fixmes) match {
+            case Some(fixme) =>
+              usedFixmes += fixme
+            case None =>
+              errors1 += error
           }
         }
 
@@ -140,7 +121,7 @@ object Pipeline {
         val redundantFixmePositions = fixmes.filterNot(usedFixmes).map(_.comment)
         val redundantFixmeErrors = redundantFixmePositions.map(RedundantFixme(_))
 
-        (forms1.toList, invalids1.toList, redundantFixmeErrors)
+        (errors1.toList, invalids1.toList, redundantFixmeErrors)
     }
 
   private def findFixme(pos: Pos, fixmes: List[Fixme]): Option[Fixme] = pos match {
@@ -148,22 +129,5 @@ object Pipeline {
       fixmes.find(fixme => startByte >= fixme.suppression.startByte && startByte <= fixme.suppression.endByte)
     case _ =>
       None
-  }
-
-  private def applyNowarnToFun(
-      originalForm: FunDecl,
-      checkedForm: InternalForm,
-      pos: Pos,
-  ): InternalForm = {
-    val noErrors = checkedForm match {
-      case FuncDecl(_, errors) =>
-        errors.isEmpty
-      case _ =>
-        true
-    }
-    if (noErrors) {
-      return FuncDecl(originalForm.id, errors = List(RedundantNowarnFunction(pos)))(originalForm.pos)
-    }
-    originalForm
   }
 }

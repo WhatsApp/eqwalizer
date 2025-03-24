@@ -9,7 +9,6 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.ast.Exprs.{Clause, Expr}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.TypeError
 import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 import com.whatsapp.eqwalizer.io.Ipc
@@ -51,9 +50,6 @@ object Forms {
   case class InvalidRecDecl(name: String, te: Invalid)(val pos: Pos) extends InvalidForm
   case class InvalidConvertTypeInRecDecl(name: String, te: Invalid)(val pos: Pos) extends InvalidForm
   case class InvalidMapType(te: Invalid)(val pos: Pos) extends InvalidForm
-
-  case class FuncDecl(id: Id, errors: List[TypeError])(val pos: Pos) extends InternalForm
-  case class MisBehaviour(te: TypeError)(val pos: Pos) extends InternalForm
 
   def load(module: String): List[InternalForm] = {
     val bytes = Ipc.getAstBytes(module, Ipc.ConvertedForms).get
