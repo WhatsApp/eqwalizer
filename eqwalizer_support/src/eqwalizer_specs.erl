@@ -13,8 +13,6 @@
 -compile(warn_missing_spec).
 -compile([export_all, nowarn_export_all]).
 
--include_lib("public_key/include/public_key.hrl").
-
 %% -------- application --------
 
 -spec 'application:get_all_env'(App :: atom()) -> [{atom(), eqwalizer:dynamic()}].
@@ -629,11 +627,6 @@ when
 
 -spec 'public_key:der_decode'(public_key:asn1_type(), public_key:der_encoded()) -> eqwalizer:dynamic().
 'public_key:der_decode'(_, _) -> error(eqwalizer_specs).
-
--spec 'public_key:pkix_decode_cert'
-    (binary(), plain) -> #'Certificate'{};
-    (binary(), otp) -> #'OTPCertificate'{}.
-'public_key:pkix_decode_cert'(_, _) -> error(eqwalizer_specs).
 
 %% -------- queue --------
 -spec 'queue:new'() -> queue:queue(none()).
