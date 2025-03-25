@@ -9,6 +9,7 @@ package com.whatsapp.eqwalizer.ast.stub
 import com.github.plokhotnyuk.jsoniter_scala.core.readFromArray
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Id
+import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 
 import scala.collection.mutable
 import com.whatsapp.eqwalizer.io.Ipc
@@ -77,8 +78,8 @@ object Db {
   def getRecord(module: String, record: String): Option[RecDecl] =
     getModuleStub(module).flatMap(_.records.get(record))
 
-  def getInvalidForms(module: String): Option[List[InvalidForm]] =
-    getModuleStub(module).map(_.invalidForms)
+  def getInvalids(module: String): Option[List[Invalid]] =
+    getModuleStub(module).map(_.invalids)
 
   def isKnownModule(module: String): Boolean =
     getModuleStub(module).isDefined

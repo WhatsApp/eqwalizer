@@ -10,6 +10,7 @@ import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 import com.whatsapp.eqwalizer.ast.Forms._
 import com.whatsapp.eqwalizer.ast.Id
+import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 
 private case class ModuleStub(
     module: String,
@@ -23,7 +24,7 @@ private case class ModuleStub(
     records: Map[String, RecDecl],
     callbacks: List[Callback],
     optionalCallbacks: Set[Id],
-    invalidForms: List[InvalidForm],
+    invalids: List[Invalid],
 )
 
 private object ModuleStub {

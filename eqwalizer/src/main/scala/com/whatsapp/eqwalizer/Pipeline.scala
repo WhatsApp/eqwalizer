@@ -21,7 +21,7 @@ object Pipeline {
       moduleName: String,
       options: Options = noOptions,
   ): (List[TypeError], List[Invalid], List[RedundantFixme]) = {
-    val invalids = Db.getInvalidForms(moduleName).get.map(_.te)
+    val invalids = Db.getInvalids(moduleName).get
     val forms = Forms.load(moduleName)
     val module = forms.collectFirst { case Module(m) => m }.get
     val erlFile = forms.collectFirst { case File(f, _) => f }.get
