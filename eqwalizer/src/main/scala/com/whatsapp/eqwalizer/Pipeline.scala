@@ -26,7 +26,7 @@ object Pipeline {
     val module = forms.collectFirst { case Module(m) => m }.get
     val erlFile = forms.collectFirst { case File(f, _) => f }.get
     val meta = forms.collectFirst { case meta: ElpMetadata => meta }
-    val noCheckFuns = forms.collect { case f: EqwalizerNowarnFunction => (f.id, f.pos) }.toMap
+    var noCheckFuns = forms.collect { case f: EqwalizerNowarnFunction => (f.id, f.pos) }.toMap
     val unlimitedRefinementFuns = forms.collect { case EqwalizerUnlimitedRefinement(id) => id }.toSet
     var currentFile = erlFile
     val result = ListBuffer.empty[TypeError]
@@ -49,8 +49,8 @@ object Pipeline {
           if (noCheckFuns.contains(f.id)) {
             if (fErrors.isEmpty)
               result.addOne(RedundantNowarnFunction(noCheckFuns(f.id)))
-          } else
-            result.addAll(fErrors)
+            noCheckFuns = noCheckFuns.removed(f.id)
+          } else result.addAll(fErrors)
         case b: Behaviour =>
           val ctx = PipelineContext(module, options)
           if (Db.isKnownModule(b.name)) {
@@ -66,6 +66,7 @@ object Pipeline {
         case _ =>
         // skipping things from header files
       }
+    noCheckFuns.foreach { case (_, pos) => result.addOne(RedundantNowarnFunction(pos)) }
     val errors = result.toList
     applyFixmes(errors, invalids, meta)
   }
