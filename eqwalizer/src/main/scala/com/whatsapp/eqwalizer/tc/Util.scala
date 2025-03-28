@@ -91,7 +91,8 @@ class Util(pipelineContext: PipelineContext) {
 
   def flattenUnions(ty: Type): List[Type] = ty match {
     case UnionType(tys) =>
-      tys.flatMap(flattenUnions).toList
+      val flatTys = tys.flatMap(flattenUnions) - NoneType
+      if (flatTys.isEmpty) List(NoneType) else flatTys.toList
     case _ => List(ty)
   }
 
