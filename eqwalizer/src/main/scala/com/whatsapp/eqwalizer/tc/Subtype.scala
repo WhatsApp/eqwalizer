@@ -344,7 +344,7 @@ class Subtype(pipelineContext: PipelineContext) {
   def joinEnvs(envs: List[Env]): Env = {
     val vars = envs.map(_.keySet).reduce(_.intersect(_))
     var envAcc: Env = envs.head.filter { case (k, _) => vars(k) }
-    for { env <- envs; v <- vars } envAcc = envAcc.updated(v, join(envAcc(v), env(v)))
+    for { env <- envs.tail; v <- vars } envAcc = envAcc.updated(v, join(envAcc(v), env(v)))
     envAcc
   }
 
