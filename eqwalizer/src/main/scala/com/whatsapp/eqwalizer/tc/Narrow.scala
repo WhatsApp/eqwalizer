@@ -212,10 +212,8 @@ class Narrow(pipelineContext: PipelineContext) {
 
   private def extractListElem(t: Type): List[Type] =
     t match {
-      case DynamicType =>
+      case DynamicType | BoundedDynamicType(_) =>
         List(DynamicType)
-      case BoundedDynamicType(bound) =>
-        extractListElem(bound).map(BoundedDynamicType(_))
       case AnyType =>
         List(AnyType)
       case UnionType(tys) =>
