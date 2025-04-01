@@ -1,6 +1,6 @@
 jobs:
   linux-ci:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Linux CI (OTP ${{matrix.otp}})
     strategy:
       matrix:
@@ -19,6 +19,8 @@ jobs:
           java-version: '17'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
       - name: Install musl-tools for rust toolchain
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -35,9 +37,11 @@ jobs:
           install-rebar: false
           install-hex: false
       - name: Install rebar3
-        run: "curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3 && chmod +x rebar3"
+        run: "mkdir rebar3 && curl https://s3.amazonaws.com/rebar3/rebar3 -o rebar3/rebar3 && chmod +x rebar3/rebar3"
       - name: "add rebar3 to path"
         run: 'echo "$GITHUB_WORKSPACE/rebar3" >> $GITHUB_PATH'
+      - name: Verify rebar3 version
+        run: rebar3 version
       - name: Assemble eqwalizer.jar
         run: "cd eqwalizer; sbt assembly"
       - name: Assemble eqwalizer binary
