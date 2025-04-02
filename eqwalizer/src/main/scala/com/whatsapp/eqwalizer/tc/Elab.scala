@@ -710,6 +710,8 @@ final class Elab(pipelineContext: PipelineContext) {
         val (_, kPatEnv) = elabPat.elabPat(gkPat, kT, gEnv)
         val (_, vPatEnv) = elabPat.elabPat(gvPat, vT, kPatEnv)
         envAcc = vPatEnv
+      case Zip(generators) =>
+        envAcc = elabQualifiers(generators, envAcc)
       case Filter(fExpr) =>
         Filters.asTest(fExpr).foreach { test =>
           envAcc = elabGuard.elabGuards(List(Guard(List(test))), envAcc)

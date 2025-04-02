@@ -91,5 +91,6 @@ object Exprs {
   case class BGenerateStrict(pat: Pat, expr: Expr) extends Generator
   case class MGenerate(kPat: Pat, vPat: Pat, expr: Expr) extends Generator
   case class MGenerateStrict(kPat: Pat, vPat: Pat, expr: Expr) extends Generator
+  case class Zip(generators: List[Generator]) extends Generator
   case class Filter(expr: Expr) extends Qualifier
 }
