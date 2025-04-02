@@ -166,7 +166,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
     val emptyPatterns = clauses.forall(_.pats.isEmpty)
     val shortGuards = clauses.forall(clause => clause.guards.map(guardSize).sum < 32)
     val smallClauses = pipelineContext.unlimitedRefinement || (clauses.size < 7 && shortGuards)
-    emptyPatterns || smallClauses
+    (module != "erl_syntax") && (emptyPatterns || smallClauses)
   }
 
   private def ignoreNumberRefinement(clause: Clause, aMap: AMap, nextClauses: List[(Clause, AMap)]): Boolean = {
