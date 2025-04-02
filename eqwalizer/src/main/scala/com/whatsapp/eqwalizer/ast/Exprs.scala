@@ -86,7 +86,10 @@ object Exprs {
   sealed trait Qualifier
   sealed trait Generator extends Qualifier
   case class LGenerate(pat: Pat, expr: Expr) extends Generator
+  case class LGenerateStrict(pat: Pat, expr: Expr) extends Generator
   case class BGenerate(pat: Pat, expr: Expr) extends Generator
+  case class BGenerateStrict(pat: Pat, expr: Expr) extends Generator
   case class MGenerate(kPat: Pat, vPat: Pat, expr: Expr) extends Generator
+  case class MGenerateStrict(kPat: Pat, vPat: Pat, expr: Expr) extends Generator
   case class Filter(expr: Expr) extends Qualifier
 }

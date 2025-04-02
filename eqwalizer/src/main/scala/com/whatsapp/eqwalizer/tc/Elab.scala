@@ -483,6 +483,20 @@ final class Elab(pipelineContext: PipelineContext) {
           mapsAcc = mapsAcc + mapTy
         }
         (narrow.joinAndMergeMaps(mapsAcc), env)
+      case MComprehension(kTemplate, vTemplate, List(MGenerateStrict(gk: PatVar, gv: PatVar, gExpr))) =>
+        val (gT, gEnv) = elabExprAndCheck(gExpr, env, MapType(Map(), AnyType, AnyType))
+        val mapT = narrow.asMapTypes(gT)
+        val kvTys = mapT.flatMap(narrow.getKVType)
+        var mapsAcc: Set[MapType] = Set()
+        for (TupleType(List(kTy, vTy)) <- kvTys) {
+          val (_, kPatEnv) = elabPat.elabPat(gk, kTy, gEnv)
+          val (_, vPatEnv) = elabPat.elabPat(gv, vTy, kPatEnv)
+          val (kType, _) = elabExpr(kTemplate, vPatEnv)
+          val (vType, _) = elabExpr(vTemplate, vPatEnv)
+          val mapTy = MapType(Map(), kType, vType)
+          mapsAcc = mapsAcc + mapTy
+        }
+        (narrow.joinAndMergeMaps(mapsAcc), env)
       case MComprehension(kTemplate, vTemplate, qualifiers) =>
         val qEnv = elabQualifiers(qualifiers, env)
         val (kType, _) = elabExpr(kTemplate, qEnv)
@@ -667,11 +681,28 @@ final class Elab(pipelineContext: PipelineContext) {
         val Some(ListType(gElemT)) = narrow.asListType(gT): @unchecked
         val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
         envAcc = pEnv
+      case LGenerateStrict(gPat, gExpr) =>
+        val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, ListType(AnyType))
+        val Some(ListType(gElemT)) = narrow.asListType(gT): @unchecked
+        val (_, pEnv) = elabPat.elabPat(gPat, gElemT, gEnv)
+        envAcc = pEnv
       case BGenerate(gPat, gExpr) =>
         envAcc = check.checkExpr(gExpr, BinaryType, envAcc)
         val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
         envAcc = pEnv
+      case BGenerateStrict(gPat, gExpr) =>
+        envAcc = check.checkExpr(gExpr, BinaryType, envAcc)
+        val (_, pEnv) = elabPat.elabPat(gPat, BinaryType, envAcc)
+        envAcc = pEnv
       case MGenerate(gkPat, gvPat, gExpr) =>
+        val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, MapType(Map(), AnyType, AnyType))
+        val mapT = narrow.asMapTypes(gT)
+        val kT = subtype.join(mapT.map(narrow.getKeyType))
+        val vT = subtype.join(mapT.map(narrow.getValType))
+        val (_, kPatEnv) = elabPat.elabPat(gkPat, kT, gEnv)
+        val (_, vPatEnv) = elabPat.elabPat(gvPat, vT, kPatEnv)
+        envAcc = vPatEnv
+      case MGenerateStrict(gkPat, gvPat, gExpr) =>
         val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, MapType(Map(), AnyType, AnyType))
         val mapT = narrow.asMapTypes(gT)
         val kT = subtype.join(mapT.map(narrow.getKeyType))
