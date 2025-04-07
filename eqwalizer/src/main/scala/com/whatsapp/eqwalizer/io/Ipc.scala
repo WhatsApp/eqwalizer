@@ -6,6 +6,8 @@
 
 package com.whatsapp.eqwalizer.io
 
+import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromString}
+import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 import com.whatsapp.eqwalizer.tc.TypeInfo
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
@@ -99,8 +101,7 @@ object Ipc {
     if (str == null) {
       Left(GotNull())
     } else {
-      val json = ujson.read(str)
-      Right(jsonToReply(json))
+      Right(readFromString[Reply](str))
     }
   }
 
@@ -159,22 +160,6 @@ object Ipc {
       )
   }
 
-  private def jsonToReply(value: ujson.Value): Reply =
-    value.obj("tag") match {
-      case ujson.Str("ELPEnteringModule") =>
-        ELPEnteringModule
-      case ujson.Str("ELPExitingModule") =>
-        ELPExitingModule
-      case ujson.Str("GetAstBytesReply") =>
-        val content = value.obj("content").obj
-        val len = content("len").num.toInt
-        GetAstBytesReply(len)
-      case ujson.Str("CannotCompleteRequest") =>
-        CannotCompleteRequest
-      case _ =>
-        throw new IllegalStateException(s"unexpected reply $value")
-    }
-
   // copy/pasted from java.io.InputStream.readNBytes and then Scalafied.
   // replace with stream.readNBytes in T111884043
   private def readNBytes(stream: java.io.InputStream, b: Array[Byte], off: Int, len: Int): Int = {
@@ -210,4 +195,10 @@ object Ipc {
     */
   private case class GetAstBytesReply(len: Int) extends Reply
   private case object CannotCompleteRequest extends Reply
+
+  private implicit val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
 }
