@@ -8,12 +8,13 @@ package com.whatsapp.eqwalizer.util
 
 import com.whatsapp.eqwalizer.{Pipeline, ast}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
-import com.whatsapp.eqwalizer.ast.{Pos, Show, TextRange}
+import com.whatsapp.eqwalizer.ast.{InvalidDiagnostics, Pos, Show, TextRange}
 import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.io.Ipc
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{RedundantFixme, TypeError}
-import com.whatsapp.eqwalizer.tc.{Options, noOptions}
-import com.github.plokhotnyuk.jsoniter_scala.core._
+import com.whatsapp.eqwalizer.tc.{Options, TcDiagnostics, noOptions}
+import com.github.plokhotnyuk.jsoniter_scala.core.*
+import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 
 object ELPDiagnostics {
   case class Error(
@@ -23,7 +24,18 @@ object ELPDiagnostics {
       errorName: String,
       explanation: Option[String],
       shownExpression: Option[String],
-      diagnostic: Diagnostic.Diagnostic,
+      diagnostic: StructuredDiagnostic,
+  )
+
+  sealed trait StructuredDiagnostic
+  case class TypeError(error: TcDiagnostics.TypeError) extends StructuredDiagnostic
+  case class InvalidForm(invalid: InvalidDiagnostics.Invalid) extends StructuredDiagnostic
+
+  implicit val codec: JsonValueCodec[StructuredDiagnostic] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
   )
 
   def getDiagnosticsIpc(modules: Iterable[String]): Unit =
@@ -47,7 +59,7 @@ object ELPDiagnostics {
   }
 
   private def toELPErrors(
-      errors: List[TypeError],
+      errors: List[TcDiagnostics.TypeError],
       invalids: List[Invalid],
       redundantFixmes: List[RedundantFixme],
   ): List[Error] =
@@ -59,7 +71,9 @@ object ELPDiagnostics {
         te.errorName,
         explanation = te.explanation,
         shownExpression = te.erroneousExpr.map(Show.show),
-        diagnostic = te,
+        diagnostic = te match
+          case te: TcDiagnostics.TypeError => TypeError(te)
+          case invalid: Invalid            => InvalidForm(invalid),
       )
     }
 
@@ -80,10 +94,7 @@ object ELPDiagnostics {
           case Some(s) => ujson.Str(s)
           case None    => ujson.Null
         }
-        val diagnosticJson = e.diagnostic match {
-          case te: TypeError => ujson.Obj("TypeError" -> ujson.read(writeToString(te)))
-          case inv: Invalid  => ujson.Obj("InvalidForm" -> ujson.read(writeToString(inv)))
-        }
+        val diagnosticJson = ujson.read(writeToString(e.diagnostic))
         ujson.Obj(
           "range" -> range,
           "message" -> ujson.Str(e.message),

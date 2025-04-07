@@ -11,8 +11,6 @@ import com.whatsapp.eqwalizer.ast.Pos
 import com.whatsapp.eqwalizer.ast.Show.{show, showNotSubtype}
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
-import com.github.plokhotnyuk.jsoniter_scala.macros._
-import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object TcDiagnostics {
   sealed trait TypeError extends Diagnostic
@@ -148,11 +146,4 @@ object TcDiagnostics {
     val errorName = "clause_not_covered"
     override val erroneousExpr: Option[Expr] = None
   }
-
-  implicit val codec: JsonValueCodec[TypeError] = JsonCodecMaker.make(
-    CodecMakerConfig
-      .withAllowRecursiveTypes(true)
-      .withDiscriminatorFieldName(None)
-      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
-  )
 }
