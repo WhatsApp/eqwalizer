@@ -49,7 +49,7 @@ object Ipc {
     }
   }
 
-  def sendDone(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]): Unit =
+  def sendDone(diagnostics: Map[String, List[ELPDiagnostics.Error]]): Unit =
     send(Done(diagnostics))
 
   def sendEqwalizingStart(module: String): Unit =
@@ -181,7 +181,7 @@ object Ipc {
   private case class EqwalizingStart(module: String) extends Request
   private case class EqwalizingDone(module: String) extends Request
   private case class Dependencies(modules: List[String]) extends Request
-  private case class Done(diagnostics: collection.Map[String, List[ELPDiagnostics.Error]]) extends Request
+  private case class Done(diagnostics: Map[String, List[ELPDiagnostics.Error]]) extends Request
 
   private sealed trait Reply
 

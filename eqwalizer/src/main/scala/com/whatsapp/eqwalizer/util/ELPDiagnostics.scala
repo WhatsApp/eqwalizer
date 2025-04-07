@@ -31,7 +31,7 @@ object ELPDiagnostics {
   case class TypeError(error: TcDiagnostics.TypeError) extends StructuredDiagnostic
   case class InvalidForm(invalid: InvalidDiagnostics.Invalid) extends StructuredDiagnostic
 
-  implicit val codec: JsonValueCodec[Error] = JsonCodecMaker.make(
+  implicit val codec: JsonValueCodec[Map[String, List[Error]]] = JsonCodecMaker.make(
     CodecMakerConfig
       .withAllowRecursiveTypes(true)
       .withDiscriminatorFieldName(None)
@@ -78,9 +78,6 @@ object ELPDiagnostics {
       )
     }
 
-  def toJsonObj(errorsByModule: collection.Map[String, List[Error]]): ujson.Obj = {
-    ujson.Obj.from(errorsByModule.map { case (module, errors) =>
-      module -> ujson.Arr.from(errors.map { e => ujson.read(writeToString(e)) })
-    })
-  }
+  def toJsonObj(errorsByModule: Map[String, List[Error]]): ujson.Value =
+    ujson.read(writeToString(errorsByModule))
 }
