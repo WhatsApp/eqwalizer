@@ -77,7 +77,4 @@ object ELPDiagnostics {
         },
       )
     }
-
-  def toJsonObj(errorsByModule: Map[String, List[Error]]): ujson.Value =
-    ujson.read(writeToString(errorsByModule))
 }

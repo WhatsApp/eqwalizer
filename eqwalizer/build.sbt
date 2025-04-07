@@ -26,8 +26,6 @@ target := {
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.3"
 
-libraryDependencies += "com.lihaoyi" %% "ujson" % "4.1.0"
-
 libraryDependencies ++= Seq(
   "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core"   % "2.33.3",
   "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % "2.33.3" % "compile-internal"

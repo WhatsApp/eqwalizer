@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.io
 
-import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromString, writeToString}
+import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromString, writeToStream}
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 import com.whatsapp.eqwalizer.ast.Pos
 import com.whatsapp.eqwalizer.ast.Types.Type
@@ -16,11 +16,9 @@ object Ipc {
   case object Terminated extends Exception
   private case class GotNull() extends Exception
 
-  sealed trait ASTFormat {
-    val jsonName: String
-  }
-  case object ConvertedForms extends ASTFormat { val jsonName = "ConvertedForms" }
-  case object TransitiveStub extends ASTFormat { val jsonName = "TransitiveStub" }
+  sealed trait ASTFormat
+  case object ConvertedForms extends ASTFormat
+  case object TransitiveStub extends ASTFormat
 
   def getAstBytes(module: String, kind: ASTFormat): Option[Array[Byte]] = {
     send(GetAstBytes(module, kind))
@@ -60,8 +58,7 @@ object Ipc {
     send(EqwalizingDone(module))
 
   private def send(req: Request): Unit = {
-    val json = reqToJson(req)
-    json.writeBytesTo(Console.out)
+    writeToStream(req, Console.out)(requestCodec)
     Console.out.println()
     Console.flush()
   }
@@ -106,63 +103,8 @@ object Ipc {
     if (str == null) {
       Left(GotNull())
     } else {
-      Right(readFromString[Reply](str))
+      Right(readFromString[Reply](str)(replyCodec))
     }
-  }
-
-  private def reqToJson(req: Request): ujson.Obj = req match {
-    case GetAstBytes(module, format) =>
-      ujson.Obj(
-        "tag" -> "GetAstBytes",
-        "content" -> ujson.Obj(
-          "module" -> module,
-          "format" -> format.jsonName,
-        ),
-      )
-    case EqwalizingStart(module) =>
-      ujson.Obj(
-        "tag" -> "EqwalizingStart",
-        "content" -> ujson.Obj(
-          "module" -> module
-        ),
-      )
-    case EqwalizingDone(module) =>
-      ujson.Obj(
-        "tag" -> "EqwalizingDone",
-        "content" -> ujson.Obj(
-          "module" -> module
-        ),
-      )
-    case Dependencies(modules) =>
-      ujson.Obj(
-        "tag" -> "Dependencies",
-        "content" -> ujson.Obj(
-          "modules" -> modules
-        ),
-      )
-    case Done(diagnostics, typeInfo) =>
-      ujson.Obj(
-        "tag" -> ujson.Str("Done"),
-        "content" ->
-          ujson.Obj(
-            "diagnostics" -> ELPDiagnostics.toJsonObj(diagnostics),
-            "type_info" -> ujson.read(writeToString(typeInfo)),
-          ),
-      )
-    case EnteringModule(module) =>
-      ujson.Obj(
-        "tag" -> "EnteringModule",
-        "content" -> ujson.Obj(
-          "module" -> module
-        ),
-      )
-    case ExitingModule(module) =>
-      ujson.Obj(
-        "tag" -> "ExitingModule",
-        "content" -> ujson.Obj(
-          "module" -> module
-        ),
-      )
   }
 
   // copy/pasted from java.io.InputStream.readNBytes and then Scalafied.
@@ -192,7 +134,6 @@ object Ipc {
   ) extends Request
 
   private sealed trait Reply
-
   private case object ELPEnteringModule extends Reply
   private case object ELPExitingModule extends Reply
 
@@ -204,13 +145,13 @@ object Ipc {
   private case class GetAstBytesReply(len: Int) extends Reply
   private case object CannotCompleteRequest extends Reply
 
-  private implicit val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(
+  private val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(
     CodecMakerConfig
       .withDiscriminatorFieldName(None)
       .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
   )
 
-  implicit val codec: JsonValueCodec[Map[String, List[(Pos, Type)]]] = JsonCodecMaker.make(
+  private val requestCodec: JsonValueCodec[Request] = JsonCodecMaker.make(
     CodecMakerConfig
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
