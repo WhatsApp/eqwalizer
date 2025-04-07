@@ -6,8 +6,6 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.github.plokhotnyuk.jsoniter_scala.macros._
-import com.github.plokhotnyuk.jsoniter_scala.core._
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.ast.{Pos, TextRange}
 import com.whatsapp.eqwalizer.{Mode, config}
@@ -89,14 +87,6 @@ class TypeInfo(pipelineContext: PipelineContext) {
 object TypeInfo {
   private val info: mutable.Map[String, mutable.Map[Pos, Type]] = mutable.Map.empty
 
-  def toJson: ujson.Value = {
-    ujson.read(writeToString(info.map { case (module, types) => (module, types.toList) }))
-  }
-
-  implicit private val codec: JsonValueCodec[mutable.Map[String, List[(Pos, Type)]]] = JsonCodecMaker.make(
-    CodecMakerConfig
-      .withAllowRecursiveTypes(true)
-      .withDiscriminatorFieldName(None)
-      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
-  )
+  def toIpc(): Map[String, List[(Pos, Type)]] =
+    info.view.mapValues(_.toList).toMap
 }

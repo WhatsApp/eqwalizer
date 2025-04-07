@@ -6,8 +6,10 @@
 
 package com.whatsapp.eqwalizer.io
 
-import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromString}
+import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromString, writeToString}
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
+import com.whatsapp.eqwalizer.ast.Pos
+import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.tc.TypeInfo
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
@@ -141,7 +143,7 @@ object Ipc {
         "content" ->
           ujson.Obj(
             "diagnostics" -> ELPDiagnostics.toJsonObj(diagnostics),
-            "type_info" -> TypeInfo.toJson,
+            "type_info" -> ujson.read(writeToString(TypeInfo.toIpc())),
           ),
       )
     case EnteringModule(module) =>
@@ -198,6 +200,15 @@ object Ipc {
 
   private implicit val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(
     CodecMakerConfig
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
+
+  implicit val codec: JsonValueCodec[Map[String, List[(Pos, Type)]]] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
       .withDiscriminatorFieldName(None)
       .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
   )
