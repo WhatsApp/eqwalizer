@@ -66,21 +66,17 @@ object ELPDiagnostics {
   def toJsonObj(errorsByModule: collection.Map[String, List[Error]]): ujson.Obj = {
     ujson.Obj.from(errorsByModule.map { case (module, errors) =>
       module -> ujson.Arr.from(errors.map { e =>
-        val (range, lineAndCol) = e.position match {
+        val range = e.position match {
           case TextRange(startByte, endByte) =>
-            val range = ujson.Obj("start" -> startByte, "end" -> endByte)
-            val lineAndCol = ujson.Null
-            (range, lineAndCol)
-          case ast.LineAndColumn(line, col) =>
-            val bs = ujson.Null
-            val lineAndCol = ujson.Obj("line" -> line, "col" -> col)
-            (bs, lineAndCol)
+            ujson.Obj("start" -> startByte, "end" -> endByte)
+          case ast.LineAndColumn(_, _) =>
+            ujson.Null
         }
-        val expressionOrNull = e.shownExpression match {
+        val expression = e.shownExpression match {
           case Some(s) => ujson.Str(s)
           case None    => ujson.Null
         }
-        val explanationOrNull = e.explanation match {
+        val explanation = e.explanation match {
           case Some(s) => ujson.Str(s)
           case None    => ujson.Null
         }
@@ -90,12 +86,11 @@ object ELPDiagnostics {
         }
         ujson.Obj(
           "range" -> range,
-          "lineAndCol" -> lineAndCol,
           "message" -> ujson.Str(e.message),
           "uri" -> ujson.Str(e.uri),
           "code" -> ujson.Str(e.errorName),
-          "expressionOrNull" -> expressionOrNull,
-          "explanationOrNull" -> explanationOrNull,
+          "expression" -> expression,
+          "explanation" -> explanation,
           "diagnostic" -> diagnosticJson,
         )
       })
