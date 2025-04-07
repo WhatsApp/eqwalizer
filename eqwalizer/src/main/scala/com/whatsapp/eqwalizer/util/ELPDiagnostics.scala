@@ -18,10 +18,10 @@ import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodec
 
 object ELPDiagnostics {
   case class Error(
-      position: Pos,
+      range: Option[TextRange],
       message: String,
       uri: String,
-      errorName: String,
+      code: String,
       explanation: Option[String],
       shownExpression: Option[String],
       diagnostic: StructuredDiagnostic,
@@ -55,7 +55,7 @@ object ELPDiagnostics {
 
   private def getDiagnostics(module: String, options: Options): List[Error] = {
     val (typeErrors, invalids, redundantFixmes) = Pipeline.checkForms(module, options)
-    toELPErrors(typeErrors, invalids, redundantFixmes).sortBy(_.position.productElement(0).asInstanceOf[Int])
+    toELPErrors(typeErrors, invalids, redundantFixmes).sortBy(_.range.map(_.startByte))
   }
 
   private def toELPErrors(
@@ -65,25 +65,26 @@ object ELPDiagnostics {
   ): List[Error] =
     (errors ++ invalids ++ redundantFixmes).map { te =>
       Error(
-        te.pos,
+        te.pos match { case tr: TextRange => Some(tr); case _ => None },
         te.msg,
         te.docURL,
         te.errorName,
         explanation = te.explanation,
         shownExpression = te.erroneousExpr.map(Show.show),
-        diagnostic = te match
+        diagnostic = te match {
           case te: TcDiagnostics.TypeError => TypeError(te)
-          case invalid: Invalid            => InvalidForm(invalid),
+          case invalid: Invalid            => InvalidForm(invalid)
+        },
       )
     }
 
   def toJsonObj(errorsByModule: collection.Map[String, List[Error]]): ujson.Obj = {
     ujson.Obj.from(errorsByModule.map { case (module, errors) =>
       module -> ujson.Arr.from(errors.map { e =>
-        val range = e.position match {
-          case TextRange(startByte, endByte) =>
-            ujson.Obj("start" -> startByte, "end" -> endByte)
-          case ast.LineAndColumn(_, _) =>
+        val range = e.range match {
+          case Some(TextRange(startByte, endByte)) =>
+            ujson.Obj("start_byte" -> startByte, "end_byte" -> endByte)
+          case _ =>
             ujson.Null
         }
         val expression = e.shownExpression match {
@@ -99,7 +100,7 @@ object ELPDiagnostics {
           "range" -> range,
           "message" -> ujson.Str(e.message),
           "uri" -> ujson.Str(e.uri),
-          "code" -> ujson.Str(e.errorName),
+          "code" -> ujson.Str(e.code),
           "expression" -> expression,
           "explanation" -> explanation,
           "diagnostic" -> diagnosticJson,
