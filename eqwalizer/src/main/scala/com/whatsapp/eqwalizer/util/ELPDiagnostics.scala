@@ -23,7 +23,7 @@ object ELPDiagnostics {
       uri: String,
       code: String,
       explanation: Option[String],
-      shownExpression: Option[String],
+      expression: Option[String],
       diagnostic: StructuredDiagnostic,
   )
 
@@ -31,7 +31,7 @@ object ELPDiagnostics {
   case class TypeError(error: TcDiagnostics.TypeError) extends StructuredDiagnostic
   case class InvalidForm(invalid: InvalidDiagnostics.Invalid) extends StructuredDiagnostic
 
-  implicit val codec: JsonValueCodec[StructuredDiagnostic] = JsonCodecMaker.make(
+  implicit val codec: JsonValueCodec[Error] = JsonCodecMaker.make(
     CodecMakerConfig
       .withAllowRecursiveTypes(true)
       .withDiscriminatorFieldName(None)
@@ -70,7 +70,7 @@ object ELPDiagnostics {
         te.docURL,
         te.errorName,
         explanation = te.explanation,
-        shownExpression = te.erroneousExpr.map(Show.show),
+        expression = te.erroneousExpr.map(Show.show),
         diagnostic = te match {
           case te: TcDiagnostics.TypeError => TypeError(te)
           case invalid: Invalid            => InvalidForm(invalid)
@@ -80,32 +80,7 @@ object ELPDiagnostics {
 
   def toJsonObj(errorsByModule: collection.Map[String, List[Error]]): ujson.Obj = {
     ujson.Obj.from(errorsByModule.map { case (module, errors) =>
-      module -> ujson.Arr.from(errors.map { e =>
-        val range = e.range match {
-          case Some(TextRange(startByte, endByte)) =>
-            ujson.Obj("start_byte" -> startByte, "end_byte" -> endByte)
-          case _ =>
-            ujson.Null
-        }
-        val expression = e.shownExpression match {
-          case Some(s) => ujson.Str(s)
-          case None    => ujson.Null
-        }
-        val explanation = e.explanation match {
-          case Some(s) => ujson.Str(s)
-          case None    => ujson.Null
-        }
-        val diagnosticJson = ujson.read(writeToString(e.diagnostic))
-        ujson.Obj(
-          "range" -> range,
-          "message" -> ujson.Str(e.message),
-          "uri" -> ujson.Str(e.uri),
-          "code" -> ujson.Str(e.code),
-          "expression" -> expression,
-          "explanation" -> explanation,
-          "diagnostic" -> diagnosticJson,
-        )
-      })
+      module -> ujson.Arr.from(errors.map { e => ujson.read(writeToString(e)) })
     })
   }
 }
