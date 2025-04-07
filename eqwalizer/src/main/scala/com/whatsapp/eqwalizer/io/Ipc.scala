@@ -22,16 +22,16 @@ object Ipc {
   def getAstBytes(module: String, kind: ASTFormat): Option[Array[Byte]] = {
     send(GetAstBytes(module, kind))
     receive() match {
-      case Right(GetAstBytesReply(astBytesLen)) if astBytesLen == 0 =>
+      case Right(GetAstBytesReply(len)) if len == 0 =>
         println()
         Console.out.flush()
         None
-      case Right(GetAstBytesReply(astBytesLen)) =>
+      case Right(GetAstBytesReply(len)) =>
         println()
         Console.out.flush()
-        val buf = new Array[Byte](astBytesLen)
-        val read = readNBytes(System.in, buf, 0, astBytesLen)
-        assert(read == astBytesLen, s"expected $astBytesLen for $module but got $read")
+        val buf = new Array[Byte](len)
+        val read = readNBytes(System.in, buf, 0, len)
+        assert(read == len, s"expected $len for $module but got $read")
         Some(buf)
       case Right(CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
@@ -167,8 +167,8 @@ object Ipc {
         ELPExitingModule
       case ujson.Str("GetAstBytesReply") =>
         val content = value.obj("content").obj
-        val astBytesLen = content("ast_bytes_len").num.toInt
-        GetAstBytesReply(astBytesLen)
+        val len = content("len").num.toInt
+        GetAstBytesReply(len)
       case ujson.Str("CannotCompleteRequest") =>
         CannotCompleteRequest
       case _ =>
@@ -206,8 +206,8 @@ object Ipc {
   /**
     * This is the only non-JSON part of the protocol.
     * After receiving this message, eqWAlizer prints a newline to stdout
-    * and then reads `astBytesLen` bytes from stdin
+    * and then reads `len` bytes from stdin
     */
-  private case class GetAstBytesReply(astBytesLen: Int) extends Reply
+  private case class GetAstBytesReply(len: Int) extends Reply
   private case object CannotCompleteRequest extends Reply
 }
