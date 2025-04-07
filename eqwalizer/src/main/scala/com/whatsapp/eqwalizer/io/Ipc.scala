@@ -10,7 +10,6 @@ import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromStrin
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 import com.whatsapp.eqwalizer.ast.Pos
 import com.whatsapp.eqwalizer.ast.Types.Type
-import com.whatsapp.eqwalizer.tc.TypeInfo
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
 object Ipc {
@@ -51,8 +50,8 @@ object Ipc {
     }
   }
 
-  def sendDone(diagnostics: Map[String, List[ELPDiagnostics.Error]]): Unit =
-    send(Done(diagnostics))
+  def sendDone(diagnostics: Map[String, List[ELPDiagnostics.Error]], typeInfo: Map[String, List[(Pos, Type)]]): Unit =
+    send(Done(diagnostics, typeInfo))
 
   def sendEqwalizingStart(module: String): Unit =
     send(EqwalizingStart(module))
@@ -83,9 +82,13 @@ object Ipc {
     }
   }
 
-  def finishEqwalization(diagnostics: Map[String, List[ELPDiagnostics.Error]], deps: List[String]): Unit = {
+  def finishEqwalization(
+      diagnostics: Map[String, List[ELPDiagnostics.Error]],
+      deps: List[String],
+      typeInfo: Map[String, List[(Pos, Type)]],
+  ): Unit = {
     send(Dependencies(deps))
-    sendDone(diagnostics)
+    sendDone(diagnostics, typeInfo)
     receive() match {
       case Right(ELPExitingModule) =>
         ()
@@ -137,13 +140,13 @@ object Ipc {
           "modules" -> modules
         ),
       )
-    case Done(diagnostics) =>
+    case Done(diagnostics, typeInfo) =>
       ujson.Obj(
         "tag" -> ujson.Str("Done"),
         "content" ->
           ujson.Obj(
             "diagnostics" -> ELPDiagnostics.toJsonObj(diagnostics),
-            "type_info" -> ujson.read(writeToString(TypeInfo.toIpc())),
+            "type_info" -> ujson.read(writeToString(typeInfo)),
           ),
       )
     case EnteringModule(module) =>
@@ -183,7 +186,10 @@ object Ipc {
   private case class EqwalizingStart(module: String) extends Request
   private case class EqwalizingDone(module: String) extends Request
   private case class Dependencies(modules: List[String]) extends Request
-  private case class Done(diagnostics: Map[String, List[ELPDiagnostics.Error]]) extends Request
+  private case class Done(
+      diagnostics: Map[String, List[ELPDiagnostics.Error]],
+      typeInfo: Map[String, List[(Pos, Type)]],
+  ) extends Request
 
   private sealed trait Reply
 

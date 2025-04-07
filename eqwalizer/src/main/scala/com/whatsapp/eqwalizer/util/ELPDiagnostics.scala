@@ -12,7 +12,7 @@ import com.whatsapp.eqwalizer.ast.{InvalidDiagnostics, Pos, Show, TextRange}
 import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.io.Ipc
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{RedundantFixme, TypeError}
-import com.whatsapp.eqwalizer.tc.{Options, TcDiagnostics, noOptions}
+import com.whatsapp.eqwalizer.tc.{Options, TcDiagnostics, TypeInfo, noOptions}
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 
@@ -45,12 +45,12 @@ object ELPDiagnostics {
           Ipc.sendEqwalizingStart(module)
           val diagnostics = getDiagnostics(module, noOptions)
           Ipc.sendEqwalizingDone(module)
-          Ipc.finishEqwalization(Map(module -> diagnostics), Db.getLoadedModules().toList)
+          Ipc.finishEqwalization(Map(module -> diagnostics), Db.getLoadedModules().toList, TypeInfo.toIpc())
         }
       }
-      Ipc.sendDone(Map.empty)
+      Ipc.sendDone(Map.empty, Map.empty)
     } catch {
-      case Ipc.Terminated => Ipc.sendDone(Map.empty)
+      case Ipc.Terminated => Ipc.sendDone(Map.empty, Map.empty)
     }
 
   private def getDiagnostics(module: String, options: Options): List[Error] = {
