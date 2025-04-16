@@ -9,6 +9,7 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.ast.BinarySpecifiers.Specifier
 import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Pats.Pat
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 object Exprs {
   case class Body(exprs: List[Expr])
@@ -75,6 +76,8 @@ object Exprs {
   case class MapCreate(kvs: List[(Expr, Expr)])(val pos: Pos) extends Expr
   case class MapUpdate(map: Expr, kvs: List[(Expr, Expr)])(val pos: Pos) extends Expr
 
+  case class TypeCast(expr: Expr, ty: ExtType, checked: Boolean)(val pos: Pos) extends Expr
+
   case class Clause(pats: List[Pat], guards: List[Guard], body: Body)(val pos: Pos)
   case class BinaryElem(expr: Expr, size: Option[Expr], specifier: Specifier)(val pos: Pos)
   sealed trait RecordField {
@@ -93,4 +96,18 @@ object Exprs {
   case class MGenerateStrict(kPat: Pat, vPat: Pat, expr: Expr) extends Generator
   case class Zip(generators: List[Generator]) extends Generator
   case class Filter(expr: Expr) extends Qualifier
+
+  case class ExtType(repr: Array[Byte])
+
+  implicit val typeAnnoCodec: JsonValueCodec[ExtType] = new JsonValueCodec[ExtType] {
+    override def nullValue: ExtType = ExtType(Array())
+
+    override def decodeValue(in: JsonReader, default: ExtType): ExtType = {
+      ExtType(in.readRawValAsBytes())
+    }
+
+    override def encodeValue(anno: ExtType, out: JsonWriter): Unit = {
+      out.writeRawVal(anno.repr)
+    }
+  }
 }

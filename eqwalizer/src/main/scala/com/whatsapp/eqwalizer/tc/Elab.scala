@@ -6,12 +6,13 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.Exprs._
+import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Types.*
+import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.ast.{BinarySpecifiers, Filters, Pats, RemoteId, Vars}
-import com.whatsapp.eqwalizer.tc.TcDiagnostics._
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.*
 
 final class Elab(pipelineContext: PipelineContext) {
   private lazy val module = pipelineContext.module
@@ -558,6 +559,19 @@ final class Elab(pipelineContext: PipelineContext) {
         val argType = DynamicType
         val (ts, _) = elseClauses.map(elabClause(_, List(argType), env, Set.empty)).unzip
         (subtype.join(bodyType :: ts), env)
+      case TypeCast(expr, ty, checked) =>
+        val validTy = {
+          Db.validateType(ty) match {
+            case Left(ty) => ty
+            case Right(invalid) =>
+              diagnosticsInfo.add(invalid)
+              DynamicType
+          }
+        }
+        val (exprTy, env1) = elabExpr(expr, env)
+        if (checked && !subtype.subType(exprTy, validTy))
+          diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = validTy, got = exprTy))
+        (validTy, env1)
     }
 
   def elabBinaryElem(elem: BinaryElem, env: Env): (Type, Env) = {

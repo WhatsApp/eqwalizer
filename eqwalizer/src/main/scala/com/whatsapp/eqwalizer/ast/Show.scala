@@ -302,5 +302,7 @@ object Show {
       "maybe .."
     case MaybeElse(_, _) =>
       "maybe .. else .."
+    case TypeCast(_, _, _) =>
+      ".. :: .."
   }
 }

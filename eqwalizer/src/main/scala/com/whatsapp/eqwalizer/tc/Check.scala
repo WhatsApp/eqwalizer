@@ -6,12 +6,13 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.Exprs._
+import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Forms.{FunDecl, FunSpec, OverloadedFunSpec}
 import com.whatsapp.eqwalizer.ast.Guards.Guard
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Types.*
+import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.ast.{Filters, Pats, RemoteId, TypeVars, Vars}
-import com.whatsapp.eqwalizer.tc.TcDiagnostics._
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.*
 
 final class Check(pipelineContext: PipelineContext) {
   private lazy val module = pipelineContext.module
@@ -469,6 +470,21 @@ final class Check(pipelineContext: PipelineContext) {
           val argType = DynamicType
           elseClauses.foreach(checkClause(_, List(argType), resTy, env, Set.empty))
           env
+        case TypeCast(expr1, ty, checked) =>
+          val validTy = {
+            Db.validateType(ty) match {
+              case Left(ty) => ty
+              case Right(invalid) =>
+                diagnosticsInfo.add(invalid)
+                DynamicType
+            }
+          }
+          if (!subtype.subType(validTy, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = validTy))
+          val (exprTy, env1) = elab.elabExpr(expr1, env)
+          if (checked && !subtype.subType(exprTy, validTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr1.pos, expr1, expected = validTy, got = exprTy))
+          env1
         case _: MapCreate | _: MapUpdate | _: Cons =>
           // delegating this stuff to elaborate for now
           elab.elabExprAndCheck(expr, env, resTy)._2

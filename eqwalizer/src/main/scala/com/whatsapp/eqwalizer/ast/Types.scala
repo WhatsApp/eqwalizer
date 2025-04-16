@@ -9,6 +9,7 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Expr, Tuple}
 import com.whatsapp.eqwalizer.ast.Forms.RecDecl
 import com.whatsapp.eqwalizer.ast.Guards.{Test, TestAtom, TestTuple}
+import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 
 import scala.util.boundary
@@ -153,6 +154,15 @@ object Types {
       "no_return" -> NoneType,
       "nonempty_string" -> stringType,
     ) ++ builtinTypeAliases
+
+  implicit val codec: JsonValueCodec[Type] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
 
   object Key {
     def asType(k: Key): Type = {

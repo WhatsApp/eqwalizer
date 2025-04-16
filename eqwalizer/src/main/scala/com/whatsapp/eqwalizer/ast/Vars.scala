@@ -140,6 +140,8 @@ object Vars {
       Set.empty
     case MaybeElse(_, _) =>
       Set.empty
+    case TypeCast(e, _, _) =>
+      exprVars(e)
   }
 
   private def fieldVars(recordField: RecordField): Set[String] =

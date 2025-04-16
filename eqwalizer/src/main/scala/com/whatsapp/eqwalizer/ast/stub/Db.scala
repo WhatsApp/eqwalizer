@@ -7,9 +7,11 @@
 package com.whatsapp.eqwalizer.ast.stub
 
 import com.github.plokhotnyuk.jsoniter_scala.core.readFromArray
-import com.whatsapp.eqwalizer.ast.Forms._
+import com.whatsapp.eqwalizer.ast.Exprs.ExtType
+import com.whatsapp.eqwalizer.ast.Forms.*
 import com.whatsapp.eqwalizer.ast.Id
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
+import com.whatsapp.eqwalizer.ast.Types.Type
 
 import scala.collection.mutable
 import com.whatsapp.eqwalizer.io.Ipc
@@ -83,4 +85,13 @@ object Db {
 
   def isKnownModule(module: String): Boolean =
     getModuleStub(module).isDefined
+
+  def validateType(repr: ExtType): Either[Type, Invalid] = {
+    val (valid, bytes) = Ipc.validateType(repr)
+    if (valid) {
+      Left(readFromArray[Type](bytes))
+    } else {
+      Right(readFromArray[Invalid](bytes))
+    }
+  }
 }

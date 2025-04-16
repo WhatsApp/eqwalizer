@@ -6,13 +6,14 @@
 
 package com.whatsapp.eqwalizer
 
-import com.whatsapp.eqwalizer.ast._
-import com.whatsapp.eqwalizer.ast.Forms._
+import com.whatsapp.eqwalizer.ast.*
+import com.whatsapp.eqwalizer.ast.Forms.*
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.Types.{DynamicType, FunType}
 import com.whatsapp.eqwalizer.ast.stub.Db
-import com.whatsapp.eqwalizer.tc.TcDiagnostics._
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.*
 import com.whatsapp.eqwalizer.tc.{Options, PipelineContext, noOptions}
+import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
 
 import scala.collection.mutable.ListBuffer
 
@@ -20,7 +21,7 @@ object Pipeline {
   def checkForms(
       moduleName: String,
       options: Options = noOptions,
-  ): (List[TypeError], List[Invalid], List[RedundantFixme]) = {
+  ): (List[Diagnostic], List[Invalid], List[RedundantFixme]) = {
     val invalids = Db.getInvalids(moduleName).get
     val forms = Forms.load(moduleName)
     val module = forms.collectFirst { case Module(m) => m }.get
@@ -29,7 +30,7 @@ object Pipeline {
     var noCheckFuns = forms.collect { case f: EqwalizerNowarnFunction => (f.id, f.pos) }.toMap
     val unlimitedRefinementFuns = forms.collect { case EqwalizerUnlimitedRefinement(id) => id }.toSet
     var currentFile = erlFile
-    val result = ListBuffer.empty[TypeError]
+    val result = ListBuffer.empty[Diagnostic]
     for (form <- forms)
       form match {
         case f @ File(path, _) =>
@@ -74,7 +75,7 @@ object Pipeline {
   private def getDynamicFunSpecType(f: FunDecl): FunSpec =
     FunSpec(f.id, FunType(Nil, List.fill(f.id.arity)(DynamicType), DynamicType))
 
-  private def checkFun(ctx: PipelineContext, f: FunDecl, spec: FunSpec): List[TypeError] = {
+  private def checkFun(ctx: PipelineContext, f: FunDecl, spec: FunSpec): List[Diagnostic] = {
     ctx.check.checkFun(f, spec)
     ctx.diagnosticsInfo.popErrors()
   }
@@ -83,22 +84,22 @@ object Pipeline {
       ctx: PipelineContext,
       f: FunDecl,
       overloadedSpec: OverloadedFunSpec,
-  ): List[TypeError] = {
+  ): List[Diagnostic] = {
     ctx.check.checkOverloadedFun(f, overloadedSpec)
     ctx.diagnosticsInfo.popErrors()
   }
 
   private def applyFixmes(
-      errors: List[TypeError],
+      errors: List[Diagnostic],
       invalids: List[Invalid],
       elpMetadaOpt: Option[ElpMetadata],
-  ): (List[TypeError], List[Invalid], List[RedundantFixme]) =
+  ): (List[Diagnostic], List[Invalid], List[RedundantFixme]) =
     elpMetadaOpt match {
       case None =>
         (errors, invalids, Nil)
       case Some(ElpMetadata(fixmes)) =>
         var usedFixmes = Set[Fixme]()
-        val errors1 = ListBuffer[TypeError]()
+        val errors1 = ListBuffer[Diagnostic]()
 
         for (error <- errors) {
           findFixme(error.pos, fixmes) match {

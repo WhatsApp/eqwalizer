@@ -6,18 +6,18 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.TypeError
+import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
 
 import scala.collection.mutable
 
 class DiagnosticsInfo {
-  private val moduleDiagnosticsInfo: mutable.ListBuffer[TypeError] = mutable.ListBuffer.empty
+  private val moduleDiagnosticsInfo: mutable.ListBuffer[Diagnostic] = mutable.ListBuffer.empty
 
-  def add(diag: TypeError): Unit = {
+  def add(diag: Diagnostic): Unit = {
     moduleDiagnosticsInfo.addOne(diag)
   }
 
-  def popErrors(): List[TypeError] = {
+  def popErrors(): List[Diagnostic] = {
     val errors = moduleDiagnosticsInfo.distinct.toList
     moduleDiagnosticsInfo.clear()
     errors

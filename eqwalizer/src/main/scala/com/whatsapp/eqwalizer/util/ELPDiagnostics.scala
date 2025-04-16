@@ -15,6 +15,7 @@ import com.whatsapp.eqwalizer.tc.TcDiagnostics.{RedundantFixme, TypeError}
 import com.whatsapp.eqwalizer.tc.{Options, TcDiagnostics, TypeInfo, noOptions}
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
+import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
 
 object ELPDiagnostics {
   case class Error(
@@ -59,7 +60,7 @@ object ELPDiagnostics {
   }
 
   private def toELPErrors(
-      errors: List[TcDiagnostics.TypeError],
+      errors: List[Diagnostic],
       invalids: List[Invalid],
       redundantFixmes: List[RedundantFixme],
   ): List[Error] =

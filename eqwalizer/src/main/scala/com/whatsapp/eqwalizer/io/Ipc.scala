@@ -10,6 +10,7 @@ import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromStrin
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 import com.whatsapp.eqwalizer.ast.Pos
 import com.whatsapp.eqwalizer.ast.Types.Type
+import com.whatsapp.eqwalizer.ast.Exprs.ExtType
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
 
 object Ipc {
@@ -56,6 +57,34 @@ object Ipc {
 
   def sendEqwalizingDone(module: String): Unit =
     send(EqwalizingDone(module))
+
+  def validateType(ty: ExtType): (Boolean, Array[Byte]) = {
+    send(ValidateType(ty))
+    receive() match {
+      case Right(ValidatedType(len)) =>
+        println()
+        Console.out.flush()
+        val buf = new Array[Byte](len)
+        val read = readNBytes(System.in, buf, 0, len)
+        assert(read == len, s"expected $len for validated type but got $read")
+        (true, buf)
+      case Right(InvalidType(len)) =>
+        println()
+        Console.out.flush()
+        val buf = new Array[Byte](len)
+        val read = readNBytes(System.in, buf, 0, len)
+        assert(read == len, s"expected $len for validated type but got $read")
+        (false, buf)
+      case Right(CannotCompleteRequest) =>
+        throw Terminated
+      case Right(reply) =>
+        Console.err.println(s"eqWAlizer received bad reply from ELP when validating type")
+        throw Terminated
+      case Left(GotNull()) =>
+        Console.err.println(s"eqWAlizer could not read validated type")
+        throw Terminated
+    }
+  }
 
   private def send(req: Request): Unit = {
     writeToStream(req, Console.out)(requestCodec)
@@ -132,6 +161,7 @@ object Ipc {
       diagnostics: Map[String, List[ELPDiagnostics.Error]],
       typeInfo: Map[String, List[(Pos, Type)]],
   ) extends Request
+  private case class ValidateType(ty: ExtType) extends Request
 
   private sealed trait Reply
   private case object ELPEnteringModule extends Reply
@@ -139,10 +169,12 @@ object Ipc {
 
   /**
     * This is the only non-JSON part of the protocol.
-    * After receiving this message, eqWAlizer prints a newline to stdout
-    * and then reads `len` bytes from stdin
+    * After receiving these messages, eqWAlizer prints a newline to stdout
+    * and then reads `len` or `typeBytesLen` bytes from stdin
     */
   private case class GetAstBytesReply(len: Int) extends Reply
+  private case class ValidatedType(len: Int) extends Reply
+  private case class InvalidType(len: Int) extends Reply
   private case object CannotCompleteRequest extends Reply
 
   private val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(

@@ -8,6 +8,8 @@ package com.whatsapp.eqwalizer.ast
 
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
+import com.github.plokhotnyuk.jsoniter_scala.core.*
+import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 
 object InvalidDiagnostics {
   sealed trait Invalid extends Diagnostic {
@@ -84,4 +86,33 @@ object InvalidDiagnostics {
     }
     def errorName = "bad_map_key"
   }
+  case class InvalidRefInTypeCast(pos: Pos, references: List[String]) extends Invalid {
+    val msg: String = references match {
+      case List(ref) =>
+        s"type cast references type with invalid definition: $ref"
+      case Nil =>
+        throw new IllegalStateException()
+      case refs =>
+        s"type cast references types with invalid definitions: ${refs.mkString(", ")}"
+    }
+
+    def errorName = "invalid_ref_in_type_cast"
+  }
+  case class VariablesInTypeCast(pos: Pos, variables: List[String]) extends Invalid {
+    val msg: String = s"type variables are not allowed in type casts, found: ${variables.mkString(", ")}"
+
+    def errorName = "variables_in_type_cast"
+  }
+  case class RefinedRecordInTypeCast(pos: Pos, name: String) extends Invalid {
+    val msg: String = s"refined records are not allowed in type casts, found: $name"
+
+    def errorName = "refined_record_in_type_cast"
+  }
+
+  implicit val codec: JsonValueCodec[Invalid] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
 }
