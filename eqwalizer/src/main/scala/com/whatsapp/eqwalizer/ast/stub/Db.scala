@@ -7,6 +7,7 @@
 package com.whatsapp.eqwalizer.ast.stub
 
 import com.github.plokhotnyuk.jsoniter_scala.core.readFromArray
+import com.whatsapp.eqwalizer.ELPProxy
 import com.whatsapp.eqwalizer.ast.Exprs.ExtType
 import com.whatsapp.eqwalizer.ast.Forms.*
 import com.whatsapp.eqwalizer.ast.Id
@@ -36,7 +37,7 @@ object Db {
   def getLoadedModules(): Set[String] = {
     val set = loadedModules.toSet
     loadedModules.clear()
-    set ++ Set("eqwalizer_types", "eqwalizer_specs")
+    set ++ ELPProxy.depModules() ++ Set("eqwalizer_types", "eqwalizer_specs")
   }
 
   def getCallbacks(module: String): (List[Callback], Set[Id]) =
