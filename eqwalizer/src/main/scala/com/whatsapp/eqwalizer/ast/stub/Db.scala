@@ -49,19 +49,10 @@ object Db {
     }
 
   def getSpec(module: String, id: Id): Option[FunSpec] =
-    if (CustomSpecs.getOverloadedSpec(module, id).isDefined) None
-    else
-      CustomSpecs.getSpec(module, id).orElse {
-        ELPProxy.funSpec(module, id)
-      }
+    ELPProxy.funSpec(module, id)
 
   def getOverloadedSpec(module: String, id: Id): Option[OverloadedFunSpec] =
-    if (CustomSpecs.getSpec(module, id).isDefined)
-      None
-    else
-      CustomSpecs.getOverloadedSpec(module, id).orElse {
-        ELPProxy.overloadedFunSpec(module, id)
-      }
+    ELPProxy.overloadedFunSpec(module, id)
 
   def isExported(module: String, id: Id): Boolean =
     getModuleStub(module).exists(_.exports(id))
