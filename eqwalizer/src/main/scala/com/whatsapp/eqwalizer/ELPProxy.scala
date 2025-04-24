@@ -6,6 +6,12 @@
 
 package com.whatsapp.eqwalizer
 
+import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromArray}
+import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
+import com.whatsapp.eqwalizer.ast.Forms.TypeDecl
+import com.whatsapp.eqwalizer.ast.Id
+import com.whatsapp.eqwalizer.io.Ipc
+
 import scala.collection.mutable
 
 // This object proxies to existing methods inside ELP with similar signatures.
@@ -20,6 +26,32 @@ object ELPProxy {
     result
   }
   // Caches (similar to salsa caches)
+
+  private val typeDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
+
   // jsoniter_scala codecs boilerplate
+
+  private val typeDeclCodec: JsonValueCodec[TypeDecl] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
+
   // each method below has a counterpart in ELP
+
+  // EqwalizerDiagnosticsDatabase::type_decl
+  def typeDecl(module: String, id: Id): Option[TypeDecl] = {
+    modules.addOne(module)
+    val key = (module, id)
+    typeDeclCache.get(key) match
+      case Some(value) =>
+        value
+      case None =>
+        val optTypeDecl = Ipc.getTypeDecl(module, id).map(readFromArray[TypeDecl](_)(typeDeclCodec))
+        typeDeclCache.put(key, optTypeDecl)
+        optTypeDecl
+  }
 }

@@ -71,7 +71,7 @@ object Db {
 
   def getType(module: String, id: Id): Option[TypeDecl] = {
     CustomTypes.getType(module, id).orElse {
-      getModuleStub(module).flatMap(_.types.get(id))
+      ELPProxy.typeDecl(module, id)
     }
   }
 
