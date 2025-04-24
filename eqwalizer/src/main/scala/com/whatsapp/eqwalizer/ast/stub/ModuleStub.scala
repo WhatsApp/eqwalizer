@@ -16,7 +16,6 @@ private case class ModuleStub(
     module: String,
     exports: Set[Id],
     imports: Map[Id, String],
-    exportTypes: Set[Id],
     invalids: List[Invalid],
 )
 
