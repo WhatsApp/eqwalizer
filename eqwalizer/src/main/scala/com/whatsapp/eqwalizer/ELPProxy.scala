@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromArray}
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
-import com.whatsapp.eqwalizer.ast.Forms.{FunSpec, RecDecl, TypeDecl}
+import com.whatsapp.eqwalizer.ast.Forms.{FunSpec, OverloadedFunSpec, RecDecl, TypeDecl}
 import com.whatsapp.eqwalizer.ast.Id
 import com.whatsapp.eqwalizer.io.Ipc
 
@@ -31,6 +31,7 @@ object ELPProxy {
   private val opaqueDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
   private val recDeclCache: mutable.Map[(String, String), Option[RecDecl]] = mutable.Map.empty
   private val funSpecCache: mutable.Map[(String, Id), Option[FunSpec]] = mutable.Map.empty
+  private val overloadedFunSpecCache: mutable.Map[(String, Id), Option[OverloadedFunSpec]] = mutable.Map.empty
 
   // jsoniter_scala codecs boilerplate
 
@@ -53,6 +54,15 @@ object ELPProxy {
   )
 
   private val funSpecCodec: JsonValueCodec[FunSpec] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
+
+  private val overloadedFunSpecCodec: JsonValueCodec[OverloadedFunSpec] = JsonCodecMaker.make(
     CodecMakerConfig
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
@@ -113,5 +123,19 @@ object ELPProxy {
         val optFunSpec = Ipc.getFunSpec(module, id).map(readFromArray[FunSpec](_)(funSpecCodec))
         funSpecCache.put(key, optFunSpec)
         optFunSpec
+  }
+
+  // EqwalizerDiagnosticsDatabase::overloaded_fun_spec
+  def overloadedFunSpec(module: String, id: Id): Option[OverloadedFunSpec] = {
+    modules.addOne(module)
+    val key = (module, id)
+    overloadedFunSpecCache.get(key) match
+      case Some(value) =>
+        value
+      case None =>
+        val optOverloadedFunSpec =
+          Ipc.getOverloadedFunSpec(module, id).map(readFromArray[OverloadedFunSpec](_)(overloadedFunSpecCodec))
+        overloadedFunSpecCache.put(key, optOverloadedFunSpec)
+        optOverloadedFunSpec
   }
 }

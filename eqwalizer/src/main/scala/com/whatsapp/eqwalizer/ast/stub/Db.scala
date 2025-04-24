@@ -60,7 +60,7 @@ object Db {
       None
     else
       CustomSpecs.getOverloadedSpec(module, id).orElse {
-        getModuleStub(module).flatMap(_.overloadedSpecs.get(id))
+        ELPProxy.overloadedFunSpec(module, id)
       }
 
   def isExported(module: String, id: Id): Boolean =
