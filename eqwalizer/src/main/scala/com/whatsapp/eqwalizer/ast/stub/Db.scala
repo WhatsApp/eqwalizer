@@ -73,7 +73,7 @@ object Db {
     ELPProxy.typeDecl(module, id)
 
   def getOpaque(module: String, id: Id): Option[TypeDecl] =
-    getModuleStub(module).flatMap(_.opaques.get(id))
+    ELPProxy.opaqueDecl(module, id)
 
   def getRecord(module: String, record: String): Option[RecDecl] =
     getModuleStub(module).flatMap(_.records.get(record))
