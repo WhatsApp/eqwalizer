@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromArray}
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
-import com.whatsapp.eqwalizer.ast.Forms.{RecDecl, TypeDecl}
+import com.whatsapp.eqwalizer.ast.Forms.{FunSpec, RecDecl, TypeDecl}
 import com.whatsapp.eqwalizer.ast.Id
 import com.whatsapp.eqwalizer.io.Ipc
 
@@ -30,6 +30,7 @@ object ELPProxy {
   private val typeDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
   private val opaqueDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
   private val recDeclCache: mutable.Map[(String, String), Option[RecDecl]] = mutable.Map.empty
+  private val funSpecCache: mutable.Map[(String, Id), Option[FunSpec]] = mutable.Map.empty
 
   // jsoniter_scala codecs boilerplate
 
@@ -43,6 +44,15 @@ object ELPProxy {
   )
 
   private val recDeclCodec: JsonValueCodec[RecDecl] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
+
+  private val funSpecCodec: JsonValueCodec[FunSpec] = JsonCodecMaker.make(
     CodecMakerConfig
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
@@ -90,5 +100,18 @@ object ELPProxy {
         val optRecDecl = Ipc.getRecDecl(module, id).map(readFromArray[RecDecl](_)(recDeclCodec))
         recDeclCache.put(key, optRecDecl)
         optRecDecl
+  }
+
+  // EqwalizerDiagnosticsDatabase::fun_spec
+  def funSpec(module: String, id: Id): Option[FunSpec] = {
+    modules.addOne(module)
+    val key = (module, id)
+    funSpecCache.get(key) match
+      case Some(value) =>
+        value
+      case None =>
+        val optFunSpec = Ipc.getFunSpec(module, id).map(readFromArray[FunSpec](_)(funSpecCodec))
+        funSpecCache.put(key, optFunSpec)
+        optFunSpec
   }
 }

@@ -52,7 +52,7 @@ object Db {
     if (CustomSpecs.getOverloadedSpec(module, id).isDefined) None
     else
       CustomSpecs.getSpec(module, id).orElse {
-        getModuleStub(module).flatMap(_.specs.get(id))
+        ELPProxy.funSpec(module, id)
       }
 
   def getOverloadedSpec(module: String, id: Id): Option[OverloadedFunSpec] =
