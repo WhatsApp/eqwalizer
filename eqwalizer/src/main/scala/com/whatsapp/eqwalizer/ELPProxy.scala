@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromArray}
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
-import com.whatsapp.eqwalizer.ast.Forms.{FunSpec, OverloadedFunSpec, RecDecl, TypeDecl}
+import com.whatsapp.eqwalizer.ast.Forms.{Callback, FunSpec, OverloadedFunSpec, RecDecl, TypeDecl}
 import com.whatsapp.eqwalizer.ast.Id
 import com.whatsapp.eqwalizer.io.Ipc
 
@@ -32,6 +32,7 @@ object ELPProxy {
   private val recDeclCache: mutable.Map[(String, String), Option[RecDecl]] = mutable.Map.empty
   private val funSpecCache: mutable.Map[(String, Id), Option[FunSpec]] = mutable.Map.empty
   private val overloadedFunSpecCache: mutable.Map[(String, Id), Option[OverloadedFunSpec]] = mutable.Map.empty
+  private val callbacksCache: mutable.Map[String, Option[(List[Callback], Set[Id])]] = mutable.Map.empty
 
   // jsoniter_scala codecs boilerplate
 
@@ -63,6 +64,15 @@ object ELPProxy {
   )
 
   private val overloadedFunSpecCodec: JsonValueCodec[OverloadedFunSpec] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
+
+  private val callbacksCodec: JsonValueCodec[(List[Callback], Set[Id])] = JsonCodecMaker.make(
     CodecMakerConfig
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
@@ -137,5 +147,17 @@ object ELPProxy {
           Ipc.getOverloadedFunSpec(module, id).map(readFromArray[OverloadedFunSpec](_)(overloadedFunSpecCodec))
         overloadedFunSpecCache.put(key, optOverloadedFunSpec)
         optOverloadedFunSpec
+  }
+
+  def callbacks(module: String): Option[(List[Callback], Set[Id])] = {
+    modules.addOne(module)
+    val key = module
+    callbacksCache.get(key) match
+      case Some(value) =>
+        value
+      case None =>
+        val optCallbacks = Ipc.getCallbacks(module).map(readFromArray[(List[Callback], Set[Id])](_)(callbacksCodec))
+        callbacksCache.put(key, optCallbacks)
+        optCallbacks
   }
 }

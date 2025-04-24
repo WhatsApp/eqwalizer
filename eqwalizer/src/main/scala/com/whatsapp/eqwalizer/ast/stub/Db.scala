@@ -40,13 +40,8 @@ object Db {
     set ++ ELPProxy.depModules() ++ Set("eqwalizer_specs")
   }
 
-  def getCallbacks(module: String): (List[Callback], Set[Id]) =
-    getModuleStub(module) match {
-      case Some(stub) =>
-        (stub.callbacks, stub.optionalCallbacks)
-      case None =>
-        (List.empty, Set.empty)
-    }
+  def getCallbacks(module: String): Option[(List[Callback], Set[Id])] =
+    ELPProxy.callbacks(module)
 
   def getSpec(module: String, id: Id): Option[FunSpec] =
     ELPProxy.funSpec(module, id)

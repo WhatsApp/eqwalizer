@@ -53,16 +53,16 @@ object Pipeline {
             noCheckFuns = noCheckFuns.removed(f.id)
           } else result.addAll(fErrors)
         case b: Behaviour =>
-          val ctx = PipelineContext(module, options)
-          if (Db.isKnownModule(b.name)) {
-            val (callbacks, optional) = Db.getCallbacks(b.name)
-            result.addAll(
-              callbacks.flatMap { cb =>
-                ctx.checkCallback.checkImpl(module, b, cb, optional(cb.id))
-              }
-            )
-          } else {
-            result.addOne(NonexistentBehaviour(b.pos, b.name))
+          Db.getCallbacks(b.name) match {
+            case Some((callbacks, optional)) =>
+              val ctx = PipelineContext(module, options)
+              result.addAll(
+                callbacks.flatMap { cb =>
+                  ctx.checkCallback.checkImpl(module, b, cb, optional(cb.id))
+                }
+              )
+            case None =>
+              result.addOne(NonexistentBehaviour(b.pos, b.name))
           }
         case _ =>
         // skipping things from header files
