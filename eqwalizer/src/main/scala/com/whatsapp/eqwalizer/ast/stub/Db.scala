@@ -37,7 +37,7 @@ object Db {
   def getLoadedModules(): Set[String] = {
     val set = loadedModules.toSet
     loadedModules.clear()
-    set ++ ELPProxy.depModules() ++ Set("eqwalizer_types", "eqwalizer_specs")
+    set ++ ELPProxy.depModules() ++ Set("eqwalizer_specs")
   }
 
   def getCallbacks(module: String): (List[Callback], Set[Id]) =
@@ -69,11 +69,8 @@ object Db {
   def getImports(module: String): Option[Map[Id, String]] =
     getModuleStub(module).map(_.imports)
 
-  def getType(module: String, id: Id): Option[TypeDecl] = {
-    CustomTypes.getType(module, id).orElse {
-      ELPProxy.typeDecl(module, id)
-    }
-  }
+  def getType(module: String, id: Id): Option[TypeDecl] =
+    ELPProxy.typeDecl(module, id)
 
   def getOpaque(module: String, id: Id): Option[TypeDecl] =
     getModuleStub(module).flatMap(_.opaques.get(id))

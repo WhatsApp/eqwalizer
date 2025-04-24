@@ -21,7 +21,7 @@ object ELPProxy {
   private val modules: mutable.Set[String] = mutable.Set.empty
   // the set of used modules in the current session
   def depModules(): Set[String] = {
-    val result = modules.toSet
+    val result = modules.toSet ++ Set("eqwalizer_types")
     modules.clear()
     result
   }
