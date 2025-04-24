@@ -76,7 +76,7 @@ object Db {
     ELPProxy.opaqueDecl(module, id)
 
   def getRecord(module: String, record: String): Option[RecDecl] =
-    getModuleStub(module).flatMap(_.records.get(record))
+    ELPProxy.recDecl(module, record)
 
   def getInvalids(module: String): Option[List[Invalid]] =
     getModuleStub(module).map(_.invalids)

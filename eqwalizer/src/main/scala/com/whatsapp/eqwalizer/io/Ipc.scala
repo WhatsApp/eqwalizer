@@ -97,6 +97,30 @@ object Ipc {
         throw Terminated
   }
 
+  def getRecDecl(module: String, id: String): Option[Array[Byte]] = {
+    send(GetRecDecl(module, id))
+    receive() match
+      case Right(GetRecDeclReply(len)) =>
+        if (len == 0) {
+          println()
+          Console.out.flush()
+          None
+        } else {
+          println()
+          Console.out.flush()
+          val buf = new Array[Byte](len)
+          val read = readNBytes(System.in, buf, 0, len)
+          assert(read == len, s"expected $len but got $read")
+          Some(buf)
+        }
+      case Right(reply) =>
+        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        throw Terminated
+      case Left(GotNull()) =>
+        Console.err.println(s"eqWAlizer could not read validated type")
+        throw Terminated
+  }
+
   def sendDone(diagnostics: Map[String, List[ELPDiagnostics.Error]], typeInfo: Map[String, List[(Pos, Type)]]): Unit =
     send(Done(diagnostics, typeInfo))
 
@@ -212,6 +236,7 @@ object Ipc {
   private case class ValidateType(ty: ExtType) extends Request
   private case class GetTypeDecl(module: String, id: Id) extends Request
   private case class GetOpaqueDecl(module: String, id: Id) extends Request
+  private case class GetRecDecl(module: String, id: String) extends Request
 
   private sealed trait Reply
   private case object ELPEnteringModule extends Reply
@@ -227,6 +252,7 @@ object Ipc {
   private case class InvalidType(len: Int) extends Reply
   private case class GetTypeDeclReply(len: Int) extends Reply
   private case class GetOpaqueDeclReply(len: Int) extends Reply
+  private case class GetRecDeclReply(len: Int) extends Reply
   private case object CannotCompleteRequest extends Reply
 
   private val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(

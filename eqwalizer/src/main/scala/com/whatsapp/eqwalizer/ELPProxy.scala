@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromArray}
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
-import com.whatsapp.eqwalizer.ast.Forms.TypeDecl
+import com.whatsapp.eqwalizer.ast.Forms.{RecDecl, TypeDecl}
 import com.whatsapp.eqwalizer.ast.Id
 import com.whatsapp.eqwalizer.io.Ipc
 
@@ -29,10 +29,20 @@ object ELPProxy {
 
   private val typeDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
   private val opaqueDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
+  private val recDeclCache: mutable.Map[(String, String), Option[RecDecl]] = mutable.Map.empty
 
   // jsoniter_scala codecs boilerplate
 
   private val typeDeclCodec: JsonValueCodec[TypeDecl] = JsonCodecMaker.make(
+    CodecMakerConfig
+      .withMapMaxInsertNumber(65536)
+      .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
+
+  private val recDeclCodec: JsonValueCodec[RecDecl] = JsonCodecMaker.make(
     CodecMakerConfig
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
@@ -67,5 +77,18 @@ object ELPProxy {
         val optTypeDecl = Ipc.getOpaqueDecl(module, id).map(readFromArray[TypeDecl](_)(typeDeclCodec))
         opaqueDeclCache.put(key, optTypeDecl)
         optTypeDecl
+  }
+
+  // EqwalizerDiagnosticsDatabase::rec_decl
+  def recDecl(module: String, id: String): Option[RecDecl] = {
+    modules.addOne(module)
+    val key = (module, id)
+    recDeclCache.get(key) match
+      case Some(value) =>
+        value
+      case None =>
+        val optRecDecl = Ipc.getRecDecl(module, id).map(readFromArray[RecDecl](_)(recDeclCodec))
+        recDeclCache.put(key, optRecDecl)
+        optRecDecl
   }
 }
