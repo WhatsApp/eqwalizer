@@ -245,7 +245,7 @@ object Types {
         res = cur.strip() :: res
         res.reverse
       }
-      if (str.charAt(0) == '{') {
+      if (str.nonEmpty && str.charAt(0) == '{') {
         val substrs = split(str.substring(1, str.length - 1))
         TupleKey(substrs.map(parse))
       } else {
