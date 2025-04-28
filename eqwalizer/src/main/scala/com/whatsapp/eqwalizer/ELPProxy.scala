@@ -28,7 +28,6 @@ object ELPProxy {
   // Caches (similar to salsa caches)
 
   private val typeDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
-  private val opaqueDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
   private val recDeclCache: mutable.Map[(String, String), Option[RecDecl]] = mutable.Map.empty
   private val funSpecCache: mutable.Map[(String, Id), Option[FunSpec]] = mutable.Map.empty
   private val overloadedFunSpecCache: mutable.Map[(String, Id), Option[OverloadedFunSpec]] = mutable.Map.empty
@@ -93,19 +92,6 @@ object ELPProxy {
       case None =>
         val optTypeDecl = Ipc.getTypeDecl(module, id).map(readFromArray[TypeDecl](_)(typeDeclCodec))
         typeDeclCache.put(key, optTypeDecl)
-        optTypeDecl
-  }
-
-  // EqwalizerDiagnosticsDatabase::opaque_decl
-  def opaqueDecl(module: String, id: Id): Option[TypeDecl] = {
-    modules.addOne(module)
-    val key = (module, id)
-    opaqueDeclCache.get(key) match
-      case Some(value) =>
-        value
-      case None =>
-        val optTypeDecl = Ipc.getOpaqueDecl(module, id).map(readFromArray[TypeDecl](_)(typeDeclCodec))
-        opaqueDeclCache.put(key, optTypeDecl)
         optTypeDecl
   }
 

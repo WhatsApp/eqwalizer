@@ -165,10 +165,6 @@ class TypeMismatch(pipelineContext: PipelineContext) {
       case (ArgTyMismatch(_, argMismatch), ListType(argTy1), ListType(argTy2)) =>
         val argExplain = explainMismatch(argTy1, argTy2, argMismatch, depth + 1)
         s"$prefix[\n$argExplain\n$prefix]"
-      case (ArgTyMismatch(argN, argMismatch), OpaqueType(rid, argTys1), OpaqueType(_, argTys2)) =>
-        val argExplain = explainMismatch(argTys1(argN), argTys2(argN), argMismatch, depth + 1)
-        val argsFmt = argTys1.map(showLimitChars(_)).updated(argN, s"\n$argExplain\n$prefix")
-        argsFmt.mkString(s"${prefix}Opaque $rid(", ", ", ")")
       case (ResTyMismatch(resMismatch), FunType(_, argTys, resTy1), FunType(_, _, resTy2)) =>
         val resExplain = explainMismatch(resTy1, resTy2, resMismatch, depth + 1)
         val argsFmt = argTys.map(showLimitChars(_)).mkString("fun((", ", ", ") ->")
@@ -261,18 +257,6 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         val details = findMismatch(t1, body, seen + (t1 -> t2))
         if (nonVerboseRids(rid) && details.mismatch.nonEmpty) Details(Some(t1, t2, Incompatible), details.score)
         else details
-
-      case (OpaqueType(id1, tys1), OpaqueType(id2, tys2)) =>
-        if (id1 != id2) Details(Some(t1, t2, Incompatible), 0)
-        else {
-          findMismatchWithIndex(tys1.zip(tys2).zipWithIndex) match {
-            case None => Details(None, 100)
-            case Some((argTy1, argTy2, mismatch, index)) =>
-              val argTys1 = tys1.updated(index, argTy1)
-              val argTys2 = tys2.updated(index, argTy2)
-              Details(Some(OpaqueType(id1, argTys1), OpaqueType(id2, argTys2), ArgTyMismatch(index, mismatch)), 80)
-          }
-        }
 
       case (ut: UnionType, _) =>
         val tys1 = util.flattenUnions(ut)

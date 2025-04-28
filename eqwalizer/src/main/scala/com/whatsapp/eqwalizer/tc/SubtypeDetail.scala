@@ -90,27 +90,15 @@ class SubtypeDetail(pipelineContext: PipelineContext) {
         recur(t1, bound)
 
       case (RemoteType(rid, args), _) =>
-        util.getTypeDeclBody(rid, args) match {
-          case body @ OpaqueType(rid2, _) if rid2 == rid =>
-            findMismatchAux(body, t2, stack0, seen)
-          case body =>
-            val stack1 = findMismatchAux(body, t2, stack, seen + (t1 -> t2))
-            if (nonVerboseRids(rid) && stack1.nonEmpty) stack
-            else stack1
-        }
+        val body = util.getTypeDeclBody(rid, args)
+        val stack1 = findMismatchAux(body, t2, stack, seen + (t1 -> t2))
+        if (nonVerboseRids(rid) && stack1.nonEmpty) stack
+        else stack1
       case (_, RemoteType(rid, args)) =>
-        util.getTypeDeclBody(rid, args) match {
-          case body @ OpaqueType(rid2, _) if rid2 == rid =>
-            findMismatchAux(t1, body, stack0, seen)
-          case body =>
-            val stack1 = findMismatchAux(t1, body, stack, seen + (t1 -> t2))
-            if (nonVerboseRids(rid) && stack1.nonEmpty) stack
-            else stack1
-        }
-
-      case (OpaqueType(id1, tys1), OpaqueType(id2, tys2)) =>
-        if (id1 != id2) stack
-        else recurSeq(tys1.zip(tys2))
+        val body = util.getTypeDeclBody(rid, args)
+        val stack1 = findMismatchAux(t1, body, stack, seen + (t1 -> t2))
+        if (nonVerboseRids(rid) && stack1.nonEmpty) stack
+        else stack1
 
       case (ut: UnionType, _) =>
         val tys1 = util.flattenUnions(ut)

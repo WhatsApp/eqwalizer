@@ -75,8 +75,6 @@ class Subtype(pipelineContext: PipelineContext) {
       case (_, RemoteType(rid, args)) =>
         val body = util.getTypeDeclBody(rid, args)
         subTypePol(t1, body, seen + ((t1, v1) -> (t2, v2)))
-      case (OpaqueType(id1, tys1), OpaqueType(id2, tys2)) =>
-        id1 == id2 && tys1.lazyZip(tys2).forall(subTypePol(_, _, seen))
 
       case (UnionType(tys1), _) =>
         tys1.forall(subTypePol(_, t2, seen))
@@ -233,8 +231,6 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case UnionType(ts) =>
         ts.forall(isNoneType(_, seen))
-      case OpaqueType(_, _) =>
-        false
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
         isNoneType(body, seen + t)
@@ -253,8 +249,6 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case UnionType(ts) =>
         ts.exists(isAnyType(_, seen))
-      case OpaqueType(_, _) =>
-        false
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
         isAnyType(body, seen + t)

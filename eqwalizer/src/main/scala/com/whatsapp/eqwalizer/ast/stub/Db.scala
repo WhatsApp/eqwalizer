@@ -58,9 +58,6 @@ object Db {
   def getType(module: String, id: Id): Option[TypeDecl] =
     ELPProxy.typeDecl(module, id)
 
-  def getOpaque(module: String, id: Id): Option[TypeDecl] =
-    ELPProxy.opaqueDecl(module, id)
-
   def getRecord(module: String, record: String): Option[RecDecl] =
     ELPProxy.recDecl(module, record)
 

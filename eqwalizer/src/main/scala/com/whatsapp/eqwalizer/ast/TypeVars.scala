@@ -35,7 +35,6 @@ object TypeVars {
     case TupleType(argTys)            => argTys
     case UnionType(tys)               => tys.toList
     case RemoteType(_, tys)           => tys
-    case OpaqueType(_, tys)           => tys
     case MapType(props, kType, vType) => kType :: vType :: props.values.map(_.tp).toList
     case ListType(ty)                 => ty :: Nil
     case RefinedRecordType(_, fields) => fields.toList.map(_._2)
@@ -125,8 +124,6 @@ object TypeVars {
         UnionType(params.map(r))
       case RemoteType(id, params) =>
         RemoteType(id, params.map(r))
-      case OpaqueType(id, params) =>
-        OpaqueType(id, params.map(r))
       case vt: VarType if toIncr.contains(vt.n) => VarType(vt.n + incr)(vt.name)
       case _: VarType                           => t
       case MapType(props, kt, vt) =>

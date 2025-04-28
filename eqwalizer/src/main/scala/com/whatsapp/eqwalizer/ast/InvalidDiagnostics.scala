@@ -6,7 +6,6 @@
 
 package com.whatsapp.eqwalizer.ast
 
-import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
@@ -62,16 +61,6 @@ object InvalidDiagnostics {
         s"$name references types with invalid definitions: ${refs.mkString(", ")}"
     }
     def errorName = "reference_to_invalid_type"
-  }
-  case class AliasWithNonCovariantParam(pos: Pos, name: String, typeVar: String, exps: List[Type]) extends Invalid {
-    val msg: String = {
-      val show = new Show(None)
-      val expsStr = exps.map(show.show)
-      val expands = s"\t$name expands to ${expsStr.head}" :: expsStr.tail.map(exp => s"\twhich expands to ${exp}")
-      val explain = s"Opaque $name expands to a type in which $typeVar appears in function parameter position"
-      (explain :: expands).mkString("\n")
-    }
-    def errorName = "type_var_in_parameter_position"
   }
   case class BadMapKey(pos: Pos, required: Boolean) extends Invalid {
     val msg: String = {

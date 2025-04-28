@@ -114,8 +114,6 @@ class Narrow(pipelineContext: PipelineContext) {
         case (FunType(_, _, _), AnyArityFunType(_)) => t1
         case (AnyArityFunType(_), AnyFunType)       => t1
         case (AnyFunType, AnyArityFunType(_))       => t1
-        case (OpaqueType(_, _), _)                  => t1
-        case (_, OpaqueType(_, _))                  => t1
         // At this point we know for sure that t1 /\ t2 = 0
         case (_, _) =>
           NoneType
@@ -163,8 +161,6 @@ class Narrow(pipelineContext: PipelineContext) {
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
         asMapTypes(body)
-      case OpaqueType(rid, _) =>
-        Set(MapType(Map(), AnyType, AnyType))
       case _ => Set()
     }
 
@@ -229,8 +225,6 @@ class Narrow(pipelineContext: PipelineContext) {
         extractListElem(body)
       case VarType(_) =>
         List(AnyType)
-      case OpaqueType(rid, _) =>
-        List(AnyType)
       case _ =>
         List()
     }
@@ -263,8 +257,6 @@ class Narrow(pipelineContext: PipelineContext) {
 
   def asTupleTypeAux(t: Type, arity: Int): List[TupleType] =
     t match {
-      case OpaqueType(rid, _params) =>
-        List(TupleType(List.fill(arity)(AnyType)))
       case DynamicType =>
         List(TupleType(List.fill(arity)(DynamicType)))
       case BoundedDynamicType(bound) =>
@@ -315,8 +307,6 @@ class Narrow(pipelineContext: PipelineContext) {
 
   private def filterTupleTypeAux(t: Type, elemIndex: Int, elemTy: Type): Type =
     t match {
-      case _: OpaqueType =>
-        t
       case DynamicType =>
         t
       case BoundedDynamicType(bound) =>
@@ -481,7 +471,7 @@ class Narrow(pipelineContext: PipelineContext) {
           .collectFirst { case (f, i) if f.name == fieldName => i + 1 }
           .map(argTys(_))
           .getOrElse(field.tp)
-      case AnyTupleType | DynamicType | VarType(_) | OpaqueType(_, _) =>
+      case AnyTupleType | DynamicType | VarType(_) =>
         field.tp
       case BoundedDynamicType(_) =>
         BoundedDynamicType(field.tp)

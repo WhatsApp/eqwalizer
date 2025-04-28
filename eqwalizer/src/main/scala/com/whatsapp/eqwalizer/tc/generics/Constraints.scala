@@ -226,8 +226,6 @@ class Constraints(pipelineContext: PipelineContext) {
             failSubtype()
         case (TupleType(leftTys), TupleType(rightTys)) if leftTys.size == rightTys.size =>
           constrainSeq(state, leftTys.zip(rightTys), tolerateUnion)
-        case (OpaqueType(id1, leftTys), OpaqueType(id2, rightTys)) if id1 == id2 =>
-          constrainSeq(state, leftTys.zip(rightTys), tolerateUnion)
         case (ListType(leftElemTy), ListType(rightElemTy)) =>
           constrain(state, leftElemTy, rightElemTy, tolerateUnion)
         case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>

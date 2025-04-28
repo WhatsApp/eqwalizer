@@ -23,13 +23,8 @@ class Variance(pipelineContext: PipelineContext) {
 
   def paramVariances(remoteId: RemoteId): List[Variance.Variance] = {
     val id = Id(remoteId.name, remoteId.arity)
-    Db.getType(remoteId.module, id) match {
-      case Some(tDecl) =>
-        tDecl.params.map(varType => varianceOf(tDecl.body, varType.n, isPositivePosition = true))
-      case None =>
-        // Opaques are covariant
-        Db.getOpaque(remoteId.module, id).get.params.map(_ => Covariant)
-    }
+    val tDecl = Db.getType(remoteId.module, id).get
+    tDecl.params.map(varType => varianceOf(tDecl.body, varType.n, isPositivePosition = true))
   }
 
   private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Variance.Variance =

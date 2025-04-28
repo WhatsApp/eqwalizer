@@ -689,12 +689,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
         overlap(body, t2)
-      case (OpaqueType(_, _), _) =>
-        None
       // t2 is generated from "predicates" - they are always without aliases
       case (_, RemoteType(_, _)) =>
-        throw new IllegalStateException(t2.toString)
-      case (_, OpaqueType(_, _)) =>
         throw new IllegalStateException(t2.toString)
 
       // funs
@@ -812,8 +808,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
         BoundedDynamicType(restrict(t, s))
       case (DynamicType, s) =>
         BoundedDynamicType(s)
-      case (OpaqueType(_, _), _) =>
-        t1
       case (_, _) =>
         t1
     }
@@ -831,8 +825,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
           case _ =>
             remove(body, t2)
         }
-      case (OpaqueType(_, _), _) =>
-        t1
       case (UnionType(ts), s) =>
         UnionType(ts.map(remove(_, s)))
       case (BoundedDynamicType(t), s) =>

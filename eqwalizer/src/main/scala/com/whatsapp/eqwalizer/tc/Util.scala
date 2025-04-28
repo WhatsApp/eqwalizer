@@ -79,14 +79,7 @@ class Util(pipelineContext: PipelineContext) {
     Db
       .getType(remoteId.module, id)
       .map(applyType)
-      .getOrElse({
-        if (pipelineContext.module == remoteId.module) {
-          applyType(Db.getOpaque(module, id).get)
-        } else {
-          assert(Db.getOpaque(remoteId.module, id).isDefined, s"could not find $remoteId from $module")
-          OpaqueType(remoteId, args)
-        }
-      })
+      .get // A non-defined type should fail during stubs validation
   }
 
   def flattenUnions(ty: Type): List[Type] = ty match {

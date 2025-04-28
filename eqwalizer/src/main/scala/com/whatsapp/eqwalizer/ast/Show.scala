@@ -13,7 +13,6 @@ import com.whatsapp.eqwalizer.tc.PipelineContext
 import scala.annotation.tailrec
 
 case class Show(pipelineContext: Option[PipelineContext]) {
-  import Show.NamedType
 
   def show(tp: Type): String =
     tp match {
@@ -31,9 +30,6 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         "[]"
       case UnionType(elemTys) =>
         elemTys.map(show).mkString(" | ")
-      case OpaqueType(rid, argTys) =>
-        val prefix = showRid(rid)
-        s"opaque $prefix${argTys.map(show).mkString("(", ", ", ")")}"
       case RemoteType(rid, argTys) =>
         val prefix = showRid(rid)
         s"$prefix${argTys.map(show).mkString("(", ", ", ")")}"
@@ -94,7 +90,8 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         s"${show(ft1)} with $cnt1 type parameter${plural(cnt1)}",
         s"${show(ft2)} with $cnt2 type parameter${plural(cnt2)}",
       )
-    case (NamedType(rid1, argTys1), NamedType(rid2, argTys2)) if rid1.name == rid2.name && rid1.module != rid2.module =>
+    case (RemoteType(rid1, argTys1), RemoteType(rid2, argTys2))
+        if rid1.name == rid2.name && rid1.module != rid2.module =>
       val prefix1 = showRid(rid1, forceShowModule = true)
       val prefix2 = showRid(rid2, forceShowModule = true)
       (
@@ -133,8 +130,7 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         val argTysTruncated = argTys.toList.take(5).map(showTruncated).mkString(" | ")
         if (argTys.size > 5) s"$argTysTruncated | ..."
         else argTysTruncated
-      case _: RemoteType | _: OpaqueType =>
-        val NamedType(rid, argTys) = tp: @unchecked
+      case RemoteType(rid, argTys) =>
         if (argTys.isEmpty)
           s"""${showRid(rid)}()"""
         else
@@ -190,14 +186,6 @@ case class Show(pipelineContext: Option[PipelineContext]) {
 }
 
 object Show {
-
-  object NamedType {
-    def unapply(ty: Type): Option[(RemoteId, List[Type])] = ty match {
-      case RemoteType(rid, argTys) => Some(rid, argTys)
-      case OpaqueType(rid, argTys) => Some(rid, argTys)
-      case _                       => None
-    }
-  }
 
   def show(tp: Type)(implicit pipelineContext: PipelineContext): String =
     Show(Some(pipelineContext)).show(tp)

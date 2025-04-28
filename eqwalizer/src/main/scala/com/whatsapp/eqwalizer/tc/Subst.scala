@@ -25,8 +25,6 @@ object Subst {
         UnionType(params.map(sub))
       case RemoteType(id, params) =>
         RemoteType(id, params.map(sub))
-      case OpaqueType(id, params) =>
-        OpaqueType(id, params.map(sub))
       case VarType(n) =>
         s.getOrElse(n, t)
       case MapType(props, kTy, vTy) =>

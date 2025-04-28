@@ -30,7 +30,6 @@ object Types {
     */
   case class UnionType(tys: Set[Type]) extends Type
   case class RemoteType(id: RemoteId, argTys: List[Type]) extends Type
-  case class OpaqueType(id: RemoteId, argTys: List[Type]) extends Type
 
   case class VarType(n: Int)(val name: String) extends Type
   case class RecordType(name: String)(val module: String) extends Type
