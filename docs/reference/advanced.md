@@ -137,34 +137,3 @@ convert(A) when is_atom(A) ->
 convert(B) when is_binary(B) ->
   binary_to_atom(B).
 ```
-
-
-## Experimental and expert features
-
-Some features of eqWAlizer are disabled by default as they are experimental
-or not meant for casual use. They can be enabled by setting the corresponding
-environment variable when calling `elp eqwalize`, e.g.,
-`EQWALIZER_CLAUSE_COVERAGE=true elp eqwalize-all`.
-
-### Occurrence typing
-
-Disable occurrence typing with `EQWALIZER_EQWATER=false`. By default, eqWAlizer
-performs occurrence typing except in some instances (for example if a function
-contains too many clauses). See [occurrence typing](./narrowing.md#occurrence-typing).
-
-### Error tolerance
-
-Disable error tolerance with `EQWALIZER_TOLERATE_ERRORS=false`. By default, eqWAlizer
-attempts to recover from type errors, to provide as much signal as possible for
-a given function or module.
-
-### Spec coverage of function clauses
-
-Disable checks of proper coverage of function clauses by specs using `EQWALIZER_CLAUSE_COVERAGE=false`.
-By default, eqWAlizer will check coverage of function clauses by the corresponding spec,
-ensuring all clauses are properly checked.
-
-### Reporting approximated map types
-
-Enable reporting of ill-formed map types approximated to `#{dynamic() => dynamic()}` using `EQWALIZER_REPORT_BAD_MAPS=true`.
-By default, all such types are silently approximated.
