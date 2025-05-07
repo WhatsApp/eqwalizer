@@ -47,7 +47,8 @@ final class Check(pipelineContext: PipelineContext) {
           resTy,
           occEnv,
           Set.empty,
-          checkCoverage = singleClause || (index != f.clauses.length),
+          fullCoverage = singleClause || (index != f.clauses.length),
+          checkCoverage = true,
         )
       )
   }
@@ -106,6 +107,7 @@ final class Check(pipelineContext: PipelineContext) {
       resTy: Type,
       env0: Env,
       exportedVars: Set[String],
+      fullCoverage: Boolean = false,
       checkCoverage: Boolean = false,
   ): Env = {
     val patVars = Vars.clausePatVars(clause)
@@ -116,7 +118,8 @@ final class Check(pipelineContext: PipelineContext) {
     }
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
-    if (checkCoverage && env4.exists { case (_, ty) => subtype.isNoneType(ty) }) {
+    val hasEmptyType = env4.exists { case (_, ty) => subtype.isNoneType(ty) }
+    if (hasEmptyType && checkCoverage && (fullCoverage || !occurrence.clauseCovered(clause, argTys))) {
       diagnosticsInfo.add(ClauseNotCovered(clause.pos))
     }
     val env5 = checkBody(clause.body, resTy, env4)
