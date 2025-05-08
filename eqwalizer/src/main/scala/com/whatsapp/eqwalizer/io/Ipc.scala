@@ -39,12 +39,12 @@ object Ipc {
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [getAstBytes] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
         // Happens when the client panics, such as ELP bug T111364923.
         // This error will only show up in logging, not really user-facing
-        Console.err.println(s"eqWAlizer could not read AST for $module")
+        Console.err.println(s"eqWAlizer [getAstBytes] GotNull")
         throw Terminated
     }
   }
@@ -65,11 +65,14 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
+      case Right(CannotCompleteRequest) =>
+        // The client has asked eqWAlizer to die
+        throw Terminated
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [getTypeDecl] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer could not read reply from ELP")
+        Console.err.println(s"eqWAlizer [getTypeDecl] GotNull")
         throw Terminated
   }
 
@@ -89,11 +92,14 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
+      case Right(CannotCompleteRequest) =>
+        // The client has asked eqWAlizer to die
+        throw Terminated
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [getRecDecl] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer could not read validated type")
+        Console.err.println(s"eqWAlizer [getRecDecl] GotNull")
         throw Terminated
   }
 
@@ -113,11 +119,14 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
+      case Right(CannotCompleteRequest) =>
+        // The client has asked eqWAlizer to die
+        throw Terminated
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [getFunSpec] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer could not read validated type")
+        Console.err.println(s"eqWAlizer [getFunSpec] GotNull")
         throw Terminated
   }
 
@@ -137,11 +146,14 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
+      case Right(CannotCompleteRequest) =>
+        // The client has asked eqWAlizer to die
+        throw Terminated
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [getOverloadedFunSpec] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer could not read validated type")
+        Console.err.println(s"eqWAlizer [getOverloadedFunSpec] GotNull")
         throw Terminated
   }
 
@@ -161,11 +173,14 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
+      case Right(CannotCompleteRequest) =>
+        // The client has asked eqWAlizer to die
+        throw Terminated
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [getCallbacks] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer could not read validated type")
+        Console.err.println(s"eqWAlizer [getCallbacks] GotNull")
         throw Terminated
   }
 
@@ -196,12 +211,13 @@ object Ipc {
         assert(read == len, s"expected $len for validated type but got $read")
         (false, buf)
       case Right(CannotCompleteRequest) =>
+        // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP when validating type")
+        Console.err.println(s"eqWAlizer [validateType] received bad reply from ELP when validating type: $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer could not read validated type")
+        Console.err.println(s"eqWAlizer [validateType] GotNull")
         throw Terminated
     }
   }
@@ -220,10 +236,10 @@ object Ipc {
       case Right(ELPExitingModule) =>
         false
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [shouldEqwalize] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer received empty reply from ELP while waiting to start eqWAlization")
+        Console.err.println(s"eqWAlizer [shouldEqwalize] GotNull")
         throw Terminated
     }
   }
@@ -239,10 +255,10 @@ object Ipc {
       case Right(ELPExitingModule) =>
         ()
       case Right(reply) =>
-        Console.err.println(s"eqWAlizer received bad reply from ELP $reply")
+        Console.err.println(s"eqWAlizer [finishEqwalization] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer received empty reply from ELP while ending eqWAlization")
+        Console.err.println(s"eqWAlizer [finishEqwalization] GotNull")
         throw Terminated
     }
   }
