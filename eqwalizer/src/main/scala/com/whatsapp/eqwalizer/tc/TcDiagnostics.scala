@@ -146,4 +146,14 @@ object TcDiagnostics {
     val errorName = "clause_not_covered"
     override val erroneousExpr: Option[Expr] = None
   }
+  case class AmbiguousLambda(pos: Pos, expr: Expr, expected: Type)(implicit
+      val pipelineContext: PipelineContext
+  ) extends TypeError {
+    override val msg: String =
+      s"Functional expression can match multiple types in ${show(expected)}"
+
+    def errorName = "ambiguous_lambda"
+
+    override def erroneousExpr: Option[Expr] = Some(expr)
+  }
 }

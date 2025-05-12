@@ -6,10 +6,10 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.Exprs._
+import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
-import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.ExpectedSubtype
+import com.whatsapp.eqwalizer.ast.Types.*
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype}
 import com.whatsapp.eqwalizer.tc.generics.Constraints
 import com.whatsapp.eqwalizer.tc.generics.Constraints.ConstraintSeq
 
@@ -68,16 +68,33 @@ class ElabApply(pipelineContext: PipelineContext) {
 
     val toSolve = ft.forall.toSet
 
+    def lambdaArg(lambda: Lambda, argTy: FunType, paramTy: Type): AppliedArg = {
+      val arity = lambda.clauses.headOption.map(_.pats.size).getOrElse(0)
+      val funParamTys = narrow.extractFunTypes(paramTy, arity)
+      if (funParamTys.size == 1) {
+        LambdaArg(lambda, argTy, funParamTys.head)
+      } else if (funParamTys.size > 1) {
+        diagnosticsInfo.add(AmbiguousLambda(lambda.pos, lambda, subtype.join(funParamTys)))
+        LambdaArg(lambda, argTy, FunType(List(), List.fill(arity)(DynamicType), DynamicType))
+      } else {
+        paramTy match {
+          // Keep it as a LambdaArg to produce an arity mismatch error message, which provides clearer signal
+          case ft: FunType => LambdaArg(lambda, argTy, ft)
+          case _           => Arg(lambda, argTy, paramTy)
+        }
+      }
+    }
+
     val appliedArgs = args
       .zip(argTys)
       .zip(ft.argTys)
       .map {
-        case ((lambda: Lambda, argTy: FunType), paramTy: FunType) if argTy.argTys.nonEmpty =>
-          LambdaArg(lambda, argTy, paramTy)
-        case ((fun: LocalFun, argTy: FunType), paramTy: FunType) if argTy.forall.nonEmpty =>
-          LambdaArg(etaExpand(fun), argTy, paramTy)
-        case ((fun: RemoteFun, argTy: FunType), paramTy: FunType) if argTy.forall.nonEmpty =>
-          LambdaArg(etaExpand(fun), argTy, paramTy)
+        case ((lambda: Lambda, argTy: FunType), paramTy) if argTy.argTys.nonEmpty =>
+          lambdaArg(lambda, argTy, paramTy)
+        case ((fun: LocalFun, argTy: FunType), paramTy) if argTy.forall.nonEmpty =>
+          lambdaArg(etaExpand(fun), argTy, paramTy)
+        case ((fun: RemoteFun, argTy: FunType), paramTy) if argTy.forall.nonEmpty =>
+          lambdaArg(etaExpand(fun), argTy, paramTy)
         case ((expr, argTy), paramTy) => Arg(expr, argTy, paramTy)
       }
 
