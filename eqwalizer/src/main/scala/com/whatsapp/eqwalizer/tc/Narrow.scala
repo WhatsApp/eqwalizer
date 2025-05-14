@@ -229,11 +229,11 @@ class Narrow(pipelineContext: PipelineContext) {
         List()
     }
 
-  def extractFunTypes(ty: Type, arity: Int): Set[FunType] = ty match {
+  def asFunTypes(ty: Type, arity: Int): Set[FunType] = ty match {
     case DynamicType =>
       Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
     case BoundedDynamicType(bound) =>
-      extractFunTypes(bound, arity).map(ft =>
+      asFunTypes(bound, arity).map(ft =>
         FunType(ft.forall, ft.argTys.map(BoundedDynamicType(_)), BoundedDynamicType(ft.resTy))
       )
     case AnyFunType =>
@@ -244,10 +244,33 @@ class Narrow(pipelineContext: PipelineContext) {
     case AnyArityFunType(resTy) =>
       Set(FunType(List.empty, List.fill(arity)(DynamicType), resTy))
     case UnionType(tys) =>
-      tys.flatMap(extractFunTypes(_, arity))
+      tys.flatMap(asFunTypes(_, arity))
     case RemoteType(rid, args) =>
       val body = util.getTypeDeclBody(rid, args)
-      extractFunTypes(body, arity)
+      asFunTypes(body, arity)
+    case _ =>
+      Set()
+  }
+
+  def onlyFunTypes(ty: Type, arity: Int): Set[FunType] = ty match {
+    case DynamicType =>
+      Set()
+    case BoundedDynamicType(bound) =>
+      onlyFunTypes(bound, arity).map(ft =>
+        FunType(ft.forall, ft.argTys.map(BoundedDynamicType(_)), BoundedDynamicType(ft.resTy))
+      )
+    case AnyFunType =>
+      Set(FunType(List.empty, List.fill(arity)(DynamicType), DynamicType))
+    case ft: FunType =>
+      if (ft.argTys.size == arity) Set(ft)
+      else Set()
+    case AnyArityFunType(resTy) =>
+      Set(FunType(List.empty, List.fill(arity)(DynamicType), resTy))
+    case UnionType(tys) =>
+      tys.flatMap(onlyFunTypes(_, arity))
+    case RemoteType(rid, args) =>
+      val body = util.getTypeDeclBody(rid, args)
+      onlyFunTypes(body, arity)
     case _ =>
       Set()
   }

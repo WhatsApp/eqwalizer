@@ -267,7 +267,7 @@ final class Check(pipelineContext: PipelineContext) {
             } else {
               ty
             }
-          val funTys = narrow.extractFunTypes(funTy, args.size)
+          val funTys = narrow.asFunTypes(funTy, args.size)
           val (argTys, env2) = elab.elabExprs(args, env1)
           if (funTys.nonEmpty) {
             funTys.foreach { ft =>
@@ -522,7 +522,7 @@ final class Check(pipelineContext: PipelineContext) {
         checkLambdaFunType(lambda, t, env)
       case _ =>
         val arity = lambdaArity(lambda)
-        narrow.extractFunTypes(resTy, arity).toList match {
+        narrow.asFunTypes(resTy, arity).toList match {
           case List(funTy) => checkLambdaFunType(lambda, funTy, env)
           case _ =>
             val (ty, _) = elab.elabExpr(lambda, env)

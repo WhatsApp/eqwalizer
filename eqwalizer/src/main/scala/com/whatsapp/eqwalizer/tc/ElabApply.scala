@@ -70,7 +70,7 @@ class ElabApply(pipelineContext: PipelineContext) {
 
     def lambdaArg(lambda: Lambda, argTy: FunType, paramTy: Type): AppliedArg = {
       val arity = lambda.clauses.headOption.map(_.pats.size).getOrElse(0)
-      val funParamTys = narrow.extractFunTypes(paramTy, arity)
+      val funParamTys = narrow.onlyFunTypes(paramTy, arity)
       if (funParamTys.size == 1) {
         LambdaArg(lambda, argTy, funParamTys.head)
       } else if (funParamTys.size > 1) {
@@ -80,7 +80,9 @@ class ElabApply(pipelineContext: PipelineContext) {
         paramTy match {
           // Keep it as a LambdaArg to produce an arity mismatch error message, which provides clearer signal
           case ft: FunType => LambdaArg(lambda, argTy, ft)
-          case _           => Arg(lambda, argTy, paramTy)
+          case t if subtype.gradualSubType(DynamicType, t) =>
+            LambdaArg(lambda, argTy, FunType(List(), List.fill(arity)(DynamicType), DynamicType))
+          case _ => Arg(lambda, argTy, paramTy)
         }
       }
     }
