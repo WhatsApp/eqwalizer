@@ -164,6 +164,28 @@ class Narrow(pipelineContext: PipelineContext) {
       case _ => Set()
     }
 
+  def asMapOrIterTypes(t: Type): Set[MapType] =
+    t match {
+      case DynamicType =>
+        Set(MapType(Map(), DynamicType, DynamicType))
+      case BoundedDynamicType(bound) =>
+        asMapOrIterTypes(bound).map(dynamicMap)
+      case AnyType | VarType(_) =>
+        Set(MapType(Map(), AnyType, AnyType))
+      case mapType: MapType =>
+        Set(mapType)
+      case UnionType(ts) =>
+        ts.flatMap(asMapOrIterTypes)
+      case RemoteType(RemoteId("maps", "iterator", 0), _) =>
+        Set(MapType(Map(), AnyType, AnyType))
+      case RemoteType(RemoteId("maps", "iterator", 2), List(keyT, valT)) =>
+        Set(MapType(Map(), keyT, valT))
+      case RemoteType(rid, args) =>
+        val body = util.getTypeDeclBody(rid, args)
+        asMapOrIterTypes(body)
+      case _ => Set()
+    }
+
   def getKVType(t: MapType): Set[TupleType] = {
     t.props.map { case (key, prop) =>
       TupleType(List(Key.asType(key), prop.tp))
