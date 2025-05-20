@@ -262,8 +262,10 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         val tys1 = util.flattenUnions(ut)
         val details = tys1.map(findMismatch(_, t2, seen))
         val lowest = details.minBy(_.score)
-        if (details.forall(_.mismatch.nonEmpty))
+        if (details.forall(_.score < 40))
           Details(Some(subtype.join(tys1), t2, Incompatible), lowest.score)
+        else if (details.forall(_.mismatch.nonEmpty))
+          lowest
         else {
           lowest.mismatch match {
             case None => lowest
