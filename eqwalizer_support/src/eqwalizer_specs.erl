@@ -1,3 +1,4 @@
+%% % @format
 %%% Copyright (c) Meta Platforms, Inc. and affiliates. All rights reserved.
 %%%
 %%% This source code is licensed under the Apache 2.0 license found in
@@ -21,10 +22,12 @@
 -spec 'application:get_env'(Param :: atom()) -> undefined | {ok, eqwalizer:dynamic()}.
 'application:get_env'(_) -> error(eqwalizer_specs).
 
--spec 'application:get_env'(App :: atom(), Param :: atom()) -> undefined | {ok, eqwalizer:dynamic()}.
+-spec 'application:get_env'(App :: atom(), Param :: atom()) ->
+    undefined | {ok, eqwalizer:dynamic()}.
 'application:get_env'(_, _) -> error(eqwalizer_specs).
 
--spec 'application:get_env'(App :: atom(), Param :: atom(), Default :: term()) -> eqwalizer:dynamic().
+-spec 'application:get_env'(App :: atom(), Param :: atom(), Default :: term()) ->
+    eqwalizer:dynamic().
 'application:get_env'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'application:get_key'(Key :: atom()) -> undefined | {ok, eqwalizer:dynamic()}.
@@ -95,7 +98,9 @@
 
 %% -------- erl_syntax_lib --------
 
--spec 'erl_syntax_lib:fold'(fun((erl_syntax:syntaxTree(), Acc) -> Acc), Acc, erl_syntax:syntaxTree()) -> Acc.
+-spec 'erl_syntax_lib:fold'(
+    fun((erl_syntax:syntaxTree(), Acc) -> Acc), Acc, erl_syntax:syntaxTree()
+) -> Acc.
 'erl_syntax_lib:fold'(_, _, _) -> error(eqwalizer_specs).
 
 %% -------- erlang --------
@@ -183,7 +188,8 @@
 'ets:foldl'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'ets:info'
-    (ets:table(), compressed | decentralized_counters | read_concurrency | write_concurrency) -> boolean();
+    (ets:table(), compressed | decentralized_counters | read_concurrency | write_concurrency) ->
+        boolean();
     (ets:table(), heir) -> pid() | none;
     (ets:table(), id) -> ets:tid();
     (ets:table(), keypos | memory | size) -> non_neg_integer();
@@ -394,7 +400,8 @@ when
 -spec 'lists:keysearch'(Key :: term(), N :: pos_integer(), [Tuple]) -> {value, Tuple} | false.
 'lists:keysearch'(_, _, _) -> error(eqwalizer_specs).
 
--spec 'lists:keytake'(Key :: term(), N :: pos_integer(), [Tuple]) -> {value, Tuple, [Tuple]} | false.
+-spec 'lists:keytake'(Key :: term(), N :: pos_integer(), [Tuple]) ->
+    {value, Tuple, [Tuple]} | false.
 'lists:keytake'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'lists:last'([T]) -> T.
@@ -625,7 +632,8 @@ when
 
 %% -------- public_key --------
 
--spec 'public_key:der_decode'(public_key:asn1_type(), public_key:der_encoded()) -> eqwalizer:dynamic().
+-spec 'public_key:der_decode'(public_key:asn1_type(), public_key:der_encoded()) ->
+    eqwalizer:dynamic().
 'public_key:der_decode'(_, _) -> error(eqwalizer_specs).
 
 %% -------- queue --------
@@ -730,17 +738,24 @@ when
 
 -spec 'string:slice'
     (string(), non_neg_integer(), 'infinity' | non_neg_integer()) -> string();
-    (unicode:unicode_binary(), non_neg_integer(), 'infinity' | non_neg_integer()) -> unicode:unicode_binary().
+    (unicode:unicode_binary(), non_neg_integer(), 'infinity' | non_neg_integer()) ->
+        unicode:unicode_binary().
 'string:slice'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'string:replace'
     (string(), string(), string()) -> [string()];
-    (unicode:unicode_binary(), unicode:unicode_binary(), unicode:unicode_binary()) -> [unicode:unicode_binary()].
+    (unicode:unicode_binary(), unicode:unicode_binary(), unicode:unicode_binary()) ->
+        [unicode:unicode_binary()].
 'string:replace'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'string:replace'
     (string(), string(), string(), leading | trailing | all) -> [string()];
-    (unicode:unicode_binary(), unicode:unicode_binary(), unicode:unicode_binary(), leading | trailing | all) ->
+    (
+        unicode:unicode_binary(),
+        unicode:unicode_binary(),
+        unicode:unicode_binary(),
+        leading | trailing | all
+    ) ->
         [unicode:unicode_binary()].
 'string:replace'(_, _, _, _) -> error(eqwalizer_specs).
 
@@ -751,7 +766,8 @@ when
 
 -spec 'string:split'
     (string(), string(), 'leading' | 'trailing' | 'all') -> [string()];
-    (unicode:unicode_binary(), unicode:unicode_binary(), 'leading' | 'trailing' | 'all') -> [unicode:unicode_binary()].
+    (unicode:unicode_binary(), unicode:unicode_binary(), 'leading' | 'trailing' | 'all') ->
+        [unicode:unicode_binary()].
 'string:split'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'string:trim'
