@@ -31,6 +31,18 @@ libraryDependencies ++= Seq(
   "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % "2.33.3" % "compile-internal"
 )
 
+initialize := {
+  // Ensure previous initializations are run
+  val _ = initialize.value
+
+  // Retrieve the JVM's class version and specification version
+  val classVersion = sys.props("java.class.version")
+  val specVersion = sys.props("java.specification.version")
+
+  // Assert that the JVM meets the minimum required version, for example, Java 17
+  assert(specVersion.toDouble >= 11, "Java 11 or above is required to run this project.")
+}
+
 assembly / assemblyJarName := "eqwalizer.jar"
 
 assembly / mainClass  := Some("com.whatsapp.eqwalizer.Main")
