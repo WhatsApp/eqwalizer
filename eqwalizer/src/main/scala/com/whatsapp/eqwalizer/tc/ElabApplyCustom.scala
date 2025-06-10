@@ -309,10 +309,10 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         def isShapeIterator(lambda: Lambda): Boolean = {
           val lastClauseIndex = lambda.clauses.length - 1
           lambda.clauses.zipWithIndex forall { (clause, index) =>
-            clause.pats.head match {
-              case PatVar(_) if index == lastClauseIndex =>
+            clause.pats match {
+              case List(PatVar(_), _, _) if index == lastClauseIndex =>
                 true
-              case PatAtom(_) =>
+              case List(PatAtom(_), _, _) =>
                 true
               case _ =>
                 false
