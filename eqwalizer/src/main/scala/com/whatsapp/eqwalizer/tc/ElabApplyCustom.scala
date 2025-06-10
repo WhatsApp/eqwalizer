@@ -8,11 +8,11 @@ package com.whatsapp.eqwalizer.tc
 
 import scala.annotation.tailrec
 import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, IntLit, Lambda, NilLit, Var}
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundRecord}
 import com.whatsapp.eqwalizer.ast.CompilerMacro
-import com.whatsapp.eqwalizer.ast.Pats.PatAtom
+import com.whatsapp.eqwalizer.ast.Pats.{PatAtom, PatVar}
 
 class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val elab = pipelineContext.elab
@@ -307,10 +307,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val keyTy = mapTys.map(narrow.getKeyType).join()
         val valTy = mapTys.map(narrow.getValType).join()
         def isShapeIterator(lambda: Lambda): Boolean = {
-          lambda.clauses.forall { clause =>
+          val lastClauseIndex = lambda.clauses.length - 1
+          lambda.clauses.zipWithIndex forall { (clause, index) =>
             clause.pats.head match {
-              case PatAtom(_) => true
-              case _          => false
+              case PatVar(_) if index == lastClauseIndex =>
+                true
+              case PatAtom(_) =>
+                true
+              case _ =>
+                false
             }
           }
         }
@@ -319,11 +324,16 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case lambda: Lambda if isShapeIterator(lambda) =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
-
+            var keyTyLast = keyTy
             val vTys = lambda.clauses.map { clause =>
-              val PatAtom(a) = clause.pats.head: @unchecked
-              val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
-              elab.elabClause(clause, List(AtomLitType(a), refinedValTy, accTy), lamEnv, Set.empty)._1
+              clause.pats.head match {
+                case PatAtom(a) =>
+                  val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
+                  keyTyLast = occurrence.remove(keyTyLast, AtomLitType(a))
+                  elab.elabClause(clause, List(AtomLitType(a), refinedValTy, accTy), lamEnv, Set.empty)._1
+                case _ =>
+                  elab.elabClause(clause, List(keyTyLast, valTy, accTy), lamEnv, Set.empty)._1
+              }
             }
             accTy1 :: vTys
           case lambda: Lambda =>
@@ -346,10 +356,16 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case lambda: Lambda if isShapeIterator(lambda) =>
             val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            var keyTyLast = keyTy
             lambda.clauses.map { clause =>
-              val PatAtom(a) = clause.pats.head: @unchecked
-              val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
-              check.checkClause(clause, List(AtomLitType(a), refinedValTy, accTy), accTy, lamEnv, Set.empty)
+              clause.pats.head match {
+                case PatAtom(a) =>
+                  val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
+                  keyTyLast = occurrence.remove(keyTyLast, AtomLitType(a))
+                  check.checkClause(clause, List(AtomLitType(a), refinedValTy, accTy), accTy, lamEnv, Set.empty)
+                case _ =>
+                  check.checkClause(clause, List(keyTyLast, valTy, accTy), accTy, lamEnv, Set.empty)
+              }
             }
           case lambda: Lambda =>
             check.checkLambda(lambda, FunType(Nil, List(keyTy, valTy, accTy), accTy), env)
