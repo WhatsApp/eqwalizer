@@ -12,7 +12,9 @@ import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundRecord}
 import com.whatsapp.eqwalizer.ast.CompilerMacro
-import com.whatsapp.eqwalizer.ast.Pats.{PatAtom, PatVar}
+import com.whatsapp.eqwalizer.ast.Pats.{PatAtom, PatVar, PatWild}
+
+import scala.collection.mutable
 
 class ElabApplyCustom(pipelineContext: PipelineContext) {
   private lazy val elab = pipelineContext.elab
@@ -307,17 +309,25 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val keyTy = mapTys.map(narrow.getKeyType).join()
         val valTy = mapTys.map(narrow.getValType).join()
         def isShapeIterator(lambda: Lambda): Boolean = {
-          val lastClauseIndex = lambda.clauses.length - 1
-          lambda.clauses.zipWithIndex forall { (clause, index) =>
+          val usedKeys = mutable.Set[String]()
+          (lambda.clauses forall { clause =>
             clause.pats match {
-              case List(PatVar(_), _, _) if index == lastClauseIndex =>
+              case List(PatAtom(a), _, _) if !usedKeys(a) =>
+                usedKeys.add(a)
                 true
-              case List(PatAtom(_), _, _) =>
+              case List(PatVar(_) | PatWild(), _, _) =>
                 true
               case _ =>
                 false
             }
-          }
+          }) && (lambda.clauses.count { clause =>
+            clause.pats match {
+              case List(PatVar(_) | PatWild(), _, _) =>
+                true
+              case _ =>
+                false
+            }
+          } <= 1)
         }
 
         def getAccumulatorTys(accTy: Type): List[Type] = funArg match {
