@@ -726,6 +726,14 @@ final class Elab(pipelineContext: PipelineContext) {
         envAcc = vPatEnv
       case Zip(generators) =>
         envAcc = elabQualifiers(generators, envAcc)
+      // [X || ... (X = foo()) =/= undefined]
+      case Filter(binOp @ BinOp(op, m @ Match(pv @ PatVar(v), _), exp2)) =>
+        envAcc = elabExpr(m, envAcc)._2
+        val fExpr = BinOp(op, Var(v)(pv.pos), exp2)(binOp.pos)
+        Filters.asTest(fExpr).foreach { test =>
+          envAcc = elabGuard.elabGuards(List(Guard(List(test))), envAcc)
+        }
+        envAcc = elabExpr(fExpr, envAcc)._2
       case Filter(fExpr) =>
         Filters.asTest(fExpr).foreach { test =>
           envAcc = elabGuard.elabGuards(List(Guard(List(test))), envAcc)
