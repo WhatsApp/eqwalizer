@@ -185,9 +185,11 @@ final class Elab(pipelineContext: PipelineContext) {
                 .unzip
             (subtype.join(resTys), env1)
         }
-      case DynCall(dynRemoteFun: DynRemoteFun, args) =>
-        val (_argTys, env1) = elabExprs(args, env)
-        (DynamicType, env1)
+      case DynCall(DynRemoteFun(mod, name), args) =>
+        val env1 = check.checkExpr(mod, AtomType, env)
+        val env2 = check.checkExpr(name, AtomType, env1)
+        val (_argTys, env3) = elabExprs(args, env)
+        (DynamicType, env3)
       case DynCall(f, args) =>
         val (ty, env1) = elabExpr(f, env)
         val expArity = args.size

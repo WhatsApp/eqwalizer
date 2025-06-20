@@ -253,10 +253,12 @@ final class Check(pipelineContext: PipelineContext) {
                 .map((clause, occEnv) => checkClause(clause, argTys, resTy, occEnv, Set.empty))
           }
           env1
-        case DynCall(dynRemoteFun: DynRemoteFun, args) =>
-          val (_argTys, env1) = elab.elabExprs(args, env)
+        case DynCall(DynRemoteFun(mod, name), args) =>
+          val env1 = checkExpr(mod, AtomType, env)
+          val env2 = checkExpr(name, AtomType, env1)
+          val (_argTys, env3) = elab.elabExprs(args, env)
           // dynamic is subtype of everything, - no need to double-check
-          env1
+          env3
         case DynCall(f, args) =>
           val (ty, env1) = elab.elabExpr(f, env)
           val expArity = args.size
