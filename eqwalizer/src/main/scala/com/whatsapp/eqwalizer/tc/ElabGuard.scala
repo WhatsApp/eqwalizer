@@ -75,6 +75,9 @@ final class ElabGuard(pipelineContext: PipelineContext) {
         }
         typeInfo.add(test.pos, testType)
         env + (v -> testType)
+      case TestCall(Id("is_map_key", 2), List(kTest: TestVar, map: TestMapCreate)) if isLiteralKeysMap(map) =>
+        val kType = getKeyType(map)
+        elabTestT(kTest, kType, env)
       case TestCall(Id(pred, 1), List(arg)) if upper == trueType && elabPredicateType1.isDefinedAt(pred) =>
         elabTestT(arg, elabPredicateType1(pred), env)
       case TestCall(Id(pred, 2), List(arg1, arg2))
@@ -308,5 +311,16 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case _ =>
         throw new IllegalStateException(s"unexpected $op")
     }
+  }
+
+  private def isLiteralKeysMap(map: TestMapCreate): Boolean =
+    map.kvs.forall((k, _) => k.isInstanceOf[TestAtom])
+
+  private def getKeyType(map: TestMapCreate): Type = {
+    val atoms = map.kvs.map { case (k, _) =>
+      val TestAtom(a) = k: @unchecked
+      AtomLitType(a)
+    }
+    UnionType(atoms.toSet)
   }
 }
