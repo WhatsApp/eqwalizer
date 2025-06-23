@@ -12,7 +12,7 @@ import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundRecord}
 import com.whatsapp.eqwalizer.ast.CompilerMacro
-import com.whatsapp.eqwalizer.ast.Pats.{PatAtom, PatVar, PatWild}
+import com.whatsapp.eqwalizer.ast.Pats.{Pat, PatAtom, PatTuple, PatVar, PatWild}
 
 import scala.collection.mutable
 
@@ -57,6 +57,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("maps", "filtermap", 2),
       RemoteId("maps", "find", 2),
       RemoteId("maps", "fold", 3),
+      RemoteId("maps", "foreach", 2),
       RemoteId("maps", "get", 2),
       RemoteId("maps", "get", 3),
       RemoteId("maps", "intersect", 2),
@@ -513,6 +514,69 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         }
         val resItemTy = funResultsToValTy(funResTys, valTy, callPos)
         (mapTys.map(narrow.setAllFieldsOptional(_, Some(resItemTy))).join(), env1)
+
+      case RemoteId("maps", "foreach", 2) =>
+        val List(funArg, map) = args
+        val List(funArgTy, mapTy) = argTys
+        val mapTys = coerceToMapsOrIter(map, mapTy)
+        val keyTy = mapTys.map(narrow.getKeyType).join()
+        val valTy = mapTys.map(narrow.getValType).join()
+        def isShapeKey(pat: Pat): Boolean = {
+          pat match {
+            case PatAtom(_)     => true
+            case PatTuple(pats) => pats.forall(isShapeKey)
+            case _              => false
+          }
+        }
+        def asKey(pat: Pat): Key = {
+          pat match {
+            case PatAtom(a)     => AtomKey(a)
+            case PatTuple(pats) => TupleKey(pats.map(asKey))
+            case _              => throw new IllegalStateException(s"unexpected pattern: $pat")
+          }
+        }
+        def isShapeIterator(lambda: Lambda): Boolean = {
+          val usedKeys = mutable.Set[Pat]()
+          (lambda.clauses forall { clause =>
+            clause.pats match {
+              case List(pat, _) if isShapeKey(pat) && !usedKeys(pat) =>
+                usedKeys.add(pat)
+                true
+              case List(PatVar(_) | PatWild(), _) =>
+                true
+              case _ =>
+                false
+            }
+          }) && (lambda.clauses.count { clause =>
+            clause.pats match {
+              case List(PatVar(_) | PatWild(), _, _) =>
+                true
+              case _ =>
+                false
+            }
+          } <= 1)
+        }
+
+        val expFunTy = FunType(Nil, List(keyTy, valTy), AnyType)
+        var keyTyLast = keyTy
+        funArg match {
+          case lambda: Lambda if isShapeIterator(lambda) =>
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            lambda.clauses.foreach { clause =>
+              if (isShapeKey(clause.pats.head)) {
+                val key = asKey(clause.pats.head)
+                val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(key, m)))
+                val kTy = Key.asType(key)
+                keyTyLast = occurrence.remove(keyTyLast, kTy)
+                check.checkClause(clause, List(kTy, refinedValTy), AnyType, lamEnv, Set.empty)
+              } else {
+                check.checkClause(clause, List(keyTyLast, valTy), AnyType, lamEnv, Set.empty)
+              }
+            }
+          case _ =>
+            check.checkExpr(funArg, expFunTy, env)
+        }
+        (AtomLitType("ok"), env)
 
       case RemoteId("maps", "remove", 2) =>
         val List(keyArg, map) = args
