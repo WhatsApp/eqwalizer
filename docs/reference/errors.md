@@ -174,32 +174,6 @@ This error indicates an unbound variable. Check the spelling of the variable.
 
 This error indicates an unbound record type. Check the spelling of the record name.
 
-
-### opacity_violation
-
-This error indicates that the code is doing something that relies on the definition
-of a type defined with `-opaque`, such as comparing it via `<=`, or inspecting it
-with a guard function such as `is_atom/1`.
-
-Opacity checks enable safe and modular reasoning about code. For example, OTP team
-defined `sets:set/1` as an opaque, which enabled them to change the representation
-of sets from records to maps. This change in representation won't break client
-code–as long as the client code doesn't violate the opacity of `sets:set/1` by
-operating on sets as records.
-
-These are some options for fixing code that violates opacity:
-
-- See if the module that defines the opaque provides helper functions for working
-with the type. For example, `sets:add_element/2` enables you to add items to a set
-without messing with the underlying record and map representations.
-- If such a helper function does not exist, you can add it: move the smallest
-operation that relies on the definition of the opaque into the same module where
-the opaque type is defined. Code in the same module as the `-opaque` type can rely
-on the definition of the opaque.
-- If the type doesn't seem like something that should be opaque, you can change
-`-opaque` to `-type` where the opaque is defined.
-
-
 ### behaviour_does_not_exist
 
 This error indicates that there is a `-behaviour(some_module)` attribute, where
@@ -416,29 +390,6 @@ You can try rewriting to use a specific function identifier:
 fun foo/1,
 foo(Arg), % etc
 ```
-
-### type_var_in_parameter_position
-
-The following opaque type alias contains a type variable in parameter position:
-
-```Erlang
--opaque bad_alias(T) -> fun((T) -> undefined).
-```
-
-Such opaques are not allowed because they break a common property assumed in
-Erlang code: that if `T` is a subtype of `U` then `alias(T)` is a subtype of
-`alias(U)`. For example, `sets:set(a)` is a subtype of `sets:set(a | b)`.
-But `fun((a) -> undefined)` is **not** a subtype of `fun((a | b) -> undefined)`.
-Put differently, aliases are usually covariant but function types are
-contravariant in their parameters.
-
-eqWAlizer is able to manipulate contravariant type aliases as long as they are
-not opaque, but will throw this error if it detects a contravariant opaque.
-
-This error is extremely rare in practice. If you get this error, the clearest
-thing to do for code readers just not use an alias: write out the full type.
-That way consumers of your API will see clearly that function types are involved.
-
 
 ### reference_to_invalid_type
 
