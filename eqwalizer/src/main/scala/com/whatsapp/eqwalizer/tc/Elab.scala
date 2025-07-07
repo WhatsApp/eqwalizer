@@ -178,12 +178,13 @@ final class Elab(pipelineContext: PipelineContext) {
             (DynamicType, env1)
           case _ =>
             val envs = occurrence.clausesEnvs(l.clauses, argTys, env1)
-            val (resTys, _) =
+            val (resTys, resEnvs) =
               l.clauses
                 .lazyZip(envs)
                 .map((clause, occEnv) => elabClause(clause, argTys, occEnv, Set.empty))
                 .unzip
-            (subtype.join(resTys), env1)
+            val resEnv = if (args.isEmpty) subtype.joinEnvs(resEnvs) else env1
+            (subtype.join(resTys), resEnv)
         }
       case DynCall(DynRemoteFun(mod, name), args) =>
         val env1 = check.checkExpr(mod, AtomType, env)
