@@ -9,7 +9,7 @@
 -compile(nowarn_redefined_builtin_type).
 -typing([eqwalizer]).
 
--export_type([dynamic/0, refinable/1]).
+-export_type([dynamic/0, dynamic/1, refinable/1]).
 -export([dynamic_cast/1, fix_me/1, reveal_type/1]).
 
 %% This type is intended to help with code being transitioned
@@ -21,6 +21,14 @@
 %% for other tooling (as dialyzer).
 %% In strict mode dynamic() is treated by eqWAlizer as an alias to term().
 -type dynamic() :: term().
+
+%% This type is a more precise version of dynamic/0, that introduces
+%% some degree of soundness while retaining the flexibility of dynamic/0.
+%% dynamic(T) is a subtype of everything, but a supertype of T
+%% (and its subtypes) only.
+%% It behaves as "T in, dynamic() out".
+%% For other tooling, dynamic(T) is defined as an alias to T.
+-type dynamic(T) :: T.
 
 %% @doc
 %% "Cast" function to convert values to eqwalizer:dynamic() type.
