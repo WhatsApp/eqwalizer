@@ -128,7 +128,8 @@ class Subtype(pipelineContext: PipelineContext) {
           case Some(recDecl) =>
             refRec.fields.forall(f => subTypePol(recDecl.fMap(f._1).tp, f._2, seen))
           case None =>
-            false
+            // rec was elaborated via is_record/3, optimistically assuming subtyping here
+            true
         }
       case (refRec1: RefinedRecordType, refRec2: RefinedRecordType) if refRec1.recType == refRec2.recType =>
         util.getRecord(refRec1.recType.module, refRec1.recType.name) match {
