@@ -6,9 +6,11 @@
 
 package com.whatsapp.eqwalizer.tc
 
+import com.whatsapp.eqwalizer.ast.Forms.RecDecl
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.{RemoteId, Show, TypeVars}
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Types.*
+
 import scala.util.boundary
 
 /**
@@ -296,30 +298,30 @@ class TypeMismatch(pipelineContext: PipelineContext) {
 
       case (r: RecordType, t: TupleType) =>
         util.getRecord(r.module, r.name) match {
-          case Some(recDecl) =>
+          case Some(recDecl) if isRecordCandidate(recDecl, t) =>
             findMismatch(recordAsTuple(recDecl), t, seen)
-          case None =>
+          case _ =>
             Details(Some(t1, t2, Incompatible), 20)
         }
       case (t: TupleType, r: RecordType) =>
         util.getRecord(r.module, r.name) match {
-          case Some(recDecl) =>
+          case Some(recDecl) if isRecordCandidate(recDecl, t) =>
             findMismatch(t, recordAsTuple(recDecl), seen)
-          case None =>
+          case _ =>
             Details(Some(t1, t2, Incompatible), 20)
         }
       case (r: RefinedRecordType, t: TupleType) =>
         util.getRecord(r.recType.module, r.recType.name) match {
-          case Some(recDecl) =>
+          case Some(recDecl) if isRecordCandidate(recDecl, t) =>
             findMismatch(refinedRecordAsTuple(recDecl, r), t, seen)
-          case None =>
+          case _ =>
             Details(Some(t1, t2, Incompatible), 20)
         }
       case (t: TupleType, r: RefinedRecordType) =>
         util.getRecord(r.recType.module, r.recType.name) match {
-          case Some(recDecl) =>
+          case Some(recDecl) if isRecordCandidate(recDecl, t) =>
             findMismatch(t, refinedRecordAsTuple(recDecl, r), seen)
-          case None =>
+          case _ =>
             Details(Some(t1, t2, Incompatible), 20)
         }
       case (refRec: RefinedRecordType, rec: RecordType) if refRec.recType.name == rec.name =>
@@ -542,5 +544,9 @@ class TypeMismatch(pipelineContext: PipelineContext) {
       case _ =>
         Details(Some(t1, t2, Incompatible), 0)
     }
+  }
+
+  private def isRecordCandidate(decl: RecDecl, tupleType: TupleType): Boolean = {
+    decl.fields.size + 1 == tupleType.argTys.size && subtype.gradualSubType(tupleType.argTys.head, AtomType)
   }
 }
