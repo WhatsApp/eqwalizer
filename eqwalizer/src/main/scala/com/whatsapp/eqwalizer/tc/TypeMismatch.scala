@@ -515,8 +515,10 @@ class TypeMismatch(pipelineContext: PipelineContext) {
           val mismatchDomain = findMismatch(kT1, domain2, seen).mismatch
           (mismatchDomain, mismatchVal) match {
             case (Some((newKT1, newKT2, mismatch)), _) =>
-              val newTy1 = MapType(props1, newKT1, vT1)
-              val newTy2 = MapType(props2, newKT2, vT2)
+              // We use `new` instead of `MapType.apply` to avoid post-processing of newKT1 and newKT2.
+              // It's important we preserve the shape of the type for error message generation later.
+              val newTy1 = new MapType(props1, newKT1, vT1)
+              val newTy2 = new MapType(props2, newKT2, vT2)
               return Details(Some(newTy1, newTy2, MapDefaultKeyMismatch(mismatch)), score)
             case (_, Some((newVT1, newVT2, mismatch))) =>
               val newTy1 = MapType(props1, kT1, newVT1)
