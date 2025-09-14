@@ -187,6 +187,11 @@
     Table :: ets:table().
 'ets:foldl'(_, _, _) -> error(eqwalizer_specs).
 
+-spec 'ets:foldr'(Function, Acc, Table) -> Acc when
+    Function :: fun((Element :: eqwalizer:dynamic(), Acc) -> Acc),
+    Table :: ets:table().
+'ets:foldr'(_, _, _) -> error(eqwalizer_specs).
+
 -spec 'ets:info'
     (ets:table(), compressed | decentralized_counters | read_concurrency | write_concurrency) ->
         boolean();
