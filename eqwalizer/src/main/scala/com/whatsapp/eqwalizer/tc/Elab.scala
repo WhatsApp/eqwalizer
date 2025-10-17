@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Guards.Guard
-import com.whatsapp.eqwalizer.ast.Pats.PatVar
+import com.whatsapp.eqwalizer.ast.Pats.{PatMatch, PatVar}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.ast.{BinarySpecifiers, Filters, Pats, RemoteId, Vars}
@@ -320,6 +320,8 @@ final class Elab(pipelineContext: PipelineContext) {
         val test = Filters.asTest(mExp).get
         val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)
         (AtomLitType("true"), env1)
+      case Match(mPat1, m @ Match(mPat2, mExp)) =>
+        elabExpr(Match(PatMatch(mPat1, mPat2)(m.pos), mExp)(expr.pos), env)
       case Match(mPat, mExp) =>
         val (ty, env1) = elabExpr(mExp, env)
         val (patTy, patEnv) = elabPat.elabPat(mPat, ty, env1)
