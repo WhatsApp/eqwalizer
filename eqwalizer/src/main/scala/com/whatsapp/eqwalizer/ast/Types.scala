@@ -29,6 +29,19 @@ object Types {
   /** prefer `Subtype.join` over `UnionType.apply`
     */
   case class UnionType(tys: Set[Type]) extends Type
+
+  object UnionType {
+    def apply(tys: Set[Type]): Type = {
+      // unions with NoneType are meaningless, we can remove them early
+      val types = tys - NoneType
+      types.size match {
+        case 0 => NoneType
+        case 1 => types.head
+        case _ => new UnionType(types)
+      }
+    }
+  }
+
   case class RemoteType(id: RemoteId, argTys: List[Type]) extends Type
 
   case class VarType(n: Int)(val name: String) extends Type
