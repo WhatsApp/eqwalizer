@@ -282,7 +282,7 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         val tys2 = util.flattenUnions(ut)
         val details = tys2.map(findMismatch(t1, _, seen))
         val highest = details.maxBy(_.score)
-        if (highest.score < 50)
+        if (highest.score < 40)
           Details(Some(t1, subtype.join(tys2), Incompatible), highest.score)
         else
           highest
