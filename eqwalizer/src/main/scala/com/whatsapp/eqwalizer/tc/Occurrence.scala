@@ -760,26 +760,26 @@ final class Occurrence(pipelineContext: PipelineContext) {
         Some(n1 == n2)
       case (RefinedRecordType(t, _), RecordType(n)) =>
         Some(n == t.name)
-      case (RecordType(name), TupleType(elems)) =>
-        elems match {
-          case Nil =>
+      case (r: RecordType, TupleType(elems)) =>
+        util.getRecordArity(r.module, r.name) match {
+          case Some(arity) if arity + 1 == elems.size =>
+            overlap(AtomLitType(r.name), elems.head)
+          case _ =>
             Some(false)
-          case h :: _ =>
-            overlap(AtomLitType(name), h)
         }
-      case (TupleType(elems), RecordType(name)) =>
-        elems match {
-          case Nil =>
+      case (TupleType(elems), r: RecordType) =>
+        util.getRecordArity(r.module, r.name) match {
+          case Some(arity) if arity + 1 == elems.size =>
+            overlap(elems.head, AtomLitType(r.name))
+          case _ =>
             Some(false)
-          case h :: _ =>
-            overlap(h, AtomLitType(name))
         }
       case (RefinedRecordType(t, _), TupleType(elems)) =>
-        elems match {
-          case Nil =>
+        util.getRecordArity(t.module, t.name) match {
+          case Some(arity) if arity + 1 == elems.size =>
+            overlap(AtomLitType(t.name), elems.head)
+          case _ =>
             Some(false)
-          case h :: _ =>
-            overlap(AtomLitType(t.name), h)
         }
       case (TupleType(_), _) =>
         Some(false)

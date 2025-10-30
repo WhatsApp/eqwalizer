@@ -34,6 +34,10 @@ class Util(pipelineContext: PipelineContext) {
     }
   }
 
+  def getRecordArity(module: String, name: String): Option[Int] = {
+    getRecord(module, name).map(_.fields.size)
+  }
+
   def getFunType(fqn: RemoteId): FunType = {
     Db.getSpec(fqn.module, Id(fqn.name, fqn.arity)).map(_.ty) match {
       case Some(funType) =>
