@@ -42,7 +42,13 @@ final class Elab(pipelineContext: PipelineContext) {
     (elabType, envAcc)
   }
 
-  def elabClause(clause: Clause, argTys: List[Type], env0: Env, exportedVars: Set[String]): (Type, Env) = {
+  def elabClause(
+      clause: Clause,
+      argTys: List[Type],
+      env0: Env,
+      exportedVars: Set[String],
+      checkReachability: Boolean = false,
+  ): (Type, Env) = {
     val patVars = Vars.clausePatVars(clause)
     val env1 = util.enterScope(env0, patVars)
     // see D29637051 for why we elabGuard twice
@@ -51,6 +57,8 @@ final class Elab(pipelineContext: PipelineContext) {
     }
     val (_, env3) = elabPat.elabPats(clause.pats, argTys, env2)
     val env4 = elabGuard.elabGuards(clause.guards, env3)
+    if (checkReachability && env4.exists { case (_, ty) => subtype.isNoneType(ty) })
+      return (NoneType, util.exitScope(env0, env4, exportedVars))
     val (eType, env5) = elabBody(clause.body, env4)
     val env6 = util.exitScope(env0, env5, exportedVars)
     if (subtype.gradualSubType(eType, NoneType))

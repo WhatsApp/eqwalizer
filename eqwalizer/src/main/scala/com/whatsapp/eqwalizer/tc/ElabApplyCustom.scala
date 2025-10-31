@@ -13,6 +13,7 @@ import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{ExpectedSubtype, IndexOutOfBounds, UnboundRecord}
 import com.whatsapp.eqwalizer.ast.CompilerMacro
 import com.whatsapp.eqwalizer.ast.Pats.{Pat, PatAtom, PatTuple, PatVar, PatWild}
+import com.whatsapp.eqwalizer.ast.Types.Key.asType
 
 import scala.collection.mutable
 
@@ -456,17 +457,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val keyTy = mapTys.map(narrow.getKeyType).join()
         val valTy = mapTys.map(narrow.getValType).join()
         val expFunTy = FunType(Nil, List(keyTy, valTy), AnyType)
-        val resValTy = funArg match {
-          case lambda: Lambda =>
-            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
-            val vTys = lambda.clauses.map(elab.elabClause(_, List(keyTy, valTy), lamEnv, Set.empty)).map(_._1)
-            subtype.join(vTys)
-          case _ =>
-            val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
-            val vTys = narrow.asFunTypes(funArgCoercedTy, 2).map(_.resTy)
-            subtype.join(vTys)
-        }
-        def mapValueType(argMapTy: MapType): Type = {
+        def mapValueType(resValTy: Type, argMapTy: MapType): Type = {
           MapType(
             argMapTy.props.map { case (key, Prop(req, _)) =>
               (key, Prop(req, resValTy))
@@ -475,7 +466,25 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             resValTy,
           )
         }
-        (mapTys.map(mapValueType).join(), env1)
+        def elabMap(lambda: Lambda, argMapTy: MapType, env: Env): MapType = {
+          MapType(
+            argMapTy.props.map { case (key, prop) =>
+              val resTy = elabLambda2(lambda, asType(key), prop.tp, env)
+              (key, Prop(prop.req, resTy))
+            },
+            argMapTy.kType,
+            elabLambda2(lambda, argMapTy.kType, argMapTy.vType, env),
+          )
+        }
+        funArg match {
+          case lambda: Lambda =>
+            val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            (mapTys.map(elabMap(lambda, _, lamEnv)).join(), env1)
+          case _ =>
+            val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
+            val vTys = narrow.asFunTypes(funArgCoercedTy, 2).map(_.resTy)
+            (mapTys.map(mapValueType(subtype.join(vTys), _)).join(), env1)
+        }
 
       case RemoteId("maps", "filtermap", 2) =>
         val List(funArg, map) = args
@@ -745,6 +754,15 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       case rid =>
         throw new IllegalArgumentException(s"unexpected $rid")
     }
+  }
+
+  def elabLambda2(lambda: Lambda, t1: Type, t2: Type, env: Env): Type = {
+    val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(t1, t2), env)
+    val resTys =
+      lambda.clauses
+        .lazyZip(clauseEnvs)
+        .map((clause, occEnv) => elab.elabClause(clause, List(t1, t2), occEnv, Set.empty, checkReachability = true)._1)
+    subtype.join(resTys)
   }
 
   private lazy val anyMapTy = MapType(Map(), AnyType, AnyType)
