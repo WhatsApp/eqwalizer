@@ -20,4 +20,6 @@
     - [Overloaded specs](./reference/advanced.md#overloaded-specs)
     - [Experimental and expert features](./reference/advanced.md#experimental-and-expert-features)
 
+- ### [Shortcomings and limitations](./reference/shortcomings.md)
+
 - ### [Reference of errors](./reference/errors.md)
