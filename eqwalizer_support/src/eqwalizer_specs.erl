@@ -179,8 +179,14 @@
 
 %% -------- ets --------
 
--spec 'ets:first'(ets:tab()) -> eqwalizer:dynamic().
+-spec 'ets:first'(ets:table()) -> eqwalizer:dynamic().
 'ets:first'(_) -> error(eqwalizer_specs).
+
+-spec 'ets:first_lookup'(Table) -> {Key, [Object]} | '$end_of_table' when
+    Table :: ets:table(),
+    Key :: eqwalizer:dynamic(),
+    Object :: tuple().
+'ets:first_lookup'(_) -> error(eqwalizer_specs).
 
 -spec 'ets:foldl'(Function, Acc, Table) -> Acc when
     Function :: fun((Element :: eqwalizer:dynamic(), Acc) -> Acc),
@@ -193,31 +199,46 @@
 'ets:foldr'(_, _, _) -> error(eqwalizer_specs).
 
 -spec 'ets:info'
-    (ets:table(), compressed | decentralized_counters | read_concurrency | write_concurrency) ->
+    (ets:table(), compressed | decentralized_counters | fixed | named_table | read_concurrency | write_concurrency) ->
         boolean();
+    (ets:table(), binary) -> list();
     (ets:table(), heir) -> pid() | none;
     (ets:table(), id) -> ets:tid();
     (ets:table(), keypos | memory | size) -> non_neg_integer();
     (ets:table(), name) -> atom();
     (ets:table(), node) -> node();
     (ets:table(), owner) -> pid();
+    (ets:table(), safe_fixed | safe_fixed_monotonic_time) -> tuple() | false;
+    (ets:table(), stats) -> tuple();
     (ets:table(), protection) -> ets:table_access();
     (ets:table(), type) -> ets:table_type().
 'ets:info'(_, _) -> error(eqwalizer_specs).
 
--spec 'ets:next'(ets:tab(), term()) -> eqwalizer:dynamic().
+-spec 'ets:next'(ets:table(), term()) -> eqwalizer:dynamic().
 'ets:next'(_, _) -> error(eqwalizer_specs).
 
--spec 'ets:last'(ets:tab()) -> eqwalizer:dynamic() | '$end_of_table'.
+-spec 'ets:next_lookup'(ets:table(), term()) -> {eqwalizer:dynamic(), list()} | '$end_of_table'.
+'ets:next_lookup'(_, _) -> error(eqwalizer_specs).
+
+-spec 'ets:prev'(ets:table(), term()) -> eqwalizer:dynamic().
+'ets:prev'(_, _) -> error(eqwalizer_specs).
+
+-spec 'ets:prev_lookup'(ets:table(), term()) -> {eqwalizer:dynamic(), list()} | '$end_of_table'.
+'ets:prev_lookup'(_, _) -> error(eqwalizer_specs).
+
+-spec 'ets:last'(ets:table()) -> eqwalizer:dynamic() | '$end_of_table'.
 'ets:last'(_) -> error(eqwalizer_specs).
 
--spec 'ets:lookup'(ets:tab(), term()) -> [eqwalizer:dynamic()].
+-spec 'ets:lookup'(ets:table(), term()) -> [eqwalizer:dynamic()].
 'ets:lookup'(_, _) -> error(eqwalizer_specs).
 
--spec 'ets:lookup_element'(ets:tab(), term(), pos_integer()) -> eqwalizer:dynamic().
+-spec 'ets:lookup_element'(ets:table(), term(), pos_integer()) -> eqwalizer:dynamic().
 'ets:lookup_element'(_, _, _) -> error(eqwalizer_specs).
 
--spec 'ets:match'(ets:tab(), ets:match_pattern()) -> [eqwalizer:dynamic()].
+-spec 'ets:lookup_element'(ets:table(), term(), pos_integer(), term()) -> eqwalizer:dynamic().
+'ets:lookup_element'(_, _, _, _) -> error(eqwalizer_specs).
+
+-spec 'ets:match'(ets:table(), ets:match_pattern()) -> [eqwalizer:dynamic()].
 'ets:match'(_, _) -> error(eqwalizer_specs).
 
 -spec 'ets:select'(EtsContinuation) ->
@@ -226,29 +247,58 @@ when
     EtsContinuation :: eqwalizer:dynamic().
 'ets:select'(_) -> error(eqwalizer_specs).
 
--spec 'ets:select'(ets:tab(), ets:match_spec()) -> [eqwalizer:dynamic()].
+-spec 'ets:select'(ets:table(), ets:match_spec()) -> [eqwalizer:dynamic()].
 'ets:select'(_, _) -> error(eqwalizer_specs).
 
--spec 'ets:select'(ets:tab(), ets:match_spec(), pos_integer()) ->
+-spec 'ets:select'(ets:table(), ets:match_spec(), pos_integer()) ->
     {[eqwalizer:dynamic()], EtsContinuation} | '$end_of_table'
 when
     EtsContinuation :: eqwalizer:dynamic().
 'ets:select'(_, _, _) -> error(eqwalizer_specs).
 
--spec 'ets:select_reverse'(ets:tab(), ets:match_spec()) -> [eqwalizer:dynamic()].
+-spec 'ets:select_reverse'(ets:table(), ets:match_spec()) -> [eqwalizer:dynamic()].
 'ets:select_reverse'(_, _) -> error(eqwalizer_specs).
 
--spec 'ets:select_reverse'(ets:tab(), ets:match_spec(), pos_integer()) ->
+-spec 'ets:select_reverse'(ets:table(), ets:match_spec(), pos_integer()) ->
     {[eqwalizer:dynamic()], EtsContinuation} | '$end_of_table'
 when
     EtsContinuation :: eqwalizer:dynamic().
 'ets:select_reverse'(_, _, _) -> error(eqwalizer_specs).
 
--spec 'ets:tab2list'(ets:tab()) -> [eqwalizer:dynamic()].
+-spec 'ets:tab2list'(ets:table()) -> [eqwalizer:dynamic()].
 'ets:tab2list'(_) -> error(eqwalizer_specs).
 
--spec 'ets:take'(ets:tab(), term()) -> [eqwalizer:dynamic()].
+-spec 'ets:take'(ets:table(), term()) -> [eqwalizer:dynamic()].
 'ets:take'(_, _) -> error(eqwalizer_specs).
+
+-spec 'ets:test_ms'(tuple(), ets:match_spec()) ->
+    {ok, eqwalizer:dynamic()} | {error, [{warning | error, string()}]}.
+'ets:test_ms'(_, _) -> error(eqwalizer_specs).
+
+-spec 'ets:update_counter'(Table, Key, UpdateOp | [UpdateOp] | Incr) -> eqwalizer:dynamic(Result | [Result]) when
+    Table :: ets:table(),
+    Key :: term(),
+    UpdateOp :: {Pos, Incr} | {Pos, Incr, Threshold, SetValue},
+    Pos :: integer(),
+    Incr :: integer(),
+    Threshold :: integer(),
+    SetValue :: integer(),
+    Result :: integer().
+'ets:update_counter'(_, _, _) -> error(eqwalizer_specs).
+
+-spec 'ets:update_counter'(Table, Key, UpdateOp | Incr | [UpdateOp], Default) ->
+    eqwalizer:dynamic(Result | [Result])
+when
+    Table :: ets:table(),
+    Key :: term(),
+    UpdateOp :: {Pos, Incr} | {Pos, Incr, Threshold, SetValue},
+    Pos :: integer(),
+    Incr :: integer(),
+    Threshold :: integer(),
+    SetValue :: integer(),
+    Result :: integer(),
+    Default :: tuple().
+'ets:update_counter'(_, _, _, _) -> error(eqwalizer_specs).
 
 %% -------- file --------
 
