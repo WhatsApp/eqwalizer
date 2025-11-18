@@ -147,3 +147,21 @@ test_impl(Foos, Bars) ->
 OTP functions with complex logic are supported on a case-by-case and best-effort basis in eqWAlizer. This includes most of the functions of the `lists` and `maps` modules, such as `lists:filtermap` and `maps:fold`, for example.
 
 While we continuously improve support for these functions, there are always some gaps. Moreover, very large types (such as large map types) can be prohibitively expensive to support properly, hence we have to resort to some approximations. In many cases, the type of a map will be "flattened", e.g., `#{a => foo(), b => bar()}` will be approximated to `#{a | b => foo() | bar()}`, possibly leading to false positives.
+
+### Clause coverage and exhaustiveness checking
+
+As eqWAlizer is able to detect which cases have been handled by previous function clauses (see [occurrence typing](../reference/narrowing.md#occurrence-typing)), it is also able to detect when a case has already been handled, or is not covered by any spec. For example, the following will not typecheck:
+```erlang
+-spec foo(atom()) -> atom().
+foo(A) when is_atom(A) -> A;
+foo(B) -> binary_to_atom(B).
+
+Clause foo(B) -> binary_to_atom(B) is not covered by spec.
+```
+However, eqWAlizer is as of now only able to perform this reasoning on top-level function clauses. For example, it will not check such coverage for case expressions. It also won't report a variable assigment whose pattern cannot match.
+
+Additionally, eqWAlizer *does not* perform the converse, that is, exhaustiveness checking. It *will not* ensure that all cases of a spec are properly handled, since leaving cases unhandled is a frequent consequence of the "let-it-crash" philosophy. As such, the following will typecheck:
+```erlang
+-spec foo(atom() | binary()) -> atom().
+foo(A) when is_atom(A) -> A.
+```
