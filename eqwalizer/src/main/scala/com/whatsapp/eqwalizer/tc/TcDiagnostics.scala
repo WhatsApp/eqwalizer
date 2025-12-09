@@ -26,12 +26,7 @@ object TcDiagnostics {
     def errorName = "incompatible_types"
     override def erroneousExpr: Option[Expr] = Some(expr)
     override lazy val explanation: Option[String] = {
-      val mismatchExplain = typeMismatch.explain(got, expected)
-      val detailsExplain = subtypeDetail.explain(got, expected)
-      val separator = s"\n\n${"-" * 30} Detailed message ${"-" * 30}\n\n"
-      val explanations = List(mismatchExplain, detailsExplain).flatten
-      if (explanations.isEmpty) None
-      else Some(explanations.mkString(separator))
+      typeMismatch.explain(got, expected)
     }
   }
   case class ExpectedFunType(pos: Pos, expr: Expr, expectedArity: Int, got: Type)(implicit
