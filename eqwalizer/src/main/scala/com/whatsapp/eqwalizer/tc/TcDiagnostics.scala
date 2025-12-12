@@ -20,7 +20,6 @@ object TcDiagnostics {
     private val (showGot, showExpected) = showNotSubtype(got, expected)
     override val msg: String =
       s"Expression has type:   $showGot\nContext expected type: $showExpected"
-    private val subtypeDetail = pipelineContext.subtypeDetail
     private val typeMismatch = pipelineContext.typeMismatch
 
     def errorName = "incompatible_types"
@@ -88,11 +87,9 @@ object TcDiagnostics {
       implicit val pipelineContext: PipelineContext
   ) extends TypeError {
     override val msg: String =
-      s"Incorrect return type for implementation of $behaviourName:$callback. Expected: ${show(expected)}, Got: ${show(
-        got
-      )}."
+      s"Incorrect return type for implementation of $behaviourName:$callback.\nExpected: ${show(expected)}\nGot:      ${show(got)}"
 
-    override lazy val explanation = pipelineContext.subtypeDetail.explain(expected = expected, got = got)
+    override lazy val explanation: Option[String] = pipelineContext.typeMismatch.explain(got, expected)
 
     def errorName = "incorrect_return_type_in_cb_implementation"
     override def erroneousExpr: Option[Expr] = None

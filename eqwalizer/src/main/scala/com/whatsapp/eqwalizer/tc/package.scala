@@ -27,7 +27,6 @@ package object tc {
     val narrow: Narrow = new Narrow(this)
     val constraints: Constraints = new Constraints(this)
     val checkCallback: CheckCallback = new CheckCallback(this)
-    val subtypeDetail: SubtypeDetail = new SubtypeDetail(this)
     val typeMismatch: TypeMismatch = new TypeMismatch(this)
     val check: Check =
       new Check(this)
