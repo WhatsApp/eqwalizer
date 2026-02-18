@@ -44,7 +44,7 @@ object Ipc {
       case Left(GotNull()) =>
         // Happens when the client panics, such as ELP bug T111364923.
         // This error will only show up in logging, not really user-facing
-        Console.err.println(s"eqWAlizer [getAstBytes] GotNull")
+        Console.err.println(s"eqWAlizer [getAstBytes] GotNull for module '$module', kind '$kind'")
         throw Terminated
     }
   }
@@ -72,7 +72,7 @@ object Ipc {
         Console.err.println(s"eqWAlizer [getTypeDecl] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer [getTypeDecl] GotNull")
+        Console.err.println(s"eqWAlizer [getTypeDecl] GotNull for module '$module', id '$id'")
         throw Terminated
   }
 
@@ -99,7 +99,7 @@ object Ipc {
         Console.err.println(s"eqWAlizer [getRecDecl] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer [getRecDecl] GotNull")
+        Console.err.println(s"eqWAlizer [getRecDecl] GotNull for module '$module', id '$id'")
         throw Terminated
   }
 
@@ -126,7 +126,7 @@ object Ipc {
         Console.err.println(s"eqWAlizer [getFunSpec] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer [getFunSpec] GotNull")
+        Console.err.println(s"eqWAlizer [getFunSpec] GotNull for module '$module', id '$id'")
         throw Terminated
   }
 
@@ -153,7 +153,7 @@ object Ipc {
         Console.err.println(s"eqWAlizer [getOverloadedFunSpec] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer [getOverloadedFunSpec] GotNull")
+        Console.err.println(s"eqWAlizer [getOverloadedFunSpec] GotNull for module '$module', id '$id'")
         throw Terminated
   }
 
@@ -180,7 +180,7 @@ object Ipc {
         Console.err.println(s"eqWAlizer [getCallbacks] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer [getCallbacks] GotNull")
+        Console.err.println(s"eqWAlizer [getCallbacks] GotNull for module '$module'")
         throw Terminated
   }
 
@@ -217,7 +217,7 @@ object Ipc {
         Console.err.println(s"eqWAlizer [validateType] received bad reply from ELP when validating type: $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer [validateType] GotNull")
+        Console.err.println(s"eqWAlizer [validateType] GotNull for type '$ty'")
         throw Terminated
     }
   }
@@ -239,7 +239,7 @@ object Ipc {
         Console.err.println(s"eqWAlizer [shouldEqwalize] received bad reply from ELP $reply")
         throw Terminated
       case Left(GotNull()) =>
-        Console.err.println(s"eqWAlizer [shouldEqwalize] GotNull")
+        Console.err.println(s"eqWAlizer [shouldEqwalize] GotNull for module '$module'")
         throw Terminated
     }
   }
