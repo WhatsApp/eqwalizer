@@ -723,7 +723,7 @@ final class Elab(pipelineContext: PipelineContext) {
         envAcc = pEnv
       case MGenerate(gkPat, gvPat, gExpr) =>
         val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, mapOrIterTy)
-        val mapT = narrow.asMapTypes(gT)
+        val mapT = narrow.asMapOrIterTypes(gT)
         val kT = subtype.join(mapT.map(narrow.getKeyType))
         val vT = subtype.join(mapT.map(narrow.getValType))
         val (_, kPatEnv) = elabPat.elabPat(gkPat, kT, gEnv)
@@ -731,7 +731,7 @@ final class Elab(pipelineContext: PipelineContext) {
         envAcc = vPatEnv
       case MGenerateStrict(gkPat, gvPat, gExpr) =>
         val (gT, gEnv) = elabExprAndCheck(gExpr, envAcc, mapOrIterTy)
-        val mapT = narrow.asMapTypes(gT)
+        val mapT = narrow.asMapOrIterTypes(gT)
         val kT = subtype.join(mapT.map(narrow.getKeyType))
         val vT = subtype.join(mapT.map(narrow.getValType))
         val (_, kPatEnv) = elabPat.elabPat(gkPat, kT, gEnv)
