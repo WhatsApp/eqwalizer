@@ -7,6 +7,7 @@
 - [Disjunction of many cases/clauses](#disjunction-of-many-casesclauses)
 - [Distributivity of unions](#distributivity-of-unions)
 - [Complex functions (lists, maps)](#complex-functions-lists-maps)
+- [Clause coverage and exhaustiveness checking](#clause-coverage-and-exhaustiveness-checking)
 
 ### Custom validation/predicates
 
@@ -159,6 +160,14 @@ foo(B) -> binary_to_atom(B).
 Clause foo(B) -> binary_to_atom(B) is not covered by spec.
 ```
 However, eqWAlizer is as of now only able to perform this reasoning on top-level function clauses. For example, it will not check such coverage for case expressions. It also won't report a variable assigment whose pattern cannot match.
+
+Also, coverage checking for the last clause of a function is done differently, and conservatively, so as to avoid false positives. Indeed, many last clauses are meant to be uncovered "catch-all" clauses, which should not be reported as errors. For example, the wildcard pattern will make the following accepted even though, according to the spec, the last clause can never match:
+```erlang
+-spec foo(atom()) -> atom().
+foo(A) when is_atom(A) -> A;
+foo(_) -> error(nomatch).
+```
+As a side-effect, it means that sometimes eqWAlizer will not report an actual issue on the last clause.
 
 Additionally, eqWAlizer *does not* perform the converse, that is, exhaustiveness checking. It *will not* ensure that all cases of a spec are properly handled, since leaving cases unhandled is a frequent consequence of the "let-it-crash" philosophy. As such, the following will typecheck:
 ```erlang
