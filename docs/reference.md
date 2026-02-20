@@ -15,6 +15,8 @@
 
 - ### [Escape hatches](./reference/escape.md)
 
+- ### [Overriding specs and types from third-party libraries](./reference/overrides.md)
+
 - ### [Advanced features](./reference/advanced.md)
 
     - [Overloaded specs](./reference/advanced.md#overloaded-specs)
