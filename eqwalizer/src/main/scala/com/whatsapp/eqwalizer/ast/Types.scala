@@ -91,8 +91,10 @@ object Types {
   val undefined: Type = AtomLitType("undefined")
   val exnClassType: Type =
     UnionType(Set(AtomLitType("error"), AtomLitType("exit"), AtomLitType("throw")))
+  val clsExnStackType: Type =
+    RemoteType(RemoteId("erlang", "stacktrace", 0), List())
   val clsExnStackTypeDynamic: Type =
-    TupleType(List(exnClassType, DynamicType, ListType(DynamicType)))
+    TupleType(List(exnClassType, DynamicType, clsExnStackType))
 
   val builtinTypeAliasBodies: Map[String, Type] = Map(
     "string" -> ListType(charType),
