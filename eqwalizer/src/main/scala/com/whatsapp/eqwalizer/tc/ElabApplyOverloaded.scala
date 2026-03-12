@@ -19,6 +19,7 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private val elabApply = pipelineContext.elabApply
   private val narrow = pipelineContext.narrow
+  private lazy val instantiate = pipelineContext.instantiate
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private implicit val pipelineCtx: PipelineContext = pipelineContext
@@ -28,12 +29,12 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
     val (argTys, env1) = elab.elabExprs(args, env)
     selectFunTypes(depFunSpec, argTys) match {
       case List(ft: FunType) =>
-        val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+        val resTy = elabApply.elabApply(ft, args, argTys, env1)
         (resTy, env1)
       case _ =>
         if (pipelineCtx.overloadedSpecDynamicResult && typeInfo.isCollect)
           diagnosticsInfo.add(NoSpecialType(expr.pos, expr, argTys))
-        toFunType(depFunSpec).foreach(ft => elabApply.elabApply(check.freshen(ft), args, argTys, env1))
+        toFunType(depFunSpec).foreach(ft => elabApply.elabApply(ft, args, argTys, env1))
         (DynamicType, env1)
     }
   }
@@ -44,10 +45,10 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   private def toFunType(depFunSpec: OverloadedFunSpec): Option[FunType] = {
     // If a sub-spec has generic vars, - transforming it to a FunType is tricky in general case.
     // Skipping overloaded specs with generic vars for now (for simplicity).
-    if (depFunSpec.tys.forall(_.forall.isEmpty)) {
+    if (depFunSpec.tys.forall(_.forall == 0)) {
       val result = depFunSpec.tys.reduce { (acc, elem) =>
         val argTys = acc.argTys.zip(elem.argTys).map { case (t1, t2) => subtype.join(t1, t2) }
-        FunType(Nil, argTys, DynamicType)
+        FunType(0, argTys, DynamicType)
       }
       Some(result)
     } else None
@@ -59,5 +60,8 @@ class ElabApplyOverloaded(pipelineContext: PipelineContext) {
   }
 
   private def selectFunTypes(depFunSpec: OverloadedFunSpec, argTys: List[Type]): List[FunType] =
-    depFunSpec.tys.filter(ft => argTys.lazyZip(ft.argTys).forall(mayOverlap))
+    depFunSpec.tys.filter { ft =>
+      val (_, iFt) = instantiate.instantiate(ft)
+      argTys.lazyZip(iFt.argTys).forall(mayOverlap)
+    }
 }

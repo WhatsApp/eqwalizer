@@ -73,7 +73,7 @@ object Pipeline {
   }
 
   private def getDynamicFunSpecType(f: FunDecl): FunSpec =
-    FunSpec(f.id, FunType(Nil, List.fill(f.id.arity)(DynamicType), DynamicType))
+    FunSpec(f.id, FunType(0, List.fill(f.id.arity)(DynamicType), DynamicType))
 
   private def checkFun(ctx: PipelineContext, f: FunDecl, spec: FunSpec): List[Diagnostic] = {
     ctx.check.checkFun(f, spec)

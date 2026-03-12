@@ -11,7 +11,7 @@ import com.whatsapp.eqwalizer.ast.Forms.{FunDecl, FunSpec, OverloadedFunSpec}
 import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.stub.Db
-import com.whatsapp.eqwalizer.ast.{Filters, Pats, RemoteId, TypeVars, Vars}
+import com.whatsapp.eqwalizer.ast.{Filters, Pats, RemoteId, Vars}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.*
 
 final class Check(pipelineContext: PipelineContext) {
@@ -29,11 +29,11 @@ final class Check(pipelineContext: PipelineContext) {
   private lazy val customReturn = pipelineContext.customReturn
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
-  lazy val freshen = new TypeVars.VarFreshener().freshen
+  private lazy val instantiate = pipelineContext.instantiate
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   def checkFun(f: FunDecl, spec: FunSpec): Unit = {
-    val ft = freshen(spec.ty)
+    val (_, ft) = instantiate.instantiate(spec.ty)
     val FunType(_, argTys, resTy) = ft
     val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Map.empty)
     val singleClause = f.clauses.length == 1
@@ -54,8 +54,8 @@ final class Check(pipelineContext: PipelineContext) {
   }
 
   def checkOverloadedFun(f: FunDecl, overloadedSpec: OverloadedFunSpec): Unit = {
-    overloadedSpec.tys.foreach { funTy =>
-      val ft = freshen(funTy)
+    overloadedSpec.tys.foreach { ft0 =>
+      val (_, ft) = instantiate.instantiate(ft0)
       val FunType(_, argTys, resTy) = ft
       val clauseEnvs = occurrence.clausesEnvs(f.clauses, ft.argTys, Env.empty)
       f.clauses
@@ -206,7 +206,7 @@ final class Check(pipelineContext: PipelineContext) {
             env1
           } else {
             val ft = util.getFunType(module, id)
-            checkApply(funId, expr, freshen(ft), args, resTy, env)
+            checkApply(funId, expr, ft, args, resTy, env)
           }
         case DynRemoteFun(mod, name) =>
           throw new IllegalStateException(s"unexpected $expr")
@@ -232,7 +232,7 @@ final class Check(pipelineContext: PipelineContext) {
             env1
           } else {
             val ft = util.getFunType(fqn)
-            checkApply(fqn, expr, freshen(ft), args, resTy, env)
+            checkApply(fqn, expr, ft, args, resTy, env)
           }
         case DynCall(l: Lambda, args) =>
           val arity = lambdaArity(l)
@@ -243,7 +243,7 @@ final class Check(pipelineContext: PipelineContext) {
           }
           l.name match {
             case Some(name) =>
-              val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), resTy)
+              val funType = FunType(0, List.fill(argTys.size)(DynamicType), resTy)
               val env2 = env.updated(name, funType)
               checkExpr(l, funType, env2)
             case _ =>
@@ -282,15 +282,13 @@ final class Check(pipelineContext: PipelineContext) {
         case LocalFun(id) =>
           val fqn = util.globalFunId(module, id)
           val ft = util.getFunType(fqn)
-          val ft1 = freshen(ft)
-          if (!subtype.subType(ft1, resTy))
-            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
+          if (!subtype.subType(ft, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft))
           env
         case RemoteFun(fqn) =>
           val ft = util.getFunType(fqn)
-          val ft1 = freshen(ft)
-          if (!subtype.subType(ft1, resTy))
-            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft1))
+          if (!subtype.subType(ft, resTy))
+            diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft))
           env
         case lambda: Lambda =>
           checkLambda(lambda, resTy, env)

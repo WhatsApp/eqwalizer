@@ -30,10 +30,7 @@ object Constraints {
   type ConstraintSeq = Vector[(Var, ConstraintLoc, Constraint)]
 
   private case class State(
-      // `toSolve` is Xbar in Pierce and Turner "Local Type Inference" section 3.3: variables we are solving for
       toSolve: Set[Var],
-      // varsToElim is set V in Pierce and Turner section 3.3: variables that should not appear in constraints (bound variables).
-      // currently will *always* be empty because currently in EqWAlizer parameters with function types always have empty foralls (we don't have higher-rank types).
       varsToElim: Set[Var],
       cs: ConstraintSeq,
       variances: Map[Var, Variance],
@@ -51,6 +48,7 @@ class Constraints(pipelineContext: PipelineContext) {
   private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
+  private lazy val instantiate = pipelineContext.instantiate
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
   /** Pierce and Turner Local Type Inference section 3.3
@@ -145,20 +143,19 @@ class Constraints(pipelineContext: PipelineContext) {
           TypeVars.conformForalls(rawFt1, rawFt2) match {
             case Some((ft1, ft2)) =>
               assert(ft1.forall == ft2.forall)
-              val st = state.copy(varsToElim = varsToElim ++ ft1.forall)
               val lowersAndUppers = ft2.argTys.zip(ft1.argTys) ++ List((ft1.resTy, ft2.resTy))
-              constrainSeq(st, lowersAndUppers, tolerateUnion)
+              constrainSeq(state, lowersAndUppers, tolerateUnion)
             case None =>
               failSubtype()
           }
 
-        case (ft1: AnyArityFunType, ft2: FunType) =>
-          val st = state.copy(varsToElim = varsToElim ++ ft2.forall)
-          constrain(st, ft1.resTy, ft2.resTy, tolerateUnion)
+        case (ft1: AnyArityFunType, ft2: FunType) if ft2.forall == 0 =>
+          constrain(state, ft1.resTy, ft2.resTy, tolerateUnion)
 
         case (ft1: FunType, ft2: AnyArityFunType) =>
-          val st = state.copy(varsToElim = varsToElim ++ ft1.forall)
-          constrain(st, ft1.resTy, ft2.resTy, tolerateUnion)
+          val (vars, ft11) = instantiate.instantiate(ft1)
+          val st = state.copy(varsToElim = state.varsToElim ++ vars)
+          constrain(st, ft11.resTy, ft2.resTy, tolerateUnion)
 
         case (ft1: AnyArityFunType, ft2: AnyArityFunType) =>
           constrain(state, ft1.resTy, ft2.resTy, tolerateUnion)
@@ -344,15 +341,9 @@ class Constraints(pipelineContext: PipelineContext) {
       c.upper
   }
 
-  private def freeVars(ty: Type): Set[Var] = freeVarsHelper(ty, Set.empty).toSet
-
-  private def freeVarsHelper(ty: Type, bound: Set[Var]): List[Var] = ty match {
-    case ft: FunType =>
-      val bound1 = bound ++ ft.forall
-      TypeVars.children(ft).flatMap(freeVarsHelper(_, bound1))
-    case FreeVarType(n) if !bound.contains(n) => List(n)
-    case FreeVarType(_)                       => Nil
-    case _                                    => TypeVars.children(ty).flatMap(freeVarsHelper(_, bound))
+  private def freeVars(ty: Type): Set[Var] = ty match {
+    case FreeVarType(n) => Set(n)
+    case _              => TypeVars.children(ty).flatMap(freeVars).toSet
   }
 
   /** Safe approximation because we re-check arg types once we have concrete param types

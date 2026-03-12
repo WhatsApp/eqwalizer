@@ -18,7 +18,7 @@ object Types {
   sealed trait Type
   case class AtomLitType(atom: String) extends Type
   case object AnyFunType extends Type
-  case class FunType(forall: List[Int], argTys: List[Type], resTy: Type) extends Type
+  case class FunType(forall: Int, argTys: List[Type], resTy: Type) extends Type
   case class AnyArityFunType(resTy: Type) extends Type
 
   case object AnyTupleType extends Type

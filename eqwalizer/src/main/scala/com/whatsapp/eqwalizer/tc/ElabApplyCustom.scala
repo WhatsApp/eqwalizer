@@ -110,7 +110,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
     remoteId match {
       case fqn @ RemoteId("file", "open", 2) =>
         val ft = util.getFunType(fqn)
-        val resTy = elabApply.elabApply(check.freshen(ft), args, argTys, env1)
+        val resTy = elabApply.elabApply(ft, args, argTys, env1)
         val resTyPrecise = {
           val modeArg = args(1)
           def collectModes(expr: Expr): List[Option[String]] = {
@@ -162,7 +162,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val elemTy = narrow.asListType(collectionTyCoerced).get.t
         val tupleTrueAnyTy = TupleType(List(trueType, AnyType))
         val expRet = subtype.join(booleanType, tupleTrueAnyTy)
-        val expFunTy = FunType(Nil, List(elemTy), expRet)
+        val expFunTy = FunType(0, List(elemTy), expRet)
         val funResTys = funArg match {
           case lambda: Lambda =>
             check.checkLambda(lambda, expFunTy, env)
@@ -250,7 +250,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val List(predTy, listTy) = argTys
         val coercedListTy = coerce(list, listTy, ListType(AnyType))
         val elemTy = narrow.asListType(coercedListTy).get.t
-        val expFunTy = FunType(Nil, List(elemTy), booleanType)
+        val expFunTy = FunType(0, List(elemTy), booleanType)
         pred match {
           case lambda: Lambda if Predicates.booleanReturnClauses(lambda.clauses) =>
             check.checkLambda(lambda, expFunTy, env1)
@@ -273,7 +273,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val mapTys = coerceToMapsOrIter(map, mapTy)
         val keyTy = mapTys.map(narrow.getKeyType).join()
         val valTy = mapTys.map(narrow.getValType).join()
-        val expFunTy = FunType(Nil, List(keyTy, valTy), booleanType)
+        val expFunTy = FunType(0, List(keyTy, valTy), booleanType)
         funArg match {
           case lambda: Lambda =>
             check.checkLambda(lambda, expFunTy, env)
@@ -334,7 +334,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
 
         def getAccumulatorTys(accTy: Type): List[Type] = funArg match {
           case lambda: Lambda if isShapeIterator(lambda) =>
-            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
+            val expFunTy = FunType(0, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
             var keyTyLast = keyTy
             val vTys = lambda.clauses.map { clause =>
@@ -349,7 +349,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             }
             accTy1 :: vTys
           case lambda: Lambda =>
-            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
+            val expFunTy = FunType(0, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
             val occEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy, accTy), lamEnv)
             val vTys =
@@ -359,14 +359,14 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
                 .map(_._1)
             accTy1 :: vTys
           case _ =>
-            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), AnyType)
+            val expFunTy = FunType(0, List(keyTy, valTy, accTy), AnyType)
             val funArgCoercedTy = coerce(funArg, funArgTy, expFunTy)
             val vTys = narrow.asFunTypes(funArgCoercedTy, 3).map(_.resTy).toList
             accTy1 :: vTys
         }
         def validateAccumulatorTy(accTy: Type): Unit = funArg match {
           case lambda: Lambda if isShapeIterator(lambda) =>
-            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
+            val expFunTy = FunType(0, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
             var keyTyLast = keyTy
             lambda.clauses.map { clause =>
@@ -380,9 +380,9 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
               }
             }
           case lambda: Lambda =>
-            check.checkLambda(lambda, FunType(Nil, List(keyTy, valTy, accTy), accTy), env)
+            check.checkLambda(lambda, FunType(0, List(keyTy, valTy, accTy), accTy), env)
           case _ =>
-            val expFunTy = FunType(Nil, List(keyTy, valTy, accTy), accTy)
+            val expFunTy = FunType(0, List(keyTy, valTy, accTy), accTy)
             coerce(funArg, funArgTy, expFunTy)
         }
         val accTys2 = getAccumulatorTys(accTy1)
@@ -456,7 +456,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val mapTys = coerceToMapsOrIter(map, mapTy)
         val keyTy = mapTys.map(narrow.getKeyType).join()
         val valTy = mapTys.map(narrow.getValType).join()
-        val expFunTy = FunType(Nil, List(keyTy, valTy), AnyType)
+        val expFunTy = FunType(0, List(keyTy, valTy), AnyType)
         def mapValueType(resValTy: Type, argMapTy: MapType): Type = {
           MapType(
             argMapTy.props.map { case (key, Prop(req, _)) =>
@@ -494,7 +494,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val valTy = mapTys.map(narrow.getValType).join()
         val tupleTrueAnyTy = TupleType(List(trueType, AnyType))
         val expRet = subtype.join(booleanType, tupleTrueAnyTy)
-        val expFunTy = FunType(Nil, List(keyTy, valTy), expRet)
+        val expFunTy = FunType(0, List(keyTy, valTy), expRet)
         val funResTys = funArg match {
           case lambda: Lambda =>
             check.checkLambda(lambda, expFunTy, env)
@@ -566,7 +566,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           } <= 1)
         }
 
-        val expFunTy = FunType(Nil, List(keyTy, valTy), AnyType)
+        val expFunTy = FunType(0, List(keyTy, valTy), AnyType)
         var keyTyLast = keyTy
         funArg match {
           case lambda: Lambda if isShapeIterator(lambda) =>

@@ -12,9 +12,8 @@ object Subst {
   def subst(s: Map[Int, Type], t: Type): Type = {
     def sub(ty: Type): Type = subst(s, ty)
     t match {
-      case FunType(forall, args, resType) =>
-        val s1 = s -- forall
-        FunType(forall, args.map(subst(s1, _)), subst(s1, resType))
+      case FunType(n, args, resType) =>
+        FunType(n, args.map(subst(s, _)), subst(s, resType))
       case AnyArityFunType(resTy) =>
         AnyArityFunType(sub(resTy))
       case TupleType(params) =>

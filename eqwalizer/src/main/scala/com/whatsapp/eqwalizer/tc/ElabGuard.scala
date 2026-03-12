@@ -48,7 +48,7 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     case ("is_record", TestAtom(recName)) =>
       RecordType(recName)(module)
     case ("is_function", TestNumber(Some(arity))) =>
-      FunType(Nil, List.fill(arity.intValue)(AnyType), AnyType)
+      FunType(0, List.fill(arity.intValue)(AnyType), AnyType)
     case ("is_function", _) =>
       AnyFunType
   }

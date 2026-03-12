@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.Types.Type
-import com.whatsapp.eqwalizer.ast.Vars
+import com.whatsapp.eqwalizer.ast.{TypeVars, Vars}
 import com.whatsapp.eqwalizer.tc.generics.{Constraints, Variance}
 
 package object tc {
@@ -28,6 +28,7 @@ package object tc {
     val constraints: Constraints = new Constraints(this)
     val checkCallback: CheckCallback = new CheckCallback(this)
     val typeMismatch: TypeMismatch = new TypeMismatch(this)
+    val instantiate: TypeVars.Instantiate = new TypeVars.Instantiate()
     val check: Check =
       new Check(this)
     val elab: Elab =

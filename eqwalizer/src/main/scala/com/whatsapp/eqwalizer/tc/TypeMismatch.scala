@@ -108,8 +108,8 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         val exp = s"${prefix}Context expects type: ${showLimitChars(t2, chars = 60)}"
         List(got, exp).mkString("\n")
       case (ParametersMismatch, ft1: FunType, ft2: FunType) =>
-        val cnt1 = ft1.forall.size
-        val cnt2 = ft2.forall.size
+        val cnt1 = ft1.forall
+        val cnt2 = ft2.forall
         def plural(n: Int): String = if (n != 1) "s" else ""
         val got =
           s"${prefix}Here the type is:     ${showLimitChars(ft1, chars = 40)} with $cnt1 type parameter${plural(cnt1)}"
@@ -382,8 +382,8 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         resMismatch.mismatch match {
           case None => resMismatch
           case Some((newResTy1, newResTy2, mismatch)) =>
-            val newTy1 = FunType(List(), argTys, newResTy1)
-            val newTy2 = FunType(List(), List.fill(argTys.length)(AnyType), newResTy2)
+            val newTy1 = FunType(0, argTys, newResTy1)
+            val newTy2 = FunType(0, List.fill(argTys.length)(AnyType), newResTy2)
             Details(Some(newTy1, newTy2, ResTyMismatch(mismatch)), 60)
         }
       case (AnyArityFunType(resTy1), FunType(_, argTys, resTy2)) =>
@@ -391,8 +391,8 @@ class TypeMismatch(pipelineContext: PipelineContext) {
         resMismatch.mismatch match {
           case None => resMismatch
           case Some((newResTy1, newResTy2, mismatch)) =>
-            val newTy1 = FunType(List(), List.fill(argTys.length)(AnyType), newResTy1)
-            val newTy2 = FunType(List(), argTys, newResTy2)
+            val newTy1 = FunType(0, List.fill(argTys.length)(AnyType), newResTy1)
+            val newTy2 = FunType(0, argTys, newResTy2)
             Details(Some(newTy1, newTy2, ResTyMismatch(mismatch)), 60)
         }
       case (AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
@@ -445,12 +445,12 @@ class TypeMismatch(pipelineContext: PipelineContext) {
             val argsMismatch = findMismatchWithIndex(argTys2.zip(argTys1).zipWithIndex)
             (resMismatch.mismatch, argsMismatch) match {
               case (Some((newRes1, newRes2, mismatch)), _) =>
-                val newTy1 = FunType(List(), argTys1, newRes1)
-                val newTy2 = FunType(List(), argTys2, newRes2)
+                val newTy1 = FunType(0, argTys1, newRes1)
+                val newTy2 = FunType(0, argTys2, newRes2)
                 Details(Some(newTy1, newTy2, ResTyMismatch(mismatch)), 80)
               case (_, Some((newArg1, newArg2, mismatch, index))) =>
-                val newTy1 = FunType(List(), argTys1.updated(index, newArg1), resTy1)
-                val newTy2 = FunType(List(), argTys2.updated(index, newArg2), resTy2)
+                val newTy1 = FunType(0, argTys1.updated(index, newArg1), resTy1)
+                val newTy2 = FunType(0, argTys2.updated(index, newArg2), resTy2)
                 Details(Some(newTy1, newTy2, ArgTyMismatch(index, mismatch)), 80)
               case (_, _) =>
                 Details(None, 100)

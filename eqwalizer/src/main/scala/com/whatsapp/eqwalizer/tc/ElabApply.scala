@@ -33,6 +33,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val variance = pipelineContext.variance
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
+  private lazy val instantiate = pipelineContext.instantiate
   implicit val pipelineCtx: PipelineContext = pipelineContext
 
   private type Var = Int
@@ -61,12 +62,13 @@ class ElabApply(pipelineContext: PipelineContext) {
   }
 
   // detailled docs in ./generics/README.md
-  def elabApply(ft: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
+  def elabApply(ft0: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
 
-    assert(ft.argTys.size == argTys.size)
+    assert(ft0.argTys.size == argTys.size)
     assert(args.size == argTys.size)
 
-    val toSolve = ft.forall.toSet
+    val (vars, ft) = instantiate.instantiate(ft0)
+    val toSolve = vars.toSet
 
     def lambdaArg(lambda: Lambda, argTy: FunType, paramTy: Type): AppliedArg = {
       val arity = lambda.clauses.headOption.map(_.pats.size).getOrElse(0)
@@ -75,13 +77,13 @@ class ElabApply(pipelineContext: PipelineContext) {
         LambdaArg(lambda, argTy, funParamTys.head)
       } else if (funParamTys.size > 1) {
         diagnosticsInfo.add(AmbiguousLambda(lambda.pos, lambda, subtype.join(funParamTys)))
-        LambdaArg(lambda, argTy, FunType(List(), List.fill(arity)(DynamicType), DynamicType))
+        LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
       } else {
         paramTy match {
           // Keep it as a LambdaArg to produce an arity mismatch error message, which provides clearer signal
           case ft: FunType => LambdaArg(lambda, argTy, ft)
           case t if subtype.gradualSubType(DynamicType, t) =>
-            LambdaArg(lambda, argTy, FunType(List(), List.fill(arity)(DynamicType), DynamicType))
+            LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
           case _ => Arg(lambda, argTy, paramTy)
         }
       }
@@ -93,9 +95,9 @@ class ElabApply(pipelineContext: PipelineContext) {
       .map {
         case ((lambda: Lambda, argTy: FunType), paramTy) if argTy.argTys.nonEmpty =>
           lambdaArg(lambda, argTy, paramTy)
-        case ((fun: LocalFun, argTy: FunType), paramTy) if argTy.forall.nonEmpty =>
+        case ((fun: LocalFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
           lambdaArg(etaExpand(fun), argTy, paramTy)
-        case ((fun: RemoteFun, argTy: FunType), paramTy) if argTy.forall.nonEmpty =>
+        case ((fun: RemoteFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
           lambdaArg(etaExpand(fun), argTy, paramTy)
         case ((expr, argTy), paramTy) => Arg(expr, argTy, paramTy)
       }
@@ -103,7 +105,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
     val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
 
-    val variances = variance.toVariances(ft)
+    val variances = variance.toVariances(ft, vars)
     val delayed: ListBuffer[Arg] = ListBuffer.empty
     val cs0 = nonLambdaArgs.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
       try
@@ -195,11 +197,11 @@ class ElabApply(pipelineContext: PipelineContext) {
     val LambdaArg(lambda, _, FunType(_, rawArgTys, rawExpResTy)) = lambdaArg
     val argTys = rawArgTys.map(Subst.subst(varToType, _))
     val expResTy = Subst.subst(varToType, rawExpResTy)
-    val expFunTy = FunType(Nil, argTys, expResTy)
+    val expFunTy = FunType(0, argTys, expResTy)
     val env1 =
       lambda.name match {
         case Some(name) =>
-          val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), DynamicType)
+          val funType = FunType(0, List.fill(argTys.size)(DynamicType), DynamicType)
           env.updated(name, funType)
         case _ =>
           env
@@ -218,7 +220,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val env1 =
       lambda.name match {
         case Some(name) =>
-          val funType = FunType(Nil, List.fill(argTys.size)(DynamicType), DynamicType)
+          val funType = FunType(0, List.fill(argTys.size)(DynamicType), DynamicType)
           env.updated(name, funType)
         case _ =>
           env

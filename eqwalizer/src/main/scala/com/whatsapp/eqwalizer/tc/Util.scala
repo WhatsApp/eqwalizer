@@ -44,7 +44,7 @@ class Util(pipelineContext: PipelineContext) {
         funType
       case None =>
         val arity = fqn.arity
-        FunType(Nil, List.fill(arity)(DynamicType), DynamicType)
+        FunType(0, List.fill(arity)(DynamicType), DynamicType)
     }
   }
 

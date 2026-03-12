@@ -16,10 +16,10 @@ class Variance(pipelineContext: PipelineContext) {
 
   import Variance._
 
-  val util = pipelineContext.util
+  private val util = pipelineContext.util
 
-  def toVariances(ft: FunType): Map[Var, Variance.Variance] =
-    ft.forall.map(tv => tv -> toTopLevelVariance(ft, tv)).toMap
+  def toVariances(ft: FunType, vars: List[Var]): Map[Var, Variance.Variance] =
+    vars.map(tv => tv -> toTopLevelVariance(ft, tv)).toMap
 
   def paramVariances(remoteId: RemoteId): List[Variance.Variance] = {
     val id = Id(remoteId.name, remoteId.arity)

@@ -489,8 +489,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
           .map(obj => (Pos(obj, tp), Neg(obj, tp)))
           .getOrElse(Unknown, Unknown)
       case TestCall(Id("is_function", 2), List(arg, TestNumber(Some(arity)))) =>
-        val tPos = FunType(Nil, List.fill(arity.intValue)(AnyType), AnyType)
-        val tNeg = FunType(Nil, List.fill(arity.intValue)(NoneType), AnyType)
+        val tPos = FunType(0, List.fill(arity.intValue)(AnyType), AnyType)
+        val tNeg = FunType(0, List.fill(arity.intValue)(NoneType), AnyType)
         testObj(arg, aMap)
           .map(obj => (Pos(obj, tPos), Neg(obj, tNeg)))
           .getOrElse(Unknown, Unknown)
