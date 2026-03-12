@@ -44,6 +44,7 @@ object Types {
 
   case class RemoteType(id: RemoteId, argTys: List[Type]) extends Type
 
+  case class BoundVarType(lvl: Int)(val name: String) extends Type
   case class FreeVarType(n: Int)(val name: String) extends Type
   case class RecordType(name: String)(val module: String) extends Type
   case class RefinedRecordType(recType: RecordType, fields: Map[String, Type]) extends Type
