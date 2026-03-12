@@ -106,8 +106,8 @@ class Narrow(pipelineContext: PipelineContext) {
           else RefinedRecordType(rt1.recType, fieldsMeet)
 
         // "Non-refinable" types. - Using the main type
-        case (VarType(_), _)                        => t1
-        case (_, VarType(_))                        => t1
+        case (FreeVarType(_), _)                    => t1
+        case (_, FreeVarType(_))                    => t1
         case (AnyFunType, FunType(_, _, _))         => t1
         case (FunType(_, _, _), AnyFunType)         => t1
         case (AnyArityFunType(_), FunType(_, _, _)) => t1
@@ -152,7 +152,7 @@ class Narrow(pipelineContext: PipelineContext) {
         Set(MapType(Map(), DynamicType, DynamicType))
       case BoundedDynamicType(bound) =>
         asMapTypes(bound).map(dynamicMap)
-      case AnyType | VarType(_) =>
+      case AnyType | FreeVarType(_) =>
         Set(MapType(Map(), AnyType, AnyType))
       case mapType: MapType =>
         Set(mapType)
@@ -170,7 +170,7 @@ class Narrow(pipelineContext: PipelineContext) {
         Set(MapType(Map(), DynamicType, DynamicType))
       case BoundedDynamicType(bound) =>
         asMapOrIterTypes(bound).map(dynamicMap)
-      case AnyType | VarType(_) =>
+      case AnyType | FreeVarType(_) =>
         Set(MapType(Map(), AnyType, AnyType))
       case mapType: MapType =>
         Set(mapType)
@@ -245,7 +245,7 @@ class Narrow(pipelineContext: PipelineContext) {
       case RemoteType(rid, args) =>
         val body = util.getTypeDeclBody(rid, args)
         extractListElem(body)
-      case VarType(_) =>
+      case FreeVarType(_) =>
         List(AnyType)
       case _ =>
         List()
@@ -306,7 +306,7 @@ class Narrow(pipelineContext: PipelineContext) {
         List(TupleType(List.fill(arity)(DynamicType)))
       case BoundedDynamicType(bound) =>
         asTupleTypeAux(bound, arity).map(tt => TupleType(tt.argTys.map(BoundedDynamicType(_))))
-      case AnyType | VarType(_) =>
+      case AnyType | FreeVarType(_) =>
         List(TupleType(List.fill(arity)(AnyType)))
       case r: RecordType if arity > 0 =>
         val rec = util.getRecord(r.module, r.name)
@@ -356,7 +356,7 @@ class Narrow(pipelineContext: PipelineContext) {
         t
       case BoundedDynamicType(bound) =>
         BoundedDynamicType(filterTupleTypeAux(bound, elemIndex, elemTy))
-      case AnyType | VarType(_) =>
+      case AnyType | FreeVarType(_) =>
         t
       case AnyTupleType =>
         t
@@ -516,7 +516,7 @@ class Narrow(pipelineContext: PipelineContext) {
           .collectFirst { case (f, i) if f.name == fieldName => i + 1 }
           .map(argTys(_))
           .getOrElse(field.tp)
-      case AnyTupleType | DynamicType | VarType(_) =>
+      case AnyTupleType | DynamicType | FreeVarType(_) =>
         field.tp
       case BoundedDynamicType(_) =>
         BoundedDynamicType(field.tp)

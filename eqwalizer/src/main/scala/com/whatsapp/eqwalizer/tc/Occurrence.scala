@@ -676,7 +676,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case (_, BoundedDynamicType(bound)) =>
         overlap(t1, bound)
 
-      case (VarType(_), _) =>
+      case (FreeVarType(_), _) =>
         Some(true)
 
       // Unions

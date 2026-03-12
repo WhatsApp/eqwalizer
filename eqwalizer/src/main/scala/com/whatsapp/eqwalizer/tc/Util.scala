@@ -76,7 +76,7 @@ class Util(pipelineContext: PipelineContext) {
     def applyType(decl: TypeDecl): Type =
       if (id.arity == 0) decl.body
       else {
-        val subst = decl.params.zip(args).map { case (VarType(n), ty) => n -> ty }.toMap
+        val subst = decl.params.zip(args).map { case (FreeVarType(n), ty) => n -> ty }.toMap
         Subst.subst(subst, decl.body)
       }
 

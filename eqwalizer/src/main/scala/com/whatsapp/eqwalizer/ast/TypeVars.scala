@@ -23,8 +23,8 @@ object TypeVars {
   }
 
   def hasTypeVars(ty: Type): Boolean = ty match {
-    case VarType(_) => true
-    case ty         => children(ty).exists(hasTypeVars)
+    case FreeVarType(_) => true
+    case ty             => children(ty).exists(hasTypeVars)
   }
 
   /** note: returns Nil for record types because they can't have type vars
@@ -85,7 +85,7 @@ object TypeVars {
   private def maxVarInt(ty: Type, start: Int): Int = {
     def maxOfChildren: Int = children(ty).foldLeft(start)((max, t) => max.max(maxVarInt(t, max)))
     ty match {
-      case VarType(n) => n
+      case FreeVarType(n) => n
       case FunType(forall, _, _) =>
         val forallMax = forall.maxOption.getOrElse(0)
         forallMax.max(maxOfChildren)
@@ -124,8 +124,8 @@ object TypeVars {
         UnionType(params.map(r))
       case RemoteType(id, params) =>
         RemoteType(id, params.map(r))
-      case vt: VarType if toIncr.contains(vt.n) => VarType(vt.n + incr)(vt.name)
-      case _: VarType                           => t
+      case vt: FreeVarType if toIncr.contains(vt.n) => FreeVarType(vt.n + incr)(vt.name)
+      case _: FreeVarType                           => t
       case MapType(props, kt, vt) =>
         MapType(props.map { case (name, Prop(req, tp)) => (name, Prop(req, r(tp))) }, r(kt), r(vt))
       case RefinedRecordType(recType, fields) =>

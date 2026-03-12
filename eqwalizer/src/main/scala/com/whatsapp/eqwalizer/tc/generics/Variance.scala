@@ -33,7 +33,7 @@ class Variance(pipelineContext: PipelineContext) {
   private def getVarianceOf(ty: Type, tv: Var, isPositivePosition: Boolean)(implicit
       history: Set[(RemoteType, Boolean)]
   ): Variance.Variance = ty match {
-    case VarType(n) if tv == n =>
+    case FreeVarType(n) if tv == n =>
       if (isPositivePosition) Covariant
       else Contravariant
     case FunType(forall, argTys, resTy) =>
