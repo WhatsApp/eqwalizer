@@ -54,11 +54,11 @@ object InvalidDiagnostics {
   case class TransitiveInvalid(pos: Pos, name: String, references: List[String]) extends Invalid {
     val msg: String = references match {
       case List(ref) =>
-        s"$name references type with invalid definition: $ref"
+        s"$name (transitively) references type with invalid definition: $ref"
       case Nil =>
         throw new IllegalStateException()
       case refs =>
-        s"$name references types with invalid definitions: ${refs.mkString(", ")}"
+        s"$name (transitively) references types with invalid definitions: ${refs.mkString(", ")}"
     }
     def errorName = "reference_to_invalid_type"
   }
