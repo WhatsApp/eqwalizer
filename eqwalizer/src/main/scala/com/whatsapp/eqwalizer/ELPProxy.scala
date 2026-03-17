@@ -11,6 +11,7 @@ import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodec
 import com.whatsapp.eqwalizer.ast.Forms.{Callback, FunSpec, OverloadedFunSpec, RecDecl, TypeDecl}
 import com.whatsapp.eqwalizer.ast.Id
 import com.whatsapp.eqwalizer.io.Ipc
+import com.whatsapp.eqwalizer.tc.generics.Variance.Variance
 
 import scala.collection.mutable
 
@@ -27,7 +28,7 @@ object ELPProxy {
   }
   // Caches (similar to salsa caches)
 
-  private val typeDeclCache: mutable.Map[(String, Id), Option[TypeDecl]] = mutable.Map.empty
+  private val typeDeclCache: mutable.Map[(String, Id), Option[(TypeDecl, List[Variance])]] = mutable.Map.empty
   private val recDeclCache: mutable.Map[(String, String), Option[RecDecl]] = mutable.Map.empty
   private val funSpecCache: mutable.Map[(String, Id), Option[FunSpec]] = mutable.Map.empty
   private val overloadedFunSpecCache: mutable.Map[(String, Id), Option[OverloadedFunSpec]] = mutable.Map.empty
@@ -35,7 +36,7 @@ object ELPProxy {
 
   // jsoniter_scala codecs boilerplate
 
-  private val typeDeclCodec: JsonValueCodec[TypeDecl] = JsonCodecMaker.make(
+  private val typeDeclCodec: JsonValueCodec[(TypeDecl, List[Variance])] = JsonCodecMaker.make(
     CodecMakerConfig
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
@@ -83,14 +84,15 @@ object ELPProxy {
   // each method below has a counterpart in ELP
 
   // EqwalizerDiagnosticsDatabase::type_decl
-  def typeDecl(module: String, id: Id): Option[TypeDecl] = {
+  def typeDecl(module: String, id: Id): Option[(TypeDecl, List[Variance])] = {
     modules.addOne(module)
     val key = (module, id)
     typeDeclCache.get(key) match
       case Some(value) =>
         value
       case None =>
-        val optTypeDecl = Ipc.getTypeDecl(module, id).map(readFromArray[TypeDecl](_)(typeDeclCodec))
+        val optTypeDecl =
+          Ipc.getTypeDecl(module, id).map(readFromArray[(TypeDecl, List[Variance])](_)(typeDeclCodec))
         typeDeclCache.put(key, optTypeDecl)
         optTypeDecl
   }

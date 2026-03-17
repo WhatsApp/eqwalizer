@@ -16,6 +16,7 @@ import com.whatsapp.eqwalizer.ast.Types.Type
 
 import scala.collection.mutable
 import com.whatsapp.eqwalizer.io.Ipc
+import com.whatsapp.eqwalizer.tc.generics.Variance.Variance
 
 object Db {
   private val stubs: mutable.Map[String, Option[ModuleStub]] = mutable.Map.empty
@@ -56,7 +57,10 @@ object Db {
     getModuleStub(module).map(_.imports)
 
   def getType(module: String, id: Id): Option[TypeDecl] =
-    ELPProxy.typeDecl(module, id)
+    ELPProxy.typeDecl(module, id).map(_._1)
+
+  def getVariance(module: String, id: Id): Option[List[Variance]] =
+    ELPProxy.typeDecl(module, id).map(_._2)
 
   def getRecord(module: String, record: String): Option[RecDecl] =
     ELPProxy.recDecl(module, record)

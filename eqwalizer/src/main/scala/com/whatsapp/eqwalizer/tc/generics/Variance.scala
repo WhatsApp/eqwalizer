@@ -16,42 +16,38 @@ class Variance(pipelineContext: PipelineContext) {
 
   import Variance._
 
-  private val util = pipelineContext.util
-
   def toVariances(ft: FunType, vars: List[Var]): Map[Var, Variance.Variance] =
     vars.map(tv => tv -> toTopLevelVariance(ft, tv)).toMap
 
-  def paramVariances(remoteId: RemoteId): List[Variance.Variance] = {
-    val id = Id(remoteId.name, remoteId.arity)
-    val tDecl = Db.getType(remoteId.module, id).get
-    tDecl.params.map(varType => varianceOf(tDecl.body, varType.n, isPositivePosition = true))
-  }
+  def paramVariances(remoteId: RemoteId): List[Variance.Variance] =
+    Db.getVariance(remoteId.module, Id(remoteId.name, remoteId.arity)).get
 
-  private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Variance.Variance =
-    getVarianceOf(ty, tv, isPositivePosition)(history = Set())
-
-  private def getVarianceOf(ty: Type, tv: Var, isPositivePosition: Boolean)(implicit
-      history: Set[(RemoteType, Boolean)]
-  ): Variance.Variance = ty match {
+  private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Variance.Variance = ty match {
     case FreeVarType(n) if tv == n =>
       if (isPositivePosition) Covariant
       else Contravariant
     case FunType(forall, argTys, resTy) =>
-      // forall can only be non-empty only for top-level fun types
-      // corresponding to generic specs
-      val variancesInArgTys = argTys.map(getVarianceOf(_, tv, !isPositivePosition))
-      val variances = getVarianceOf(resTy, tv, isPositivePosition) :: variancesInArgTys
+      val variancesInArgTys = argTys.map(varianceOf(_, tv, !isPositivePosition))
+      val variances = varianceOf(resTy, tv, isPositivePosition) :: variancesInArgTys
       combineVariances(variances)
-    case t @ RemoteType(rid, args) =>
-      if (history((t, isPositivePosition))) {
-        Constant
-      } else {
-        val body = util.getTypeDeclBody(rid, args)
-        getVarianceOf(body, tv, isPositivePosition)(history + ((t, isPositivePosition)))
-      }
+    case RemoteType(rid, args) =>
+      val pvs = paramVariances(rid)
+      combineVariances(args.zip(pvs).map { case (arg, pv) =>
+        pv match {
+          case Covariant     => varianceOf(arg, tv, isPositivePosition)
+          case Contravariant => varianceOf(arg, tv, !isPositivePosition)
+          case Invariant     => if (containsVar(arg, tv)) Invariant else Constant
+          case Constant      => Constant
+        }
+      })
     case _ =>
-      val variances = TypeVars.children(ty).map(getVarianceOf(_, tv, isPositivePosition))
+      val variances = TypeVars.children(ty).map(varianceOf(_, tv, isPositivePosition))
       combineVariances(variances)
+  }
+
+  private def containsVar(ty: Type, tv: Var): Boolean = ty match {
+    case FreeVarType(n) => tv == n
+    case _              => TypeVars.children(ty).exists(containsVar(_, tv))
   }
 
   private def toTopLevelVariance(ft: FunType, tv: Var): Variance.Variance =
