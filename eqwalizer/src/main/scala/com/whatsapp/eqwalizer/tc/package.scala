@@ -56,7 +56,6 @@ package object tc {
       new TypeInfo(this)
     val diagnosticsInfo: DiagnosticsInfo =
       new DiagnosticsInfo()
-    val errorDepth: Int = config.errorDepth
     val overloadedSpecDynamicResult: Boolean = config.overloadedSpecDynamicResult
     val customMapsMerge: Boolean = config.customMapsMerge
     val reportDynamicLambdas: Boolean = config.reportDynamicLambdas

@@ -32,7 +32,6 @@ package object eqwalizer {
       overloadedSpecDynamicResult: Boolean,
       customMapsMerge: Boolean,
       mode: Mode.Mode,
-      errorDepth: Int,
       reportDynamicLambdas: Boolean,
   )
 
@@ -44,7 +43,6 @@ package object eqwalizer {
       overloadedSpecDynamicResult = config.getBoolean("overloaded_spec_dynamic_result"),
       customMapsMerge = config.getBoolean("custom_maps_merge"),
       mode,
-      errorDepth = config.getInt("error_depth"),
       reportDynamicLambdas = config.getBoolean("report_dynamic_lambdas"),
     )
   }
