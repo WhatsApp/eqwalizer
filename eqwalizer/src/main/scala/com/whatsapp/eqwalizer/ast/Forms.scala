@@ -36,7 +36,7 @@ object Forms {
   case class TypeDecl(id: Id, params: List[FreeVarType], body: Type)
 
   def load(module: String): List[InternalForm] = {
-    val bytes = Ipc.getAstBytes(module, Ipc.ConvertedForms).get
+    val bytes = Ipc.getAstBytes(module, Ipc.ASTFormat.ConvertedForms).get
     readFromArray[List[InternalForm]](bytes)
   }
 

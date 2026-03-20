@@ -17,9 +17,9 @@ object Ipc {
   case object Terminated extends Exception
   private case class GotNull() extends Exception
 
-  sealed trait ASTFormat
-  case object ConvertedForms extends ASTFormat
-  case object TransitiveStub extends ASTFormat
+  enum ASTFormat {
+    case ConvertedForms, TransitiveStub
+  }
 
   def getAstBytes(module: String, kind: ASTFormat): Option[Array[Byte]] = {
     send(GetAstBytes(module, kind))

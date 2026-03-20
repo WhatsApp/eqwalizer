@@ -29,7 +29,7 @@ object Db {
     if (stubs.contains(module)) stubs(module)
     else {
       val optStub =
-        Ipc.getAstBytes(module, Ipc.TransitiveStub).map(readFromArray[ModuleStub](_))
+        Ipc.getAstBytes(module, Ipc.ASTFormat.TransitiveStub).map(readFromArray[ModuleStub](_))
       stubs.put(module, optStub)
       optStub
     }
