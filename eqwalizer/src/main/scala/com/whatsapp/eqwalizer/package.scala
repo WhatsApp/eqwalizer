@@ -9,15 +9,11 @@ package com.whatsapp
 import com.typesafe.config.ConfigFactory
 
 package object eqwalizer {
+  enum Mode {
+    case Shell, ElpCli, ElpIde
+  }
+
   object Mode {
-    sealed trait Mode
-
-    case object Shell extends Mode
-
-    case object ElpCli extends Mode
-
-    case object ElpIde extends Mode
-
     def fromString(str: String): Option[Mode] = {
       str match {
         case "shell"   => Some(Shell)
@@ -31,7 +27,7 @@ package object eqwalizer {
   case class Config(
       overloadedSpecDynamicResult: Boolean,
       customMapsMerge: Boolean,
-      mode: Mode.Mode,
+      mode: Mode,
       reportDynamicLambdas: Boolean,
   )
 
