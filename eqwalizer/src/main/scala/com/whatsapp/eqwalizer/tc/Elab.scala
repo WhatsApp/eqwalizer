@@ -11,7 +11,7 @@ import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Pats.{PatMatch, PatVar}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.stub.Db
-import com.whatsapp.eqwalizer.ast.{BinarySpecifiers, Filters, Pats, RemoteId, Vars}
+import com.whatsapp.eqwalizer.ast.{Specifier, Filters, Pats, RemoteId, Vars}
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.*
 
 final class Elab(pipelineContext: PipelineContext) {
@@ -593,7 +593,7 @@ final class Elab(pipelineContext: PipelineContext) {
       case None    => env
     }
     val isStringLiteral = elem.expr.isInstanceOf[StringLit]
-    val expType = BinarySpecifiers.expType(elem.specifier, isStringLiteral)
+    val expType = Specifier.expType(elem.specifier, isStringLiteral)
     val env2 = check.checkExpr(elem.expr, expType, env1)
     (expType, env2)
   }

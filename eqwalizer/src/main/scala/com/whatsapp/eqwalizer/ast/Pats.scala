@@ -6,7 +6,6 @@
 
 package com.whatsapp.eqwalizer.ast
 
-import com.whatsapp.eqwalizer.ast.BinarySpecifiers.Specifier
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
 
 object Pats {

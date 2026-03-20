@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.BinarySpecifiers
+import com.whatsapp.eqwalizer.ast.Specifier
 import com.whatsapp.eqwalizer.ast.Pats._
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{UnboundRecord, UnhandledOp}
@@ -171,7 +171,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
     for (eSize <- elem.size)
       check.checkExpr(eSize, NumberType, env)
     val isStringLiteral = elem.pat.isInstanceOf[PatString]
-    val expType = BinarySpecifiers.expType(elem.specifier, isStringLiteral)
+    val expType = Specifier.expType(elem.specifier, isStringLiteral)
     val (_, env1) = elabPat(elem.pat, expType, env)
     env1
   }

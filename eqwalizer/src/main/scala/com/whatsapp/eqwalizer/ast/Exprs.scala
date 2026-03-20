@@ -6,7 +6,6 @@
 
 package com.whatsapp.eqwalizer.ast
 
-import com.whatsapp.eqwalizer.ast.BinarySpecifiers.Specifier
 import com.whatsapp.eqwalizer.ast.Guards.Guard
 import com.whatsapp.eqwalizer.ast.Pats.Pat
 import com.github.plokhotnyuk.jsoniter_scala.core._
