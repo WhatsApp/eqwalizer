@@ -22,20 +22,20 @@ object Ipc {
   }
 
   def getAstBytes(module: String, kind: ASTFormat): Option[Array[Byte]] = {
-    send(GetAstBytes(module, kind))
+    send(Request.GetAstBytes(module, kind))
     receive() match {
-      case Right(GetAstBytesReply(len)) if len == 0 =>
+      case Right(Reply.GetAstBytesReply(len)) if len == 0 =>
         println()
         Console.out.flush()
         None
-      case Right(GetAstBytesReply(len)) =>
+      case Right(Reply.GetAstBytesReply(len)) =>
         println()
         Console.out.flush()
         val buf = new Array[Byte](len)
         val read = readNBytes(System.in, buf, 0, len)
         assert(read == len, s"expected $len for $module but got $read")
         Some(buf)
-      case Right(CannotCompleteRequest) =>
+      case Right(Reply.CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
@@ -50,9 +50,9 @@ object Ipc {
   }
 
   def getTypeDecl(module: String, id: Id): Option[Array[Byte]] = {
-    send(GetTypeDecl(module, id))
+    send(Request.GetTypeDecl(module, id))
     receive() match
-      case Right(GetTypeDeclReply(len)) =>
+      case Right(Reply.GetTypeDeclReply(len)) =>
         if (len == 0) {
           println()
           Console.out.flush()
@@ -65,7 +65,7 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
-      case Right(CannotCompleteRequest) =>
+      case Right(Reply.CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
@@ -77,9 +77,9 @@ object Ipc {
   }
 
   def getRecDecl(module: String, id: String): Option[Array[Byte]] = {
-    send(GetRecDecl(module, id))
+    send(Request.GetRecDecl(module, id))
     receive() match
-      case Right(GetRecDeclReply(len)) =>
+      case Right(Reply.GetRecDeclReply(len)) =>
         if (len == 0) {
           println()
           Console.out.flush()
@@ -92,7 +92,7 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
-      case Right(CannotCompleteRequest) =>
+      case Right(Reply.CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
@@ -104,9 +104,9 @@ object Ipc {
   }
 
   def getFunSpec(module: String, id: Id): Option[Array[Byte]] = {
-    send(GetFunSpec(module, id))
+    send(Request.GetFunSpec(module, id))
     receive() match
-      case Right(GetFunSpecReply(len)) =>
+      case Right(Reply.GetFunSpecReply(len)) =>
         if (len == 0) {
           println()
           Console.out.flush()
@@ -119,7 +119,7 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
-      case Right(CannotCompleteRequest) =>
+      case Right(Reply.CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
@@ -131,9 +131,9 @@ object Ipc {
   }
 
   def getOverloadedFunSpec(module: String, id: Id): Option[Array[Byte]] = {
-    send(GetOverloadedFunSpec(module, id))
+    send(Request.GetOverloadedFunSpec(module, id))
     receive() match
-      case Right(GetOverloadedFunSpecReply(len)) =>
+      case Right(Reply.GetOverloadedFunSpecReply(len)) =>
         if (len == 0) {
           println()
           Console.out.flush()
@@ -146,7 +146,7 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
-      case Right(CannotCompleteRequest) =>
+      case Right(Reply.CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
@@ -158,9 +158,9 @@ object Ipc {
   }
 
   def getCallbacks(module: String): Option[Array[Byte]] = {
-    send(GetCallbacks(module))
+    send(Request.GetCallbacks(module))
     receive() match
-      case Right(GetCallbacksReply(len)) =>
+      case Right(Reply.GetCallbacksReply(len)) =>
         if (len == 0) {
           println()
           Console.out.flush()
@@ -173,7 +173,7 @@ object Ipc {
           assert(read == len, s"expected $len but got $read")
           Some(buf)
         }
-      case Right(CannotCompleteRequest) =>
+      case Right(Reply.CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
@@ -185,32 +185,32 @@ object Ipc {
   }
 
   def sendDone(diagnostics: Map[String, List[ELPDiagnostics.Error]], typeInfo: Map[String, List[(Pos, Type)]]): Unit =
-    send(Done(diagnostics, typeInfo))
+    send(Request.Done(diagnostics, typeInfo))
 
   def sendEqwalizingStart(module: String): Unit =
-    send(EqwalizingStart(module))
+    send(Request.EqwalizingStart(module))
 
   def sendEqwalizingDone(module: String): Unit =
-    send(EqwalizingDone(module))
+    send(Request.EqwalizingDone(module))
 
   def validateType(ty: ExtType): (Boolean, Array[Byte]) = {
-    send(ValidateType(ty))
+    send(Request.ValidateType(ty))
     receive() match {
-      case Right(ValidatedType(len)) =>
+      case Right(Reply.ValidatedType(len)) =>
         println()
         Console.out.flush()
         val buf = new Array[Byte](len)
         val read = readNBytes(System.in, buf, 0, len)
         assert(read == len, s"expected $len for validated type but got $read")
         (true, buf)
-      case Right(InvalidType(len)) =>
+      case Right(Reply.InvalidType(len)) =>
         println()
         Console.out.flush()
         val buf = new Array[Byte](len)
         val read = readNBytes(System.in, buf, 0, len)
         assert(read == len, s"expected $len for validated type but got $read")
         (false, buf)
-      case Right(CannotCompleteRequest) =>
+      case Right(Reply.CannotCompleteRequest) =>
         // The client has asked eqWAlizer to die
         throw Terminated
       case Right(reply) =>
@@ -229,11 +229,11 @@ object Ipc {
   }
 
   def shouldEqwalize(module: String): Boolean = {
-    send(EnteringModule(module))
+    send(Request.EnteringModule(module))
     receive() match {
-      case Right(ELPEnteringModule) =>
+      case Right(Reply.ELPEnteringModule) =>
         true
-      case Right(ELPExitingModule) =>
+      case Right(Reply.ELPExitingModule) =>
         false
       case Right(reply) =>
         Console.err.println(s"eqWAlizer [shouldEqwalize] received bad reply from ELP $reply")
@@ -249,10 +249,10 @@ object Ipc {
       deps: List[String],
       typeInfo: Map[String, List[(Pos, Type)]],
   ): Unit = {
-    send(Dependencies(deps))
+    send(Request.Dependencies(deps))
     sendDone(diagnostics, typeInfo)
     receive() match {
-      case Right(ELPExitingModule) =>
+      case Right(Reply.ELPExitingModule) =>
         ()
       case Right(reply) =>
         Console.err.println(s"eqWAlizer [finishEqwalization] received bad reply from ELP $reply")
@@ -286,42 +286,44 @@ object Ipc {
     n
   }
 
-  private sealed trait Request
-  private case class EnteringModule(module: String) extends Request
-  private case class ExitingModule(module: String) extends Request
-  private case class GetAstBytes(module: String, format: ASTFormat) extends Request
-  private case class EqwalizingStart(module: String) extends Request
-  private case class EqwalizingDone(module: String) extends Request
-  private case class Dependencies(modules: List[String]) extends Request
-  private case class Done(
-      diagnostics: Map[String, List[ELPDiagnostics.Error]],
-      typeInfo: Map[String, List[(Pos, Type)]],
-  ) extends Request
-  private case class ValidateType(ty: ExtType) extends Request
-  private case class GetTypeDecl(module: String, id: Id) extends Request
-  private case class GetRecDecl(module: String, id: String) extends Request
-  private case class GetFunSpec(module: String, id: Id) extends Request
-  private case class GetOverloadedFunSpec(module: String, id: Id) extends Request
-  private case class GetCallbacks(module: String) extends Request
+  enum Request {
+    case EnteringModule(module: String)
+    case ExitingModule(module: String) extends Request
+    case GetAstBytes(module: String, format: ASTFormat)
+    case EqwalizingStart(module: String)
+    case EqwalizingDone(module: String)
+    case Dependencies(modules: List[String])
+    case Done(
+        diagnostics: Map[String, List[ELPDiagnostics.Error]],
+        typeInfo: Map[String, List[(Pos, Type)]],
+    )
+    case ValidateType(ty: ExtType)
+    case GetTypeDecl(module: String, id: Id)
+    case GetRecDecl(module: String, id: String)
+    case GetFunSpec(module: String, id: Id)
+    case GetOverloadedFunSpec(module: String, id: Id)
+    case GetCallbacks(module: String)
+  }
 
-  private sealed trait Reply
-  private case object ELPEnteringModule extends Reply
-  private case object ELPExitingModule extends Reply
+  enum Reply {
+    case ELPEnteringModule
+    case ELPExitingModule
 
-  /**
-    * Classes with `len` are non-JSON part of the protocol.
-    * After receiving these messages, eqWAlizer prints a newline to stdout
-    * and then reads `len` or `typeBytesLen` bytes from stdin
-    */
-  private case class GetAstBytesReply(len: Int) extends Reply
-  private case class ValidatedType(len: Int) extends Reply
-  private case class InvalidType(len: Int) extends Reply
-  private case class GetTypeDeclReply(len: Int) extends Reply
-  private case class GetRecDeclReply(len: Int) extends Reply
-  private case class GetFunSpecReply(len: Int) extends Reply
-  private case class GetOverloadedFunSpecReply(len: Int) extends Reply
-  private case class GetCallbacksReply(len: Int) extends Reply
-  private case object CannotCompleteRequest extends Reply
+    /**
+     * Variants with `len` are non-JSON part of the protocol.
+     * After receiving these messages, eqWAlizer prints a newline to stdout
+     * and then reads `len` or `typeBytesLen` bytes from stdin
+     */
+    case GetAstBytesReply(len: Int)
+    case ValidatedType(len: Int)
+    case InvalidType(len: Int)
+    case GetTypeDeclReply(len: Int)
+    case GetRecDeclReply(len: Int)
+    case GetFunSpecReply(len: Int)
+    case GetOverloadedFunSpecReply(len: Int)
+    case GetCallbacksReply(len: Int)
+    case CannotCompleteRequest
+  }
 
   private val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(
     CodecMakerConfig
