@@ -28,9 +28,10 @@ object ELPDiagnostics {
       diagnostic: StructuredDiagnostic,
   )
 
-  sealed trait StructuredDiagnostic
-  case class TypeError(error: TcDiagnostics.TypeError) extends StructuredDiagnostic
-  case class InvalidForm(invalid: InvalidDiagnostics.Invalid) extends StructuredDiagnostic
+  enum StructuredDiagnostic {
+    case TypeError(error: TcDiagnostics.TypeError)
+    case InvalidForm(invalid: InvalidDiagnostics.Invalid)
+  }
 
   implicit val codec: JsonValueCodec[Map[String, List[Error]]] = JsonCodecMaker.make(
     CodecMakerConfig
@@ -73,8 +74,8 @@ object ELPDiagnostics {
         explanation = te.explanation,
         expression = te.erroneousExpr.map(Show.show),
         diagnostic = te match {
-          case te: TcDiagnostics.TypeError => TypeError(te)
-          case invalid: Invalid            => InvalidForm(invalid)
+          case te: TcDiagnostics.TypeError => StructuredDiagnostic.TypeError(te)
+          case invalid: Invalid            => StructuredDiagnostic.InvalidForm(invalid)
         },
       )
     }
