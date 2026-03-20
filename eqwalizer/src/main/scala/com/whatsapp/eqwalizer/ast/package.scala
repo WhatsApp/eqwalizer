@@ -16,9 +16,10 @@ package object ast {
     override def toString: String = s"$module:$name/$arity"
   }
 
-  sealed trait Pos
-  case class TextRange(startByte: Int, endByte: Int) extends Pos
-  case class LineAndColumn(line: Int, column: Int) extends Pos
+  enum Pos {
+    case TextRange(startByte: Int, endByte: Int)
+    case LineAndColumn(line: Int, column: Int)
+  }
 
   object Id {
     implicit val keyCodec: JsonKeyCodec[Id] = new JsonKeyCodec[Id] {

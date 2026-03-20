@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer.util
 
 import com.whatsapp.eqwalizer.{Pipeline, ast}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
-import com.whatsapp.eqwalizer.ast.{InvalidDiagnostics, Pos, Show, TextRange}
+import com.whatsapp.eqwalizer.ast.{InvalidDiagnostics, Pos, Show}
 import com.whatsapp.eqwalizer.ast.stub.Db
 import com.whatsapp.eqwalizer.io.Ipc
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{RedundantFixme, TypeError}
@@ -19,7 +19,7 @@ import com.whatsapp.eqwalizer.util.Diagnostic.Diagnostic
 
 object ELPDiagnostics {
   case class Error(
-      range: Option[TextRange],
+      range: Option[Pos.TextRange],
       message: String,
       uri: String,
       code: String,
@@ -67,7 +67,7 @@ object ELPDiagnostics {
   ): List[Error] =
     (errors ++ invalids ++ redundantFixmes).map { te =>
       Error(
-        te.pos match { case tr: TextRange => Some(tr); case _ => None },
+        te.pos match { case tr: Pos.TextRange => Some(tr); case _ => None },
         te.msg,
         te.docURL,
         te.errorName,

@@ -19,7 +19,7 @@ object Forms {
   case class Module(name: String)(val pos: Pos) extends InternalForm
   case class FunDecl(id: Id, clauses: List[Clause])(val pos: Pos) extends InternalForm
   case class File(file: String, start: Int)(val pos: Pos) extends InternalForm
-  case class Fixme(comment: TextRange, suppression: TextRange, isIgnore: Boolean)
+  case class Fixme(comment: Pos.TextRange, suppression: Pos.TextRange, isIgnore: Boolean)
   case class ElpMetadata(fixmes: List[Fixme])(val pos: Pos) extends InternalForm
   case class Behaviour(name: String)(val pos: Pos) extends InternalForm
   case class EqwalizerNowarnFunction(id: Id)(val pos: Pos) extends InternalForm

@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Types.Type
-import com.whatsapp.eqwalizer.ast.{Pos, TextRange}
+import com.whatsapp.eqwalizer.ast.Pos
 import com.whatsapp.eqwalizer.{Mode, config}
 
 import scala.collection.mutable
@@ -73,9 +73,9 @@ class TypeInfo(pipelineContext: PipelineContext) {
 
   def clear(pos: Pos): Unit = {
     pos match {
-      case TextRange(startByte, endByte) =>
+      case Pos.TextRange(startByte, endByte) =>
         moduleTypeInfo.filterInPlace {
-          case (TextRange(startExpr, endExpr), _) =>
+          case (Pos.TextRange(startExpr, endExpr), _) =>
             startByte > startExpr || endExpr > endByte
           case _ => true
         }

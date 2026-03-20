@@ -127,7 +127,7 @@ object Pipeline {
     }
 
   private def findFixme(pos: Pos, fixmes: List[Fixme]): Option[Fixme] = pos match {
-    case TextRange(startByte, _) =>
+    case Pos.TextRange(startByte, _) =>
       fixmes.find(fixme => startByte >= fixme.suppression.startByte && startByte <= fixme.suppression.endByte)
     case _ =>
       None
