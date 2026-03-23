@@ -10,11 +10,21 @@ import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.tc.PipelineContext
 
-object ElimTypeVars {
-  sealed trait VarElimMode
-  case object Promote extends VarElimMode
-  case object Demote extends VarElimMode
+enum ElimMode {
+  case Promote, Demote
 
+  def switch: ElimMode = this match {
+    case Promote => Demote
+    case Demote  => Promote
+  }
+
+  def toType: Type = this match {
+    case Promote => AnyType
+    case Demote  => NoneType
+  }
+}
+
+object ElimTypeVars {
   private def containsVars(ty: Type, tv: Set[Int]): Boolean = ty match {
     case FreeVarType(n) => tv(n)
     case ty             => TypeVars.children(ty).exists(containsVars(_, tv))
@@ -22,11 +32,11 @@ object ElimTypeVars {
 
   /** Pierce and Turner Local Type Inference section 3.2
     */
-  def elimTypeVars(ty: Type, mode: VarElimMode, vars: Set[Int])(implicit pipelineContext: PipelineContext): Type = {
+  def elimTypeVars(ty: Type, mode: ElimMode, vars: Set[Int])(implicit pipelineContext: PipelineContext): Type = {
     def elim(t: Type): Type = elimTypeVars(t, mode, vars)
     ty match {
       case FunType(forall, args, resType) =>
-        val args1 = args.map(elimTypeVars(_, switchMode(mode), vars))
+        val args1 = args.map(elimTypeVars(_, mode.switch, vars))
         FunType(forall, args1, elim(resType))
       case AnyArityFunType(resType) =>
         AnyArityFunType(elim(resType))
@@ -40,14 +50,14 @@ object ElimTypeVars {
         val variances = pipelineContext.variance.paramVariances(id)
         val elimmedParams = params.lazyZip(variances).map {
           case (param, Variance.Constant | Variance.Covariant) => elimTypeVars(param, mode, vars)
-          case (param, Variance.Contravariant)                 => elimTypeVars(param, switchMode(mode), vars)
+          case (param, Variance.Contravariant)                 => elimTypeVars(param, mode.switch, vars)
           case (param, Variance.Invariant) =>
-            if (containsVars(param, vars)) modeToType(mode)
+            if (containsVars(param, vars)) mode.toType
             else param
         }
         RemoteType(id, elimmedParams)
       case FreeVarType(v) if vars.contains(v) =>
-        modeToType(mode)
+        mode.toType
       case vt: FreeVarType =>
         vt
       case MapType(props, kt, vt) =>
@@ -57,15 +67,5 @@ object ElimTypeVars {
       case _ =>
         ty
     }
-  }
-
-  private def modeToType(mode: VarElimMode): Type = mode match {
-    case Promote => AnyType
-    case Demote  => NoneType
-  }
-
-  private def switchMode(mode: VarElimMode): VarElimMode = mode match {
-    case Promote => Demote
-    case Demote  => Promote
   }
 }
