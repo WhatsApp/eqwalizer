@@ -172,6 +172,7 @@ object Types {
 
   implicit val codec: JsonValueCodec[Type] = JsonCodecMaker.make(
     CodecMakerConfig
+      .withMapAsArray(true)
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
       .withAllowRecursiveTypes(true)
@@ -238,44 +239,6 @@ object Types {
             Some(TupleKey(keys))
           }
         case _ => None
-      }
-    }
-
-    private def parse(str: String): Key = {
-      def split(str: String): List[String] = {
-        if (str.isEmpty) return List()
-        var cur = ""
-        var inBraces = 0
-        var res: List[String] = List()
-        for (c <- str) {
-          if (c == '{') inBraces += 1
-          else if (c == '}') inBraces -= 1
-          if (c == ',' && inBraces == 0) {
-            res = cur.strip() :: res
-            cur = ""
-          } else {
-            cur = cur + c
-          }
-        }
-        res = cur.strip() :: res
-        res.reverse
-      }
-      if (str.nonEmpty && str.charAt(0) == '{') {
-        val substrs = split(str.substring(1, str.length - 1))
-        TupleKey(substrs.map(parse))
-      } else {
-        AtomKey(str)
-      }
-    }
-
-    implicit val keyCodec: JsonKeyCodec[Key] = new JsonKeyCodec[Key] {
-      override def decodeKey(in: JsonReader): Key = {
-        val key = in.readKeyAsString()
-        parse(key)
-      }
-
-      override def encodeKey(k: Key, out: JsonWriter): Unit = {
-        out.writeKey(k.toString)
       }
     }
   }
