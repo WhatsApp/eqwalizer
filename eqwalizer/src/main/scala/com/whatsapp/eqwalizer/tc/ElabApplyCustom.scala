@@ -756,7 +756,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
     }
   }
 
-  def elabLambda2(lambda: Lambda, t1: Type, t2: Type, env: Env): Type = {
+  private def elabLambda2(lambda: Lambda, t1: Type, t2: Type, env: Env): Type = {
     val clauseEnvs = occurrence.clausesEnvs(lambda.clauses, List(t1, t2), env)
     val resTys =
       lambda.clauses

@@ -62,7 +62,7 @@ final class Elab(pipelineContext: PipelineContext) {
     val (eType, env5) = elabBody(clause.body, env4)
     val env6 = util.exitScope(env0, env5, exportedVars)
     if (subtype.gradualSubType(eType, NoneType))
-      (NoneType, env6.map { case (name, _) => (name -> NoneType) })
+      (NoneType, env6.map { case (name, _) => name -> NoneType })
     else
       (eType, env6)
   }

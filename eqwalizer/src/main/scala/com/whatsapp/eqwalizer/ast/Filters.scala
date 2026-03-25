@@ -10,7 +10,7 @@ import com.whatsapp.eqwalizer.ast.Exprs._
 import com.whatsapp.eqwalizer.ast.Guards._
 
 object Filters {
-  val predicates1: Set[String] =
+  private val predicates1: Set[String] =
     Set(
       "is_atom",
       "is_binary",
@@ -28,7 +28,7 @@ object Filters {
       "is_tuple",
     )
 
-  val guards_binop: Set[String] =
+  private val guards_binop: Set[String] =
     Set(
       "/",
       "*",
@@ -56,7 +56,7 @@ object Filters {
       "orelse",
     )
 
-  val guards_unop: Set[String] =
+  private val guards_unop: Set[String] =
     Set("bnot", "+", "-", "not")
 
   private def isPredicateFun(name: String, arity: Int): Boolean =
@@ -102,7 +102,7 @@ object Filters {
         None
     }
 
-  def asTests(exprs: List[Expr]): Option[List[Test]] = {
+  private def asTests(exprs: List[Expr]): Option[List[Test]] = {
     val maybeRes = exprs.flatMap(asTest)
     if (maybeRes.length == exprs.size)
       Some(maybeRes)

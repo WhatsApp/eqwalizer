@@ -112,7 +112,7 @@ object TcDiagnostics {
   case class RevealTypeHint(t: Type)(val pos: Pos)(implicit val pipelineContext: PipelineContext) extends TypeError {
     private val typeS = show(t)
     override val errorName = "reveal_type"
-    override val msg = typeS
+    override val msg: String = typeS
     override def erroneousExpr: Option[Expr] = None
   }
   case class RedundantFixme(pos: Pos) extends TypeError {

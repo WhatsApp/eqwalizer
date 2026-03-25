@@ -25,7 +25,7 @@ object Constraints {
   }
 
   case class Constraint(lower: Type, upper: Type)
-  val emptyConstraint = Constraint(NoneType, AnyType)
+  private val emptyConstraint = Constraint(NoneType, AnyType)
 
   type ConstraintSeq = Vector[(Var, ConstraintLoc, Constraint)]
 

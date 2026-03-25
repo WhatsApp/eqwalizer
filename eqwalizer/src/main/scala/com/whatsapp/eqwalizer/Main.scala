@@ -23,7 +23,7 @@ object Main {
     }
   }
 
-  def ipc(ipcArgs: Array[String]): Unit = {
+  private def ipc(ipcArgs: Array[String]): Unit = {
     val modules = ipcArgs.tail
     ELPDiagnostics.getDiagnosticsIpc(modules)
   }
@@ -31,7 +31,7 @@ object Main {
   private def help(): Unit =
     Console.print(helpText)
 
-  val helpText: String = {
+  private val helpText: String = {
     """com.whatsapp.eqwalizer.Main
       |eqWAlizer is meant to be used from ELP
       |""".stripMargin

@@ -275,13 +275,13 @@ object Ipc {
   // copy/pasted from java.io.InputStream.readNBytes and then Scalafied.
   // replace with stream.readNBytes in T111884043
   private def readNBytes(stream: java.io.InputStream, b: Array[Byte], off: Int, len: Int): Int = {
-    var n = 0;
+    var n = 0
 
     while (n < len) {
-      val count = stream.read(b, off + n, len - n);
+      val count = stream.read(b, off + n, len - n)
       if (count < 0)
         return n
-      n += count;
+      n += count
     }
     n
   }

@@ -24,7 +24,7 @@ object Db {
 
   /** module stub suitable for type-checking
     */
-  def getModuleStub(module: String): Option[ModuleStub] = {
+  private def getModuleStub(module: String): Option[ModuleStub] = {
     loadedModules.add(module)
     if (stubs.contains(module)) stubs(module)
     else {

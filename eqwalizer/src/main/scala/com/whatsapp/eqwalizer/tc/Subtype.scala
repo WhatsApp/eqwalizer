@@ -12,7 +12,7 @@ import com.whatsapp.eqwalizer.ast.Types._
 import scala.util.boundary
 
 class Subtype(pipelineContext: PipelineContext) {
-  val util = pipelineContext.util
+  private val util = pipelineContext.util
 
   private sealed trait Variance
   private case object + extends Variance
@@ -210,7 +210,7 @@ class Subtype(pipelineContext: PipelineContext) {
             return true
           // Or it must be covered by the compatible props + the default association
           val domain2 = join(kT2, domainProps2)
-          (subTypePol(kT1, domain2, seen) && subTypePol(vT1, vT2, seen))
+          subTypePol(kT1, domain2, seen) && subTypePol(vT1, vT2, seen)
         }
       case _ =>
         false

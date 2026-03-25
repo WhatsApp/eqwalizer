@@ -25,7 +25,7 @@ import scala.util.boundary
  */
 
 object TypeMismatch {
-  lazy val nonVerboseRids = builtinTypes.keys.map(RemoteId("erlang", _, 0)).toSet
+  private lazy val nonVerboseRids = builtinTypes.keys.map(RemoteId("erlang", _, 0)).toSet
 
   /**
    * The score is a rough estimate of how close the two matched types are.
@@ -80,7 +80,7 @@ class TypeMismatch(pipelineContext: PipelineContext) {
 
   def showLimitChars(tp: Type, chars: Integer = 30): String = {
     val fullShow = show.show(tp)
-    if (fullShow.size >= chars)
+    if (fullShow.length >= chars)
       show.showTruncated(tp)
     else
       fullShow
@@ -464,7 +464,7 @@ class TypeMismatch(pipelineContext: PipelineContext) {
           val commonKeys = props1.keySet.intersect(props2.keySet)
           val allKeys = props1.keySet.union(props2.keySet)
           val score =
-            if (allKeys.size == 0) 80
+            if (allKeys.isEmpty) 80
             else 40 + 40 * commonKeys.size / allKeys.size
           // Required keys don't match
           val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet

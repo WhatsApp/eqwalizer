@@ -300,7 +300,7 @@ class Narrow(pipelineContext: PipelineContext) {
   def asTupleType(t: Type, arity: Int): List[TupleType] =
     asTupleTypeAux(t, arity)
 
-  def asTupleTypeAux(t: Type, arity: Int): List[TupleType] =
+  private def asTupleTypeAux(t: Type, arity: Int): List[TupleType] =
     t match {
       case DynamicType =>
         List(TupleType(List.fill(arity)(DynamicType)))
@@ -555,7 +555,7 @@ class Narrow(pipelineContext: PipelineContext) {
         val prop2 = s2.props.getOrElse(key, Prop(req = false, NoneType))
         val req = (inOrder && (prop1.req || prop2.req)) || (prop1.req && prop2.req)
         val tp = if (inOrder && prop2.req) prop2.tp else subtype.join(prop1.tp, prop2.tp)
-        (key -> Prop(req, tp))
+        key -> Prop(req, tp)
       }.toMap,
       subtype.join(s1.kType, s2.kType),
       subtype.join(s1.vType, s2.vType),

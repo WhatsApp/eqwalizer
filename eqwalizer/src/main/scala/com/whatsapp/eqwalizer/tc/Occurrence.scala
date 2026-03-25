@@ -406,7 +406,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
                   recDecl.fields
                     .filter(fDecl => !fields.exists(f => f.name == fDecl._1))
                     .flatMap(fDecl => aliases(x, path ++ List(RecordField(fDecl._1, recName)), genPat, env))
-                    .toList
                 genAliases ++ fieldsAliases
             }
         }
@@ -448,7 +447,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
       case TestCall(Id("hd", 1), List(arg)) =>
         testObj(arg, aMap).map(FieldObj(ListHead, _))
       case TestCall(Id("element", 2), List(TestNumber(Some(index)), arg)) =>
-        testObj(arg, aMap).map(FieldObj(TupleField(index.toInt, None), _))
+        testObj(arg, aMap).map(FieldObj(TupleField(index, None), _))
       case _ =>
         None
     }
@@ -572,7 +571,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
                   recDecl.fields
                     .filter(fDecl => !fields.exists(f => f.name == fDecl._1))
                     .flatMap(fDecl => patProps(x, path :+ RecordField(fDecl._1, recName), genPat, env))
-                    .toList
                     .unzip
                 (posNamed ++ posGen, negNamed ++ negGen)
             }

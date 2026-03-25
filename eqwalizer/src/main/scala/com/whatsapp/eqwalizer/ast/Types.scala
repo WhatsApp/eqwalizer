@@ -51,7 +51,7 @@ object Types {
   case class MapType(props: Map[Key, Prop], kType: Type, vType: Type) extends Type
 
   object MapType {
-    def apply(props: Map[Key, Prop], kType: Type, vType: Type) = {
+    def apply(props: Map[Key, Prop], kType: Type, vType: Type): MapType = {
       Key.fromType(kType) match {
         case Some(key) => new MapType(props + (key -> Prop(req = false, vType)), NoneType, NoneType)
         case None =>
