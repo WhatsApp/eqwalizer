@@ -30,8 +30,6 @@ object ElimTypeVars {
     case ty             => TypeVars.children(ty).exists(containsVars(_, tv))
   }
 
-  /** Pierce and Turner Local Type Inference section 3.2
-    */
   def elimTypeVars(ty: Type, mode: ElimMode, vars: Set[Int])(implicit pipelineContext: PipelineContext): Type = {
     def elim(t: Type): Type = elimTypeVars(t, mode, vars)
     ty match {

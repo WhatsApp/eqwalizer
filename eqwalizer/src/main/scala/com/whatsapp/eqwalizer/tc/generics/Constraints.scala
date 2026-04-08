@@ -34,7 +34,7 @@ object Constraints {
       varsToElim: Set[Var],
       cs: ConstraintSeq,
       variances: Map[Var, Variance],
-      seen: Set[(Type, Type)], // for handling recursive types, same logic as in subtype.scala
+      seen: Set[(Type, Type)],
       constraintLoc: ConstraintLoc,
   )
 
@@ -51,14 +51,6 @@ class Constraints(pipelineContext: PipelineContext) {
   private lazy val instantiate = pipelineContext.instantiate
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
-  /** Pierce and Turner Local Type Inference section 3.3
-    * We're constraining `lowerBound` to be a subtype of `upperBound` (usually written `S &lt;: T` in the paper).
-    *
-    * Differences from the paper:
-    * - We have more types of types in our system (tuples, for example).
-    * - P&T don't handle pattern-matching. We use None to represent failure.
-    * - We return early if there are no type variables to solve: we use same logic for both generic and non-generic fun application
-    */
   def constraintGen(
       toSolve: Set[Var],
       lowerBound: Type,

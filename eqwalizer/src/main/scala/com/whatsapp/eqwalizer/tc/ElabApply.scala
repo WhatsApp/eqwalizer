@@ -15,14 +15,6 @@ import com.whatsapp.eqwalizer.tc.generics.Constraints.ConstraintSeq
 
 import scala.collection.mutable.ListBuffer
 
-/** Implement Pierce and Turner "Local Type Inference" with the following tweaks:
-  * - special handling for functions applied to lambdas, see `synthesizeWithLambdas`
-  * - instantiation of generic functions through eta-expansion - see `etaExpand`
-  * - no special handling for generic function application in check mode: we didn't see much difference in behavior
-  * and it's easier to maintain fewer code paths. P&T say the special casing helps for when there are type vars in
-  * return types that appear in both positive and negative positions.
-  * - A single code path for both generic and non-generic function application
-  */
 class ElabApply(pipelineContext: PipelineContext) {
   private lazy val check = pipelineContext.check
   private lazy val elab = pipelineContext.elab
@@ -61,7 +53,6 @@ class ElabApply(pipelineContext: PipelineContext) {
     Lambda(List(clause))(pos, name = None)
   }
 
-  // detailled docs in ./generics/README.md
   def elabApply(ft0: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
 
     assert(ft0.argTys.size == argTys.size)
