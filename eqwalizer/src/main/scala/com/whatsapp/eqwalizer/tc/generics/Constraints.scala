@@ -10,7 +10,7 @@ import com.whatsapp.eqwalizer.ast.{Subst, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousUnion, ExpectedSubtype}
-import com.whatsapp.eqwalizer.tc.generics.Variance.*
+import com.whatsapp.eqwalizer.ast.Variance.*
 import com.whatsapp.eqwalizer.tc.PipelineContext
 
 import scala.annotation.tailrec

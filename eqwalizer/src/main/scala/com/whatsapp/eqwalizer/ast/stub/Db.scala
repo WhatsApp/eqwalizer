@@ -16,7 +16,7 @@ import com.whatsapp.eqwalizer.ast.Types.Type
 
 import scala.collection.mutable
 import com.whatsapp.eqwalizer.io.Ipc
-import com.whatsapp.eqwalizer.tc.generics.Variance.Variance
+import com.whatsapp.eqwalizer.ast.Variance.Variance
 
 object Db {
   private val stubs: mutable.Map[String, Option[ModuleStub]] = mutable.Map.empty

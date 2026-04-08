@@ -6,8 +6,8 @@
 
 package com.whatsapp.eqwalizer.tc.generics
 
-import com.whatsapp.eqwalizer.ast.TypeVars
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.{TypeVars, Variance}
+import com.whatsapp.eqwalizer.ast.Types.*
 
 enum ElimMode {
   case Promote, Demote

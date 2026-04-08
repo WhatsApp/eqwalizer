@@ -11,7 +11,7 @@ import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodec
 import com.whatsapp.eqwalizer.ast.Forms.{Callback, FunSpec, OverloadedFunSpec, RecDecl, TypeDecl}
 import com.whatsapp.eqwalizer.ast.Id
 import com.whatsapp.eqwalizer.io.Ipc
-import com.whatsapp.eqwalizer.tc.generics.Variance.Variance
+import com.whatsapp.eqwalizer.ast.Variance.Variance
 
 import scala.collection.mutable
 

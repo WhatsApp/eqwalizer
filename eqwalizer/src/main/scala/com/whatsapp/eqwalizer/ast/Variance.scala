@@ -4,10 +4,9 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
-package com.whatsapp.eqwalizer.tc.generics
+package com.whatsapp.eqwalizer.ast
 
-import com.whatsapp.eqwalizer.ast.{Id, RemoteId, TypeVars}
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.stub.Db
 
 object Variance {
