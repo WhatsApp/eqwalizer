@@ -6,10 +6,10 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.Forms._
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Forms.*
+import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.stub.Db
-import com.whatsapp.eqwalizer.ast.{Id, RemoteId}
+import com.whatsapp.eqwalizer.ast.{Id, RemoteId, Subst}
 
 class Util(pipelineContext: PipelineContext) {
   private val module = pipelineContext.module
