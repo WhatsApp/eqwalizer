@@ -6,12 +6,11 @@
 
 package com.whatsapp.eqwalizer.tc.generics
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
-import com.whatsapp.eqwalizer.ast.{Subst, TypeVars}
+import com.whatsapp.eqwalizer.ast.{Subst, TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types.*
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousUnion, ExpectedSubtype}
-import com.whatsapp.eqwalizer.ast.Variance.*
 import com.whatsapp.eqwalizer.tc.PipelineContext
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousUnion, ExpectedSubtype}
 
 import scala.annotation.tailrec
 
@@ -322,14 +321,14 @@ class Constraints(pipelineContext: PipelineContext) {
   }
 
   private def constraintToType(c: Constraint, variance: Variance): Type = variance match {
-    case Constant | Covariant =>
+    case Variance.Constant | Variance.Covariant =>
       if (subtype.isNoneType(c.lower)) DynamicType
       else c.lower
-    case Invariant =>
+    case Variance.Invariant =>
       // Safe because we check all argument types against param types once we have a substitution.
       if (subtype.isNoneType(c.lower)) DynamicType
       else c.lower
-    case Contravariant =>
+    case Variance.Contravariant =>
       c.upper
   }
 

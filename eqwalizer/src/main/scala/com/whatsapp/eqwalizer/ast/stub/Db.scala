@@ -10,13 +10,12 @@ import com.github.plokhotnyuk.jsoniter_scala.core.readFromArray
 import com.whatsapp.eqwalizer.ELPProxy
 import com.whatsapp.eqwalizer.ast.Exprs.ExtType
 import com.whatsapp.eqwalizer.ast.Forms.*
-import com.whatsapp.eqwalizer.ast.Id
+import com.whatsapp.eqwalizer.ast.{Id, Variance}
 import com.whatsapp.eqwalizer.ast.InvalidDiagnostics.Invalid
 import com.whatsapp.eqwalizer.ast.Types.Type
+import com.whatsapp.eqwalizer.io.Ipc
 
 import scala.collection.mutable
-import com.whatsapp.eqwalizer.io.Ipc
-import com.whatsapp.eqwalizer.ast.Variance.Variance
 
 object Db {
   private val stubs: mutable.Map[String, Option[ModuleStub]] = mutable.Map.empty

@@ -9,16 +9,20 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.stub.Db
 
+enum Variance {
+  case Constant, Covariant, Contravariant, Invariant
+}
+
 object Variance {
   private type Var = Int
 
-  def toVariances(ft: FunType, vars: List[Var]): Map[Var, Variance.Variance] =
+  def toVariances(ft: FunType, vars: List[Var]): Map[Var, Variance] =
     vars.map(tv => tv -> toTopLevelVariance(ft, tv)).toMap
 
-  def paramVariances(remoteId: RemoteId): List[Variance.Variance] =
+  def paramVariances(remoteId: RemoteId): List[Variance] =
     Db.getVariance(remoteId.module, Id(remoteId.name, remoteId.arity)).get
 
-  private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Variance.Variance = ty match {
+  private def varianceOf(ty: Type, tv: Var, isPositivePosition: Boolean): Variance = ty match {
     case FreeVarType(n) if tv == n =>
       if (isPositivePosition) Covariant
       else Contravariant
@@ -46,7 +50,7 @@ object Variance {
     case _              => TypeVars.children(ty).exists(containsVar(_, tv))
   }
 
-  private def toTopLevelVariance(ft: FunType, tv: Var): Variance.Variance =
+  private def toTopLevelVariance(ft: FunType, tv: Var): Variance =
     varianceOf(ft.resTy, tv, isPositivePosition = true) match {
       case Constant =>
         combineVariances(ft.argTys.map(varianceOf(_, tv, isPositivePosition = false))) match {
@@ -59,8 +63,8 @@ object Variance {
         variance
     }
 
-  private def combineVariances(variances: List[Variance.Variance]): Variance.Variance =
-    variances.foldLeft(Constant: Variance.Variance)((v1Opt, v2Opt) =>
+  private def combineVariances(variances: List[Variance]): Variance =
+    variances.foldLeft(Constant: Variance)((v1Opt, v2Opt) =>
       (v1Opt, v2Opt) match {
         case (v, Constant)        => v
         case (Constant, v)        => v
@@ -68,10 +72,4 @@ object Variance {
         case (_, _)               => Invariant
       }
     )
-
-  sealed trait Variance
-  object Constant extends Variance
-  object Covariant extends Variance
-  object Contravariant extends Variance
-  object Invariant extends Variance
 }
