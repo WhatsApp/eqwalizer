@@ -5,8 +5,9 @@
  */
 
 package com.whatsapp.eqwalizer.tc.generics
+
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
-import com.whatsapp.eqwalizer.ast.{Subst, TypeVars, Variance}
+import com.whatsapp.eqwalizer.ast.{ElimMode, ElimTypeVars, Subst, TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.PipelineContext
