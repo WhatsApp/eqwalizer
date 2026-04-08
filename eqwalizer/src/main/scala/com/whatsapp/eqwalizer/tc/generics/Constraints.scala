@@ -7,7 +7,7 @@
 package com.whatsapp.eqwalizer.tc.generics
 
 import com.whatsapp.eqwalizer.ast.Exprs.Expr
-import com.whatsapp.eqwalizer.ast.{ElimMode, ElimTypeVars, Subst, TypeVars, Variance}
+import com.whatsapp.eqwalizer.ast.{Subst, TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.PipelineContext
@@ -101,13 +101,13 @@ class Constraints(pipelineContext: PipelineContext) {
         // CG-Upper from Pierce and "Turner Local Type Inference"
         case (FreeVarType(n), _) if toSolve(n) =>
           assert(freeVars(upperBound).intersect(toSolve).isEmpty)
-          val upper = ElimTypeVars.elimTypeVars(upperBound, ElimMode.Demote, varsToElim)
+          val upper = TypeVars.demote(upperBound, varsToElim)
           val constraint = Constraint(NoneType, upper)
           state.copy(cs = constraints :+ (n, constraintLoc, constraint))
         // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
           assert(freeVars(lowerBound).intersect(toSolve).isEmpty)
-          val lower = ElimTypeVars.elimTypeVars(lowerBound, ElimMode.Promote, varsToElim)
+          val lower = TypeVars.promote(lowerBound, varsToElim)
           val constraint = Constraint(lower, AnyType)
           state.copy(cs = constraints :+ (n, constraintLoc, constraint))
         case (FreeVarType(n1), FreeVarType(n2)) if n1 == n2 && !toSolve(n1) =>
@@ -156,9 +156,9 @@ class Constraints(pipelineContext: PipelineContext) {
           constrainSeq(state, tys.map((_, upperBound)), tolerateUnion)
         // when the upper bound is a union, see if there is only one potential match, use it for constraint generation
         case (_, UnionType(tys)) =>
-          val elimmedLower = ElimTypeVars.elimTypeVars(lowerBound, ElimMode.Demote, toSolve ++ varsToElim)
+          val elimmedLower = TypeVars.demote(lowerBound, toSolve ++ varsToElim)
           val candidates = tys.filter { ty =>
-            val elimmedUpper = ElimTypeVars.elimTypeVars(ty, ElimMode.Promote, toSolve ++ varsToElim)
+            val elimmedUpper = TypeVars.promote(ty, toSolve ++ varsToElim)
             subtype.subType(elimmedLower, elimmedUpper)
           }.toList
           val (varTypes, others) = candidates.partition {
@@ -231,7 +231,7 @@ class Constraints(pipelineContext: PipelineContext) {
                 constraints = (asType(key1), kT2) :: (prop1.tp, vT2) :: constraints
             }
           }
-          val elimmedkT1 = ElimTypeVars.elimTypeVars(kT1, ElimMode.Promote, toSolve ++ varsToElim)
+          val elimmedkT1 = TypeVars.promote(kT1, toSolve ++ varsToElim)
           for ((key2, prop2) <- props2.removedAll(props1.keySet)) {
             if (subtype.subType(asType(key2), elimmedkT1)) {
               constraints = (asType(key2), kT1) :: (vT1, prop2.tp) :: constraints

@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.ast
 
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Types.*
 
 object TypeVars {
 
@@ -21,6 +21,20 @@ object TypeVars {
         shift = shift + ft.forall
         (newVars, res)
       }
+  }
+
+  enum ElimMode {
+    case Promote, Demote
+
+    def switch: ElimMode = this match {
+      case Promote => Demote
+      case Demote  => Promote
+    }
+
+    def toType: Type = this match {
+      case Promote => AnyType
+      case Demote  => NoneType
+    }
   }
 
   def hasTypeVars(ty: Type): Boolean = ty match {
@@ -75,5 +89,54 @@ object TypeVars {
       BoundedDynamicType(substLevels(shift)(bound))
     case _ =>
       t
+  }
+
+  private def containsVars(ty: Type, tv: Set[Int]): Boolean = ty match {
+    case FreeVarType(n) => tv(n)
+    case ty             => TypeVars.children(ty).exists(containsVars(_, tv))
+  }
+
+  def promote(ty: Type, vars: Set[Int]): Type =
+    elimTypeVars(ty, ElimMode.Promote, vars)
+
+  def demote(ty: Type, vars: Set[Int]): Type =
+    elimTypeVars(ty, ElimMode.Demote, vars)
+
+  private def elimTypeVars(ty: Type, mode: ElimMode, vars: Set[Int]): Type = {
+    def elim(t: Type): Type = elimTypeVars(t, mode, vars)
+
+    ty match {
+      case FunType(forall, args, resType) =>
+        val args1 = args.map(elimTypeVars(_, mode.switch, vars))
+        FunType(forall, args1, elim(resType))
+      case AnyArityFunType(resType) =>
+        AnyArityFunType(elim(resType))
+      case TupleType(params) =>
+        TupleType(params.map(elim))
+      case ListType(elemT) =>
+        ListType(elim(elemT))
+      case UnionType(params) =>
+        UnionType(params.map(elim))
+      case RemoteType(id, params) =>
+        val variances = Variance.paramVariances(id)
+        val elimmedParams = params.lazyZip(variances).map {
+          case (param, Variance.Constant | Variance.Covariant) => elimTypeVars(param, mode, vars)
+          case (param, Variance.Contravariant)                 => elimTypeVars(param, mode.switch, vars)
+          case (param, Variance.Invariant) =>
+            if (containsVars(param, vars)) mode.toType
+            else param
+        }
+        RemoteType(id, elimmedParams)
+      case FreeVarType(v) if vars.contains(v) =>
+        mode.toType
+      case vt: FreeVarType =>
+        vt
+      case MapType(props, kt, vt) =>
+        MapType(props.map { case (key, Prop(req, tp)) => (key, Prop(req, elim(tp))) }, elim(kt), elim(vt))
+      case BoundedDynamicType(bound) =>
+        BoundedDynamicType(elim(bound))
+      case _ =>
+        ty
+    }
   }
 }
