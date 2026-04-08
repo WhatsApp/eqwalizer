@@ -8,7 +8,6 @@ package com.whatsapp.eqwalizer.tc.generics
 
 import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types._
-import com.whatsapp.eqwalizer.tc.PipelineContext
 
 enum ElimMode {
   case Promote, Demote
@@ -30,7 +29,7 @@ object ElimTypeVars {
     case ty             => TypeVars.children(ty).exists(containsVars(_, tv))
   }
 
-  def elimTypeVars(ty: Type, mode: ElimMode, vars: Set[Int])(implicit pipelineContext: PipelineContext): Type = {
+  def elimTypeVars(ty: Type, mode: ElimMode, vars: Set[Int]): Type = {
     def elim(t: Type): Type = elimTypeVars(t, mode, vars)
     ty match {
       case FunType(forall, args, resType) =>
@@ -45,7 +44,7 @@ object ElimTypeVars {
       case UnionType(params) =>
         UnionType(params.map(elim))
       case RemoteType(id, params) =>
-        val variances = pipelineContext.variance.paramVariances(id)
+        val variances = Variance.paramVariances(id)
         val elimmedParams = params.lazyZip(variances).map {
           case (param, Variance.Constant | Variance.Covariant) => elimTypeVars(param, mode, vars)
           case (param, Variance.Contravariant)                 => elimTypeVars(param, mode.switch, vars)

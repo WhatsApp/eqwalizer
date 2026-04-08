@@ -10,7 +10,7 @@ import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype}
-import com.whatsapp.eqwalizer.tc.generics.Constraints
+import com.whatsapp.eqwalizer.tc.generics.{Constraints, Variance}
 import com.whatsapp.eqwalizer.tc.generics.Constraints.ConstraintSeq
 
 import scala.collection.mutable.ListBuffer
@@ -22,7 +22,6 @@ class ElabApply(pipelineContext: PipelineContext) {
   private lazy val constraints = pipelineContext.constraints
   private lazy val occurrence = pipelineContext.occurrence
   private lazy val narrow = pipelineContext.narrow
-  private lazy val variance = pipelineContext.variance
   private lazy val typeInfo = pipelineContext.typeInfo
   private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private lazy val instantiate = pipelineContext.instantiate
@@ -96,7 +95,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
     val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
 
-    val variances = variance.toVariances(ft, vars)
+    val variances = Variance.toVariances(ft, vars)
     val delayed: ListBuffer[Arg] = ListBuffer.empty
     val cs0 = nonLambdaArgs.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
       try

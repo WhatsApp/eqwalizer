@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.ast.{TypeVars, Vars}
-import com.whatsapp.eqwalizer.tc.generics.{Constraints, Variance}
+import com.whatsapp.eqwalizer.tc.generics.Constraints
 
 package object tc {
   type Env = Map[String, Type]
@@ -50,8 +50,6 @@ package object tc {
     val unlimitedRefinement: Boolean = {
       options.unlimitedRefinement.getOrElse(false)
     }
-    val variance: Variance =
-      new Variance(this)
     val typeInfo: TypeInfo =
       new TypeInfo(this)
     val diagnosticsInfo: DiagnosticsInfo =

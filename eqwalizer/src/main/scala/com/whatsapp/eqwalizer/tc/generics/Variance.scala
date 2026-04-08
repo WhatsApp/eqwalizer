@@ -9,12 +9,9 @@ package com.whatsapp.eqwalizer.tc.generics
 import com.whatsapp.eqwalizer.ast.{Id, RemoteId, TypeVars}
 import com.whatsapp.eqwalizer.ast.Types._
 import com.whatsapp.eqwalizer.ast.stub.Db
-import com.whatsapp.eqwalizer.tc.PipelineContext
 
-class Variance(pipelineContext: PipelineContext) {
+object Variance {
   private type Var = Int
-
-  import Variance._
 
   def toVariances(ft: FunType, vars: List[Var]): Map[Var, Variance.Variance] =
     vars.map(tv => tv -> toTopLevelVariance(ft, tv)).toMap
@@ -72,14 +69,10 @@ class Variance(pipelineContext: PipelineContext) {
         case (_, _)               => Invariant
       }
     )
-}
-
-object Variance {
 
   sealed trait Variance
   object Constant extends Variance
   object Covariant extends Variance
   object Contravariant extends Variance
   object Invariant extends Variance
-
 }
