@@ -71,10 +71,40 @@ class ElabApply(pipelineContext: PipelineContext) {
     }
   }
 
-  def elabApply(ft0: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
-
-    assert(ft0.argTys.size == argTys.size)
+  def elabApply(ft: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
+    assert(ft.argTys.size == argTys.size)
     assert(args.size == argTys.size)
+    if (ft.forall == 0)
+      elabApplyMono(ft, args, argTys, env)
+    else
+      elabApplyPoly(ft, args, argTys, env)
+  }
+
+  private def elabApplyMono(ft: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
+    val appliedArgs = args
+      .zip(argTys)
+      .zip(ft.argTys)
+      .map {
+        case ((lambda: Lambda, argTy: FunType), paramTy) if argTy.argTys.nonEmpty =>
+          lambdaArg(lambda, argTy, paramTy)
+        case ((fun: LocalFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
+          lambdaArg(etaExpand(fun), argTy, paramTy)
+        case ((fun: RemoteFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
+          lambdaArg(etaExpand(fun), argTy, paramTy)
+        case ((expr, argTy), paramTy) => Arg(expr, argTy, paramTy)
+      }
+
+    val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
+    val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
+
+    val subst: Map[Var, Type] = Map.empty
+    nonLambdaArgs.foreach(checkArg(_, subst))
+    lambdaArgs.foreach(checkLambdaArg(_, subst, env))
+
+    ft.resTy
+  }
+
+  private def elabApplyPoly(ft0: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
 
     val (vars, ft) = instantiate.instantiate(ft0)
     val toSolve = vars.toSet
