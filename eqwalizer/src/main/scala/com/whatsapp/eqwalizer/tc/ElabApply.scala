@@ -52,6 +52,24 @@ class ElabApply(pipelineContext: PipelineContext) {
     val clause = Clause(patVars, Nil, Body(List(app)))(pos)
     Lambda(List(clause))(pos, name = None)
   }
+  private def lambdaArg(lambda: Lambda, argTy: FunType, paramTy: Type): AppliedArg = {
+    val arity = lambda.clauses.headOption.map(_.pats.size).getOrElse(0)
+    val funParamTys = narrow.onlyFunTypes(paramTy, arity)
+    if (funParamTys.size == 1) {
+      LambdaArg(lambda, argTy, funParamTys.head)
+    } else if (funParamTys.size > 1) {
+      diagnosticsInfo.add(AmbiguousLambda(lambda.pos, lambda, subtype.join(funParamTys)))
+      LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
+    } else {
+      paramTy match {
+        // Keep it as a LambdaArg to produce an arity mismatch error message, which provides clearer signal
+        case ft: FunType => LambdaArg(lambda, argTy, ft)
+        case t if subtype.gradualSubType(DynamicType, t) =>
+          LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
+        case _ => Arg(lambda, argTy, paramTy)
+      }
+    }
+  }
 
   def elabApply(ft0: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
 
@@ -60,25 +78,6 @@ class ElabApply(pipelineContext: PipelineContext) {
 
     val (vars, ft) = instantiate.instantiate(ft0)
     val toSolve = vars.toSet
-
-    def lambdaArg(lambda: Lambda, argTy: FunType, paramTy: Type): AppliedArg = {
-      val arity = lambda.clauses.headOption.map(_.pats.size).getOrElse(0)
-      val funParamTys = narrow.onlyFunTypes(paramTy, arity)
-      if (funParamTys.size == 1) {
-        LambdaArg(lambda, argTy, funParamTys.head)
-      } else if (funParamTys.size > 1) {
-        diagnosticsInfo.add(AmbiguousLambda(lambda.pos, lambda, subtype.join(funParamTys)))
-        LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
-      } else {
-        paramTy match {
-          // Keep it as a LambdaArg to produce an arity mismatch error message, which provides clearer signal
-          case ft: FunType => LambdaArg(lambda, argTy, ft)
-          case t if subtype.gradualSubType(DynamicType, t) =>
-            LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
-          case _ => Arg(lambda, argTy, paramTy)
-        }
-      }
-    }
 
     val appliedArgs = args
       .zip(argTys)
