@@ -87,10 +87,6 @@ class ElabApply(pipelineContext: PipelineContext) {
       .map {
         case ((lambda: Lambda, argTy: FunType), paramTy) if argTy.argTys.nonEmpty =>
           lambdaArg(lambda, argTy, paramTy)
-        case ((fun: LocalFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
-          lambdaArg(etaExpand(fun), argTy, paramTy)
-        case ((fun: RemoteFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
-          lambdaArg(etaExpand(fun), argTy, paramTy)
         case ((expr, argTy), paramTy) => Arg(expr, argTy, paramTy)
       }
 
