@@ -97,9 +97,8 @@ class ElabApply(pipelineContext: PipelineContext) {
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
     val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
 
-    val subst: Map[Var, Type] = Map.empty
-    nonLambdaArgs.foreach(checkArg(_, subst))
-    lambdaArgs.foreach(checkLambdaArg(_, subst, env))
+    nonLambdaArgs.foreach(checkArg(_, None))
+    lambdaArgs.foreach(checkLambdaArg(_, None, env))
 
     ft.resTy
   }
@@ -200,23 +199,23 @@ class ElabApply(pipelineContext: PipelineContext) {
     // that the args match the parameters.
     // - We assume that any consistent substitution of type variables is sound.
     //   For example, we use an approximation for `meet` in Constraints.scala
-    nonLambdaArgs.foreach(checkArg(_, subst3))
-    lambdaArgs.foreach(checkLambdaArg(_, subst3, env))
+    nonLambdaArgs.foreach(checkArg(_, Some(subst3)))
+    lambdaArgs.foreach(checkLambdaArg(_, Some(subst3), env))
 
     Subst.subst(subst3, ft.resTy)
   }
 
-  private def checkArg(arg: Arg, varToType: Map[Var, Type]): Unit = {
+  private def checkArg(arg: Arg, varToType: Option[Map[Var, Type]]): Unit = {
     val Arg(expr, argTy, rawParamTy) = arg
-    val paramTy = Subst.subst(varToType, rawParamTy)
+    val paramTy = varToType.fold(rawParamTy)(Subst.subst(_, rawParamTy))
     if (!subtype.subType(argTy, paramTy))
       diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = paramTy, got = argTy))
   }
 
-  private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Map[Var, Type], env: Env): Unit = {
+  private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Option[Map[Var, Type]], env: Env): Unit = {
     val LambdaArg(lambda, _, FunType(_, rawArgTys, rawExpResTy)) = lambdaArg
-    val argTys = rawArgTys.map(Subst.subst(varToType, _))
-    val expResTy = Subst.subst(varToType, rawExpResTy)
+    val argTys = varToType.fold(rawArgTys)(s => rawArgTys.map(Subst.subst(s, _)))
+    val expResTy = varToType.fold(rawExpResTy)(Subst.subst(_, rawExpResTy))
     val expFunTy = FunType(0, argTys, expResTy)
     val env1 =
       lambda.name match {
