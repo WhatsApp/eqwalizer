@@ -6,13 +6,15 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.TypeVars
+import com.whatsapp.eqwalizer.ast.{TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
-import com.whatsapp.eqwalizer.ast.Types._
+import com.whatsapp.eqwalizer.ast.Types.*
+
 import scala.util.boundary
 
 class Subtype(pipelineContext: PipelineContext) {
   private val util = pipelineContext.util
+  private lazy val instantiate = pipelineContext.instantiate
 
   private sealed trait Variance
   private case object + extends Variance
@@ -160,7 +162,15 @@ class Subtype(pipelineContext: PipelineContext) {
       case (ft1: FunType, ft2: FunType) if ft1.argTys.size == ft2.argTys.size =>
         TypeVars.conformForalls(ft1, ft2) match {
           case None =>
-            false
+            (ft1.forall > 0) && (ft2.forall == 0) && {
+              val (vars, ft) = instantiate.instantiate(ft1)
+              pipelineContext.fConstraints.satisfiable(
+                toSolve = vars.toSet,
+                varsToElim = Set.empty,
+                pairs = ft2.argTys.zip(ft.argTys) :+ (ft.resTy, ft2.resTy),
+                variances = Variance.toVariances(ft, vars),
+              )
+            }
           case Some((FunType(_, args1, res1), FunType(_, args2, res2))) =>
             subType(res1, res2, seen) && args2.lazyZip(args1).forall(subType(_, _, seen))
         }

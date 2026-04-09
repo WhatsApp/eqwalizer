@@ -8,7 +8,7 @@ package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.ast.{TypeVars, Vars}
-import com.whatsapp.eqwalizer.tc.generics.Constraints
+import com.whatsapp.eqwalizer.tc.generics.{Constraints, FConstraints}
 
 package object tc {
   type Env = Map[String, Type]
@@ -26,6 +26,7 @@ package object tc {
     val subtype: Subtype = new Subtype(this)
     val narrow: Narrow = new Narrow(this)
     val constraints: Constraints = new Constraints(this)
+    val fConstraints: FConstraints = new FConstraints(this)
     val checkCallback: CheckCallback = new CheckCallback(this)
     val typeMismatch: TypeMismatch = new TypeMismatch(this)
     val instantiate: TypeVars.Instantiate = new TypeVars.Instantiate()
