@@ -11,8 +11,6 @@ import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.tc.PipelineContext
 
-import scala.annotation.tailrec
-
 object FConstraints {
   private type Var = Int
 
@@ -55,7 +53,6 @@ class FConstraints(pipelineContext: PipelineContext) {
     }
   }
 
-  @tailrec
   private def constrain(
       state: State,
       lowerBound: Type,
@@ -127,27 +124,12 @@ class FConstraints(pipelineContext: PipelineContext) {
 
         case (UnionType(tys), _) =>
           constrainSeq(state, tys.map((_, upperBound)), seen)
-        // when the upper bound is a union, see if there is only one potential match, use it for constraint generation
         case (_, UnionType(tys)) =>
-          val elimmedLower = TypeVars.demote(lowerBound, toSolve ++ varsToElim)
-          val candidates = tys.filter { ty =>
-            val elimmedUpper = TypeVars.promote(ty, toSolve ++ varsToElim)
-            subtype.subType(elimmedLower, elimmedUpper)
-          }.toList
-          val (varTypes, others) = candidates.partition {
-            case _: FreeVarType => true
-            case _              => false
-          }
-          (varTypes, others) match {
-            case (_, List(upperBound)) =>
-              constrain(state, lowerBound, upperBound, seen)
-            case (List(upperBound), _) =>
-              constrain(state, lowerBound, upperBound, seen)
-            case (List(), List()) =>
-              None
-            case (_, _) =>
-              None
-          }
+          val results = tys.flatMap(constrain(state, lowerBound, _, seen)).toList
+          if (results.isEmpty)
+            None
+          else
+            Some(results.flatten)
         case (r: RecordType, t: TupleType) =>
           util.getRecord(r.module, r.name) match {
             case Some(recDecl) =>
