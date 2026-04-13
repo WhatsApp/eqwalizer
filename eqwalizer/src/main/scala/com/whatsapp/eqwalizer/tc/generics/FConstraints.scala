@@ -20,11 +20,7 @@ object FConstraints {
   case class Constraint(lower: Type, upper: Type)
   type ConstraintSeq = Vector[(Var, Constraint)]
 
-  private case class State(
-      toSolve: Set[Var],
-      varsToElim: Set[Var],
-      cs: ConstraintSeq,
-  )
+  private case class State(toSolve: Set[Var], varsToElim: Set[Var])
 
   private object SubtypeFailure extends Exception with NoStackTrace
   private object UnionFailure extends Exception with NoStackTrace
@@ -51,13 +47,9 @@ class FConstraints(pipelineContext: PipelineContext) {
       pairs: List[(Type, Type)],
   ): Boolean = {
     try {
-      val state0 = State(
-        toSolve = toSolve,
-        varsToElim = varsToElim,
-        cs = Vector.empty,
-      )
-      val state = pairs.foldLeft(state0) { case (st, (lower, upper)) => constrain(st, lower, upper, Set.empty) }
-      val meets = state.cs.foldLeft(Map.empty)(meetConstraints)
+      val state = State(toSolve = toSolve, varsToElim = varsToElim)
+      val cs = constrainSeq(state, pairs, seen = Set.empty)
+      val meets = cs.foldLeft(Map.empty)(meetConstraints)
       meets.values.forall(c => subtype.subType(c.lower, c.upper))
     } catch {
       case SubtypeFailure | UnionFailure => false
@@ -71,16 +63,16 @@ class FConstraints(pipelineContext: PipelineContext) {
     throw UnionFailure
 
   @tailrec
-  private def constrain(state: State, lowerBound: Type, upperBound: Type, seen: Set[(Type, Type)]): State = {
-    val State(toSolve, varsToElim, constraints) = state
+  private def constrain(state: State, lowerBound: Type, upperBound: Type, seen: Set[(Type, Type)]): ConstraintSeq = {
+    val State(toSolve, varsToElim) = state
 
-    if (toSolve.isEmpty) state
-    else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) state
+    if (toSolve.isEmpty) Vector.empty
+    else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) Vector.empty
     // The logic is similar to Subtype.scala
-    else if (seen((lowerBound, upperBound))) state
-    else if (lowerBound == upperBound) state
-    else if (subtype.isAnyType(upperBound)) state
-    else if (subtype.isNoneType(lowerBound)) state
+    else if (seen((lowerBound, upperBound))) Vector.empty
+    else if (lowerBound == upperBound) Vector.empty
+    else if (subtype.isAnyType(upperBound)) Vector.empty
+    else if (subtype.isNoneType(lowerBound)) Vector.empty
     else
       (lowerBound, upperBound) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
@@ -88,23 +80,21 @@ class FConstraints(pipelineContext: PipelineContext) {
           assert(freeVars(upperBound).intersect(toSolve).isEmpty)
           val upper = TypeVars.demote(upperBound, varsToElim)
           val constraint = Constraint(NoneType, upper)
-          state.copy(cs = constraints :+ (n, constraint))
+          Vector((n, constraint))
         // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
           assert(freeVars(lowerBound).intersect(toSolve).isEmpty)
           val lower = TypeVars.promote(lowerBound, varsToElim)
           val constraint = Constraint(lower, AnyType)
-          state.copy(cs = constraints :+ (n, constraint))
+          Vector((n, constraint))
         case (FreeVarType(n1), FreeVarType(n2)) if n1 == n2 && !toSolve(n1) =>
-          state
+          Vector.empty
         case (DynamicType, _) =>
           val solveFor = freeVars(upperBound).intersect(toSolve)
-          val newConstraints = solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
-          state.copy(cs = constraints ++ newConstraints)
+          solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
         case (BoundedDynamicType(_), _) =>
           val solveFor = freeVars(upperBound).intersect(toSolve)
-          val newConstraints = solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
-          state.copy(cs = constraints ++ newConstraints)
+          solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
         case (_, BoundedDynamicType(bound)) =>
           constrain(state, lowerBound, bound, seen)
         // logic for recursive types is the same as in subtype.scala
@@ -226,14 +216,16 @@ class FConstraints(pipelineContext: PipelineContext) {
           constrainSeq(state, constraints, seen)
         case _ =>
           if (!subtype.subType(lowerBound, upperBound)) failSubtype()
-          else state
+          else Vector.empty
       }
   }
 
-  private def constrainSeq(state0: State, lowersAndUppers: Iterable[(Type, Type)], seen: Set[(Type, Type)]): State =
-    lowersAndUppers.foldLeft(state0) { case (state1, (lowerBound, upperBound)) =>
-      constrain(state1, lowerBound, upperBound, seen)
-    }
+  private def constrainSeq(
+      state: State,
+      lowersAndUppers: Iterable[(Type, Type)],
+      seen: Set[(Type, Type)],
+  ): ConstraintSeq =
+    lowersAndUppers.flatMap { case (lowerBound, upperBound) => constrain(state, lowerBound, upperBound, seen) }.toVector
 
   private def meetConstraints(constraints: Map[Var, Constraint], tuple: (Var, Constraint)): Map[Var, Constraint] = {
     val (tv, c2) = tuple
