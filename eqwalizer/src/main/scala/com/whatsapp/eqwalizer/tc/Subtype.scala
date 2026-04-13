@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import com.whatsapp.eqwalizer.ast.{TypeVars, Variance}
+import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types.*
 
@@ -168,7 +168,6 @@ class Subtype(pipelineContext: PipelineContext) {
                 toSolve = vars.toSet,
                 varsToElim = Set.empty,
                 pairs = ft2.argTys.zip(ft.argTys) :+ (ft.resTy, ft2.resTy),
-                variances = Variance.toVariances(ft, vars),
               )
             }
           case Some((FunType(_, args1, res1), FunType(_, args2, res2))) =>

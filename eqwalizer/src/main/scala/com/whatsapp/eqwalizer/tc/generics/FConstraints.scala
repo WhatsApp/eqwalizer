@@ -6,7 +6,7 @@
 
 package com.whatsapp.eqwalizer.tc.generics
 
-import com.whatsapp.eqwalizer.ast.{TypeVars, Variance}
+import com.whatsapp.eqwalizer.ast.TypeVars
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.tc.PipelineContext
@@ -24,7 +24,6 @@ object FConstraints {
       toSolve: Set[Var],
       varsToElim: Set[Var],
       cs: ConstraintSeq,
-      variances: Map[Var, Variance],
   )
 
   private object SubtypeFailure extends Exception with NoStackTrace
@@ -50,17 +49,15 @@ class FConstraints(pipelineContext: PipelineContext) {
       toSolve: Set[Var],
       varsToElim: Set[Var],
       pairs: List[(Type, Type)],
-      variances: Map[Var, Variance],
   ): Boolean = {
     try {
       val state0 = State(
         toSolve = toSolve,
         varsToElim = varsToElim,
         cs = Vector.empty,
-        variances = variances,
       )
       val state = pairs.foldLeft(state0) { case (st, (lower, upper)) => constrain(st, lower, upper, Set.empty) }
-      val meets = state.cs.foldLeft(Map.empty)(meetConstraints(_, _, variances))
+      val meets = state.cs.foldLeft(Map.empty)(meetConstraints)
       meets.values.forall(c => subtype.subType(c.lower, c.upper))
     } catch {
       case SubtypeFailure | UnionFailure => false
@@ -75,7 +72,7 @@ class FConstraints(pipelineContext: PipelineContext) {
 
   @tailrec
   private def constrain(state: State, lowerBound: Type, upperBound: Type, seen: Set[(Type, Type)]): State = {
-    val State(toSolve, varsToElim, constraints, variances) = state
+    val State(toSolve, varsToElim, constraints) = state
 
     if (toSolve.isEmpty) state
     else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) state
@@ -238,11 +235,7 @@ class FConstraints(pipelineContext: PipelineContext) {
       constrain(state1, lowerBound, upperBound, seen)
     }
 
-  private def meetConstraints(
-      constraints: Map[Var, Constraint],
-      tuple: (Var, Constraint),
-      variances: Map[Var, Variance],
-  ): Map[Var, Constraint] = {
+  private def meetConstraints(constraints: Map[Var, Constraint], tuple: (Var, Constraint)): Map[Var, Constraint] = {
     val (tv, c2) = tuple
     constraints.get(tv) match {
       case None =>
