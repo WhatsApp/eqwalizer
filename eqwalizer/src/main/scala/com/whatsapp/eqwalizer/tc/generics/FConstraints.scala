@@ -61,16 +61,16 @@ class FConstraints(pipelineContext: PipelineContext) {
       lowerBound: Type,
       upperBound: Type,
       seen: Set[(Type, Type)],
-  ): Option[CMap] = {
+  ): Option[List[CMap]] = {
     val State(toSolve, varsToElim) = state
 
-    if (toSolve.isEmpty) Some(Map.empty)
-    else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) Some(Map.empty)
+    if (toSolve.isEmpty) Some(List(Map.empty))
+    else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) Some(List(Map.empty))
     // The logic is similar to Subtype.scala
-    else if (seen((lowerBound, upperBound))) Some(Map.empty)
-    else if (lowerBound == upperBound) Some(Map.empty)
-    else if (subtype.isAnyType(upperBound)) Some(Map.empty)
-    else if (subtype.isNoneType(lowerBound)) Some(Map.empty)
+    else if (seen((lowerBound, upperBound))) Some(List(Map.empty))
+    else if (lowerBound == upperBound) Some(List(Map.empty))
+    else if (subtype.isAnyType(upperBound)) Some(List(Map.empty))
+    else if (subtype.isNoneType(lowerBound)) Some(List(Map.empty))
     else
       (lowerBound, upperBound) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
@@ -78,21 +78,21 @@ class FConstraints(pipelineContext: PipelineContext) {
           assert(freeVars(upperBound).intersect(toSolve).isEmpty)
           val upper = TypeVars.demote(upperBound, varsToElim)
           val constraint = Constraint(NoneType, upper)
-          Some(Map(n -> constraint))
+          Some(List(Map(n -> constraint)))
         // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
           assert(freeVars(lowerBound).intersect(toSolve).isEmpty)
           val lower = TypeVars.promote(lowerBound, varsToElim)
           val constraint = Constraint(lower, AnyType)
-          Some(Map(n -> constraint))
+          Some(List(Map(n -> constraint)))
         case (FreeVarType(n1), FreeVarType(n2)) if n1 == n2 && !toSolve(n1) =>
-          Some(Map.empty)
+          Some(List(Map.empty))
         case (DynamicType, _) =>
           val solveFor = freeVars(upperBound).intersect(toSolve)
-          Some(solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toMap)
+          Some(List(solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toMap))
         case (BoundedDynamicType(_), _) =>
           val solveFor = freeVars(upperBound).intersect(toSolve)
-          Some(solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toMap)
+          Some(List(solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toMap))
         case (_, BoundedDynamicType(bound)) =>
           constrain(state, lowerBound, bound, seen)
         // logic for recursive types is the same as in subtype.scala
@@ -214,7 +214,7 @@ class FConstraints(pipelineContext: PipelineContext) {
           constrainSeq(state, constraints, seen)
         case _ =>
           if (!subtype.subType(lowerBound, upperBound)) None
-          else Some(Map.empty)
+          else Some(List(Map.empty))
       }
   }
 
@@ -222,8 +222,8 @@ class FConstraints(pipelineContext: PipelineContext) {
       state: State,
       lowersAndUppers: Iterable[(Type, Type)],
       seen: Set[(Type, Type)],
-  ): Option[CMap] = {
-    var result: Option[CMap] = Some(Map.empty)
+  ): Option[List[CMap]] = {
+    var result: Option[List[CMap]] = Some(List(Map.empty))
     for ((lowerBound, upperBound) <- lowersAndUppers)
       if (result.isDefined) {
         constrain(state, lowerBound, upperBound, seen) match {
@@ -258,6 +258,14 @@ class FConstraints(pipelineContext: PipelineContext) {
       if (result.isDefined)
         result = result.flatMap(meetConstraints(_, tuple))
     result
+  }
+
+  private def meetConstraints(ms1: List[CMap], ms2: List[CMap]): Option[List[CMap]] = {
+    val meets = for (m1 <- ms1; m2 <- ms2; meet <- meetConstraints(m1, m2)) yield meet
+    if (meets.isEmpty)
+      None
+    else
+      Some(meets)
   }
 
   private def freeVars(ty: Type): Set[Var] = ty match {
