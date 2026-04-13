@@ -25,7 +25,6 @@ object FConstraints {
       varsToElim: Set[Var],
       cs: ConstraintSeq,
       variances: Map[Var, Variance],
-      seen: Set[(Type, Type)], // for handling recursive types, same logic as in subtype.scala
   )
 
   private object SubtypeFailure extends Exception with NoStackTrace
@@ -59,9 +58,8 @@ class FConstraints(pipelineContext: PipelineContext) {
         varsToElim = varsToElim,
         cs = Vector.empty,
         variances = variances,
-        seen = Set.empty,
       )
-      val state = pairs.foldLeft(state0) { case (st, (lower, upper)) => constrain(st, lower, upper) }
+      val state = pairs.foldLeft(state0) { case (st, (lower, upper)) => constrain(st, lower, upper, Set.empty) }
       val meets = state.cs.foldLeft(Map.empty)(meetConstraints(_, _, variances))
       meets.values.forall(c => subtype.subType(c.lower, c.upper))
     } catch {
@@ -76,8 +74,8 @@ class FConstraints(pipelineContext: PipelineContext) {
     throw UnionFailure
 
   @tailrec
-  private def constrain(state: State, lowerBound: Type, upperBound: Type): State = {
-    val State(toSolve, varsToElim, constraints, variances, seen) = state
+  private def constrain(state: State, lowerBound: Type, upperBound: Type, seen: Set[(Type, Type)]): State = {
+    val State(toSolve, varsToElim, constraints, variances) = state
 
     if (toSolve.isEmpty) state
     else if (!TypeVars.hasTypeVars(upperBound) && !TypeVars.hasTypeVars(lowerBound)) state
@@ -111,14 +109,14 @@ class FConstraints(pipelineContext: PipelineContext) {
           val newConstraints = solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
           state.copy(cs = constraints ++ newConstraints)
         case (_, BoundedDynamicType(bound)) =>
-          constrain(state, lowerBound, bound)
+          constrain(state, lowerBound, bound, seen)
         // logic for recursive types is the same as in subtype.scala
         case (RemoteType(rid, args), _) =>
           val lower = util.getTypeDeclBody(rid, args)
-          constrain(state.copy(seen = seen + (lowerBound -> upperBound)), lower, upperBound)
+          constrain(state, lower, upperBound, seen + (lowerBound -> upperBound))
         case (_, RemoteType(rid, args)) =>
           val upper = util.getTypeDeclBody(rid, args)
-          constrain(state.copy(seen = seen + (lowerBound -> upperBound)), lowerBound, upper)
+          constrain(state, lowerBound, upper, seen + (lowerBound -> upperBound))
 
         // CG-Fun
         case (rawFt1: FunType, rawFt2: FunType) if rawFt1.argTys.size == rawFt2.argTys.size =>
@@ -126,24 +124,24 @@ class FConstraints(pipelineContext: PipelineContext) {
             case Some((ft1, ft2)) =>
               assert(ft1.forall == ft2.forall)
               val lowersAndUppers = ft2.argTys.zip(ft1.argTys) ++ List((ft1.resTy, ft2.resTy))
-              constrainSeq(state, lowersAndUppers)
+              constrainSeq(state, lowersAndUppers, seen)
             case None =>
               failSubtype()
           }
 
         case (ft1: AnyArityFunType, ft2: FunType) if ft2.forall == 0 =>
-          constrain(state, ft1.resTy, ft2.resTy)
+          constrain(state, ft1.resTy, ft2.resTy, seen)
 
         case (ft1: FunType, ft2: AnyArityFunType) =>
           val (vars, ft11) = instantiate.instantiate(ft1)
           val st = state.copy(varsToElim = state.varsToElim ++ vars)
-          constrain(st, ft11.resTy, ft2.resTy)
+          constrain(st, ft11.resTy, ft2.resTy, seen)
 
         case (ft1: AnyArityFunType, ft2: AnyArityFunType) =>
-          constrain(state, ft1.resTy, ft2.resTy)
+          constrain(state, ft1.resTy, ft2.resTy, seen)
 
         case (UnionType(tys), _) =>
-          constrainSeq(state, tys.map((_, upperBound)))
+          constrainSeq(state, tys.map((_, upperBound)), seen)
         // when the upper bound is a union, see if there is only one potential match, use it for constraint generation
         case (_, UnionType(tys)) =>
           val elimmedLower = TypeVars.demote(lowerBound, toSolve ++ varsToElim)
@@ -157,9 +155,9 @@ class FConstraints(pipelineContext: PipelineContext) {
           }
           (varTypes, others) match {
             case (_, List(upperBound)) =>
-              constrain(state, lowerBound, upperBound)
+              constrain(state, lowerBound, upperBound, seen)
             case (List(upperBound), _) =>
-              constrain(state, lowerBound, upperBound)
+              constrain(state, lowerBound, upperBound, seen)
             case (List(), List()) =>
               failSubtype()
             case (_, _) =>
@@ -168,28 +166,28 @@ class FConstraints(pipelineContext: PipelineContext) {
         case (r: RecordType, t: TupleType) =>
           util.getRecord(r.module, r.name) match {
             case Some(recDecl) =>
-              constrain(state, recordAsTuple(recDecl), t)
+              constrain(state, recordAsTuple(recDecl), t, seen)
             case None =>
               failSubtype()
           }
         case (t: TupleType, r: RecordType) =>
           util.getRecord(r.module, r.name) match {
             case Some(recDecl) =>
-              constrain(state, t, recordAsTuple(recDecl))
+              constrain(state, t, recordAsTuple(recDecl), seen)
             case None =>
               failSubtype()
           }
         case (r: RefinedRecordType, t: TupleType) =>
           util.getRecord(r.recType.module, r.recType.name) match {
             case Some(recDecl) =>
-              constrain(state, refinedRecordAsTuple(recDecl, r), t)
+              constrain(state, refinedRecordAsTuple(recDecl, r), t, seen)
             case None =>
               failSubtype()
           }
         case (t: TupleType, r: RefinedRecordType) =>
           util.getRecord(r.recType.module, r.recType.name) match {
             case Some(recDecl) =>
-              constrain(state, t, refinedRecordAsTuple(recDecl, r))
+              constrain(state, t, refinedRecordAsTuple(recDecl, r), seen)
             case None =>
               failSubtype()
           }
@@ -197,16 +195,16 @@ class FConstraints(pipelineContext: PipelineContext) {
           if (r1.recType == r2.recType)
             util.getRecord(r1.recType.module, r1.recType.name) match {
               case Some(recDecl) =>
-                constrain(state, refinedRecordAsTuple(recDecl, r1), refinedRecordAsTuple(recDecl, r2))
+                constrain(state, refinedRecordAsTuple(recDecl, r1), refinedRecordAsTuple(recDecl, r2), seen)
               case None =>
                 failSubtype()
             }
           else
             failSubtype()
         case (TupleType(leftTys), TupleType(rightTys)) if leftTys.size == rightTys.size =>
-          constrainSeq(state, leftTys.zip(rightTys))
+          constrainSeq(state, leftTys.zip(rightTys), seen)
         case (ListType(leftElemTy), ListType(rightElemTy)) =>
-          constrain(state, leftElemTy, rightElemTy)
+          constrain(state, leftElemTy, rightElemTy, seen)
         case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
           // adapted from subtype.subtype
           var constraints: List[(Type, Type)] = List()
@@ -228,16 +226,16 @@ class FConstraints(pipelineContext: PipelineContext) {
             }
           }
           constraints = (kT1, kT2) :: (vT1, vT2) :: constraints
-          constrainSeq(state, constraints)
+          constrainSeq(state, constraints, seen)
         case _ =>
           if (!subtype.subType(lowerBound, upperBound)) failSubtype()
           else state
       }
   }
 
-  private def constrainSeq(state0: State, lowersAndUppers: Iterable[(Type, Type)]): State =
+  private def constrainSeq(state0: State, lowersAndUppers: Iterable[(Type, Type)], seen: Set[(Type, Type)]): State =
     lowersAndUppers.foldLeft(state0) { case (state1, (lowerBound, upperBound)) =>
-      constrain(state1, lowerBound, upperBound)
+      constrain(state1, lowerBound, upperBound, seen)
     }
 
   private def meetConstraints(
