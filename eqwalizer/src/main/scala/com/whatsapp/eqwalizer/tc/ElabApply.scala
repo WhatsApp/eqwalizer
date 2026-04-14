@@ -144,6 +144,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val m0 = constraints.meetAllConstraints(cs0, variances, Map.empty)
     val subst0 = constraints.constraintsToSubst(m0, variances)
 
+    // Process "delayed arguments" that have union upper bounds
     val cs1 = delayed.toList.foldLeft(cs0) { case (cs, arg) =>
       constraints.constraintGen(
         toSolve,
@@ -159,34 +160,15 @@ class ElabApply(pipelineContext: PipelineContext) {
     val m1 = constraints.meetAllConstraints(cs1, variances, m0)
     val subst1 = constraints.constraintsToSubst(m1, variances, toSolve)
 
-    // Then we check the lambdas and use the inferred return types of the lambdas for a final round of constraint generation
-    def inferenceRound(cs: ConstraintSeq, subst: Map[Var, Type]): (ConstraintSeq, Map[Var, Type]) = {
-      val cs1 = lambdaArgs.foldLeft(cs) { case (cs, lambdaArg) =>
-        val resolved = lambdaToFunTy(lambdaArg, subst, env)
-        constraints.constraintGen(
-          toSolve,
-          cs = cs,
-          variances = variances,
-          lowerBound = resolved.resTy,
-          upperBound = lambdaArg.paramTy.resTy,
-          constraintLoc = lambdaArg.copy(argTy = resolved),
-          tolerateUnion = false,
-        )
-      }
-      val subst1 = constraints.constraintsSeqToSubst(cs1, variances, toSolve)
-      (cs1, subst1)
-    }
-
+    // Then we elaborate the lambdas using the partial solutions
     val (cs3, subst3) = typeInfo.withoutTypeCollection {
-      val (cs2, subst2) = inferenceRound(cs1, subst1)
+      val (cs2, subst2) = elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
       val subst2Merged = subst2.map {
         case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
         case (v, ty)             => (v, ty)
       }
-      inferenceRound(cs2, subst2Merged)
+      elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
     }
-
-    // Then we check the lambdas and use the inferred return types of the lambdas for a final round of constraint generation
 
     // We check that all arguments are well-typed under the final substitution.
     // These checks are necessary because:
@@ -199,6 +181,30 @@ class ElabApply(pipelineContext: PipelineContext) {
     lambdaArgs.foreach(checkLambdaArg(_, Some(subst3), env))
 
     Subst.subst(subst3, ft.resTy)
+  }
+
+  private def elabLambdas(
+      cs: ConstraintSeq,
+      subst: Map[Var, Type],
+      lambdaArgs: List[LambdaArg],
+      env: Env,
+      variances: Map[Var, Variance],
+      toSolve: Set[Var],
+  ): (ConstraintSeq, Map[Var, Type]) = {
+    var cs1 = cs
+    for (lambdaArg <- lambdaArgs) {
+      val funType = lambdaToFunTy(lambdaArg, subst, env)
+      cs1 = constraints.constraintGen(
+        toSolve,
+        lowerBound = funType.resTy,
+        upperBound = lambdaArg.paramTy.resTy,
+        lambdaArg.copy(argTy = funType),
+        cs1,
+        variances,
+        false,
+      )
+    }
+    (cs1, constraints.constraintsSeqToSubst(cs1, variances, toSolve))
   }
 
   private def checkArg(arg: Arg, varToType: Option[Map[Var, Type]]): Unit = {
@@ -224,14 +230,10 @@ class ElabApply(pipelineContext: PipelineContext) {
     check.checkLambda(lambda, expFunTy, env1)
   }
 
-  private def lambdaToFunTy(
-      lambdaArg: LambdaArg,
-      varToType: Map[Var, Type],
-      env: Env,
-  ): FunType = {
+  private def lambdaToFunTy(lambdaArg: LambdaArg, subst: Map[Var, Type], env: Env): FunType = {
     val LambdaArg(lambda, _, ft: FunType) = lambdaArg
 
-    val argTys = ft.argTys.map(Subst.subst(varToType, _))
+    val argTys = ft.argTys.map(Subst.subst(subst, _))
     val env1 =
       lambda.name match {
         case Some(name) =>
