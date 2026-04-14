@@ -104,24 +104,24 @@ class Constraints(pipelineContext: PipelineContext) {
       (lowerBound, upperBound) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
         case (FreeVarType(n), _) if toSolve(n) =>
-          assert(freeVars(upperBound).intersect(toSolve).isEmpty)
+          assert(TypeVars.freeVars(upperBound).intersect(toSolve).isEmpty)
           val upper = TypeVars.demote(upperBound, varsToElim)
           val constraint = Constraint(NoneType, upper)
           state.copy(cs = constraints :+ (n, constraintLoc, constraint))
         // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
-          assert(freeVars(lowerBound).intersect(toSolve).isEmpty)
+          assert(TypeVars.freeVars(lowerBound).intersect(toSolve).isEmpty)
           val lower = TypeVars.promote(lowerBound, varsToElim)
           val constraint = Constraint(lower, AnyType)
           state.copy(cs = constraints :+ (n, constraintLoc, constraint))
         case (FreeVarType(n1), FreeVarType(n2)) if n1 == n2 && !toSolve(n1) =>
           state
         case (DynamicType, _) =>
-          val solveFor = freeVars(upperBound).intersect(toSolve)
+          val solveFor = TypeVars.freeVars(upperBound).intersect(toSolve)
           val newConstraints = solveFor.map(n => (n, constraintLoc, Constraint(DynamicType, AnyType))).toVector
           state.copy(cs = constraints ++ newConstraints)
         case (BoundedDynamicType(_), _) =>
-          val solveFor = freeVars(upperBound).intersect(toSolve)
+          val solveFor = TypeVars.freeVars(upperBound).intersect(toSolve)
           val newConstraints = solveFor.map(n => (n, constraintLoc, Constraint(DynamicType, AnyType))).toVector
           state.copy(cs = constraints ++ newConstraints)
         case (_, BoundedDynamicType(bound)) =>
@@ -346,11 +346,6 @@ class Constraints(pipelineContext: PipelineContext) {
       else c.lower
     case Variance.Contravariant =>
       c.upper
-  }
-
-  private def freeVars(ty: Type): Set[Var] = ty match {
-    case FreeVarType(n) => Set(n)
-    case _              => TypeVars.children(ty).flatMap(freeVars).toSet
   }
 
   /** Safe approximation because we re-check arg types once we have concrete param types

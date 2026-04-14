@@ -62,21 +62,21 @@ class FConstraints(pipelineContext: PipelineContext) {
       (lower, upper) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
         case (FreeVarType(n), _) if toSolve(n) =>
-          assert(freeVars(upper).intersect(toSolve).isEmpty)
+          assert(TypeVars.freeVars(upper).intersect(toSolve).isEmpty)
           val constraint = Constraint(NoneType, TypeVars.demote(upper, varsToElim))
           Some(List(Map(n -> constraint)))
         // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
-          assert(freeVars(lower).intersect(toSolve).isEmpty)
+          assert(TypeVars.freeVars(lower).intersect(toSolve).isEmpty)
           val constraint = Constraint(TypeVars.promote(lower, varsToElim), AnyType)
           Some(List(Map(n -> constraint)))
         case (FreeVarType(n1), FreeVarType(n2)) if n1 == n2 && !toSolve(n1) =>
           Some(List(Map.empty))
         case (DynamicType, _) =>
-          val solveFor = freeVars(upper).intersect(toSolve)
+          val solveFor = TypeVars.freeVars(upper).intersect(toSolve)
           Some(List(solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toMap))
         case (BoundedDynamicType(_), _) =>
-          val solveFor = freeVars(upper).intersect(toSolve)
+          val solveFor = TypeVars.freeVars(upper).intersect(toSolve)
           Some(List(solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toMap))
         case (_, BoundedDynamicType(bound)) =>
           constrain(ctx, lower, bound, seen)
@@ -223,11 +223,6 @@ class FConstraints(pipelineContext: PipelineContext) {
   private def meetConstraints(ms1: List[CMap], ms2: List[CMap]): Option[List[CMap]] = {
     val meets = for (m1 <- ms1; m2 <- ms2; meet <- meetConstraints(m1, m2)) yield meet
     if (meets.isEmpty) None else Some(meets)
-  }
-
-  private def freeVars(ty: Type): Set[Var] = ty match {
-    case FreeVarType(n) => Set(n)
-    case _              => TypeVars.children(ty).flatMap(freeVars).toSet
   }
 
   private def meet(t1: Type, t2: Type): Type = narrow.meet(t1, t2)

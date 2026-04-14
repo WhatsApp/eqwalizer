@@ -9,11 +9,12 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.ast.Types.*
 
 object TypeVars {
+  type Var = Int
 
   class Instantiate {
     private var shift = 0
 
-    def instantiate(ft: FunType): (List[Int], FunType) =
+    def instantiate(ft: FunType): (List[Var], FunType) =
       if (ft.forall == 0) (Nil, ft)
       else {
         val newVars = (shift until (shift + ft.forall)).toList
@@ -40,6 +41,11 @@ object TypeVars {
   def hasTypeVars(ty: Type): Boolean = ty match {
     case FreeVarType(_) => true
     case ty             => children(ty).exists(hasTypeVars)
+  }
+
+  def freeVars(ty: Type): Set[Var] = ty match {
+    case FreeVarType(n) => Set(n)
+    case _              => children(ty).flatMap(freeVars).toSet
   }
 
   /** note: returns Nil for record types because they can't have type vars
@@ -91,18 +97,18 @@ object TypeVars {
       t
   }
 
-  private def containsVars(ty: Type, tv: Set[Int]): Boolean = ty match {
+  private def containsVars(ty: Type, tv: Set[Var]): Boolean = ty match {
     case FreeVarType(n) => tv(n)
     case ty             => TypeVars.children(ty).exists(containsVars(_, tv))
   }
 
-  def promote(ty: Type, vars: Set[Int]): Type =
+  def promote(ty: Type, vars: Set[Var]): Type =
     elimTypeVars(ty, ElimMode.Promote, vars)
 
-  def demote(ty: Type, vars: Set[Int]): Type =
+  def demote(ty: Type, vars: Set[Var]): Type =
     elimTypeVars(ty, ElimMode.Demote, vars)
 
-  private def elimTypeVars(ty: Type, mode: ElimMode, vars: Set[Int]): Type = {
+  private def elimTypeVars(ty: Type, mode: ElimMode, vars: Set[Var]): Type = {
     def elim(t: Type): Type = elimTypeVars(t, mode, vars)
 
     ty match {
