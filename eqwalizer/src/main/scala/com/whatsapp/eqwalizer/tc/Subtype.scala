@@ -167,7 +167,7 @@ class Subtype(pipelineContext: PipelineContext) {
               pipelineContext.fConstraints.satisfiable(
                 toSolve = vars.toSet,
                 varsToElim = Set.empty,
-                pairs = ft2.argTys.zip(ft.argTys) :+ (ft.resTy, ft2.resTy),
+                bounds = ft2.argTys.zip(ft.argTys) :+ (ft.resTy, ft2.resTy),
               )
             }
           case Some((FunType(_, args1, res1), FunType(_, args2, res2))) =>
