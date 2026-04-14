@@ -119,47 +119,10 @@ class ElabApply(pipelineContext: PipelineContext) {
 
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
     val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
-
     val variances = Variance.toVariances(ft, vars)
-    val delayed: ListBuffer[Arg] = ListBuffer.empty
-    val cs0 = nonLambdaArgs.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
-      try
-        constraints.constraintGen(
-          toSolve,
-          cs = cs,
-          variances = variances,
-          lowerBound = arg.argTy,
-          upperBound = arg.paramTy,
-          constraintLoc = arg,
-          tolerateUnion = true,
-        )
-      catch {
-        case Constraints.UnionFailure() =>
-          delayed.addOne(arg)
-          cs
-      }
-    }
 
-    // We generate constraints from the non-lambda args and find a substitution that minimizes type vars in ft.resTy
-    val m0 = constraints.meetAllConstraints(cs0, variances, Map.empty)
-    val subst0 = constraints.constraintsToSubst(m0, variances)
-
-    // Process "delayed arguments" that have union upper bounds
-    val cs1 = delayed.toList.foldLeft(cs0) { case (cs, arg) =>
-      constraints.constraintGen(
-        toSolve,
-        cs = cs,
-        variances = variances,
-        lowerBound = arg.argTy,
-        upperBound = Subst.subst(subst0, arg.paramTy),
-        constraintLoc = arg,
-        tolerateUnion = false,
-      )
-    }
-
-    val m1 = constraints.meetAllConstraints(cs1, variances, m0)
-    val subst1 = constraints.constraintsToSubst(m1, variances, toSolve)
-
+    // First we elaborate non-lambda arguments (datums)
+    val (cs1, subst1) = elabTerms(toSolve, nonLambdaArgs, variances)
     // Then we elaborate the lambdas using the partial solutions
     val (cs3, subst3) = typeInfo.withoutTypeCollection {
       val (cs2, subst2) = elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
@@ -181,6 +144,51 @@ class ElabApply(pipelineContext: PipelineContext) {
     lambdaArgs.foreach(checkLambdaArg(_, Some(subst3), env))
 
     Subst.subst(subst3, ft.resTy)
+  }
+
+  private def elabTerms(
+      toSolve: Set[Var],
+      args: List[Arg],
+      variances: Map[Var, Variance],
+  ): (ConstraintSeq, Map[Var, Type]) = {
+    val delayed: ListBuffer[Arg] = ListBuffer.empty
+    val cs1 = args.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
+      try
+        constraints.constraintGen(
+          toSolve,
+          cs = cs,
+          variances = variances,
+          lowerBound = arg.argTy,
+          upperBound = arg.paramTy,
+          constraintLoc = arg,
+          tolerateUnion = true,
+        )
+      catch {
+        case Constraints.UnionFailure() =>
+          delayed.addOne(arg)
+          cs
+      }
+    }
+
+    val m1 = constraints.meetAllConstraints(cs1, variances, Map.empty)
+    val subst1 = constraints.constraintsToSubst(m1, variances)
+
+    // Process "delayed arguments" that have union upper bounds
+    val cs2 = delayed.toList.foldLeft(cs1) { case (cs, arg) =>
+      constraints.constraintGen(
+        toSolve,
+        cs = cs,
+        variances = variances,
+        lowerBound = arg.argTy,
+        upperBound = Subst.subst(subst1, arg.paramTy),
+        constraintLoc = arg,
+        tolerateUnion = false,
+      )
+    }
+
+    val m2 = constraints.meetAllConstraints(cs2, variances, m1)
+    val subst2 = constraints.constraintsToSubst(m2, variances, toSolve)
+    (cs2, subst2)
   }
 
   private def elabLambdas(
