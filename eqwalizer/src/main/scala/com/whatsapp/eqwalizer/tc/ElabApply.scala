@@ -158,8 +158,8 @@ class ElabApply(pipelineContext: PipelineContext) {
           toSolve,
           cs = cs,
           variances = variances,
-          lowerBound = arg.argTy,
-          upperBound = arg.paramTy,
+          lower = arg.argTy,
+          upper = arg.paramTy,
           constraintLoc = arg,
           tolerateUnion = true,
         )
@@ -179,8 +179,8 @@ class ElabApply(pipelineContext: PipelineContext) {
         toSolve,
         cs = cs,
         variances = variances,
-        lowerBound = arg.argTy,
-        upperBound = Subst.subst(subst1, arg.paramTy),
+        lower = arg.argTy,
+        upper = Subst.subst(subst1, arg.paramTy),
         constraintLoc = arg,
         tolerateUnion = false,
       )
@@ -204,8 +204,8 @@ class ElabApply(pipelineContext: PipelineContext) {
       val funType = lambdaToFunTy(lambdaArg, subst, env)
       cs1 = constraints.constraintGen(
         toSolve,
-        lowerBound = funType.resTy,
-        upperBound = lambdaArg.paramTy.resTy,
+        lower = funType.resTy,
+        upper = lambdaArg.paramTy.resTy,
         lambdaArg.copy(argTy = funType),
         cs1,
         variances,
