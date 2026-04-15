@@ -237,10 +237,11 @@ class Constraints(pipelineContext: PipelineContext) {
           constrain(state, leftElemTy, rightElemTy, seen, tolerateUnion)
         case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
           // adapted from subtype.subtype
+          val tolerantSubtype = subtype.isDynamicType(kT1) && subtype.isDynamicType(vT1)
           var constraints: List[(Type, Type)] = List()
           val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
           val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
-          if (!reqKeys2.subsetOf(reqKeys1)) failSubtype()
+          if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) failSubtype()
           for ((key1, prop1) <- props1) {
             props2.get(key1) match {
               case Some(prop2) =>
