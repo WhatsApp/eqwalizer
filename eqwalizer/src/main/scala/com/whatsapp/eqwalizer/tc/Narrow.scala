@@ -15,6 +15,9 @@ class Narrow(pipelineContext: PipelineContext) {
   private val subtype = pipelineContext.subtype
   private val util = pipelineContext.util
 
+  // It tries to narrow t1 wrt t2.
+  // Ideally, it finds t1 ∩ t2, but it's not guaranteed.
+  // Read the implementation for more details.
   def meet(t1: Type, t2: Type): Type =
     meetAux(t1, t2, Set.empty)(promoteNone = true)
 
