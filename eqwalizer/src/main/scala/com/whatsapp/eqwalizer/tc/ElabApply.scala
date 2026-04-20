@@ -215,14 +215,16 @@ class ElabApply(pipelineContext: PipelineContext) {
     (cs1, constraints.constraintsSeqToSubst(cs1, variances, toSolve))
   }
 
-  private def checkArg(arg: Arg, varToType: Option[Map[Var, Type]]): Unit = {
+  private def checkArg(arg: Arg, varToType: Option[Map[Var, Type]]): Boolean = {
     val Arg(expr, argTy, rawParamTy) = arg
     val paramTy = varToType.fold(rawParamTy)(Subst.subst(_, rawParamTy))
-    if (!subtype.subType(argTy, paramTy))
+    if (!subtype.subType(argTy, paramTy)) {
       diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = paramTy, got = argTy))
+      false
+    } else true
   }
 
-  private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Option[Map[Var, Type]], env: Env): Unit = {
+  private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Option[Map[Var, Type]], env: Env): Boolean = {
     val LambdaArg(lambda, _, FunType(_, rawArgTys, rawExpResTy)) = lambdaArg
     val argTys = varToType.fold(rawArgTys)(s => rawArgTys.map(Subst.subst(s, _)))
     val expResTy = varToType.fold(rawExpResTy)(Subst.subst(_, rawExpResTy))
@@ -235,7 +237,8 @@ class ElabApply(pipelineContext: PipelineContext) {
         case _ =>
           env
       }
-    check.checkLambda(lambda, expFunTy, env1)
+    val (_, typed) = check.checkLambda(lambda, expFunTy, env1)
+    typed
   }
 
   private def lambdaToFunTy(lambdaArg: LambdaArg, subst: Map[Var, Type], env: Env): FunType = {
