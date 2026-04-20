@@ -291,7 +291,8 @@ final class Check(pipelineContext: PipelineContext) {
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ft))
           env
         case lambda: Lambda =>
-          checkLambda(lambda, resTy, env)
+          val (env1, _) = checkLambda(lambda, resTy, env)
+          env1
         case Block(block) =>
           checkBody(block, resTy, env)
         case c: Case if Predicates.isCaseIf(c) =>
@@ -496,12 +497,12 @@ final class Check(pipelineContext: PipelineContext) {
 
   private def lambdaArity(lambda: Lambda): Int = lambda.clauses.head.pats.size
 
-  private def checkLambdaFunType(lambda: Lambda, funTy: FunType, env: Env): Env = {
+  private def checkLambdaFunType(lambda: Lambda, funTy: FunType, env: Env): (Env, Boolean) = {
     val FunType(_, fParamTys, fResTy) = funTy
     val arity = lambdaArity(lambda)
     if (arity != fParamTys.size) {
       diagnosticsInfo.add(LambdaArityMismatch(lambda.pos, lambda, lambdaArity = arity, argsArity = fParamTys.size))
-      return env
+      return (env, false)
     }
     val env1 = lambda.name match {
       case Some(name) =>
@@ -510,28 +511,36 @@ final class Check(pipelineContext: PipelineContext) {
         env
     }
     val envs = occurrence.clausesEnvs(lambda.clauses, fParamTys, env1)
-    lambda.clauses
-      .lazyZip(envs)
-      .map((clause, occEnv) => checkClause(clause, fParamTys, fResTy, occEnv, Set.empty))
-    env
+
+    var typed: Boolean = true
+    for ((clause, occEnv) <- lambda.clauses.lazyZip(envs)) {
+      val (infResType, _) = elab.elabClause(clause, fParamTys, occEnv, Set.empty)
+      if (!subtype.subType(infResType, fResTy)) {
+        val expr = clause.body.exprs.last
+        diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = fResTy, got = infResType))
+        typed = false
+      }
+    }
+    (env, typed)
   }
 
-  def checkLambda(lambda: Lambda, resTy: Type, env: Env): Env = {
+  def checkLambda(lambda: Lambda, resTy: Type, env: Env): (Env, Boolean) =
     resTy match {
       case t: FunType =>
         checkLambdaFunType(lambda, t, env)
       case _ =>
         val arity = lambdaArity(lambda)
         narrow.asFunTypes(resTy, arity).toList match {
-          case List(funTy) => checkLambdaFunType(lambda, funTy, env)
+          case List(funTy) =>
+            checkLambdaFunType(lambda, funTy, env)
           case _ =>
             val (ty, _) = elab.elabExpr(lambda, env)
-            if (!subtype.subType(ty, resTy))
+            if (!subtype.subType(ty, resTy)) {
               diagnosticsInfo.add(ExpectedSubtype(lambda.pos, lambda, expected = resTy, got = ty))
+              (env, false)
+            } else (env, true)
         }
     }
-    env
-  }
 
   private def checkApply(funId: RemoteId, expr: Expr, ft: FunType, args: List[Expr], resTy: Type, env: Env): Env = {
     val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
