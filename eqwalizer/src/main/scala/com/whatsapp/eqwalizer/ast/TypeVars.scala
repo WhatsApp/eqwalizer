@@ -38,11 +38,6 @@ object TypeVars {
     }
   }
 
-  def hasTypeVars(ty: Type): Boolean = ty match {
-    case FreeVarType(_) => true
-    case ty             => children(ty).exists(hasTypeVars)
-  }
-
   def freeVars(ty: Type): Set[Var] = ty match {
     case FreeVarType(n) => Set(n)
     case _              => children(ty).flatMap(freeVars).toSet
