@@ -92,9 +92,8 @@ class Constraints(pipelineContext: PipelineContext) {
     def failUnion(): Nothing = {
       unionFailure(constraintLoc, tolerateUnion)
     }
-    if (!TypeVars.hasTypeVars(upper) && !TypeVars.hasTypeVars(lower)) state
     // The logic is similar to Subtype.scala
-    else if (seen((lower, upper))) state
+    if (seen((lower, upper))) state
     else if (subtype.subType(lower, upper)) state
     else
       (lower, upper) match {
