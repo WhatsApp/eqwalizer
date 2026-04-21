@@ -53,9 +53,7 @@ class FConstraints(pipelineContext: PipelineContext) {
 
     // The logic is similar to Subtype.scala
     if (seen((lower, upper))) Some(List(Map.empty))
-    else if (lower == upper) Some(List(Map.empty))
-    else if (subtype.isAnyType(upper)) Some(List(Map.empty))
-    else if (subtype.isNoneType(lower)) Some(List(Map.empty))
+    else if (subtype.subType(lower, upper)) Some(List(Map.empty))
     else
       (lower, upper) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
@@ -179,9 +177,7 @@ class FConstraints(pipelineContext: PipelineContext) {
           }
           constraints = (kT1, kT2) :: (vT1, vT2) :: constraints
           constrainSeq(ctx, constraints, seen)
-        case _ =>
-          if (!subtype.subType(lower, upper)) None
-          else Some(List(Map.empty))
+        case _ => None
       }
   }
 
