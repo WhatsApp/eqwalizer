@@ -95,9 +95,7 @@ class Constraints(pipelineContext: PipelineContext) {
     if (!TypeVars.hasTypeVars(upper) && !TypeVars.hasTypeVars(lower)) state
     // The logic is similar to Subtype.scala
     else if (seen((lower, upper))) state
-    else if (lower == upper) state
-    else if (subtype.isAnyType(upper)) state
-    else if (subtype.isNoneType(lower)) state
+    else if (subtype.subType(lower, upper)) state
     else
       (lower, upper) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
@@ -257,8 +255,7 @@ class Constraints(pipelineContext: PipelineContext) {
           constraints = (kT1, kT2) :: (vT1, vT2) :: constraints
           constrainSeq(state, constraints, seen, tolerateUnion)
         case _ =>
-          if (!subtype.subType(lower, upper)) failSubtype()
-          else state
+          failSubtype()
       }
   }
 
