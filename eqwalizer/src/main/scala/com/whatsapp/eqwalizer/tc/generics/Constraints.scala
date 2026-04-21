@@ -25,7 +25,6 @@ object Constraints {
   }
 
   case class Constraint(lower: Type, upper: Type)
-  private val emptyConstraint = Constraint(NoneType, AnyType)
 
   type ConstraintSeq = Vector[(Var, ConstraintLoc, Constraint)]
 
@@ -330,26 +329,23 @@ class Constraints(pipelineContext: PipelineContext) {
 
   def constraintsSeqToSubst(cseq: ConstraintSeq, variances: Map[Var, Variance], toSolve: Set[Var]): Map[Var, Type] = {
     val meets = meetAllConstraints(cseq, variances, Map.empty)
-    val cs = meets ++ (toSolve -- meets.keySet).map(_ -> emptyConstraint)
-    constraintsToSubst(cs, variances)
+    val map1 = constraintsToSubst(meets, variances)
+    val map2 = (toSolve -- meets.keySet).map(_ -> DynamicType)
+    map1 ++ map2
   }
 
   def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Map[Var, Type] =
     cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
 
   def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance], toSolve: Set[Var]): Map[Var, Type] = {
-    val cs1 = cs ++ (toSolve -- cs.keySet).map(_ -> emptyConstraint)
-    cs1.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
+    val map1 = cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
+    val map2 = (toSolve -- cs.keySet).map(_ -> DynamicType)
+    map1 ++ map2
   }
 
   private def constraintToType(c: Constraint, variance: Variance): Type = variance match {
-    case Variance.Constant | Variance.Covariant =>
-      if (subtype.isNoneType(c.lower)) DynamicType
-      else c.lower
-    case Variance.Invariant =>
-      // Safe because we check all argument types against param types once we have a substitution.
-      if (subtype.isNoneType(c.lower)) DynamicType
-      else c.lower
+    case Variance.Constant | Variance.Covariant | Variance.Invariant =>
+      c.lower
     case Variance.Contravariant =>
       c.upper
   }
