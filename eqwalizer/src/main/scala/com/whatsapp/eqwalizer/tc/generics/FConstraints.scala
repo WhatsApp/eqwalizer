@@ -51,9 +51,8 @@ class FConstraints(pipelineContext: PipelineContext) {
   private def constrain(ctx: Ctx, lower: Type, upper: Type, seen: Set[(Type, Type)]): Option[List[CMap]] = {
     val Ctx(toSolve, varsToElim) = ctx
 
-    if (!TypeVars.hasTypeVars(upper) && !TypeVars.hasTypeVars(lower)) Some(List(Map.empty))
     // The logic is similar to Subtype.scala
-    else if (seen((lower, upper))) Some(List(Map.empty))
+    if (seen((lower, upper))) Some(List(Map.empty))
     else if (lower == upper) Some(List(Map.empty))
     else if (subtype.isAnyType(upper)) Some(List(Map.empty))
     else if (subtype.isNoneType(lower)) Some(List(Map.empty))
