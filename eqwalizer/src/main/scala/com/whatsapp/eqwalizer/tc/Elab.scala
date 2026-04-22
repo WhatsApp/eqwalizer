@@ -163,7 +163,7 @@ final class Elab(pipelineContext: PipelineContext) {
           val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
             elabExprs(args, env)
           }
-          var resTy = elabApply.elabApply(ft, args, argTys, env1)
+          var resTy = elabApply.elabApply(ft, args, argTys, env1, expr.pos)
           if (customReturn.isCustomReturn(funId))
             resTy = customReturn.customizeResultType(funId, args, argTys, resTy)
           (resTy, env1)
@@ -215,7 +215,7 @@ final class Elab(pipelineContext: PipelineContext) {
           (NoneType, env2)
         } else {
           val (argTys, env2) = elabExprs(args, env1)
-          val resTys = funTys.map(elabApply.elabApply(_, args, argTys, env2))
+          val resTys = funTys.map(elabApply.elabApply(_, args, argTys, env2, expr.pos))
           (subtype.join(resTys), env2)
         }
       case DynRemoteFun(mod, name) =>
@@ -246,7 +246,7 @@ final class Elab(pipelineContext: PipelineContext) {
           val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
             elabExprs(args, env)
           }
-          var resTy = elabApply.elabApply(ft, args, argTys, env1)
+          var resTy = elabApply.elabApply(ft, args, argTys, env1, expr.pos)
           if (customReturn.isCustomReturn(fqn))
             resTy = customReturn.customizeResultType(fqn, args, argTys, resTy)
           (resTy, env1)

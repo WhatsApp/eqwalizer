@@ -110,7 +110,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
     remoteId match {
       case fqn @ RemoteId("file", "open", 2) =>
         val ft = util.getFunType(fqn)
-        val resTy = elabApply.elabApply(ft, args, argTys, env1)
+        val resTy = elabApply.elabApply(ft, args, argTys, env1, callPos)
         val resTyPrecise = {
           val modeArg = args(1)
           def collectModes(expr: Expr): List[Option[String]] = {

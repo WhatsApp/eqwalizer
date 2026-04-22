@@ -6,37 +6,26 @@
 
 package com.whatsapp.eqwalizer.tc.generics
 
-import com.whatsapp.eqwalizer.ast.Exprs.Expr
-import com.whatsapp.eqwalizer.ast.{Subst, TypeVars, Variance}
+import com.whatsapp.eqwalizer.ast.{TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.PipelineContext
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousUnion, ExpectedSubtype}
 
 import scala.annotation.tailrec
 
 object Constraints {
   private type Var = Int
 
-  trait ConstraintLoc {
-    val arg: Expr
-    val argTy: Type
-    val paramTy: Type
-  }
-
   case class Constraint(lower: Type, upper: Type)
 
-  type ConstraintSeq = Vector[(Var, ConstraintLoc, Constraint)]
+  type ConstraintSeq = Vector[(Var, Constraint)]
 
   private case class State(
       toSolve: Set[Var],
       varsToElim: Set[Var],
       cs: ConstraintSeq,
       variances: Map[Var, Variance],
-      constraintLoc: ConstraintLoc,
   )
-
-  private case class SubtypeFailure() extends Exception
   case class UnionFailure() extends Exception
 }
 
@@ -45,7 +34,6 @@ class Constraints(pipelineContext: PipelineContext) {
   private lazy val subtype = pipelineContext.subtype
   private lazy val narrow = pipelineContext.narrow
   private lazy val util = pipelineContext.util
-  private lazy val diagnosticsInfo = pipelineContext.diagnosticsInfo
   private lazy val instantiate = pipelineContext.instantiate
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
@@ -53,26 +41,12 @@ class Constraints(pipelineContext: PipelineContext) {
       toSolve: Set[Var],
       lower: Type,
       upper: Type,
-      constraintLoc: ConstraintLoc,
       cs: ConstraintSeq,
       variances: Map[Var, Variance],
       tolerateUnion: Boolean,
-  ): ConstraintSeq = {
-    val state = State(
-      toSolve = toSolve,
-      varsToElim = Set.empty,
-      cs,
-      variances,
-      constraintLoc,
-    )
-    try {
-      constrain(state, lower, upper, Set.empty, tolerateUnion).cs
-    } catch {
-      case SubtypeFailure() =>
-        cs
-      case UnionFailure() if !tolerateUnion =>
-        cs
-    }
+  ): Option[ConstraintSeq] = {
+    val state = State(toSolve, Set.empty, cs, variances)
+    constrain(state, lower, upper, Set.empty, tolerateUnion).map(_.cs)
   }
 
   @tailrec
@@ -82,41 +56,37 @@ class Constraints(pipelineContext: PipelineContext) {
       upper: Type,
       seen: Set[(Type, Type)],
       tolerateUnion: Boolean,
-  ): State = {
-    val State(toSolve, varsToElim, constraints, variances, constraintLoc) = state
+  ): Option[State] = {
+    val State(toSolve, varsToElim, constraints, variances) = state
 
-    def failSubtype(): Nothing = {
-      val cs = meetAllConstraints(constraints, variances, Map.empty)
-      subtypeFailure(cs, constraintLoc, variances)
-    }
-    def failUnion(): Nothing = {
-      unionFailure(constraintLoc, tolerateUnion)
+    def failUnion(): None.type = {
+      unionFailure(tolerateUnion)
     }
     // The logic is similar to Subtype.scala
-    if (seen((lower, upper))) state
-    else if (subtype.subType(lower, upper)) state
+    if (seen((lower, upper))) Some(state)
+    else if (subtype.subType(lower, upper)) Some(state)
     else
       (lower, upper) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
         case (FreeVarType(n), _) if toSolve(n) =>
           assert(TypeVars.freeVars(upper).intersect(toSolve).isEmpty)
           val constraint = Constraint(NoneType, TypeVars.demote(upper, varsToElim))
-          state.copy(cs = constraints :+ (n, constraintLoc, constraint))
+          Some(state.copy(cs = constraints :+ (n, constraint)))
         // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
           assert(TypeVars.freeVars(lower).intersect(toSolve).isEmpty)
           val constraint = Constraint(TypeVars.promote(lower, varsToElim), AnyType)
-          state.copy(cs = constraints :+ (n, constraintLoc, constraint))
+          Some(state.copy(cs = constraints :+ (n, constraint)))
         case (FreeVarType(n1), FreeVarType(n2)) if n1 == n2 && !toSolve(n1) =>
-          state
+          Some(state)
         case (DynamicType, _) =>
           val solveFor = TypeVars.freeVars(upper).intersect(toSolve)
-          val newConstraints = solveFor.map(n => (n, constraintLoc, Constraint(DynamicType, AnyType))).toVector
-          state.copy(cs = constraints ++ newConstraints)
+          val newConstraints = solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
+          Some(state.copy(cs = constraints ++ newConstraints))
         case (BoundedDynamicType(_), _) =>
           val solveFor = TypeVars.freeVars(upper).intersect(toSolve)
-          val newConstraints = solveFor.map(n => (n, constraintLoc, Constraint(DynamicType, AnyType))).toVector
-          state.copy(cs = constraints ++ newConstraints)
+          val newConstraints = solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
+          Some(state.copy(cs = constraints ++ newConstraints))
         case (_, BoundedDynamicType(bound)) =>
           constrain(state, lower, bound, seen, tolerateUnion)
         // logic for recursive types is the same as in subtype.scala
@@ -145,7 +115,7 @@ class Constraints(pipelineContext: PipelineContext) {
               val bounds = ft2.argTys.zip(ft1.argTys) ++ List((ft1.resTy, ft2.resTy))
               constrainSeq(state, bounds, seen, tolerateUnion)
             case None =>
-              failSubtype()
+              None
           }
 
         case (ft1: AnyArityFunType, ft2: FunType) if ft2.forall == 0 =>
@@ -178,7 +148,7 @@ class Constraints(pipelineContext: PipelineContext) {
             case (List(upperBound), _) =>
               constrain(state, lower, upperBound, seen, tolerateUnion)
             case (List(), List()) =>
-              failSubtype()
+              None
             case (_, _) =>
               failUnion()
           }
@@ -187,28 +157,28 @@ class Constraints(pipelineContext: PipelineContext) {
             case Some(recDecl) =>
               constrain(state, recordAsTuple(recDecl), t, seen, tolerateUnion)
             case None =>
-              failSubtype()
+              None
           }
         case (t: TupleType, r: RecordType) =>
           util.getRecord(r.module, r.name) match {
             case Some(recDecl) =>
               constrain(state, t, recordAsTuple(recDecl), seen, tolerateUnion)
             case None =>
-              failSubtype()
+              None
           }
         case (r: RefinedRecordType, t: TupleType) =>
           util.getRecord(r.recType.module, r.recType.name) match {
             case Some(recDecl) =>
               constrain(state, refinedRecordAsTuple(recDecl, r), t, seen, tolerateUnion)
             case None =>
-              failSubtype()
+              None
           }
         case (t: TupleType, r: RefinedRecordType) =>
           util.getRecord(r.recType.module, r.recType.name) match {
             case Some(recDecl) =>
               constrain(state, t, refinedRecordAsTuple(recDecl, r), seen, tolerateUnion)
             case None =>
-              failSubtype()
+              None
           }
         case (r1: RefinedRecordType, r2: RefinedRecordType) =>
           if (r1.recType == r2.recType)
@@ -222,10 +192,10 @@ class Constraints(pipelineContext: PipelineContext) {
                   tolerateUnion,
                 )
               case None =>
-                failSubtype()
+                None
             }
           else
-            failSubtype()
+            None
         case (TupleType(leftTys), TupleType(rightTys)) if leftTys.size == rightTys.size =>
           constrainSeq(state, leftTys.zip(rightTys), seen, tolerateUnion)
         case (ListType(leftElemTy), ListType(rightElemTy)) =>
@@ -236,7 +206,7 @@ class Constraints(pipelineContext: PipelineContext) {
           var constraints: List[(Type, Type)] = List()
           val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
           val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
-          if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) failSubtype()
+          if (!tolerantSubtype && !reqKeys2.subsetOf(reqKeys1)) return None
           for ((key1, prop1) <- props1) {
             props2.get(key1) match {
               case Some(prop2) =>
@@ -254,63 +224,42 @@ class Constraints(pipelineContext: PipelineContext) {
           constraints = (kT1, kT2) :: (vT1, vT2) :: constraints
           constrainSeq(state, constraints, seen, tolerateUnion)
         case _ =>
-          failSubtype()
+          None
       }
   }
 
-  private def subtypeFailure(
-      cs: Map[Var, Constraint],
-      cLoc: ConstraintLoc,
-      variances: Map[Var, Variance],
-  ): Nothing = {
-    val subst = constraintsToSubst(cs, variances)
-    val expected = Subst.subst(subst, cLoc.paramTy)
-    diagnosticsInfo.add(ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy))
-    throw SubtypeFailure()
-  }
-
-  private def unionFailure(
-      cLoc: ConstraintLoc,
-      tolerateUnion: Boolean,
-  ): Nothing = {
-    if (!tolerateUnion) {
-      diagnosticsInfo.add(AmbiguousUnion(cLoc.arg.pos, cLoc.arg, cLoc.paramTy, got = cLoc.argTy))
-    }
-    throw UnionFailure()
-  }
+  private def unionFailure(tolerateUnion: Boolean): None.type =
+    if (tolerateUnion) throw UnionFailure()
+    else None
 
   private def constrainSeq(
       state: State,
       bounds: Iterable[(Type, Type)],
       seen: Set[(Type, Type)],
       tolerateUnion: Boolean,
-  ): State =
-    bounds.foldLeft(state) { case (state, (lower, upper)) => constrain(state, lower, upper, seen, tolerateUnion) }
+  ): Option[State] =
+    bounds.foldLeft(Option(state)) { case (s, (lower, upper)) =>
+      s.flatMap(constrain(_, lower, upper, seen, tolerateUnion))
+    }
 
   private def meetConstraints(
       constraints: Map[Var, Constraint],
-      entry: (Var, ConstraintLoc, Constraint),
+      entry: (Var, Constraint),
       variances: Map[Var, Variance],
-  ): Map[Var, Constraint] = {
-    val (tv, cLoc, c2) = entry
+  ): Option[Map[Var, Constraint]] = {
+    val (tv, c2) = entry
     constraints.get(tv) match {
       case None =>
-        constraints + (tv -> c2)
+        Some(constraints + (tv -> c2))
       case Some(c1) =>
         val upper = meet(c1.upper, c2.upper)
         val lower = subtype.join(c1.lower, c2.lower)
         if (!subtype.subType(c2.lower, c1.upper)) {
-          val subst = constraintsToSubst(constraints, variances) + (tv -> c1.upper)
-          val expected = Subst.subst(subst, cLoc.paramTy)
-          diagnosticsInfo.add(ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy))
-          constraints + (tv -> Constraint(DynamicType, DynamicType))
+          None
         } else if (!subtype.subType(lower, upper)) {
-          val subst = constraintsToSubst(constraints, variances) + (tv -> c1.lower)
-          val expected = Subst.subst(subst, cLoc.paramTy)
-          diagnosticsInfo.add(ExpectedSubtype(cLoc.arg.pos, cLoc.arg, expected, got = cLoc.argTy))
-          constraints + (tv -> Constraint(DynamicType, DynamicType))
+          None
         } else {
-          constraints + (tv -> Constraint(lower, upper))
+          Some(constraints + (tv -> Constraint(lower, upper)))
         }
     }
   }
@@ -319,15 +268,19 @@ class Constraints(pipelineContext: PipelineContext) {
       cs: ConstraintSeq,
       variances: Map[Var, Variance],
       constraints: Map[Var, Constraint],
-  ): Map[Var, Constraint] =
-    cs.foldLeft(constraints)(meetConstraints(_, _, variances))
+  ): Option[Map[Var, Constraint]] =
+    cs.foldLeft(Option(constraints))((cs, x) => cs.flatMap(meetConstraints(_, x, variances)))
 
-  def constraintsSeqToSubst(cseq: ConstraintSeq, variances: Map[Var, Variance], toSolve: Set[Var]): Map[Var, Type] = {
-    val meets = meetAllConstraints(cseq, variances, Map.empty)
-    val map1 = constraintsToSubst(meets, variances)
-    val map2 = (toSolve -- meets.keySet).map(_ -> DynamicType)
-    map1 ++ map2
-  }
+  def constraintsSeqToSubst(
+      cseq: ConstraintSeq,
+      variances: Map[Var, Variance],
+      toSolve: Set[Var],
+  ): Option[Map[Var, Type]] =
+    meetAllConstraints(cseq, variances, Map.empty).map { meets =>
+      val map1 = constraintsToSubst(meets, variances)
+      val map2 = (toSolve -- meets.keySet).map(_ -> DynamicType)
+      map1 ++ map2
+    }
 
   def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Map[Var, Type] =
     cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }

@@ -8,9 +8,9 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
-import com.whatsapp.eqwalizer.ast.{Subst, Variance}
+import com.whatsapp.eqwalizer.ast.{Pos, Subst, Variance}
 import com.whatsapp.eqwalizer.ast.Types.*
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype, NoSolution}
 import com.whatsapp.eqwalizer.tc.generics.Constraints
 import com.whatsapp.eqwalizer.tc.generics.Constraints.ConstraintSeq
 
@@ -30,9 +30,9 @@ class ElabApply(pipelineContext: PipelineContext) {
 
   private type Var = Int
 
-  private sealed trait AppliedArg extends Constraints.ConstraintLoc
-  private case class LambdaArg(arg: Lambda, argTy: Type, paramTy: FunType) extends AppliedArg
-  private case class Arg(arg: Expr, argTy: Type, paramTy: Type) extends AppliedArg
+  private sealed trait Arg
+  private case class LambdaArg(lambda: Lambda, funType: FunType) extends Arg
+  private case class TermArg(arg: Expr, argTy: Type, paramTy: Type) extends Arg
 
   private def etaExpand(fun: LocalFun): Lambda = {
     val pos = fun.pos
@@ -52,32 +52,32 @@ class ElabApply(pipelineContext: PipelineContext) {
     val clause = Clause(patVars, Nil, Body(List(app)))(pos)
     Lambda(List(clause))(pos, name = None)
   }
-  private def lambdaArg(lambda: Lambda, argTy: FunType, paramTy: Type): AppliedArg = {
+  private def lambdaArg(lambda: Lambda, argTy: FunType, paramTy: Type): Arg = {
     val arity = lambda.clauses.headOption.map(_.pats.size).getOrElse(0)
     val funParamTys = narrow.onlyFunTypes(paramTy, arity)
     if (funParamTys.size == 1) {
-      LambdaArg(lambda, argTy, funParamTys.head)
+      LambdaArg(lambda, funParamTys.head)
     } else if (funParamTys.size > 1) {
       diagnosticsInfo.add(AmbiguousLambda(lambda.pos, lambda, subtype.join(funParamTys)))
-      LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
+      LambdaArg(lambda, FunType(0, List.fill(arity)(DynamicType), DynamicType))
     } else {
       paramTy match {
         // Keep it as a LambdaArg to produce an arity mismatch error message, which provides clearer signal
-        case ft: FunType => LambdaArg(lambda, argTy, ft)
+        case ft: FunType => LambdaArg(lambda, ft)
         case t if subtype.gradualSubType(DynamicType, t) =>
-          LambdaArg(lambda, argTy, FunType(0, List.fill(arity)(DynamicType), DynamicType))
-        case _ => Arg(lambda, argTy, paramTy)
+          LambdaArg(lambda, FunType(0, List.fill(arity)(DynamicType), DynamicType))
+        case _ => TermArg(lambda, argTy, paramTy)
       }
     }
   }
 
-  def elabApply(ft: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
+  def elabApply(ft: FunType, args: List[Expr], argTys: List[Type], env: Env, pos: Pos): Type = {
     assert(ft.argTys.size == argTys.size)
     assert(args.size == argTys.size)
     if (ft.forall == 0)
       elabApplyMono(ft, args, argTys, env)
     else
-      elabApplyPoly(ft, args, argTys, env)
+      elabApplyPoly(ft, args, argTys, env, pos)
   }
 
   private def elabApplyMono(ft: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
@@ -87,19 +87,19 @@ class ElabApply(pipelineContext: PipelineContext) {
       .map {
         case ((lambda: Lambda, argTy: FunType), paramTy) if argTy.argTys.nonEmpty =>
           lambdaArg(lambda, argTy, paramTy)
-        case ((expr, argTy), paramTy) => Arg(expr, argTy, paramTy)
+        case ((expr, argTy), paramTy) => TermArg(expr, argTy, paramTy)
       }
 
+    val termArgs = appliedArgs.collect { case pa: TermArg => pa }
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
-    val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
 
-    nonLambdaArgs.foreach(checkArg(_, None))
+    termArgs.foreach(checkTermArg(_, None))
     lambdaArgs.foreach(checkLambdaArg(_, None, env))
 
     ft.resTy
   }
 
-  private def elabApplyPoly(ft0: FunType, args: List[Expr], argTys: List[Type], env: Env): Type = {
+  private def elabApplyPoly(ft0: FunType, args: List[Expr], argTys: List[Type], env: Env, pos: Pos): Type = {
 
     val (vars, ft) = instantiate.instantiate(ft0)
     val toSolve = vars.toSet
@@ -114,25 +114,40 @@ class ElabApply(pipelineContext: PipelineContext) {
           lambdaArg(etaExpand(fun), argTy, paramTy)
         case ((fun: RemoteFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
           lambdaArg(etaExpand(fun), argTy, paramTy)
-        case ((expr, argTy), paramTy) => Arg(expr, argTy, paramTy)
+        case ((expr, argTy), paramTy) => TermArg(expr, argTy, paramTy)
       }
 
+    val termArgs = appliedArgs.collect { case pa: TermArg => pa }
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
-    val nonLambdaArgs = appliedArgs.collect { case pa: Arg => pa }
     val variances = Variance.toVariances(ft, vars)
 
-    // First we elaborate non-lambda arguments (datums)
-    val (cs1, subst1) = elabTerms(toSolve, nonLambdaArgs, variances)
-    // Then we elaborate the lambdas using the partial solutions
-    val (cs3, subst3) = typeInfo.withoutTypeCollection {
-      val (cs2, subst2) = elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
-      val subst2Merged = subst2.map {
-        case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
-        case (v, ty)             => (v, ty)
-      }
-      elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
+    val (cs1, subst1, termsSuccess) = elabTerms(toSolve, termArgs, variances) match {
+      case Some(cs1, subst1) =>
+        (cs1, subst1, true)
+      case None =>
+        (Vector.empty: ConstraintSeq, toSolve.map(_ -> DynamicType).toMap, false)
     }
 
+    // Then we elaborate the lambdas using the partial solutions
+    val elabLambdasRes = typeInfo.withoutTypeCollection {
+      elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve) match {
+        case Some((cs2, subst2)) =>
+          val subst2Merged = subst2.map {
+            case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
+            case (v, ty)             => (v, ty)
+          }
+          elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
+        case None =>
+          None
+      }
+    }
+
+    val (cs3, subst3, lambdasSuccess) = elabLambdasRes match {
+      case Some((cs3, subst3)) =>
+        (cs3, subst3, true)
+      case None =>
+        (Vector.empty: ConstraintSeq, toSolve.map(_ -> DynamicType).toMap, false)
+    }
     // We check that all arguments are well-typed under the final substitution.
     // These checks are necessary because:
     // - A type can be both an input and an output of a lambda.
@@ -140,28 +155,33 @@ class ElabApply(pipelineContext: PipelineContext) {
     // that the args match the parameters.
     // - We assume that any consistent substitution of type variables is sound.
     //   For example, we use an approximation for `meet` in Constraints.scala
-    nonLambdaArgs.foreach(checkArg(_, Some(subst3)))
-    lambdaArgs.foreach(checkLambdaArg(_, Some(subst3), env))
+    val termsTyped = termArgs.map(checkTermArg(_, Some(subst3))).forall(identity)
+    val lambdasTyped = lambdaArgs.map(checkLambdaArg(_, Some(subst3), env)).forall(identity)
+
+    if ((!termsSuccess && termsTyped) || (!lambdasSuccess && lambdasTyped)) {
+      diagnosticsInfo.add(NoSolution(pos))
+    }
 
     Subst.subst(subst3, ft.resTy)
   }
 
   private def elabTerms(
       toSolve: Set[Var],
-      args: List[Arg],
+      args: List[TermArg],
       variances: Map[Var, Variance],
-  ): (ConstraintSeq, Map[Var, Type]) = {
-    val delayed: ListBuffer[Arg] = ListBuffer.empty
-    val cs1 = args.foldLeft(Vector.empty: ConstraintSeq) { case (cs, arg) =>
+  ): Option[(ConstraintSeq, Map[Var, Type])] = {
+    val delayed: ListBuffer[TermArg] = ListBuffer.empty
+    val cs1 = args.foldLeft(Option(Vector.empty: ConstraintSeq)) { case (cs, arg) =>
       try
-        constraints.constraintGen(
-          toSolve,
-          cs = cs,
-          variances = variances,
-          lower = arg.argTy,
-          upper = arg.paramTy,
-          constraintLoc = arg,
-          tolerateUnion = true,
+        cs.flatMap(cs =>
+          constraints.constraintGen(
+            toSolve,
+            cs = cs,
+            variances = variances,
+            lower = arg.argTy,
+            upper = arg.paramTy,
+            tolerateUnion = true,
+          )
         )
       catch {
         case Constraints.UnionFailure() =>
@@ -170,25 +190,43 @@ class ElabApply(pipelineContext: PipelineContext) {
       }
     }
 
-    val m1 = constraints.meetAllConstraints(cs1, variances, Map.empty)
-    val subst1 = constraints.constraintsToSubst(m1, variances)
+    cs1 match {
+      case None =>
+        None
+      case Some(cs1) =>
+        constraints.meetAllConstraints(cs1, variances, Map.empty) match {
+          case None =>
+            None
+          case Some(m1) =>
+            val subst1 = constraints.constraintsToSubst(m1, variances)
 
-    // Process "delayed arguments" that have union upper bounds
-    val cs2 = delayed.toList.foldLeft(cs1) { case (cs, arg) =>
-      constraints.constraintGen(
-        toSolve,
-        cs = cs,
-        variances = variances,
-        lower = arg.argTy,
-        upper = Subst.subst(subst1, arg.paramTy),
-        constraintLoc = arg,
-        tolerateUnion = false,
-      )
+            // Process "delayed arguments" that have union upper bounds
+            val cs2 = delayed.toList.foldLeft(Option(cs1)) { case (cs, arg) =>
+              cs.flatMap(cs =>
+                constraints.constraintGen(
+                  toSolve,
+                  cs = cs,
+                  variances = variances,
+                  lower = arg.argTy,
+                  upper = Subst.subst(subst1, arg.paramTy),
+                  tolerateUnion = false,
+                )
+              )
+            }
+            cs2 match {
+              case None =>
+                None
+              case Some(cs2) =>
+                constraints.meetAllConstraints(cs2, variances, m1) match {
+                  case None =>
+                    None
+                  case Some(m2) =>
+                    val subst2 = constraints.constraintsToSubst(m2, variances, toSolve)
+                    Some(cs2, subst2)
+                }
+            }
+        }
     }
-
-    val m2 = constraints.meetAllConstraints(cs2, variances, m1)
-    val subst2 = constraints.constraintsToSubst(m2, variances, toSolve)
-    (cs2, subst2)
   }
 
   private def elabLambdas(
@@ -198,25 +236,34 @@ class ElabApply(pipelineContext: PipelineContext) {
       env: Env,
       variances: Map[Var, Variance],
       toSolve: Set[Var],
-  ): (ConstraintSeq, Map[Var, Type]) = {
-    var cs1 = cs
+  ): Option[(ConstraintSeq, Map[Var, Type])] = {
+    var cs1 = Option(cs)
     for (lambdaArg <- lambdaArgs) {
       val funType = lambdaToFunTy(lambdaArg, subst, env)
-      cs1 = constraints.constraintGen(
-        toSolve,
-        lower = funType.resTy,
-        upper = lambdaArg.paramTy.resTy,
-        lambdaArg.copy(argTy = funType),
-        cs1,
-        variances,
-        false,
+      cs1 = cs1.flatMap(cs1 =>
+        constraints.constraintGen(
+          toSolve,
+          lower = funType.resTy,
+          upper = lambdaArg.funType.resTy,
+          cs1,
+          variances,
+          false,
+        )
       )
     }
-    (cs1, constraints.constraintsSeqToSubst(cs1, variances, toSolve))
+    cs1 match {
+      case None =>
+        None
+      case Some(cs1) =>
+        constraints.constraintsSeqToSubst(cs1, variances, toSolve) match {
+          case None      => None
+          case Some(sub) => Some(cs1, sub)
+        }
+    }
   }
 
-  private def checkArg(arg: Arg, varToType: Option[Map[Var, Type]]): Boolean = {
-    val Arg(expr, argTy, rawParamTy) = arg
+  private def checkTermArg(arg: TermArg, varToType: Option[Map[Var, Type]]): Boolean = {
+    val TermArg(expr, argTy, rawParamTy) = arg
     val paramTy = varToType.fold(rawParamTy)(Subst.subst(_, rawParamTy))
     if (!subtype.subType(argTy, paramTy)) {
       diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = paramTy, got = argTy))
@@ -225,7 +272,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   }
 
   private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Option[Map[Var, Type]], env: Env): Boolean = {
-    val LambdaArg(lambda, _, FunType(_, rawArgTys, rawExpResTy)) = lambdaArg
+    val LambdaArg(lambda, FunType(_, rawArgTys, rawExpResTy)) = lambdaArg
     val argTys = varToType.fold(rawArgTys)(s => rawArgTys.map(Subst.subst(s, _)))
     val expResTy = varToType.fold(rawExpResTy)(Subst.subst(_, rawExpResTy))
     val expFunTy = FunType(0, argTys, expResTy)
@@ -242,7 +289,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   }
 
   private def lambdaToFunTy(lambdaArg: LambdaArg, subst: Map[Var, Type], env: Env): FunType = {
-    val LambdaArg(lambda, _, ft: FunType) = lambdaArg
+    val LambdaArg(lambda, ft: FunType) = lambdaArg
 
     val argTys = ft.argTys.map(Subst.subst(subst, _))
     val env1 =

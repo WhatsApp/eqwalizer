@@ -273,7 +273,7 @@ final class Check(pipelineContext: PipelineContext) {
           val (argTys, env2) = elab.elabExprs(args, env1)
           if (funTys.nonEmpty) {
             funTys.foreach { ft =>
-              val ftResTy = elabApply.elabApply(ft, args, argTys, env1)
+              val ftResTy = elabApply.elabApply(ft, args, argTys, env1, expr.pos)
               if (!subtype.subType(ftResTy, resTy))
                 diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = ftResTy))
             }
@@ -546,7 +546,7 @@ final class Check(pipelineContext: PipelineContext) {
     val (argTys, env1) = typeInfo.withoutLambdaTypeCollection {
       elab.elabExprs(args, env)
     }
-    var ftResTy = elabApply.elabApply(ft, args, argTys, env1)
+    var ftResTy = elabApply.elabApply(ft, args, argTys, env1, expr.pos)
     if (customReturn.isCustomReturn(funId))
       ftResTy = customReturn.customizeResultType(funId, args, argTys, ftResTy)
     if (!subtype.subType(ftResTy, resTy))
