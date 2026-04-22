@@ -194,14 +194,8 @@ class Constraints(pipelineContext: PipelineContext) {
       case None =>
         Some(cmap + entry)
       case Some(c1) =>
-        val upper = meet(c1.upper, c2.upper)
-        val lower = subtype.join(c1.lower, c2.lower)
-        if (!subtype.subType(c2.lower, c1.upper))
-          None
-        else if (!subtype.subType(lower, upper))
-          None
-        else
-          Some(cmap + (tv -> Constraint(lower, upper)))
+        if (!subtype.subType(c1.lower, c2.upper) || !subtype.subType(c2.lower, c1.upper)) None
+        else Some(cmap + (tv -> Constraint(subtype.join(c1.lower, c2.lower), meet(c1.upper, c2.upper))))
     }
   }
 
