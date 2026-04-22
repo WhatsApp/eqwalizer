@@ -23,7 +23,6 @@ object Constraints {
   private case class State(
       toSolve: Set[Var],
       varsToElim: Set[Var],
-      cs: ConstraintSeq,
       variances: Map[Var, Variance],
   )
   case class UnionFailure() extends Exception
@@ -41,12 +40,11 @@ class Constraints(pipelineContext: PipelineContext) {
       toSolve: Set[Var],
       lower: Type,
       upper: Type,
-      cs: ConstraintSeq,
       variances: Map[Var, Variance],
       tolerateUnion: Boolean,
   ): Option[ConstraintSeq] = {
-    val state = State(toSolve, Set.empty, cs, variances)
-    constrain(state, lower, upper, Set.empty, tolerateUnion).map(_.cs)
+    val state = State(toSolve, Set.empty, variances)
+    constrain(state, lower, upper, Set.empty, tolerateUnion)
   }
 
   @tailrec
@@ -56,37 +54,37 @@ class Constraints(pipelineContext: PipelineContext) {
       upper: Type,
       seen: Set[(Type, Type)],
       tolerateUnion: Boolean,
-  ): Option[State] = {
-    val State(toSolve, varsToElim, constraints, variances) = state
+  ): Option[ConstraintSeq] = {
+    val State(toSolve, varsToElim, variances) = state
 
     def failUnion(): None.type = {
       unionFailure(tolerateUnion)
     }
     // The logic is similar to Subtype.scala
-    if (seen((lower, upper))) Some(state)
-    else if (subtype.subType(lower, upper)) Some(state)
+    if (seen((lower, upper))) Some(Vector.empty)
+    else if (subtype.subType(lower, upper)) Some(Vector.empty)
     else
       (lower, upper) match {
         // CG-Upper from Pierce and "Turner Local Type Inference"
         case (FreeVarType(n), _) if toSolve(n) =>
           assert(TypeVars.freeVars(upper).intersect(toSolve).isEmpty)
           val constraint = Constraint(NoneType, TypeVars.demote(upper, varsToElim))
-          Some(state.copy(cs = constraints :+ (n, constraint)))
+          Some(Vector(n -> constraint))
         // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
           assert(TypeVars.freeVars(lower).intersect(toSolve).isEmpty)
           val constraint = Constraint(TypeVars.promote(lower, varsToElim), AnyType)
-          Some(state.copy(cs = constraints :+ (n, constraint)))
+          Some(Vector(n -> constraint))
         case (FreeVarType(n1), FreeVarType(n2)) if n1 == n2 && !toSolve(n1) =>
-          Some(state)
+          Some(Vector.empty)
         case (DynamicType, _) =>
           val solveFor = TypeVars.freeVars(upper).intersect(toSolve)
           val newConstraints = solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
-          Some(state.copy(cs = constraints ++ newConstraints))
+          Some(newConstraints)
         case (BoundedDynamicType(_), _) =>
           val solveFor = TypeVars.freeVars(upper).intersect(toSolve)
           val newConstraints = solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toVector
-          Some(state.copy(cs = constraints ++ newConstraints))
+          Some(newConstraints)
         case (_, BoundedDynamicType(bound)) =>
           constrain(state, lower, bound, seen, tolerateUnion)
         // logic for recursive types is the same as in subtype.scala
@@ -237,10 +235,18 @@ class Constraints(pipelineContext: PipelineContext) {
       bounds: Iterable[(Type, Type)],
       seen: Set[(Type, Type)],
       tolerateUnion: Boolean,
-  ): Option[State] =
-    bounds.foldLeft(Option(state)) { case (s, (lower, upper)) =>
-      s.flatMap(constrain(_, lower, upper, seen, tolerateUnion))
+  ): Option[ConstraintSeq] = {
+    var result: Option[ConstraintSeq] = Some(Vector.empty)
+    for ((lower, upper) <- bounds) {
+      result.match {
+        case None =>
+          ()
+        case Some(cs) =>
+          result = constrain(state, lower, upper, seen, tolerateUnion).map(cs ++ _)
+      }
     }
+    result
+  }
 
   private def meetConstraints(
       constraints: Map[Var, Constraint],

@@ -171,22 +171,22 @@ class ElabApply(pipelineContext: PipelineContext) {
       variances: Map[Var, Variance],
   ): Option[(ConstraintSeq, Map[Var, Type])] = {
     val delayed: ListBuffer[TermArg] = ListBuffer.empty
-    val cs1 = args.foldLeft(Option(Vector.empty: ConstraintSeq)) { case (cs, arg) =>
-      try
-        cs.flatMap(cs =>
-          constraints.constraintGen(
+    val cs1 = args.foldLeft(Option(Vector.empty: ConstraintSeq)) { case (csOpt, arg) =>
+      try {
+        for {
+          cs <- csOpt
+          delta <- constraints.constraintGen(
             toSolve,
-            cs = cs,
             variances = variances,
             lower = arg.argTy,
             upper = arg.paramTy,
             tolerateUnion = true,
           )
-        )
-      catch {
+        } yield cs ++ delta
+      } catch {
         case Constraints.UnionFailure() =>
           delayed.addOne(arg)
-          cs
+          csOpt
       }
     }
 
@@ -201,17 +201,18 @@ class ElabApply(pipelineContext: PipelineContext) {
             val subst1 = constraints.constraintsToSubst(m1, variances)
 
             // Process "delayed arguments" that have union upper bounds
-            val cs2 = delayed.toList.foldLeft(Option(cs1)) { case (cs, arg) =>
-              cs.flatMap(cs =>
-                constraints.constraintGen(
-                  toSolve,
-                  cs = cs,
-                  variances = variances,
-                  lower = arg.argTy,
-                  upper = Subst.subst(subst1, arg.paramTy),
-                  tolerateUnion = false,
-                )
-              )
+            val cs2 = delayed.toList.foldLeft(Option(cs1)) { case (csOpt, arg) =>
+              for {
+                cs <- csOpt
+                delta <-
+                  constraints.constraintGen(
+                    toSolve,
+                    variances = variances,
+                    lower = arg.argTy,
+                    upper = Subst.subst(subst1, arg.paramTy),
+                    tolerateUnion = false,
+                  )
+              } yield cs ++ delta
             }
             cs2 match {
               case None =>
@@ -240,16 +241,17 @@ class ElabApply(pipelineContext: PipelineContext) {
     var cs1 = Option(cs)
     for (lambdaArg <- lambdaArgs) {
       val funType = lambdaToFunTy(lambdaArg, subst, env)
-      cs1 = cs1.flatMap(cs1 =>
-        constraints.constraintGen(
-          toSolve,
-          lower = funType.resTy,
-          upper = lambdaArg.funType.resTy,
-          cs1,
-          variances,
-          false,
-        )
-      )
+      cs1 = for {
+        cs <- cs1;
+        delta <-
+          constraints.constraintGen(
+            toSolve,
+            lower = funType.resTy,
+            upper = lambdaArg.funType.resTy,
+            variances,
+            false,
+          )
+      } yield cs ++ delta
     }
     cs1 match {
       case None =>
