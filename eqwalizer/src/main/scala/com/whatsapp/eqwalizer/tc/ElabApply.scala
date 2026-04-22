@@ -10,7 +10,7 @@ import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
 import com.whatsapp.eqwalizer.ast.{Pos, Subst, Variance}
 import com.whatsapp.eqwalizer.ast.Types.*
-import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype, NoSolution}
+import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype}
 import com.whatsapp.eqwalizer.tc.Constraints.CMap
 
 class ElabApply(pipelineContext: PipelineContext) {
@@ -147,9 +147,8 @@ class ElabApply(pipelineContext: PipelineContext) {
     val termsTyped = termArgs.map(checkTermArg(_, Some(subst3))).forall(identity)
     val lambdasTyped = lambdaArgs.map(checkLambdaArg(_, Some(subst3), env)).forall(identity)
 
-    if ((!termsSuccess && termsTyped) || (!lambdasSuccess && lambdasTyped)) {
-      diagnosticsInfo.add(NoSolution(pos))
-    }
+    if (!termsSuccess && termsTyped) termArgs.foreach(checkTermArg(_, None))
+    else if (!lambdasSuccess && lambdasTyped) lambdaArgs.foreach(checkLambdaArg(_, None, env))
 
     Subst.subst(subst3, ft.resTy)
   }
