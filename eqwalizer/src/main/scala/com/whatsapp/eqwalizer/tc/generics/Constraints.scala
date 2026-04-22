@@ -28,6 +28,19 @@ class Constraints(pipelineContext: PipelineContext) {
   private lazy val instantiate = pipelineContext.instantiate
   private implicit val pipelineCtx: PipelineContext = pipelineContext
 
+  def satisfiable(toSolve: Set[Var], varsToElim: Set[Var], bounds: List[(Type, Type)]): Boolean = {
+    val ctx = Ctx(toSolve = toSolve, varsToElim = varsToElim)
+    constrainSeq(ctx, bounds, seen = Set.empty) match {
+      case None =>
+        false
+      case Some(cs) =>
+        var meets: Option[CMap] = Some(Map.empty)
+        for (c <- cs; if meets.isDefined)
+          meets = meets.flatMap(meetConstraints(_, c))
+        meets.exists(_.values.forall(c => subtype.subType(c.lower, c.upper)))
+    }
+  }
+
   def constraintGen(toSolve: Set[Var], lower: Type, upper: Type): Option[List[CMap]] = {
     val state = Ctx(toSolve, Set.empty)
     constrain(state, lower, upper, Set.empty)

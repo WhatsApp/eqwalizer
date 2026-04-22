@@ -164,7 +164,7 @@ class Subtype(pipelineContext: PipelineContext) {
           case None =>
             (ft1.forall > 0) && (ft2.forall == 0) && {
               val (vars, ft) = instantiate.instantiate(ft1)
-              pipelineContext.fConstraints.satisfiable(
+              pipelineContext.constraints.satisfiable(
                 toSolve = vars.toSet,
                 varsToElim = Set.empty,
                 bounds = ft2.argTys.zip(ft.argTys) :+ (ft.resTy, ft2.resTy),
