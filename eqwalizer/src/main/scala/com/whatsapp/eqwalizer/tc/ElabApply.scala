@@ -11,7 +11,7 @@ import com.whatsapp.eqwalizer.ast.Pats.PatVar
 import com.whatsapp.eqwalizer.ast.{Pos, Subst, Variance}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype, NoSolution}
-import com.whatsapp.eqwalizer.tc.generics.Constraints.CMap
+import com.whatsapp.eqwalizer.tc.Constraints.CMap
 
 class ElabApply(pipelineContext: PipelineContext) {
   private lazy val check = pipelineContext.check

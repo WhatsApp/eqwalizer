@@ -8,7 +8,6 @@ package com.whatsapp.eqwalizer
 
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.ast.{TypeVars, Vars}
-import com.whatsapp.eqwalizer.tc.generics.Constraints
 
 package object tc {
   type Env = Map[String, Type]

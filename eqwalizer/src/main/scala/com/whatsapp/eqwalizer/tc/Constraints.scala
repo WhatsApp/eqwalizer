@@ -4,7 +4,7 @@
  * the LICENSE file in the root directory of this source tree.
  */
 
-package com.whatsapp.eqwalizer.tc.generics
+package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.{TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
