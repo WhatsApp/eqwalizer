@@ -19,8 +19,6 @@ object Constraints {
   case class Constraint(lower: Type, upper: Type)
   type CMap = Map[Var, Constraint]
 
-  type ConstraintSeq = Vector[(Var, Constraint)]
-
   private case class State(toSolve: Set[Var], varsToElim: Set[Var])
   case class UnionFailure() extends Exception
 }
@@ -274,23 +272,6 @@ class Constraints(pipelineContext: PipelineContext) {
       result = result.flatMap(meetConstraints(_, entry))
     result
   }
-
-  def meetAllConstraints(
-      cs: ConstraintSeq,
-      constraints: Map[Var, Constraint],
-  ): Option[Map[Var, Constraint]] =
-    cs.foldLeft(Option(constraints))((cs, x) => cs.flatMap(meetConstraints(_, x)))
-
-  def constraintsSeqToSubst(
-      cseq: ConstraintSeq,
-      variances: Map[Var, Variance],
-      toSolve: Set[Var],
-  ): Option[Map[Var, Type]] =
-    meetAllConstraints(cseq, Map.empty).map { meets =>
-      val map1 = constraintsToSubst(meets, variances)
-      val map2 = (toSolve -- meets.keySet).map(_ -> DynamicType)
-      map1 ++ map2
-    }
 
   def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Map[Var, Type] =
     cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
