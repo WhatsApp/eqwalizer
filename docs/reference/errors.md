@@ -452,39 +452,6 @@ warnings about a function that does not have a type error.
 
 In such a case, the instruction nowarn_function can be deleted.
 
-
-### ambiguous_union
-
-This error indicates that an expression is used in a context involving generics,
-but there are multiple possibilities to solve these generics, due to a union.
-
-```Erlang
--spec generic_function(Config, {Config, R} | {ok, R}) -> {Config, R}.
-% impl
-
--spec apply_generic({ok, atom()}) -> {ok, atom()}.
-apply_generic(V) -> generic_function(ok, V).
-```
-
-When resolving the type of `generic_function/1` applied to `V`, the type
-of `V`, `{ok, atom()}`, can match both `{Config, R}` and `{ok, R}`.
-While is this case both seem equivalent, it is difficult in the general
-case to know in advance whether an option is better than the other.
-Hence, to keep signal clear and consistent, eqWAlizer chooses not to
-attempt to solve generics in such a case.
-
-A possible fix here is to use tagged unions to explicitly tell eqWAlizer
-which branch to use, e.g.:
-
-```Erlang
--spec generic_function(Config, {left, {Config, R}} | {right, {ok, R}}) -> {Config, R}.
-% impl
-
--spec apply_generic({ok, atom()}) -> {ok, atom()}.
-apply_generic(V) -> generic_function(ok, {right, V}).
-```
-
-
 ### clause_not_covered
 
 This error indicates that a clause is not properly covered by a spec, and will

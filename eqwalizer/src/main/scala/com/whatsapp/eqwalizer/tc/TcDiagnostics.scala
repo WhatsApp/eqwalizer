@@ -125,14 +125,6 @@ object TcDiagnostics {
     def errorName = "redundant_nowarn_function"
     override def erroneousExpr: Option[Expr] = None
   }
-  case class AmbiguousUnion(pos: Pos, expr: Expr, expected: Type, got: Type)(implicit
-      val pipelineContext: PipelineContext
-  ) extends TypeError {
-    override val msg: String =
-      s"Expression has type ${show(got)} which matches multiple generic types in ${show(expected)}"
-    def errorName = "ambiguous_union"
-    override def erroneousExpr: Option[Expr] = Some(expr)
-  }
   case class ClauseNotCovered(pos: Pos) extends TypeError {
     override val msg: String = "Clause is not covered by spec"
     val errorName = "clause_not_covered"
