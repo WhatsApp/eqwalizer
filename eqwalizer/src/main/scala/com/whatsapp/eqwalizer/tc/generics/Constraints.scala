@@ -20,11 +20,7 @@ object Constraints {
 
   type ConstraintSeq = Vector[(Var, Constraint)]
 
-  private case class State(
-      toSolve: Set[Var],
-      varsToElim: Set[Var],
-      variances: Map[Var, Variance],
-  )
+  private case class State(toSolve: Set[Var], varsToElim: Set[Var])
   case class UnionFailure() extends Exception
 }
 
@@ -40,10 +36,9 @@ class Constraints(pipelineContext: PipelineContext) {
       toSolve: Set[Var],
       lower: Type,
       upper: Type,
-      variances: Map[Var, Variance],
       tolerateUnion: Boolean,
   ): Option[ConstraintSeq] = {
-    val state = State(toSolve, Set.empty, variances)
+    val state = State(toSolve, Set.empty)
     constrain(state, lower, upper, Set.empty, tolerateUnion)
   }
 
@@ -55,7 +50,7 @@ class Constraints(pipelineContext: PipelineContext) {
       seen: Set[(Type, Type)],
       tolerateUnion: Boolean,
   ): Option[ConstraintSeq] = {
-    val State(toSolve, varsToElim, variances) = state
+    val State(toSolve, varsToElim) = state
 
     def failUnion(): None.type = {
       unionFailure(tolerateUnion)
@@ -251,7 +246,6 @@ class Constraints(pipelineContext: PipelineContext) {
   private def meetConstraints(
       constraints: Map[Var, Constraint],
       entry: (Var, Constraint),
-      variances: Map[Var, Variance],
   ): Option[Map[Var, Constraint]] = {
     val (tv, c2) = entry
     constraints.get(tv) match {
@@ -272,17 +266,16 @@ class Constraints(pipelineContext: PipelineContext) {
 
   def meetAllConstraints(
       cs: ConstraintSeq,
-      variances: Map[Var, Variance],
       constraints: Map[Var, Constraint],
   ): Option[Map[Var, Constraint]] =
-    cs.foldLeft(Option(constraints))((cs, x) => cs.flatMap(meetConstraints(_, x, variances)))
+    cs.foldLeft(Option(constraints))((cs, x) => cs.flatMap(meetConstraints(_, x)))
 
   def constraintsSeqToSubst(
       cseq: ConstraintSeq,
       variances: Map[Var, Variance],
       toSolve: Set[Var],
   ): Option[Map[Var, Type]] =
-    meetAllConstraints(cseq, variances, Map.empty).map { meets =>
+    meetAllConstraints(cseq, Map.empty).map { meets =>
       val map1 = constraintsToSubst(meets, variances)
       val map2 = (toSolve -- meets.keySet).map(_ -> DynamicType)
       map1 ++ map2

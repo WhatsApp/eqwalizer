@@ -177,7 +177,6 @@ class ElabApply(pipelineContext: PipelineContext) {
           cs <- csOpt
           delta <- constraints.constraintGen(
             toSolve,
-            variances = variances,
             lower = arg.argTy,
             upper = arg.paramTy,
             tolerateUnion = true,
@@ -194,7 +193,7 @@ class ElabApply(pipelineContext: PipelineContext) {
       case None =>
         None
       case Some(cs1) =>
-        constraints.meetAllConstraints(cs1, variances, Map.empty) match {
+        constraints.meetAllConstraints(cs1, Map.empty) match {
           case None =>
             None
           case Some(m1) =>
@@ -207,7 +206,6 @@ class ElabApply(pipelineContext: PipelineContext) {
                 delta <-
                   constraints.constraintGen(
                     toSolve,
-                    variances = variances,
                     lower = arg.argTy,
                     upper = Subst.subst(subst1, arg.paramTy),
                     tolerateUnion = false,
@@ -218,7 +216,7 @@ class ElabApply(pipelineContext: PipelineContext) {
               case None =>
                 None
               case Some(cs2) =>
-                constraints.meetAllConstraints(cs2, variances, m1) match {
+                constraints.meetAllConstraints(cs2, m1) match {
                   case None =>
                     None
                   case Some(m2) =>
@@ -248,7 +246,6 @@ class ElabApply(pipelineContext: PipelineContext) {
             toSolve,
             lower = funType.resTy,
             upper = lambdaArg.funType.resTy,
-            variances,
             false,
           )
       } yield cs ++ delta
