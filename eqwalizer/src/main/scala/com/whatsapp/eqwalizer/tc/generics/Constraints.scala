@@ -268,7 +268,7 @@ class Constraints(pipelineContext: PipelineContext) {
     }
   }
 
-  private def meetConstraints(m1: CMap, m2: CMap): Option[CMap] = {
+  def meetConstraints(m1: CMap, m2: CMap): Option[CMap] = {
     var result: Option[CMap] = Some(m1)
     for (entry <- m2; if result.isDefined)
       result = result.flatMap(meetConstraints(_, entry))
