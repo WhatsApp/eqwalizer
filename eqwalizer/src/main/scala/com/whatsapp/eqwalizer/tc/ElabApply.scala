@@ -11,10 +11,7 @@ import com.whatsapp.eqwalizer.ast.Pats.PatVar
 import com.whatsapp.eqwalizer.ast.{Pos, Subst, Variance}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype, NoSolution}
-import com.whatsapp.eqwalizer.tc.generics.Constraints
 import com.whatsapp.eqwalizer.tc.generics.Constraints.CMap
-
-import scala.collection.mutable.ListBuffer
 
 class ElabApply(pipelineContext: PipelineContext) {
   private lazy val check = pipelineContext.check
@@ -121,40 +118,32 @@ class ElabApply(pipelineContext: PipelineContext) {
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
     val variances = Variance.toVariances(ft, vars)
 
-    val (cs1, subst1, termsSuccess) = elabTerms(toSolve, termArgs, variances) match {
-      case Some(cs1, subst1) =>
-        (cs1, subst1, true)
-      case None =>
-        (Map.empty: CMap, toSolve.map(_ -> DynamicType).toMap, false)
+    val (solutions1: List[(CMap, Map[Var, Type])], termsSuccess) = elabTerms(toSolve, termArgs, variances) match {
+      case Some(tuples1) => (tuples1, true)
+      case None          => (List((Map.empty: CMap, toSolve.map(_ -> DynamicType).toMap)), false)
     }
 
     // Then we elaborate the lambdas using the partial solutions
     val elabLambdasRes = typeInfo.withoutTypeCollection {
-      elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve) match {
-        case Some((cs2, subst2)) =>
-          val subst2Merged = subst2.map {
-            case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
-            case (v, ty)             => (v, ty)
-          }
-          elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
-        case None =>
-          None
-      }
+      for {
+        (cs1, subst1) <- solutions1
+        solutions2: List[(CMap, Map[Var, Type])] <- elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
+        (cs2, subst2) <- solutions2
+        subst2Merged = subst2.map {
+          case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
+          case (v, ty)             => (v, ty)
+        }
+        solutions3: List[(CMap, Map[Var, Type])] <- elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
+        (cs3, subst3) <- solutions3
+      } yield (cs3, subst3)
     }
 
-    val (cs3, subst3, lambdasSuccess) = elabLambdasRes match {
-      case Some((cs3, subst3)) =>
-        (cs3, subst3, true)
-      case None =>
-        (Map.empty: CMap, toSolve.map(_ -> DynamicType).toMap, false)
+    // in the end we take the first solution if it exists
+    val (subst3, lambdasSuccess) = elabLambdasRes match {
+      case (_, subst3) :: _ => (subst3, true)
+      case Nil              => (toSolve.map(_ -> DynamicType).toMap, false)
     }
     // We check that all arguments are well-typed under the final substitution.
-    // These checks are necessary because:
-    // - A type can be both an input and an output of a lambda.
-    // - (optimization) We exit constraint generation early if there are no type variables: in such cases we still need to check
-    // that the args match the parameters.
-    // - We assume that any consistent substitution of type variables is sound.
-    //   For example, we use an approximation for `meet` in Constraints.scala
     val termsTyped = termArgs.map(checkTermArg(_, Some(subst3))).forall(identity)
     val lambdasTyped = lambdaArgs.map(checkLambdaArg(_, Some(subst3), env)).forall(identity)
 
@@ -169,53 +158,21 @@ class ElabApply(pipelineContext: PipelineContext) {
       toSolve: Set[Var],
       args: List[TermArg],
       variances: Map[Var, Variance],
-  ): Option[(CMap, Map[Var, Type])] = {
-    val delayed: ListBuffer[TermArg] = ListBuffer.empty
-    val cs1 = args.foldLeft(Option(Map.empty: CMap)) { case (csOpt, arg) =>
-      try {
-        for {
-          cs <- csOpt
-          delta <- constraints.constraintGen(
-            toSolve,
-            lower = arg.argTy,
-            upper = arg.paramTy,
-            tolerateUnion = true,
-          )
-          meet <- constraints.meetConstraints(cs, delta)
-        } yield meet
-      } catch {
-        case Constraints.UnionFailure() =>
-          delayed.addOne(arg)
-          csOpt
-      }
+  ): Option[List[(CMap, Map[Var, Type])]] = {
+    val cs1 = args.foldLeft(Option(List(Map.empty: CMap))) { case (csOpt, arg) =>
+      for {
+        cs <- csOpt
+        delta <- constraints.constraintGen(
+          toSolve,
+          lower = arg.argTy,
+          upper = arg.paramTy,
+        )
+        meet <- constraints.meetConstraints(cs, delta)
+      } yield meet
     }
-
     cs1 match {
-      case None =>
-        None
-      case Some(cs1) =>
-        val subst1 = constraints.constraintsToSubst(cs1, variances)
-        // Process "delayed arguments" that have union upper bounds
-        val cs2 = delayed.toList.foldLeft(Option(cs1)) { case (csOpt, arg) =>
-          for {
-            cs <- csOpt
-            delta <-
-              constraints.constraintGen(
-                toSolve,
-                lower = arg.argTy,
-                upper = Subst.subst(subst1, arg.paramTy),
-                tolerateUnion = false,
-              )
-            meet <- constraints.meetConstraints(cs, delta)
-          } yield meet
-        }
-        cs2 match {
-          case None =>
-            None
-          case Some(cs2) =>
-            val subst2 = constraints.constraintsToSubst(cs2, variances, toSolve)
-            Some(cs2, subst2)
-        }
+      case None      => None
+      case Some(cs1) => Some(cs1.map(cs => (cs, constraints.constraintsToSubst(cs, variances, toSolve))))
     }
   }
 
@@ -226,8 +183,8 @@ class ElabApply(pipelineContext: PipelineContext) {
       env: Env,
       variances: Map[Var, Variance],
       toSolve: Set[Var],
-  ): Option[(CMap, Map[Var, Type])] = {
-    var cs1 = Option(cs)
+  ): Option[List[(CMap, Map[Var, Type])]] = {
+    var cs1 = Option(List(cs))
     for (lambdaArg <- lambdaArgs) {
       val funType = lambdaToFunTy(lambdaArg, subst, env)
       cs1 = for {
@@ -237,17 +194,13 @@ class ElabApply(pipelineContext: PipelineContext) {
             toSolve,
             lower = funType.resTy,
             upper = lambdaArg.funType.resTy,
-            false,
           )
         meet <- constraints.meetConstraints(cs, delta)
       } yield meet
     }
     cs1 match {
-      case None =>
-        None
-      case Some(cs1) =>
-        val sub = constraints.constraintsToSubst(cs1, variances, toSolve)
-        Some(cs1, sub)
+      case None      => None
+      case Some(cs1) => Some(cs1.map(cs => (cs, constraints.constraintsToSubst(cs, variances, toSolve))))
     }
   }
 
