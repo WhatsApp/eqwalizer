@@ -29,8 +29,8 @@ class ElabApply(pipelineContext: PipelineContext) {
   private type Var = Int
 
   private sealed trait Arg
-  private case class LambdaArg(lambda: Lambda, funType: FunType) extends Arg
-  private case class TermArg(arg: Expr, argTy: Type, paramTy: Type) extends Arg
+  private case class LambdaArg(expr: Lambda, paramType: FunType) extends Arg
+  private case class TermArg(expr: Expr, argTy: Type, paramTy: Type) extends Arg
 
   private def etaExpand(fun: LocalFun): Lambda = {
     val pos = fun.pos
@@ -174,7 +174,7 @@ class ElabApply(pipelineContext: PipelineContext) {
       variances: Map[Var, Variance],
       toSolve: Set[Var],
   ): Option[List[(CMap, Subst)]] = {
-    val bounds = lambdaArgs.map(arg => (lambdaToFunTy(arg, subst, env).resTy, arg.funType.resTy))
+    val bounds = lambdaArgs.map(arg => (lambdaToFunTy(arg, subst, env).resTy, arg.paramType.resTy))
     val lambdaCs = constraints.constrainSeq(Ctx(toSolve, Set.empty), bounds, seen = Set.empty)
     val cs1 = lambdaCs.flatMap(constraints.meetConstraints(_, List(cs)))
     cs1 match {
