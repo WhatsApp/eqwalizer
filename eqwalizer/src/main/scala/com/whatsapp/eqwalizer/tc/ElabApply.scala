@@ -29,8 +29,8 @@ class ElabApply(pipelineContext: PipelineContext) {
   private type Var = Int
 
   private sealed trait Arg
+  private case class TermArg(expr: Expr, paramTy: Type, argTy: Type) extends Arg
   private case class LambdaArg(expr: Lambda, paramType: FunType) extends Arg
-  private case class TermArg(expr: Expr, argTy: Type, paramTy: Type) extends Arg
 
   private def etaExpand(fun: LocalFun): Lambda = {
     val pos = fun.pos
@@ -64,7 +64,7 @@ class ElabApply(pipelineContext: PipelineContext) {
         case ft: FunType => LambdaArg(lambda, ft)
         case t if subtype.gradualSubType(DynamicType, t) =>
           LambdaArg(lambda, FunType(0, List.fill(arity)(DynamicType), DynamicType))
-        case _ => TermArg(lambda, argTy, paramTy)
+        case _ => TermArg(lambda, paramTy, argTy)
       }
     }
   }
@@ -85,7 +85,7 @@ class ElabApply(pipelineContext: PipelineContext) {
       .map {
         case ((lambda: Lambda, argTy: FunType), paramTy) if argTy.argTys.nonEmpty =>
           lambdaArg(lambda, argTy, paramTy)
-        case ((expr, argTy), paramTy) => TermArg(expr, argTy, paramTy)
+        case ((expr, argTy), paramTy) => TermArg(expr, paramTy, argTy)
       }
 
     val termArgs = appliedArgs.collect { case pa: TermArg => pa }
@@ -112,7 +112,7 @@ class ElabApply(pipelineContext: PipelineContext) {
           lambdaArg(etaExpand(fun), argTy, paramTy)
         case ((fun: RemoteFun, argTy: FunType), paramTy) if argTy.forall > 0 =>
           lambdaArg(etaExpand(fun), argTy, paramTy)
-        case ((expr, argTy), paramTy) => TermArg(expr, argTy, paramTy)
+        case ((expr, argTy), paramTy) => TermArg(expr, paramTy, argTy)
       }
 
     val termArgs = appliedArgs.collect { case pa: TermArg => pa }
@@ -184,7 +184,7 @@ class ElabApply(pipelineContext: PipelineContext) {
   }
 
   private def checkTermArg(arg: TermArg, varToType: Option[Subst]): Boolean = {
-    val TermArg(expr, argTy, rawParamTy) = arg
+    val TermArg(expr, rawParamTy, argTy) = arg
     val paramTy = varToType.fold(rawParamTy)(Subst.subst(_, rawParamTy))
     if (!subtype.subType(argTy, paramTy)) {
       diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = paramTy, got = argTy))
