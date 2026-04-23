@@ -6,6 +6,7 @@
 
 package com.whatsapp.eqwalizer.tc
 
+import com.whatsapp.eqwalizer.ast.Subst.Subst
 import com.whatsapp.eqwalizer.ast.{TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.Key.asType
 import com.whatsapp.eqwalizer.ast.Types.*
@@ -211,10 +212,10 @@ class Constraints(pipelineContext: PipelineContext) {
     if (meets.isEmpty) None else Some(meets)
   }
 
-  def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Map[Var, Type] =
+  def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Subst =
     cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
 
-  def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance], toSolve: Set[Var]): Map[Var, Type] = {
+  def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance], toSolve: Set[Var]): Subst = {
     val map1 = cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
     val map2 = (toSolve -- cs.keySet).map(_ -> DynamicType)
     map1 ++ map2

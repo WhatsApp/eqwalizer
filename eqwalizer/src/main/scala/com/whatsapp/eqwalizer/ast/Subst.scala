@@ -9,7 +9,8 @@ package com.whatsapp.eqwalizer.ast
 import com.whatsapp.eqwalizer.ast.Types.*
 
 object Subst {
-  def subst(s: Map[Int, Type], t: Type): Type = {
+  type Subst = Map[Int, Type]
+  def subst(s: Subst, t: Type): Type = {
     def sub(ty: Type): Type = subst(s, ty)
     t match {
       case MapType(props, kTy, vTy) =>

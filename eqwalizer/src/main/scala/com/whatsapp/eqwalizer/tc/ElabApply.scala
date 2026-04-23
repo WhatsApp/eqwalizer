@@ -8,6 +8,7 @@ package com.whatsapp.eqwalizer.tc
 
 import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
+import com.whatsapp.eqwalizer.ast.Subst.Subst
 import com.whatsapp.eqwalizer.ast.{Pos, Subst, Variance}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype}
@@ -118,7 +119,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
     val variances = Variance.toVariances(ft, vars)
 
-    val (solutions1: List[(CMap, Map[Var, Type])], termsSuccess) = elabTerms(toSolve, termArgs, variances) match {
+    val (solutions1: List[(CMap, Subst)], termsSuccess) = elabTerms(toSolve, termArgs, variances) match {
       case Some(tuples1) => (tuples1, true)
       case None          => (List((Map.empty: CMap, toSolve.map(_ -> DynamicType).toMap)), false)
     }
@@ -127,13 +128,13 @@ class ElabApply(pipelineContext: PipelineContext) {
     val elabLambdasRes = typeInfo.withoutTypeCollection {
       for {
         (cs1, subst1) <- solutions1
-        solutions2: List[(CMap, Map[Var, Type])] <- elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
+        solutions2: List[(CMap, Subst)] <- elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
         (cs2, subst2) <- solutions2
         subst2Merged = subst2.map {
           case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
           case (v, ty)             => (v, ty)
         }
-        solutions3: List[(CMap, Map[Var, Type])] <- elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
+        solutions3: List[(CMap, Subst)] <- elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
         (cs3, subst3) <- solutions3
       } yield (cs3, subst3)
     }
@@ -157,7 +158,7 @@ class ElabApply(pipelineContext: PipelineContext) {
       toSolve: Set[Var],
       args: List[TermArg],
       variances: Map[Var, Variance],
-  ): Option[List[(CMap, Map[Var, Type])]] = {
+  ): Option[List[(CMap, Subst)]] = {
     val cs1 = args.foldLeft(Option(List(Map.empty: CMap))) { case (csOpt, arg) =>
       for {
         cs <- csOpt
@@ -177,12 +178,12 @@ class ElabApply(pipelineContext: PipelineContext) {
 
   private def elabLambdas(
       cs: CMap,
-      subst: Map[Var, Type],
+      subst: Subst,
       lambdaArgs: List[LambdaArg],
       env: Env,
       variances: Map[Var, Variance],
       toSolve: Set[Var],
-  ): Option[List[(CMap, Map[Var, Type])]] = {
+  ): Option[List[(CMap, Subst)]] = {
     var cs1 = Option(List(cs))
     for (lambdaArg <- lambdaArgs) {
       val funType = lambdaToFunTy(lambdaArg, subst, env)
@@ -203,7 +204,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     }
   }
 
-  private def checkTermArg(arg: TermArg, varToType: Option[Map[Var, Type]]): Boolean = {
+  private def checkTermArg(arg: TermArg, varToType: Option[Subst]): Boolean = {
     val TermArg(expr, argTy, rawParamTy) = arg
     val paramTy = varToType.fold(rawParamTy)(Subst.subst(_, rawParamTy))
     if (!subtype.subType(argTy, paramTy)) {
@@ -212,7 +213,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     } else true
   }
 
-  private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Option[Map[Var, Type]], env: Env): Boolean = {
+  private def checkLambdaArg(lambdaArg: LambdaArg, varToType: Option[Subst], env: Env): Boolean = {
     val LambdaArg(lambda, FunType(_, rawArgTys, rawExpResTy)) = lambdaArg
     val argTys = varToType.fold(rawArgTys)(s => rawArgTys.map(Subst.subst(s, _)))
     val expResTy = varToType.fold(rawExpResTy)(Subst.subst(_, rawExpResTy))
@@ -229,7 +230,7 @@ class ElabApply(pipelineContext: PipelineContext) {
     typed
   }
 
-  private def lambdaToFunTy(lambdaArg: LambdaArg, subst: Map[Var, Type], env: Env): FunType = {
+  private def lambdaToFunTy(lambdaArg: LambdaArg, subst: Subst, env: Env): FunType = {
     val LambdaArg(lambda, ft: FunType) = lambdaArg
 
     val argTys = ft.argTys.map(Subst.subst(subst, _))
