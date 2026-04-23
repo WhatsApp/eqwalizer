@@ -12,7 +12,7 @@ import com.whatsapp.eqwalizer.ast.Subst.Subst
 import com.whatsapp.eqwalizer.ast.{Pos, Subst, Variance}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype}
-import com.whatsapp.eqwalizer.tc.Constraints.CMap
+import com.whatsapp.eqwalizer.tc.Constraints.{CMap, Ctx}
 
 class ElabApply(pipelineContext: PipelineContext) {
   private lazy val check = pipelineContext.check
@@ -159,18 +159,8 @@ class ElabApply(pipelineContext: PipelineContext) {
       args: List[TermArg],
       variances: Map[Var, Variance],
   ): Option[List[(CMap, Subst)]] = {
-    val cs1 = args.foldLeft(Option(List(Map.empty: CMap))) { case (csOpt, arg) =>
-      for {
-        cs <- csOpt
-        delta <- constraints.constraintGen(
-          toSolve,
-          lower = arg.argTy,
-          upper = arg.paramTy,
-        )
-        meet <- constraints.meetConstraints(cs, delta)
-      } yield meet
-    }
-    cs1 match {
+    val bounds = args.map(arg => (arg.argTy, arg.paramTy))
+    constraints.constrainSeq(Ctx(toSolve, Set.empty), bounds, seen = Set.empty) match {
       case None      => None
       case Some(cs1) => Some(cs1.map(cs => (cs, constraints.constraintsToSubst(cs, variances, toSolve))))
     }
@@ -184,20 +174,9 @@ class ElabApply(pipelineContext: PipelineContext) {
       variances: Map[Var, Variance],
       toSolve: Set[Var],
   ): Option[List[(CMap, Subst)]] = {
-    var cs1 = Option(List(cs))
-    for (lambdaArg <- lambdaArgs) {
-      val funType = lambdaToFunTy(lambdaArg, subst, env)
-      cs1 = for {
-        cs <- cs1;
-        delta <-
-          constraints.constraintGen(
-            toSolve,
-            lower = funType.resTy,
-            upper = lambdaArg.funType.resTy,
-          )
-        meet <- constraints.meetConstraints(cs, delta)
-      } yield meet
-    }
+    val bounds = lambdaArgs.map(arg => (lambdaToFunTy(arg, subst, env).resTy, arg.funType.resTy))
+    val lambdaCs = constraints.constrainSeq(Ctx(toSolve, Set.empty), bounds, seen = Set.empty)
+    val cs1 = lambdaCs.flatMap(constraints.meetConstraints(_, List(cs)))
     cs1 match {
       case None      => None
       case Some(cs1) => Some(cs1.map(cs => (cs, constraints.constraintsToSubst(cs, variances, toSolve))))

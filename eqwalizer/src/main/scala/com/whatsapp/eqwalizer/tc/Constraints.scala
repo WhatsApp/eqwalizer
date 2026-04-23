@@ -25,7 +25,7 @@ object Constraints {
   }
   type CMap = Map[Var, Constraint]
 
-  private case class Ctx(toSolve: Set[Var], varsToElim: Set[Var])
+  case class Ctx(toSolve: Set[Var], varsToElim: Set[Var])
 }
 
 class Constraints(pipelineContext: PipelineContext) {
@@ -186,7 +186,7 @@ class Constraints(pipelineContext: PipelineContext) {
       }
   }
 
-  private def constrainSeq(ctx: Ctx, bounds: Iterable[(Type, Type)], seen: Set[(Type, Type)]): Option[List[CMap]] = {
+  def constrainSeq(ctx: Ctx, bounds: Iterable[(Type, Type)], seen: Set[(Type, Type)]): Option[List[CMap]] = {
     var result: Option[List[CMap]] = Some(List(Map.empty))
     for ((lower, upper) <- bounds; if result.isDefined)
       constrain(ctx, lower, upper, seen) match {
