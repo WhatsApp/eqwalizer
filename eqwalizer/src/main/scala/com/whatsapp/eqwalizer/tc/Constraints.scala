@@ -15,7 +15,14 @@ import com.whatsapp.eqwalizer.tc.PipelineContext
 object Constraints {
   private type Var = Int
 
-  case class Constraint(lower: Type, upper: Type)
+  case class Constraint(lower: Type, upper: Type) {
+    def toType(variance: Variance): Type = variance match {
+      case Variance.Constant | Variance.Covariant | Variance.Invariant =>
+        lower
+      case Variance.Contravariant =>
+        upper
+    }
+  }
   type CMap = Map[Var, Constraint]
 
   private case class Ctx(toSolve: Set[Var], varsToElim: Set[Var])
@@ -213,19 +220,12 @@ class Constraints(pipelineContext: PipelineContext) {
   }
 
   def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Subst =
-    cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
+    cs.map { case (tv, c) => tv -> c.toType(variances(tv)) }
 
   def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance], toSolve: Set[Var]): Subst = {
-    val map1 = cs.map { case (tv, c) => tv -> constraintToType(c, variances(tv)) }
+    val map1 = cs.map { case (tv, c) => tv -> c.toType(variances(tv)) }
     val map2 = (toSolve -- cs.keySet).map(_ -> DynamicType)
     map1 ++ map2
-  }
-
-  private def constraintToType(c: Constraint, variance: Variance): Type = variance match {
-    case Variance.Constant | Variance.Covariant | Variance.Invariant =>
-      c.lower
-    case Variance.Contravariant =>
-      c.upper
   }
 
   /** Safe approximation because we re-check arg types once we have concrete param types
