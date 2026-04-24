@@ -117,7 +117,7 @@ class ElabApply(pipelineContext: PipelineContext) {
 
     val termArgs = appliedArgs.collect { case pa: TermArg => pa }
     val lambdaArgs = appliedArgs.collect { case la: LambdaArg => la }
-    val variances = Variance.toVariances(ft, vars)
+    val variances = Variance.toVariances(ft.resTy, vars)
 
     val (solutions1: List[(CMap, Subst)], termsSuccess) = elabTerms(toSolve, termArgs, variances) match {
       case Some(tuples1) => (tuples1, true)

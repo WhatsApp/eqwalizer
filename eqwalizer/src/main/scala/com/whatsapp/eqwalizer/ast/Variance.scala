@@ -16,7 +16,7 @@ enum Variance {
 object Variance {
   private type Var = Int
 
-  def toVariances(ft: FunType, vars: List[Var]): Map[Var, Variance] =
+  def toVariances(ft: Type, vars: List[Var]): Map[Var, Variance] =
     vars.map(tv => tv -> toTopLevelVariance(ft, tv)).toMap
 
   def paramVariances(remoteId: RemoteId): List[Variance] =
@@ -50,18 +50,8 @@ object Variance {
     case _              => TypeVars.children(ty).exists(containsVar(_, tv))
   }
 
-  private def toTopLevelVariance(ft: FunType, tv: Var): Variance =
-    varianceOf(ft.resTy, tv, isPositivePosition = true) match {
-      case Constant =>
-        combineVariances(ft.argTys.map(varianceOf(_, tv, isPositivePosition = false))) match {
-          case Constant | Covariant | Invariant =>
-            Covariant
-          case Contravariant =>
-            Contravariant
-        }
-      case variance =>
-        variance
-    }
+  private def toTopLevelVariance(ft: Type, tv: Var): Variance =
+    varianceOf(ft, tv, isPositivePosition = true)
 
   private def combineVariances(variances: List[Variance]): Variance =
     variances.foldLeft(Constant: Variance)((v1Opt, v2Opt) =>
