@@ -214,9 +214,6 @@ class Constraints(pipelineContext: PipelineContext) {
     if (meets.isEmpty) None else Some(meets)
   }
 
-  def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance]): Subst =
-    cs.map { case (tv, c) => tv -> c.toType(variances(tv)) }
-
   def constraintsToSubst(cs: Map[Var, Constraint], variances: Map[Var, Variance], toSolve: Set[Var]): Subst = {
     val map1 = cs.map { case (tv, c) => tv -> c.toType(variances(tv)) }
     val map2 = (toSolve -- cs.keySet).map(_ -> DynamicType)
