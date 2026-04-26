@@ -49,11 +49,6 @@ class Constraints(pipelineContext: PipelineContext) {
     }
   }
 
-  def constraintGen(toSolve: Set[Var], lower: Type, upper: Type): Option[List[CMap]] = {
-    val state = Ctx(toSolve, Set.empty)
-    constrain(state, lower, upper, Set.empty)
-  }
-
   private def constrain(ctx: Ctx, lower: Type, upper: Type, seen: Set[(Type, Type)]): Option[List[CMap]] = {
     val Ctx(toSolve, varsToElim) = ctx
 
