@@ -85,8 +85,8 @@ class Narrow(pipelineContext: PipelineContext) {
               if ((prop1.isEmpty && !subtype.subType(keyT, kT1)) || (prop2.isEmpty && !subtype.subType(keyT, kT2))) {
                 boundary.break(NoneType)
               }
-              val propT1 = prop1.map(_.tp).getOrElse(kT1)
-              val propT2 = prop2.map(_.tp).getOrElse(kT2)
+              val propT1 = prop1.map(_.tp).getOrElse(vT1)
+              val propT2 = prop2.map(_.tp).getOrElse(vT2)
               val req = prop1.exists(_.req) || prop2.exists(_.req)
               val meetType = meetAux(propT1, propT2, seen)
               if (promoteNone && req && subtype.isNoneType(meetType)) {
