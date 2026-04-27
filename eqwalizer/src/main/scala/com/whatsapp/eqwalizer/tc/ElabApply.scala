@@ -9,7 +9,7 @@ package com.whatsapp.eqwalizer.tc
 import com.whatsapp.eqwalizer.ast.Exprs.*
 import com.whatsapp.eqwalizer.ast.Pats.PatVar
 import com.whatsapp.eqwalizer.ast.Subst.Subst
-import com.whatsapp.eqwalizer.ast.{Pos, Subst, Variance}
+import com.whatsapp.eqwalizer.ast.{Pos, Subst, TypeVars, Variance}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.tc.TcDiagnostics.{AmbiguousLambda, ExpectedSubtype}
 import com.whatsapp.eqwalizer.tc.Constraints.{CMap, Ctx}
@@ -174,7 +174,7 @@ class ElabApply(pipelineContext: PipelineContext) {
       variances: Map[Var, Variance],
       toSolve: Set[Var],
   ): Option[List[(CMap, Subst)]] = {
-    val bounds = lambdaArgs.map(arg => (lambdaToFunTy(arg, subst, env).resTy, arg.paramType.resTy))
+    val bounds = lambdaArgs.map(arg => (lambdaResTy(arg, subst, env), arg.paramType.resTy))
     val lambdaCs = constraints.constrainSeq(Ctx(toSolve, Set.empty), bounds, seen = Set.empty)
     val cs1 = lambdaCs.flatMap(constraints.meetConstraints(_, List(cs)))
     cs1 match {
@@ -209,27 +209,27 @@ class ElabApply(pipelineContext: PipelineContext) {
     typed
   }
 
-  private def lambdaToFunTy(lambdaArg: LambdaArg, subst: Subst, env: Env): FunType = {
+  private def lambdaResTy(lambdaArg: LambdaArg, subst: Subst, env: Env): Type = {
     val LambdaArg(lambda, ft: FunType) = lambdaArg
+    if (TypeVars.freeVars(ft).isEmpty) ft.resTy
+    else {
+      val argTys = ft.argTys.map(Subst.subst(subst, _))
+      val env1 =
+        lambda.name match {
+          case Some(name) =>
+            val funType = FunType(0, List.fill(argTys.size)(DynamicType), DynamicType)
+            env.updated(name, funType)
+          case _ =>
+            env
+        }
 
-    val argTys = ft.argTys.map(Subst.subst(subst, _))
-    val env1 =
-      lambda.name match {
-        case Some(name) =>
-          val funType = FunType(0, List.fill(argTys.size)(DynamicType), DynamicType)
-          env.updated(name, funType)
-        case _ =>
-          env
-      }
-
-    val envs = occurrence.clausesEnvs(lambda.clauses, argTys, env1)
-    val clauseTys =
-      lambda.clauses
-        .lazyZip(envs)
-        .map((clause, occEnv) => elab.elabClause(clause, argTys, occEnv, Set.empty))
-        .map(_._1)
-
-    val resTy = subtype.join(clauseTys)
-    ft.copy(argTys = argTys, resTy = resTy)
+      val envs = occurrence.clausesEnvs(lambda.clauses, argTys, env1)
+      val clauseTys =
+        lambda.clauses
+          .lazyZip(envs)
+          .map((clause, occEnv) => elab.elabClause(clause, argTys, occEnv, Set.empty))
+          .map(_._1)
+      subtype.join(clauseTys)
+    }
   }
 }
