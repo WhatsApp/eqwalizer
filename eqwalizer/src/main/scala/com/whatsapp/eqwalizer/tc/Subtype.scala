@@ -15,6 +15,7 @@ import scala.util.boundary
 class Subtype(pipelineContext: PipelineContext) {
   private val util = pipelineContext.util
   private lazy val instantiate = pipelineContext.instantiate
+  private lazy val constraints = pipelineContext.constraints
 
   private sealed trait Variance
   private case object + extends Variance
@@ -164,7 +165,7 @@ class Subtype(pipelineContext: PipelineContext) {
           case None =>
             (ft1.forall > 0) && (ft2.forall == 0) && {
               val (vars, ft) = instantiate.instantiate(ft1)
-              pipelineContext.constraints.satisfiable(
+              constraints.satisfiable(
                 toSolve = vars.toSet,
                 varsToElim = Set.empty,
                 bounds = ft2.argTys.zip(ft.argTys) :+ (ft.resTy, ft2.resTy),
