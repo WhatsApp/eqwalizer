@@ -45,17 +45,14 @@ class Constraints(pipelineContext: PipelineContext) {
   private def constrain(ctx: Ctx, lower: Type, upper: Type, seen: Set[(Type, Type)]): Option[List[CMap]] = {
     val Ctx(toSolve, varsToElim) = ctx
 
-    // The logic is similar to Subtype.scala
     if (seen((lower, upper))) Some(List(Map.empty))
     else if (subtype.subType(lower, upper)) Some(List(Map.empty))
     else
       (lower, upper) match {
-        // CG-Upper from Pierce and "Turner Local Type Inference"
         case (FreeVarType(n), _) if toSolve(n) =>
           assert(TypeVars.freeVars(upper).intersect(toSolve).isEmpty)
           val constraint = Constraint(NoneType, TypeVars.demote(upper, varsToElim))
           Some(List(Map(n -> constraint)))
-        // CG-Lower
         case (_, FreeVarType(n)) if toSolve(n) =>
           assert(TypeVars.freeVars(lower).intersect(toSolve).isEmpty)
           val constraint = Constraint(TypeVars.promote(lower, varsToElim), AnyType)
@@ -70,13 +67,10 @@ class Constraints(pipelineContext: PipelineContext) {
           Some(List(solveFor.map(n => (n, Constraint(DynamicType, AnyType))).toMap))
         case (_, BoundedDynamicType(bound)) =>
           constrain(ctx, lower, bound, seen)
-        // logic for recursive types is the same as in subtype.scala
         case (RemoteType(rid, args), _) =>
           constrain(ctx, util.getTypeDeclBody(rid, args), upper, seen + (lower -> upper))
         case (_, RemoteType(rid, args)) =>
           constrain(ctx, lower, util.getTypeDeclBody(rid, args), seen + (lower -> upper))
-
-        // CG-Fun
         case (rawFt1: FunType, rawFt2: FunType) if rawFt1.argTys.size == rawFt2.argTys.size =>
           TypeVars.conformForalls(rawFt1, rawFt2) match {
             case Some((ft1, ft2)) =>
@@ -94,7 +88,6 @@ class Constraints(pipelineContext: PipelineContext) {
           constrain(st, ft11.resTy, ft2.resTy, seen)
         case (ft1: AnyArityFunType, ft2: AnyArityFunType) =>
           constrain(ctx, ft1.resTy, ft2.resTy, seen)
-
         case (UnionType(tys), _) =>
           constrainSeq(ctx, tys.map((_, upper)), seen)
         case (_, UnionType(tys)) =>
@@ -103,7 +96,6 @@ class Constraints(pipelineContext: PipelineContext) {
             None
           else
             Some(results.flatten)
-
         case (r: RecordType, t: TupleType) =>
           util.getRecord(r.module, r.name) match {
             case Some(recDecl) =>
@@ -147,7 +139,6 @@ class Constraints(pipelineContext: PipelineContext) {
         case (ListType(leftElemTy), ListType(rightElemTy)) =>
           constrain(ctx, leftElemTy, rightElemTy, seen)
         case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
-          // adapted from subtype.subtype
           val tolerantSubtype = subtype.isDynamicType(kT1) && subtype.isDynamicType(vT1)
           var constraints: List[(Type, Type)] = List()
           val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
