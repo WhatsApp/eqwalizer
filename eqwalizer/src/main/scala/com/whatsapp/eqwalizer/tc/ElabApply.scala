@@ -124,19 +124,29 @@ class ElabApply(pipelineContext: PipelineContext) {
       case None          => (List((Map.empty: CMap, toSolve.map(_ -> DynamicType).toMap)), false)
     }
 
+    val hasInvariant =
+      lambdaArgs.exists { a => Variance.toVariances(a.paramType, vars).exists(_._2 == Variance.Invariant) }
+
     // Then we elaborate the lambdas using the partial solutions
     val elabLambdasRes = typeInfo.withoutTypeCollection {
-      for {
-        (cs1, subst1) <- solutions1
-        solutions2: List[(CMap, Subst)] <- elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
-        (cs2, subst2) <- solutions2
-        subst2Merged = subst2.map {
-          case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
-          case (v, ty)             => (v, ty)
-        }
-        solutions3: List[(CMap, Subst)] <- elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
-        (cs3, subst3) <- solutions3
-      } yield (cs3, subst3)
+      if (hasInvariant)
+        for {
+          (cs1, subst1) <- solutions1
+          solutions2: List[(CMap, Subst)] <- elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
+          (cs2, subst2) <- solutions2
+          subst2Merged = subst2.map {
+            case (v, UnionType(tys)) => (v, narrow.joinAndMergeMaps(tys))
+            case (v, ty)             => (v, ty)
+          }
+          solutions3: List[(CMap, Subst)] <- elabLambdas(cs2, subst2Merged, lambdaArgs, env, variances, toSolve)
+          (cs3, subst3) <- solutions3
+        } yield (cs3, subst3)
+      else
+        for {
+          (cs1, subst1) <- solutions1
+          solutions2: List[(CMap, Subst)] <- elabLambdas(cs1, subst1, lambdaArgs, env, variances, toSolve)
+          (cs2, subst2) <- solutions2
+        } yield (cs2, subst2)
     }
 
     // in the end we take the first solution if it exists
