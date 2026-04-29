@@ -59,10 +59,10 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         pipelineContext.flatMap(_.util.getRecord(r.module, r.name)) match {
           case None => s"#${r.name}{}"
           case Some(recDecl) =>
-            fields
-              .collect {
-                case (name, ty) if recDecl.fMap(name).refinable => s"${name} :: ${show(ty)}"
-              }
+            fields.toList
+              .filter { case (name, _) => recDecl.fMap(name).refinable }
+              .map { case (name, ty) => s"$name :: ${show(ty)}" }
+              .sorted
               .mkString(s"#${r.name}{", ", ", "}")
         }
       case MapType(props, NoneType, _) =>
