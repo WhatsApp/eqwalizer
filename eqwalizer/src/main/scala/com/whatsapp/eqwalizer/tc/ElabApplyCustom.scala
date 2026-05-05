@@ -737,8 +737,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case Var(x) =>
             val ListType(predListTy) = narrow.asListType(listTy1).get
             val posElemT = predListTy
-            val posEnv = env1.updated(x, posElemT)
-            (booleanType, posEnv, env1)
+            val xT = env1(x)
+            if (subtype.gradualSubType(posElemT, xT)) {
+              val posEnv = env1.updated(x, posElemT)
+              (booleanType, posEnv, env1)
+            } else (booleanType, env1, env1)
           case _ =>
             (booleanType, env1, env1)
         }
