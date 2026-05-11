@@ -6,9 +6,10 @@
 
 package com.whatsapp.eqwalizer.io
 
-import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromString, writeToStream}
+import com.github.plokhotnyuk.jsoniter_scala.core.{JsonValueCodec, readFromArray, readFromString, writeToStream}
 import com.github.plokhotnyuk.jsoniter_scala.macros.{CodecMakerConfig, JsonCodecMaker}
 import com.whatsapp.eqwalizer.ast.{Id, Pos}
+import com.whatsapp.eqwalizer.ast.Forms.FunDecl
 import com.whatsapp.eqwalizer.ast.Types.Type
 import com.whatsapp.eqwalizer.ast.Exprs.ExtType
 import com.whatsapp.eqwalizer.util.ELPDiagnostics
@@ -222,6 +223,32 @@ object Ipc {
     }
   }
 
+  case class FunToCheck(module: String, id: Id, funDecl: FunDecl)
+  case class FunCheckResult(module: String, id: Id, errors: List[ELPDiagnostics.Error])
+
+  def getFunsToCheck(): List[FunToCheck] = {
+    receive() match {
+      case Right(Reply.FunsToCheckReply(len)) =>
+        println()
+        Console.out.flush()
+        val buf = new Array[Byte](len)
+        val read = readNBytes(System.in, buf, 0, len)
+        assert(read == len, s"expected $len but got $read")
+        readFromArray[List[FunToCheck]](buf)(funToCheckListCodec)
+      case Right(Reply.CannotCompleteRequest) =>
+        throw Terminated
+      case Right(reply) =>
+        Console.err.println(s"eqWAlizer [getFunsToCheck] received bad reply from ELP $reply")
+        throw Terminated
+      case Left(GotNull()) =>
+        Console.err.println(s"eqWAlizer [getFunsToCheck] GotNull")
+        throw Terminated
+    }
+  }
+
+  def sendFunCheckDone(results: List[FunCheckResult]): Unit =
+    send(Request.FunCheckDone(results))
+
   private def send(req: Request): Unit = {
     writeToStream(req, Console.out)(requestCodec)
     Console.out.println()
@@ -303,6 +330,7 @@ object Ipc {
     case GetFunSpec(module: String, id: Id)
     case GetOverloadedFunSpec(module: String, id: Id)
     case GetCallbacks(module: String)
+    case FunCheckDone(results: List[FunCheckResult])
   }
 
   enum Reply {
@@ -323,6 +351,7 @@ object Ipc {
     case GetOverloadedFunSpecReply(len: Int)
     case GetCallbacksReply(len: Int)
     case CannotCompleteRequest
+    case FunsToCheckReply(len: Int)
   }
 
   private val replyCodec: JsonValueCodec[Reply] = JsonCodecMaker.make(
@@ -335,6 +364,13 @@ object Ipc {
     CodecMakerConfig
       .withMapMaxInsertNumber(65536)
       .withSetMaxInsertNumber(65536)
+      .withAllowRecursiveTypes(true)
+      .withDiscriminatorFieldName(None)
+      .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)
+  )
+
+  private val funToCheckListCodec: JsonValueCodec[List[FunToCheck]] = JsonCodecMaker.make(
+    CodecMakerConfig
       .withAllowRecursiveTypes(true)
       .withDiscriminatorFieldName(None)
       .withFieldNameMapper(JsonCodecMaker.enforce_snake_case)

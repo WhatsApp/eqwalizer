@@ -38,15 +38,7 @@ object Pipeline {
         case f: FunDecl if currentFile == erlFile =>
           val options1 =
             if (unlimitedRefinementFuns(f.id)) options.copy(unlimitedRefinement = Some(true)) else options
-          val ctx = PipelineContext(module, options1)
-          val fErrors = (Db.getSpec(module, f.id), Db.getOverloadedSpec(module, f.id)) match {
-            case (Some(spec), _) =>
-              checkFun(ctx, f, spec)
-            case (_, Some(overloadedSpec)) =>
-              checkOverloadedFun(ctx, f, overloadedSpec)
-            case _ =>
-              checkFun(ctx, f, getDynamicFunSpecType(f))
-          }
+          val fErrors = checkFunction(module, f, options1)
           if (noCheckFuns.contains(f.id)) {
             if (fErrors.isEmpty)
               result.addOne(RedundantNowarnFunction(noCheckFuns(f.id)))
@@ -70,6 +62,22 @@ object Pipeline {
     noCheckFuns.foreach { case (_, pos) => result.addOne(RedundantNowarnFunction(pos)) }
     val errors = result.toList
     applyFixmes(errors, invalids, meta)
+  }
+
+  def checkFunction(
+      module: String,
+      funDecl: FunDecl,
+      options: Options = noOptions,
+  ): List[Diagnostic] = {
+    val ctx = PipelineContext(module, options)
+    (Db.getSpec(module, funDecl.id), Db.getOverloadedSpec(module, funDecl.id)) match {
+      case (Some(spec), _) =>
+        checkFun(ctx, funDecl, spec)
+      case (_, Some(overloadedSpec)) =>
+        checkOverloadedFun(ctx, funDecl, overloadedSpec)
+      case _ =>
+        checkFun(ctx, funDecl, getDynamicFunSpecType(funDecl))
+    }
   }
 
   private def getDynamicFunSpecType(f: FunDecl): FunSpec =

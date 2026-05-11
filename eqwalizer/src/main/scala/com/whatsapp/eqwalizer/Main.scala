@@ -18,8 +18,9 @@ object Main {
     val cmd = args(0)
 
     cmd match {
-      case "ipc" => ipc(args)
-      case _     => help()
+      case "ipc"            => ipc(args)
+      case "ipc-check-funs" => ELPDiagnostics.getDiagnosticsIpcCheckFuns()
+      case _                => help()
     }
   }
 

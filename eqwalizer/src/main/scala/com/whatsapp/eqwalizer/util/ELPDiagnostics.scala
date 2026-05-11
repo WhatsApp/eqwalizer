@@ -55,6 +55,18 @@ object ELPDiagnostics {
       case Ipc.Terminated => Ipc.sendDone(Map.empty, Map.empty)
     }
 
+  def getDiagnosticsIpcCheckFuns(): Unit =
+    try {
+      val funsToCheck = Ipc.getFunsToCheck()
+      val results = funsToCheck.map { ftc =>
+        val errors = Pipeline.checkFunction(ftc.module, ftc.funDecl)
+        Ipc.FunCheckResult(ftc.module, ftc.id, toELPErrors(errors, Nil, Nil))
+      }
+      Ipc.sendFunCheckDone(results)
+    } catch {
+      case Ipc.Terminated => ()
+    }
+
   private def getDiagnostics(module: String, options: Options): List[Error] = {
     val (typeErrors, invalids, redundantFixmes) = Pipeline.checkForms(module, options)
     toELPErrors(typeErrors, invalids, redundantFixmes).sortBy(_.range.map(_.startByte))
