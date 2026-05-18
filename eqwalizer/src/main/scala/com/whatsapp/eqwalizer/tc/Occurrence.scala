@@ -17,17 +17,17 @@ import scala.collection.mutable.ListBuffer
 import scala.util.boundary
 
 object Occurrence {
-  sealed trait Prop
-  case object Unknown extends Prop
-  case object True extends Prop
-  case object False extends Prop
-  case class Pos(obj: Obj, t: Type) extends Prop
-  case class Neg(obj: Obj, t: Type) extends Prop
-  case class And(props: List[Prop]) extends Prop
-  case class Or(props: List[Prop]) extends Prop
+  private sealed trait Prop
+  private case object Unknown extends Prop
+  private case object True extends Prop
+  private case object False extends Prop
+  private case class Pos(obj: Obj, t: Type) extends Prop
+  private case class Neg(obj: Obj, t: Type) extends Prop
+  private case class And(props: List[Prop]) extends Prop
+  private case class Or(props: List[Prop]) extends Prop
 
   /** Prefer these functions to And.apply and Or.apply */
-  def and(props: List[Prop]): Prop = {
+  private def and(props: List[Prop]): Prop =
     if (props.isEmpty) True
     else if (props.contains(False)) False
     else {
@@ -44,9 +44,8 @@ object Occurrence {
       else if (simplProps.size == 1) simplProps.head
       else And(simplProps)
     }
-  }
 
-  def or(props: List[Prop]): Prop = {
+  private def or(props: List[Prop]): Prop =
     if (props.isEmpty) False
     else if (props.contains(True)) True
     else {
@@ -63,23 +62,22 @@ object Occurrence {
       else if (simplProps.size == 1) simplProps.head
       else Or(simplProps)
     }
-  }
 
-  sealed trait Obj
-  case class VarObj(v: String) extends Obj
-  case class FieldObj(field: Field, obj: Obj) extends Obj
+  private sealed trait Obj
+  private case class VarObj(v: String) extends Obj
+  private case class FieldObj(field: Field, obj: Obj) extends Obj
 
-  sealed trait Field
-  case class TupleField(index: Int, arity: Option[Int]) extends Field
-  case class RecordField(field: String, recName: String) extends Field
-  case class MapField(field: Key) extends Field
-  case object ListHead extends Field
-  case object ListTail extends Field
+  private sealed trait Field
+  private case class TupleField(index: Int, arity: Option[Int]) extends Field
+  private case class RecordField(field: String, recName: String) extends Field
+  private case class MapField(field: Key) extends Field
+  private case object ListHead extends Field
+  private case object ListTail extends Field
 
-  type PropEnv = List[Prop]
-  type AMap = Map[String, Obj]
+  private type PropEnv = List[Prop]
+  private type AMap = Map[String, Obj]
 
-  implicit class MaybeOps(maybe: Option[Boolean]) {
+  private implicit class MaybeOps(maybe: Option[Boolean]) {
     @inline
     def isTrue: Boolean = maybe.contains(true)
     @inline
@@ -89,9 +87,9 @@ object Occurrence {
   private sealed trait Polarity
   private case object + extends Polarity
   private case object - extends Polarity
-  type Path = List[Field]
+  private type Path = List[Field]
 
-  val unary_predicates: Map[String, Type] =
+  private val unary_predicates: Map[String, Type] =
     Map(
       "is_atom" -> AtomType,
       "is_binary" -> BinaryType,
@@ -109,19 +107,19 @@ object Occurrence {
       "is_tuple" -> AnyTupleType,
     )
 
-  sealed trait ValueKind
-  case object AtomKind extends ValueKind
-  case object BinaryKind extends ValueKind
-  case object FunKind extends ValueKind
-  case object ListKind extends ValueKind
-  case object MapKind extends ValueKind
-  case object NumberKind extends ValueKind
-  case object PidKind extends ValueKind
-  case object PortKind extends ValueKind
-  case object ReferenceKind extends ValueKind
-  case object TupleKind extends ValueKind
+  private sealed trait ValueKind
+  private case object AtomKind extends ValueKind
+  private case object BinaryKind extends ValueKind
+  private case object FunKind extends ValueKind
+  private case object ListKind extends ValueKind
+  private case object MapKind extends ValueKind
+  private case object NumberKind extends ValueKind
+  private case object PidKind extends ValueKind
+  private case object PortKind extends ValueKind
+  private case object ReferenceKind extends ValueKind
+  private case object TupleKind extends ValueKind
 
-  def kind(t: Type): Option[ValueKind] = t match {
+  private def kind(t: Type): Option[ValueKind] = t match {
     case AtomLitType(_) | AtomType =>
       Some(AtomKind)
     case BinaryType =>
