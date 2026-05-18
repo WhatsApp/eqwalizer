@@ -6,7 +6,6 @@
 
 package com.whatsapp.eqwalizer.tc
 
-import scala.annotation.tailrec
 import com.whatsapp.eqwalizer.ast.Exprs.{AtomLit, Cons, Expr, IntLit, Lambda, NilLit, Var}
 import com.whatsapp.eqwalizer.ast.Types.*
 import com.whatsapp.eqwalizer.ast.{Exprs, Pos, RemoteId}
@@ -605,35 +604,11 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val pairTys = mapTys.flatMap(narrow.getKVType)
         (ListType(pairTys.join()), env1)
       },
-      RemoteId("maps", "with", 2) -> { (args, argTys, env, env1, _) =>
-        @tailrec
-        def toKey(ty: Type)(implicit pos: Pos): Option[Key] = ty match {
-          case RemoteType(rid, argTys) =>
-            // Note: this won't infinite-loop since we don't continue under type constructors
-            toKey(util.getTypeDeclBody(rid, argTys))
-          case _ =>
-            Key.fromType(ty)
-        }
-        @tailrec
-        def getKeysToKeep(e: Expr, keys: List[Key]): Option[List[Key]] = {
-          e match {
-            case Exprs.NilLit() =>
-              Some(keys)
-            case Exprs.Cons(h, t) =>
-              toKey(elab.elabExpr(h, env)._1)(h.pos) match {
-                case Some(key) =>
-                  getKeysToKeep(t, key :: keys)
-                case None =>
-                  None
-              }
-            case _ => None
-          }
-        }
+      RemoteId("maps", "with", 2) -> { (args, argTys, _, env1, _) =>
         val List(keysArg, map) = args
         val List(keysTy, mapTy) = argTys
         val mapTys = coerceToMaps(map, mapTy)
-        val expKeysTy = ListType(AnyType)
-        val _ = coerce(keysArg, keysTy, expKeysTy)
+        val keysCoercedTy = coerce(keysArg, keysTy, ListType(AnyType))
         def `with`(mapTy: MapType, keysToKeep: Set[Key]): Type = {
           val props = keysToKeep.flatMap { key =>
             mapTy.props.get(key) match {
@@ -645,45 +620,21 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           }
           MapType(props.toMap, NoneType, NoneType)
         }
-        getKeysToKeep(keysArg, Nil).map(_.toSet) match {
-          case None       => (mapTys.map(narrow.setAllFieldsOptional(_)).join(), env1)
+        asKeySetStrict(keysCoercedTy) match {
           case Some(keys) => (mapTys.map(`with`(_, keys)).join(), env1)
+          case None       => (mapTys.map(narrow.setAllFieldsOptional(_)).join(), env1)
         }
       },
-      RemoteId("maps", "without", 2) -> { (args, argTys, env, env1, _) =>
-        @tailrec
-        def toKey(ty: Type)(implicit pos: Pos): Option[Key] = ty match {
-          case RemoteType(rid, argTys) =>
-            // Note: this won't infinite-loop since we don't continue under type constructors
-            toKey(util.getTypeDeclBody(rid, argTys))
-          case _ =>
-            Key.fromType(ty)
-        }
-        @tailrec
-        def getKeysToRemove(e: Expr, keys: List[Key]): Option[List[Key]] = {
-          e match {
-            case Exprs.NilLit() =>
-              Some(keys)
-            case Exprs.Cons(h, t) =>
-              toKey(elab.elabExpr(h, env)._1)(h.pos) match {
-                case Some(key) =>
-                  getKeysToRemove(t, key :: keys)
-                case None =>
-                  None
-              }
-            case _ => None
-          }
-        }
+      RemoteId("maps", "without", 2) -> { (args, argTys, _, env1, _) =>
         val List(keysArg, map) = args
         val List(keysTy, mapTy) = argTys
         val mapTys = coerceToMaps(map, mapTy)
-        val expKeysTy = ListType(AnyType)
-        val _ = coerce(keysArg, keysTy, expKeysTy)
+        val keysCoercedTy = coerce(keysArg, keysTy, ListType(AnyType))
         def without(mapTy: MapType, keysToRemove: Set[Key]): Type =
           mapTy.copy(props = mapTy.props.removedAll(keysToRemove))
-        getKeysToRemove(keysArg, Nil).map(_.toSet) match {
-          case None       => (mapTys.map(narrow.setAllFieldsOptional(_)).join(), env1)
+        asKeySetStrict(keysCoercedTy) match {
           case Some(keys) => (mapTys.map(without(_, keys)).join(), env1)
+          case None       => (mapTys.map(narrow.setAllFieldsOptional(_)).join(), env1)
         }
       },
       RemoteId(CompilerMacro.fake_module, "record_info", 2) -> { (args, _, _, env1, _) =>
@@ -744,6 +695,20 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("io_lib", "char_list", 1) -> ioListPredicateHandler,
       RemoteId("io_lib", "latin1_char_list", 1) -> ioListPredicateHandler,
     )
+  }
+
+  private def asKeySetStrict(ty: Type): Option[Set[Key]] = {
+    def go(t: Type): Option[Set[Key]] = t match {
+      case UnionType(ts) =>
+        ts.foldLeft[Option[Set[Key]]](Some(Set())) { (acc, ty) =>
+          acc.flatMap(keys => go(ty).map(keys2 => keys ++ keys2))
+        }
+      case RemoteType(rid, args) =>
+        go(util.getTypeDeclBody(rid, args))
+      case NoneType => Some(Set())
+      case _        => Key.fromType(t).map(Set(_))
+    }
+    narrow.asListType(ty).flatMap(lt => go(lt.t))
   }
 
   private def elabLambda2(lambda: Lambda, t1: Type, t2: Type, env: Env): Type = {
