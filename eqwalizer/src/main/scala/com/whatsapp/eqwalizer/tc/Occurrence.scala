@@ -107,39 +107,31 @@ object Occurrence {
       "is_tuple" -> AnyTupleType,
     )
 
-  private sealed trait ValueKind
-  private case object AtomKind extends ValueKind
-  private case object BinaryKind extends ValueKind
-  private case object FunKind extends ValueKind
-  private case object ListKind extends ValueKind
-  private case object MapKind extends ValueKind
-  private case object NumberKind extends ValueKind
-  private case object PidKind extends ValueKind
-  private case object PortKind extends ValueKind
-  private case object ReferenceKind extends ValueKind
-  private case object TupleKind extends ValueKind
+  private enum ValueKind {
+    case Atom, Binary, Fun, List, Map, Number, Pid, Port, Reference, Tuple
+  }
 
   private def kind(t: Type): Option[ValueKind] = t match {
     case AtomLitType(_) | AtomType =>
-      Some(AtomKind)
+      Some(ValueKind.Atom)
     case BinaryType =>
-      Some(BinaryKind)
+      Some(ValueKind.Binary)
     case AnyFunType | FunType(_, _, _) | AnyArityFunType(_) =>
-      Some(FunKind)
+      Some(ValueKind.Fun)
     case NilType | ListType(_) =>
-      Some(ListKind)
+      Some(ValueKind.List)
     case MapType(_, _, _) =>
-      Some(MapKind)
+      Some(ValueKind.Map)
     case NumberType =>
-      Some(NumberKind)
+      Some(ValueKind.Number)
     case PidType =>
-      Some(PidKind)
+      Some(ValueKind.Pid)
     case PortType =>
-      Some(PortKind)
+      Some(ValueKind.Port)
     case ReferenceType =>
-      Some(ReferenceKind)
+      Some(ValueKind.Reference)
     case AnyTupleType | TupleType(_) | RecordType(_) | RefinedRecordType(_, _) =>
-      Some(TupleKind)
+      Some(ValueKind.Tuple)
     case _ =>
       None
   }
