@@ -176,10 +176,8 @@ be refined, for performance reasons.
 typing will be disabled in eqWAlizer if the number of clauses exceeds seven.
 2. Similarly, if the number of connectives in a guard (`;`, `,`, `andalso`, `orelse`, ...)
 exceeds 32, occurrence typing will be disabled.
-3. Type aliases used as enumerations (unions) of more than 16 cases will not
-be refined by occurrence typing, as they are often not meant to be in practice.
 
-Hence, when working with very large union types, or functions that have
+Hence, when working with functions that have
 many cases, one should try to rely as much as possible on narrowing by
 adding more guards instead of relying on occurrence typing. Note that
 narrowing supports arbitrary numbers of guards.
@@ -187,7 +185,7 @@ narrowing supports arbitrary numbers of guards.
 However, in most cases, occurrence typing is still fairly optimized and
 can easily go over these limits. If one still wants to rely on
 occurrence typing to type-check a function (say `my_function/2`) with many
-clauses, large guards, or large union aliases, it is possible to add the pragma
+clauses, large guards, it is possible to add the pragma
 `-eqwalizer({unlimited_refinement, my_function/2})`
 at the top of the module defining this function to force occurrence typing
 and refinements.

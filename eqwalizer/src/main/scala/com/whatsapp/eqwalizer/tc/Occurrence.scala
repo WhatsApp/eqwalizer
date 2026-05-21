@@ -822,13 +822,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
         NoneType
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
-        body match {
-          case UnionType(ts) if (!pipelineContext.unlimitedRefinement) && (ts.size > 16) =>
-            t1
-          case _ =>
-            val removed = remove(body, t2)
-            if (removed == body) t1 else removed
-        }
+        val removed = remove(body, t2)
+        if (removed == body) t1 else removed
       case (UnionType(ts), s) =>
         UnionType(ts.map(remove(_, s)))
       case (BoundedDynamicType(t), s) =>
