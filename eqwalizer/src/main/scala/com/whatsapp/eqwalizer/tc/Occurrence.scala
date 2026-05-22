@@ -739,15 +739,21 @@ final class Occurrence(pipelineContext: PipelineContext) {
       // tuples and records
       case (TupleType(ts1), TupleType(ts2)) =>
         if (ts1.size != ts2.size) Some(false)
-        else {
-          val overlaps = ts1.lazyZip(ts2).map(overlap)
-          if (overlaps.exists(_.isFalse))
-            Some(false)
-          else if (overlaps.forall(_.isTrue))
-            Some(true)
-          else
-            None
-        }
+        else
+          boundary {
+            var allTrue = true
+            for ((t1, t2) <- ts1.lazyZip(ts2)) {
+              overlap(t1, t2) match {
+                case Some(false) =>
+                  boundary.break(Some(false))
+                case Some(true) =>
+                  ()
+                case None =>
+                  allTrue = false
+              }
+            }
+            if (allTrue) Some(true) else None
+          }
       case (TupleType(_), AnyTupleType) =>
         Some(true)
       case (AnyTupleType, TupleType(_)) =>
