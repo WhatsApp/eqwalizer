@@ -149,7 +149,7 @@ final class Elab(pipelineContext: PipelineContext) {
         val (tailT, env2) = elabExprAndCheck(tail, env1, ListType(AnyType))
         val resType = narrow.asListType(tailT) match {
           case Some(ListType(t)) => ListType(subtype.join(headT, t))
-          case None              => headT
+          case None              => ListType(headT)
         }
         (resType, env2)
       case LocalCall(id, args) =>
