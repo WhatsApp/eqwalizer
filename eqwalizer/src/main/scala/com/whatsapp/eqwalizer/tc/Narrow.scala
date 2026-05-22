@@ -19,11 +19,9 @@ class Narrow(pipelineContext: PipelineContext) {
   // Ideally, it finds t1 ∩ t2, but it's not guaranteed.
   // Read the implementation for more details.
   def meet(t1: Type, t2: Type): Type =
-    meetAux(t1, t2, Set.empty)(promoteNone = true)
+    meetAux(t1, t2, Set.empty)
 
-  private def meetAux(t1: Type, t2: Type, seen: Set[RemoteId])(implicit
-      promoteNone: Boolean
-  ): Type =
+  private def meetAux(t1: Type, t2: Type, seen: Set[RemoteId]): Type =
     if (subtype.gradualSubType(t1, t2)) t1
     else if (subtype.gradualSubType(t2, t1)) t2
     else
@@ -52,15 +50,15 @@ class Narrow(pipelineContext: PipelineContext) {
         // Composed "refinable" types - refining component by component
         case (UnionType(ty1s), _) => subtype.join(ty1s.map(meetAux(_, t2, seen)))
         case (_, UnionType(ty2s)) =>
-          subtype.join(ty2s.map(meetAux(t1, _, seen)(promoteNone)))
+          subtype.join(ty2s.map(meetAux(t1, _, seen)))
 
         case (TupleType(elems1), TupleType(elems2)) if elems1.size == elems2.size =>
           val elems = elems1.lazyZip(elems2).map(meetAux(_, _, seen))
-          if (promoteNone && elems.exists(subtype.isNoneType)) NoneType
+          if (elems.exists(subtype.isNoneType)) NoneType
           else TupleType(elems)
         case (ListType(et1), ListType(et2)) =>
           val et = meetAux(et1, et2, seen)
-          if (promoteNone && subtype.isNoneType(et)) NilType
+          if (subtype.isNoneType(et)) NilType
           else ListType(et)
         case (ft1: FunType, ft2: FunType) if ft1.argTys.size == ft2.argTys.size =>
           TypeVars.conformForalls(ft1, ft2) match {
@@ -69,7 +67,7 @@ class Narrow(pipelineContext: PipelineContext) {
               FunType(
                 forall,
                 args1.lazyZip(args2).map(subtype.join),
-                meetAux(res1, res2, seen)(promoteNone = false),
+                meetAux(res1, res2, seen),
               )
           }
         case (AnyArityFunType(resTy1), AnyArityFunType(resTy2)) =>
@@ -89,7 +87,7 @@ class Narrow(pipelineContext: PipelineContext) {
               val propT2 = prop2.map(_.tp).getOrElse(vT2)
               val req = prop1.exists(_.req) || prop2.exists(_.req)
               val meetType = meetAux(propT1, propT2, seen)
-              if (promoteNone && req && subtype.isNoneType(meetType)) {
+              if (req && subtype.isNoneType(meetType)) {
                 boundary.break(NoneType)
               }
               props += (key -> Prop(req, meetType))
@@ -105,7 +103,7 @@ class Narrow(pipelineContext: PipelineContext) {
             val t2 = rt2.fields.getOrElse(fieldName, AnyType)
             fieldName -> meet(t1, t2)
           }.toMap
-          if (promoteNone && fieldsMeet.values.exists(subtype.isNoneType)) NoneType
+          if (fieldsMeet.values.exists(subtype.isNoneType)) NoneType
           else RefinedRecordType(rt1.recType, fieldsMeet)
 
         // "Non-refinable" types. - Using the main type
