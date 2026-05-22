@@ -28,12 +28,14 @@ class Narrow(pipelineContext: PipelineContext) {
       (t1, t2) match {
         case (RemoteType(rid, args), _) =>
           val body = util.getTypeDeclBody(rid, args)
-          meetAux(body, t2, seen)
+          val met = meetAux(body, t2, seen)
+          if (met == body) t1 else met
         case (_, RemoteType(rid, args)) =>
           if (seen(rid)) t1
           else {
             val body = util.getTypeDeclBody(rid, args)
-            meetAux(t1, body, seen + rid)
+            val met = meetAux(t1, body, seen + rid)
+            if (met == body) t2 else met
           }
         case (BoundedDynamicType(b1), DynamicType) =>
           BoundedDynamicType(b1)
