@@ -53,9 +53,14 @@ class Narrow(pipelineContext: PipelineContext) {
           subtype.join(ty2s.map(meetAux(t1, _, seen)))
 
         case (TupleType(elems1), TupleType(elems2)) if elems1.size == elems2.size =>
-          val elems = elems1.lazyZip(elems2).map(meetAux(_, _, seen))
-          if (elems.exists(subtype.isNoneType)) NoneType
-          else TupleType(elems)
+          boundary {
+            val elems = elems1.lazyZip(elems2).map { (a, b) =>
+              val t = meetAux(a, b, seen)
+              if subtype.isNoneType(t) then boundary.break(NoneType)
+              t
+            }
+            TupleType(elems)
+          }
         case (ListType(et1), ListType(et2)) =>
           val et = meetAux(et1, et2, seen)
           if (subtype.isNoneType(et)) NilType
