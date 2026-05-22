@@ -668,22 +668,36 @@ final class Occurrence(pipelineContext: PipelineContext) {
         Some(true)
 
       // Unions
-      case (UnionType(ts), t) =>
-        val subs = ts.map(overlap(_, t))
-        if (subs.exists(_.isTrue))
-          Some(true)
-        else if (subs.forall(_.isFalse))
-          Some(false)
-        else
-          None
-      case (t, UnionType(ts)) =>
-        val subs = ts.map(overlap(t, _))
-        if (subs.exists(_.isTrue))
-          Some(true)
-        else if (subs.forall(_.isFalse))
-          Some(false)
-        else
-          None
+      case (UnionType(ts), _) =>
+        boundary {
+          var allFalse = true
+          for (t1 <- ts) {
+            overlap(t1, t2) match {
+              case Some(true) =>
+                boundary.break(Some(true))
+              case None =>
+                allFalse = false
+              case Some(false) =>
+                ()
+            }
+          }
+          if (allFalse) Some(false) else None
+        }
+      case (_, UnionType(ts)) =>
+        boundary {
+          var allFalse = true
+          for (t2 <- ts) {
+            overlap(t1, t2) match {
+              case Some(true) =>
+                boundary.break(Some(true))
+              case None =>
+                allFalse = false
+              case Some(false) =>
+                ()
+            }
+          }
+          if (allFalse) Some(false) else None
+        }
 
       case (AtomLitType(l1), AtomLitType(l2)) =>
         Some(l1 == l2)
