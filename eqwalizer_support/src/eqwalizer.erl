@@ -27,6 +27,7 @@
 %% dynamic(T) is a subtype of everything, but a supertype of T
 %% (and its subtypes) only.
 %% It behaves as "T in, dynamic() out".
+%% If eqwalizer had intersection types, dynamic(T) can be expressed as T & dynamic().
 %% For other tooling, dynamic(T) is defined as an alias to T.
 -type dynamic(T) :: T.
 
