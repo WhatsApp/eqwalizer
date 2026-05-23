@@ -17,22 +17,15 @@ class Subtype(pipelineContext: PipelineContext) {
   private lazy val instantiate = pipelineContext.instantiate
   private lazy val constraints = pipelineContext.constraints
 
-  private sealed trait Variance
-  private case object + extends Variance
-  private case object - extends Variance
+  private sealed trait Polarity
+  private case object + extends Polarity
+  private case object - extends Polarity
 
-  private type Polarity = (Variance, Variance)
-
-  private def negate(v: Variance): Variance =
-    v match {
+  private def negate(p: Polarity): Polarity =
+    p match {
       case + => -
       case - => +
     }
-
-  private def negate(polarity: Polarity): Polarity = {
-    val (v1, v2) = polarity
-    (negate(v2), negate(v1))
-  }
 
   // classical consistent subtyping
   def subType(t1: Type, t2: Type): Boolean =
@@ -214,16 +207,11 @@ class Subtype(pipelineContext: PipelineContext) {
   }
 
   def gradualSubType(t1: Type, t2: Type): Boolean =
-    subTypePol(t1, t2, Set.empty)(+, +) && subTypePol(t1, t2, Set.empty)(-, -)
+    subTypePol(t1, t2, Set.empty)(+) && subTypePol(t1, t2, Set.empty)(-)
 
-  private def subTypePol(
-      t1: Type,
-      t2: Type,
-      seen: Set[((Type, Variance), (Type, Variance))],
-  )(implicit polarity: Polarity): Boolean = {
-    val (v1, v2) = polarity
+  private def subTypePol(t1: Type, t2: Type, seen: Set[(Type, Type, Polarity)])(implicit p: Polarity): Boolean =
     (t1, t2) match {
-      case (_, _) if seen(((t1, v1), (t2, v2))) =>
+      case (_, _) if seen((t1, t2, p)) =>
         true
       case (_, _) if t1 == t2 =>
         true
@@ -232,28 +220,28 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case (NoneType, _) =>
         true
-      case (DynamicType, _) if v1 == - =>
+      case (DynamicType, _) if p == - =>
         true
-      case (DynamicType, _) if v1 == + =>
+      case (DynamicType, _) if p == + =>
         subTypePol(AnyType, t2, seen)
-      case (_, DynamicType) if v2 == - =>
+      case (_, DynamicType) if p == - =>
         subTypePol(t1, NoneType, seen)
-      case (_, DynamicType) if v2 == + =>
+      case (_, DynamicType) if p == + =>
         true
-      case (BoundedDynamicType(_), _) if v1 == - =>
+      case (BoundedDynamicType(_), _) if p == - =>
         true
-      case (BoundedDynamicType(bound), _) if v1 == + =>
+      case (BoundedDynamicType(bound), _) if p == + =>
         subTypePol(bound, t2, seen)
-      case (_, BoundedDynamicType(_)) if v2 == - =>
+      case (_, BoundedDynamicType(_)) if p == - =>
         subTypePol(t1, NoneType, seen)
-      case (_, BoundedDynamicType(bound)) if v2 == + =>
+      case (_, BoundedDynamicType(bound)) if p == + =>
         subTypePol(t1, bound, seen)
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
-        containsType(t1, t2, v2) || subTypePol(body, t2, seen + ((t1, v1) -> (t2, v2)))
+        containsType(t1, t2, p) || subTypePol(body, t2, seen + ((t1, t2, p)))
       case (_, RemoteType(rid, args)) =>
         val body = util.getTypeDeclBody(rid, args)
-        subTypePol(t1, body, seen + ((t1, v1) -> (t2, v2)))
+        subTypePol(t1, body, seen + ((t1, t2, p)))
 
       case (UnionType(tys1), _) =>
         tys1.forall(subTypePol(_, t2, seen))
@@ -321,19 +309,19 @@ class Subtype(pipelineContext: PipelineContext) {
                 subTypePol(recDecl.fMap(fName).tp, fTy, seen)
             }
         }
-      case (AnyTupleType, TupleType(_)) if v1 == - =>
+      case (AnyTupleType, TupleType(_)) if p == - =>
         true
-      case (AnyTupleType, RecordType(_)) if v1 == - =>
+      case (AnyTupleType, RecordType(_)) if p == - =>
         true
-      case (AnyTupleType, RefinedRecordType(_, _)) if v1 == - =>
+      case (AnyTupleType, RefinedRecordType(_, _)) if p == - =>
         true
       case (FunType(_, _, _), AnyFunType) =>
         true
-      case (AnyFunType, FunType(_, _, _)) if v1 == - =>
+      case (AnyFunType, FunType(_, _, _)) if p == - =>
         true
       case (AnyArityFunType(_), AnyFunType) =>
         true
-      case (AnyFunType, AnyArityFunType(_)) if v1 == - =>
+      case (AnyFunType, AnyArityFunType(_)) if p == - =>
         true
       case (FunType(_, _, resTy1), AnyArityFunType(resTy2)) =>
         subTypePol(resTy1, resTy2, seen)
@@ -355,11 +343,11 @@ class Subtype(pipelineContext: PipelineContext) {
           case Some((FunType(_, args1, res1), FunType(_, args2, res2))) =>
             subTypePol(res1, res2, seen) && args2
               .lazyZip(args1)
-              .forall(subTypePol(_, _, seen)(negate(polarity)))
+              .forall(subTypePol(_, _, seen)(negate(p)))
         }
       case (MapType(props1, kT1, vT1), MapType(props2, kT2, vT2)) =>
         boundary {
-          val tolerantSubtype = isDynamicType(kT1) && isDynamicType(vT1) && v1 == -
+          val tolerantSubtype = isDynamicType(kT1) && isDynamicType(vT1) && p == -
           val reqKeys1 = props1.collect { case (k, Prop(true, _)) => k }.toSet
           val reqKeys2 = props2.collect { case (k, Prop(true, _)) => k }.toSet
           // Verify that all required keys of M2 are also required keys in M1
@@ -394,7 +382,6 @@ class Subtype(pipelineContext: PipelineContext) {
       case _ =>
         false
     }
-  }
 
   def eqv(t1: Type, t2: Type): Boolean =
     subType(t1, t2) && subType(t2, t1)
@@ -448,14 +435,14 @@ class Subtype(pipelineContext: PipelineContext) {
     }
   }
 
-  private def containsType(t1: Type, t2: Type, v2: Variance): Boolean = {
+  private def containsType(t1: Type, t2: Type, p: Polarity): Boolean = {
     t2 match {
       case AnyType       => true
       case _ if t1 == t2 => true
       case UnionType(tys) =>
-        tys.exists(containsType(t1, _, v2))
-      case BoundedDynamicType(bound) if v2 == + =>
-        containsType(t1, bound, v2)
+        tys.exists(containsType(t1, _, p))
+      case BoundedDynamicType(bound) if p == + =>
+        containsType(t1, bound, p)
       case _ => false
     }
   }
@@ -468,7 +455,7 @@ class Subtype(pipelineContext: PipelineContext) {
       proj: Int,
       originalTuple: TupleType,
       seen: Set[(Type, Type)],
-  ): Boolean = {
+  ): Boolean =
     (t1, t2) match {
       // Standard cases from subType
       case (NoneType, _) =>
@@ -516,7 +503,6 @@ class Subtype(pipelineContext: PipelineContext) {
       case _ =>
         false
     }
-  }
 
   /** Checks whether originalTuple.updated(proj, t1) < t2, by expanding t1 if it is an alias or a union.
     */
@@ -525,9 +511,8 @@ class Subtype(pipelineContext: PipelineContext) {
       t2: Type,
       proj: Int,
       originalTuple: TupleType,
-      seen: Set[((Type, Variance), (Type, Variance))],
-  )(implicit polarity: (Variance, Variance)): Boolean = {
-    val (v1, v2) = polarity
+      seen: Set[(Type, Type, Polarity)],
+  )(implicit p: Polarity): Boolean =
     (t1, t2) match {
       // Standard cases from subType
       case (NoneType, _) =>
@@ -536,17 +521,17 @@ class Subtype(pipelineContext: PipelineContext) {
         true
       case (_, AnyTupleType) =>
         true
-      case (_, DynamicType) if v2 == + =>
+      case (_, DynamicType) if p == + =>
         true
-      case (_, DynamicType) if v2 == - =>
+      case (_, DynamicType) if p == - =>
         false
-      case (DynamicType, _) if v1 == + =>
+      case (DynamicType, _) if p == + =>
         subtypeTuple(AnyType, t2, proj, originalTuple, seen)
-      case (_, BoundedDynamicType(bound)) if v2 == + =>
+      case (_, BoundedDynamicType(bound)) if p == + =>
         subtypeTuple(t1, bound, proj, originalTuple, seen)
-      case (_, BoundedDynamicType(_)) if v2 == - =>
+      case (_, BoundedDynamicType(_)) if p == - =>
         false
-      case (BoundedDynamicType(bound), _) if v1 == + =>
+      case (BoundedDynamicType(bound), _) if p == + =>
         subtypeTuple(bound, t2, proj, originalTuple, seen)
       case (RemoteType(rid, args), _) =>
         val body = util.getTypeDeclBody(rid, args)
@@ -562,7 +547,7 @@ class Subtype(pipelineContext: PipelineContext) {
       // Standard cases from subType
       case (_, RemoteType(rid, args)) =>
         val body = util.getTypeDeclBody(rid, args)
-        subtypeTuple(t1, body, proj, originalTuple, seen + ((originalTuple, v1) -> (t2, v2)))
+        subtypeTuple(t1, body, proj, originalTuple, seen + ((originalTuple, t2, p)))
       case (_, UnionType(tys)) =>
         tys.exists(t => subtypeTuple(t1, t, proj, originalTuple, seen))
       case (_, r: RecordType) =>
@@ -583,7 +568,6 @@ class Subtype(pipelineContext: PipelineContext) {
       case _ =>
         false
     }
-  }
 
   def joinEnvs(envs: List[Env]): Env = {
     val vars = envs.map(_.keySet).reduce(_.intersect(_))
