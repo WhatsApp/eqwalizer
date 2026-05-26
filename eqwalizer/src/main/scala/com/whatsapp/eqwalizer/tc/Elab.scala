@@ -300,30 +300,20 @@ final class Elab(pipelineContext: PipelineContext) {
       case c @ Case(sel, clauses) =>
         val (selTy, env1) = elabExpr(sel, env)
         val effVars = Vars.clausesVars(clauses)
-        if (occurrence.isEnabled(clauses)) {
-          val clauseEnvs = occurrence.caseEnvs(c, selTy, env1)
-          val (ts, envs) = clauses
-            .lazyZip(clauseEnvs)
-            .map((clause, occEnv) => elabClause(clause, List(selTy), occEnv, effVars))
-            .unzip
-          (subtype.join(ts), subtype.joinEnvs(envs))
-        } else {
-          val (ts, envs) = clauses.map(elabClause(_, List(selTy), env1, effVars)).unzip
-          (subtype.join(ts), subtype.joinEnvs(envs))
-        }
+        val clauseEnvs = occurrence.caseEnvs(c, selTy, env1)
+        val (ts, envs) = clauses
+          .lazyZip(clauseEnvs)
+          .map((clause, occEnv) => elabClause(clause, List(selTy), occEnv, effVars))
+          .unzip
+        (subtype.join(ts), subtype.joinEnvs(envs))
       case i @ If(clauses) =>
         val effVars = Vars.clausesVars(clauses)
-        if (occurrence.isEnabled(clauses)) {
-          val clauseEnvs = occurrence.ifEnvs(i, env)
-          val (ts, envs) = clauses
-            .lazyZip(clauseEnvs)
-            .map((clause, occEnv) => elabClause(clause, List.empty, occEnv, effVars))
-            .unzip
-          (subtype.join(ts), subtype.joinEnvs(envs))
-        } else {
-          val (ts, envs) = clauses.map(elabClause(_, List.empty, env, effVars)).unzip
-          (subtype.join(ts), subtype.joinEnvs(envs))
-        }
+        val clauseEnvs = occurrence.ifEnvs(i, env)
+        val (ts, envs) = clauses
+          .lazyZip(clauseEnvs)
+          .map((clause, occEnv) => elabClause(clause, List.empty, occEnv, effVars))
+          .unzip
+        (subtype.join(ts), subtype.joinEnvs(envs))
       case Match(Pats.PatAtom("true"), mExp) if Filters.asTest(mExp).isDefined =>
         val test = Filters.asTest(mExp).get
         val env1 = elabGuard.elabGuards(List(Guard(List(test))), env)

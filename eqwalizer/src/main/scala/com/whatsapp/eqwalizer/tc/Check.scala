@@ -313,28 +313,18 @@ final class Check(pipelineContext: PipelineContext) {
         case c @ Case(sel, clauses) =>
           val (selType, env1) = elab.elabExpr(sel, env)
           val effVars = Vars.clausesVars(clauses)
-          if (occurrence.isEnabled(clauses)) {
-            val clauseEnvs = pipelineCtx.occurrence.caseEnvs(c, selType, env1)
-            val envs2 = clauses
-              .lazyZip(clauseEnvs)
-              .map((clause, occEnv) => checkClause(clause, List(selType), resTy, occEnv, effVars))
-            subtype.joinEnvs(envs2)
-          } else {
-            val envs2 = clauses.map(checkClause(_, List(selType), resTy, env1, effVars))
-            subtype.joinEnvs(envs2)
-          }
+          val clauseEnvs = pipelineCtx.occurrence.caseEnvs(c, selType, env1)
+          val envs2 = clauses
+            .lazyZip(clauseEnvs)
+            .map((clause, occEnv) => checkClause(clause, List(selType), resTy, occEnv, effVars))
+          subtype.joinEnvs(envs2)
         case i @ If(clauses) =>
           val effVars = Vars.clausesVars(clauses)
-          if (occurrence.isEnabled(clauses)) {
-            val clauseEnvs = pipelineCtx.occurrence.ifEnvs(i, env)
-            val envs1 = clauses
-              .lazyZip(clauseEnvs)
-              .map((clause, occEnv) => checkClause(clause, List.empty, resTy, occEnv, effVars))
-            subtype.joinEnvs(envs1)
-          } else {
-            val envs1 = clauses.map(checkClause(_, List.empty, resTy, env, effVars))
-            subtype.joinEnvs(envs1)
-          }
+          val clauseEnvs = pipelineCtx.occurrence.ifEnvs(i, env)
+          val envs1 = clauses
+            .lazyZip(clauseEnvs)
+            .map((clause, occEnv) => checkClause(clause, List.empty, resTy, occEnv, effVars))
+          subtype.joinEnvs(envs1)
         case Match(mPat, mExp) =>
           val (mType, env1) = elab.elabExpr(mExp, env)
           val (t2, env2) = elabPat.elabPat(mPat, mType, env1)

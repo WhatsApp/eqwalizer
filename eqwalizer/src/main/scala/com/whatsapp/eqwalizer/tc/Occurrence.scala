@@ -152,7 +152,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
     s"$$$gen"
   }
 
-  def isEnabled(clauses: List[Clause]): Boolean = {
+  private def isEnabled(clauses: List[Clause]): Boolean = {
     val emptyPatterns = clauses.forall(_.pats.isEmpty)
     val shortGuards = clauses.forall(clause => clause.guards.map(guardSize).sum < 32)
     val smallClauses = pipelineContext.unlimitedRefinement || (clauses.size < 7 && shortGuards)
@@ -215,11 +215,14 @@ final class Occurrence(pipelineContext: PipelineContext) {
   def ifEnvs(i: If, env: Env): List[Env] = {
     var propsAcc = List.empty[Prop]
     val clauseEnvs = ListBuffer.empty[Env]
+    val accumulateNegProps = isEnabled(i.clauses)
     for (clause <- i.clauses) {
       if (linearVars(clause)) {
         val aMap = Map.empty[Name, Obj]
         val (testPos, testNeg) = guardsProps(clause.guards, aMap)
-        val clauseProps = combine(testPos.toList, propsAcc)
+        val clauseProps =
+          if (accumulateNegProps) combine(testPos.toList, propsAcc)
+          else testPos.toList
         val clauseEnv = batchSelect(env, clauseProps, aMap)
         clauseEnvs.addOne(clauseEnv)
         propsAcc = testNeg match {
@@ -253,6 +256,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
         Map.empty[Name, Obj]
     }
 
+    val accumulateNegProps = isEnabled(c.clauses)
     var propsAcc = List.empty[Prop]
     val clauseEnvs = ListBuffer.empty[Env]
     for (clause <- c.clauses) {
@@ -265,7 +269,9 @@ final class Occurrence(pipelineContext: PipelineContext) {
           }
         val aMap = aliases(x, Nil, pat, env).toMap
         val (testPos, testNeg) = guardsProps(clause.guards, aMap)
-        val clauseProps = combine(patPos.toList ++ testPos, propsAcc)
+        val clauseProps =
+          if (accumulateNegProps) combine(patPos.toList ++ testPos, propsAcc)
+          else patPos.toList ++ testPos
         val clauseEnv = batchSelect(env1, clauseProps, aMap ++ eMap)
         clauseEnvs.addOne(clauseEnv)
         propsAcc = {
