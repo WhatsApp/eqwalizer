@@ -225,11 +225,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
           else testPos.toList
         val clauseEnv = batchSelect(env, clauseProps, aMap)
         clauseEnvs.addOne(clauseEnv)
-        propsAcc = testNeg match {
-          case None =>
-            propsAcc
-          case Some(neg) =>
-            propsAcc :+ neg
+        if (accumulateNegProps) {
+          propsAcc = testNeg match {
+            case None          => propsAcc
+            case Some(propNeg) => propsAcc :+ propNeg
+          }
         }
       } else {
         clauseEnvs.addOne(env)
@@ -274,15 +274,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
           else patPos.toList ++ testPos
         val clauseEnv = batchSelect(env1, clauseProps, aMap ++ eMap)
         clauseEnvs.addOne(clauseEnv)
-        propsAcc = {
-          val allNeg = patNeg.toList ++ testNeg
-          allNeg match {
-            case Nil =>
-              propsAcc
-            case h :: Nil =>
-              propsAcc :+ h
-            case zz =>
-              propsAcc :+ or(zz)
+        if (accumulateNegProps) {
+          propsAcc = patNeg.toList ++ testNeg match {
+            case Nil            => propsAcc
+            case propNeg :: Nil => propsAcc :+ propNeg
+            case propsNeg       => propsAcc :+ or(propsNeg)
           }
         }
       } else {
@@ -325,17 +321,16 @@ final class Occurrence(pipelineContext: PipelineContext) {
           else (allPos ++ testPos).toList
         val clauseEnv = batchSelect(env1, clauseProps, aMap)
         clauseEnvs.addOne(clauseEnv)
-        propsAcc = {
-          val allNeg1 =
-            if (!ignoreNumberRefinement(clause, aMap, clausesWithAliases)) allNeg.toList ++ testNeg
-            else allNeg.toList
-          allNeg1 match {
-            case Nil =>
-              propsAcc
-            case h :: Nil =>
-              propsAcc :+ h
-            case zz =>
-              propsAcc :+ or(zz)
+        if (accumulateNegProps) {
+          propsAcc = {
+            val allNeg1 =
+              if (!ignoreNumberRefinement(clause, aMap, clausesWithAliases)) allNeg.toList ++ testNeg
+              else allNeg.toList
+            allNeg1 match {
+              case Nil            => propsAcc
+              case propNeg :: Nil => propsAcc :+ propNeg
+              case propsNeg       => propsAcc :+ or(propsNeg)
+            }
           }
         }
       } else {
