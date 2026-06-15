@@ -10,7 +10,7 @@
 -typing([eqwalizer]).
 
 -export_type([dynamic/0, dynamic/1, refinable/1]).
--export([dynamic_cast/1, fix_me/1, reveal_type/1]).
+-export([reveal_type/1]).
 
 %% This type is intended to help with code being transitioned
 %% from untyped/unchecked mode to gradual mode.
@@ -30,20 +30,6 @@
 %% If eqwalizer had intersection types, dynamic(T) can be expressed as T & dynamic().
 %% For other tooling, dynamic(T) is defined as an alias to T.
 -type dynamic(T) :: T.
-
-%% @doc
-%% "Cast" function to convert values to eqwalizer:dynamic() type.
-%% It communicates the intent: "I know that the value would be of the right type".
-%% @end
--spec dynamic_cast(term()) -> eqwalizer:dynamic().
-dynamic_cast(X) -> X.
-
-%% @doc
-%% "Cast" function to convert values to eqwalizer:dynamic() type.
-%% It communicates the intent: "This code should be fixed" (later).
-%% @end
--spec fix_me(term()) -> eqwalizer:dynamic().
-fix_me(X) -> X.
 
 %% @doc
 %% A utility function for helping debug type-related errors.
