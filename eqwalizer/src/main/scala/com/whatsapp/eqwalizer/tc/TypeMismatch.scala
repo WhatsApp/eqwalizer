@@ -361,13 +361,6 @@ class TypeMismatch(pipelineContext: PipelineContext) {
             Details(Some(t1, t2, Incompatible), 20)
         }
 
-      case (AnyTupleType, TupleType(_)) =>
-        Details(None, 90)
-      case (AnyTupleType, RecordType(_)) =>
-        Details(None, 90)
-      case (AnyTupleType, RefinedRecordType(_, _)) =>
-        Details(None, 90)
-
       case (FunType(_, _, _), AnyFunType) =>
         Details(None, 100)
       case (AnyFunType, FunType(_, _, _)) =>

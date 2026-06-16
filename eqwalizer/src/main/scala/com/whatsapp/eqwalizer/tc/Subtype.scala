@@ -125,12 +125,6 @@ class Subtype(pipelineContext: PipelineContext) {
                 subType(recDecl.fMap(fName).tp, fTy, seen)
             }
         }
-      case (AnyTupleType, TupleType(_)) =>
-        true
-      case (AnyTupleType, RecordType(_)) =>
-        true
-      case (AnyTupleType, RefinedRecordType(_, _)) =>
-        true
       case (FunType(_, _, _), AnyFunType) =>
         true
       case (AnyFunType, FunType(_, _, _)) =>
@@ -309,12 +303,6 @@ class Subtype(pipelineContext: PipelineContext) {
                 subTypePol(recDecl.fMap(fName).tp, fTy, seen)
             }
         }
-      case (AnyTupleType, TupleType(_)) if p == - =>
-        true
-      case (AnyTupleType, RecordType(_)) if p == - =>
-        true
-      case (AnyTupleType, RefinedRecordType(_, _)) if p == - =>
-        true
       case (FunType(_, _, _), AnyFunType) =>
         true
       case (AnyFunType, FunType(_, _, _)) if p == - =>

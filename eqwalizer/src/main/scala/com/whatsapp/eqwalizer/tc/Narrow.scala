@@ -343,7 +343,7 @@ class Narrow(pipelineContext: PipelineContext) {
         } else
           List()
       case AnyTupleType =>
-        List(TupleType(List.fill(arity)(DynamicType)))
+        List(TupleType(List.fill(arity)(AnyType)))
       case tt: TupleType if tt.argTys.size == arity => List(tt)
       case UnionType(tys)                           => tys.flatMap(asTupleTypeAux(_, arity)).toList
       case RemoteType(rid, args) =>
@@ -409,7 +409,7 @@ class Narrow(pipelineContext: PipelineContext) {
     case DynamicType =>
       Right(DynamicType)
     case AnyTupleType =>
-      Right(DynamicType)
+      Right(AnyType)
     case BoundedDynamicType(t) if subtype.subType(t, AnyTupleType) =>
       Right(BoundedDynamicType(getTupleElement(t, idx).getOrElse(NoneType)))
     case BoundedDynamicType(t) =>
@@ -452,7 +452,7 @@ class Narrow(pipelineContext: PipelineContext) {
     case DynamicType =>
       DynamicType
     case AnyTupleType =>
-      DynamicType
+      AnyType
     case BoundedDynamicType(t) if subtype.subType(t, AnyTupleType) =>
       BoundedDynamicType(getAllTupleElements(t))
     case BoundedDynamicType(t) =>
@@ -524,7 +524,9 @@ class Narrow(pipelineContext: PipelineContext) {
           .collectFirst { case (f, i) if f.name == fieldName => i + 1 }
           .map(argTys(_))
           .getOrElse(field.tp)
-      case AnyTupleType | DynamicType | FreeVarType(_) =>
+      case AnyTupleType =>
+        AnyType
+      case DynamicType | FreeVarType(_) =>
         field.tp
       case BoundedDynamicType(_) =>
         BoundedDynamicType(field.tp)

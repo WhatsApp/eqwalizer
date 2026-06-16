@@ -959,8 +959,8 @@ final class Occurrence(pipelineContext: PipelineContext) {
           NoneType
         else
           ListType(lt)
-      case (_, TupleField(_, None) :: _) =>
-        AnyTupleType
+      case (_, TupleField(_, None) :: path) if pol == + =>
+        update(t, path, pol, AnyTupleType)
       case (_, _) =>
         t
     }
