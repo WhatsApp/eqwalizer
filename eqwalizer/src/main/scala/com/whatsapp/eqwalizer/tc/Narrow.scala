@@ -443,6 +443,46 @@ class Narrow(pipelineContext: PipelineContext) {
       throw new IllegalStateException()
   }
 
+  def setTupleElement(t: Type, idx: Int, elemT: Type): Either[Int, Type] = t match {
+    case NoneType =>
+      Right(NoneType)
+    case DynamicType =>
+      Right(DynamicType)
+    case AnyTupleType =>
+      Right(AnyTupleType)
+    case BoundedDynamicType(t) if subtype.subType(t, AnyTupleType) =>
+      Right(BoundedDynamicType(setTupleElement(t, idx, elemT).getOrElse(NoneType)))
+    case BoundedDynamicType(t) =>
+      Right(BoundedDynamicType(NoneType))
+    case TupleType(elemTys) if idx >= 1 && idx <= elemTys.length =>
+      Right(TupleType(elemTys.updated(idx - 1, elemT)))
+    case TupleType(elemTys) =>
+      Left(elemTys.length)
+    case r: RecordType =>
+      recordToTuple(r) match {
+        case Some(tupTy) => setTupleElement(tupTy, idx, elemT)
+        case None        => Right(DynamicType)
+      }
+    case r: RefinedRecordType =>
+      refinedRecordToTuple(r) match {
+        case Some(tupTy) => setTupleElement(tupTy, idx, elemT)
+        case None        => Right(DynamicType)
+      }
+    case UnionType(tys) =>
+      val res = tys.map(setTupleElement(_, idx, elemT)).foldLeft[Either[Int, Set[Type]]](Right(Set.empty)) {
+        case (Right(accTy), Right(elemTy)) => Right(accTy + elemTy)
+        case (Left(n1), Left(n2))          => Left(n1.min(n2))
+        case (Left(n1), _)                 => Left(n1)
+        case (_, Left(n2))                 => Left(n2)
+      }
+      res.map { optionTys => UnionType(util.flattenUnions(UnionType(optionTys)).toSet) }
+    case RemoteType(rid, args) =>
+      val body = util.getTypeDeclBody(rid, args)
+      setTupleElement(body, idx, elemT)
+    case _ =>
+      throw new IllegalStateException()
+  }
+
   /**
   * Given a type (required to be a subtype of `AnyTupleType`), returns the union of all its element types.
   */

@@ -422,6 +422,26 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
 
         (elemTy, env1)
       },
+      RemoteId("erlang", "setelement", 3) -> { (args, argTys, _, env1, callPos) =>
+        val List(index, tuple, elem) = args
+        val List(indexTy, argTy, elemTy) = argTys
+        val _ = coerce(index, indexTy, NumberType)
+        val tupleTy = coerce(tuple, argTy, AnyTupleType)
+
+        val resTy = index match {
+          case IntLit(Some(n)) =>
+            narrow.setTupleElement(tupleTy, n, elemTy) match {
+              case Right(t) => t
+              case Left(tupLen) =>
+                diagnosticsInfo.add(IndexOutOfBounds(callPos, index, n, tupLen))
+                DynamicType
+            }
+          case _ =>
+            AnyTupleType
+        }
+
+        (resTy, env1)
+      },
       RemoteId("maps", "get", 3) -> { (args, argTys, _, env1, _) =>
         val List(key, map, defaultVal) = args
         val List(keyTy, mapTy, defaultValTy) = argTys
