@@ -338,15 +338,16 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case lambda: Lambda if isShapeIterator(lambda) =>
             val expFunTy = FunType(0, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            val occEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy, accTy), lamEnv)
             var keyTyLast = keyTy
-            val vTys = lambda.clauses.map { clause =>
+            val vTys = lambda.clauses.lazyZip(occEnvs).map { (clause, occEnv) =>
               clause.pats.head match {
                 case PatAtom(a) =>
                   val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
                   keyTyLast = occurrence.remove(keyTyLast, AtomLitType(a))
-                  elab.elabClause(clause, List(AtomLitType(a), refinedValTy, accTy), lamEnv, Set.empty)._1
+                  elab.elabClause(clause, List(AtomLitType(a), refinedValTy, accTy), occEnv, Set.empty)._1
                 case _ =>
-                  elab.elabClause(clause, List(keyTyLast, valTy, accTy), lamEnv, Set.empty)._1
+                  elab.elabClause(clause, List(keyTyLast, valTy, accTy), occEnv, Set.empty)._1
               }
             }
             accTy1 :: vTys
@@ -370,15 +371,16 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
           case lambda: Lambda if isShapeIterator(lambda) =>
             val expFunTy = FunType(0, List(keyTy, valTy, accTy), accTy)
             val lamEnv = lambda.name.map(name => env.updated(name, expFunTy)).getOrElse(env)
+            val occEnvs = occurrence.clausesEnvs(lambda.clauses, List(keyTy, valTy, accTy), lamEnv)
             var keyTyLast = keyTy
-            lambda.clauses.map { clause =>
+            lambda.clauses.lazyZip(occEnvs).map { (clause, occEnv) =>
               clause.pats.head match {
                 case PatAtom(a) =>
                   val refinedValTy = UnionType(mapTys.map(m => narrow.getValType(AtomKey(a), m)))
                   keyTyLast = occurrence.remove(keyTyLast, AtomLitType(a))
-                  check.checkClause(clause, List(AtomLitType(a), refinedValTy, accTy), accTy, lamEnv, Set.empty)
+                  check.checkClause(clause, List(AtomLitType(a), refinedValTy, accTy), accTy, occEnv, Set.empty)
                 case _ =>
-                  check.checkClause(clause, List(keyTyLast, valTy, accTy), accTy, lamEnv, Set.empty)
+                  check.checkClause(clause, List(keyTyLast, valTy, accTy), accTy, occEnv, Set.empty)
               }
             }
           case lambda: Lambda =>
