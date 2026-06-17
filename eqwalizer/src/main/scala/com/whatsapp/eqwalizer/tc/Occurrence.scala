@@ -325,7 +325,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
           propsAcc = {
             val allNeg1 =
               if (!ignoreNumberRefinement(clause, aMap, clausesWithAliases)) allNeg.toList ++ testNeg
-              else allNeg.toList
+              else Nil
             allNeg1 match {
               case Nil            => propsAcc
               case propNeg :: Nil => propsAcc :+ propNeg
