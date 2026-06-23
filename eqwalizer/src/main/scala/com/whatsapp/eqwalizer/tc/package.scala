@@ -54,7 +54,6 @@ package object tc {
     val diagnosticsInfo: DiagnosticsInfo =
       new DiagnosticsInfo()
     val overloadedSpecDynamicResult: Boolean = config.overloadedSpecDynamicResult
-    val customMapsMerge: Boolean = config.customMapsMerge
     val reportDynamicLambdas: Boolean = config.reportDynamicLambdas
   }
 }

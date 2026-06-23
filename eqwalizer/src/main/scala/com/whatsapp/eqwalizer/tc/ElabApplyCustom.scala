@@ -122,17 +122,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       (ListType(elemTy), env1)
     }
 
-    val mapsMergeHandler: CustomHandler = { (args, argTys, _, env1, _) =>
-      val List(map1, map2) = args
-      val List(ty1, ty2) = argTys
-      val mapTys1 = coerceToMaps(map1, ty1)
-      val mapTys2 = coerceToMaps(map2, ty2)
-      val pairs = for (t1 <- mapTys1; t2 <- mapTys2) yield (t1, t2)
-      val resTys = pairs.map { case (ty1, ty2) => narrow.joinAndMergeMaps(List(ty1, ty2), inOrder = true) }
-      (resTys.join(), env1)
-    }
-
-    val baseMap = Map[RemoteId, CustomHandler](
+    Map[RemoteId, CustomHandler](
       RemoteId("file", "open", 2) -> { (args, argTys, _, env1, callPos) =>
         val ft = util.getFunType(RemoteId("file", "open", 2))
         val resTy = elabApply.elabApply(ft, args, argTys, env1, callPos)
@@ -677,11 +667,16 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
             }
         }
       },
+      RemoteId("maps", "merge", 2) -> { (args, argTys, _, env1, _) =>
+        val List(map1, map2) = args
+        val List(ty1, ty2) = argTys
+        val mapTys1 = coerceToMaps(map1, ty1)
+        val mapTys2 = coerceToMaps(map2, ty2)
+        val pairs = for (t1 <- mapTys1; t2 <- mapTys2) yield (t1, t2)
+        val resTys = pairs.map { case (ty1, ty2) => narrow.joinAndMergeMaps(List(ty1, ty2), inOrder = true) }
+        (resTys.join(), env1)
+      },
     )
-    if (pipelineContext.customMapsMerge)
-      baseMap + (RemoteId("maps", "merge", 2) -> mapsMergeHandler)
-    else
-      baseMap
   }
 
   private lazy val customPredicate: Map[RemoteId, CustomPredicateHandler] = {
