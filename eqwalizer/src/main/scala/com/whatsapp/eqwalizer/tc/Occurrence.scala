@@ -163,24 +163,6 @@ final class Occurrence(pipelineContext: PipelineContext) {
     (module != "erl_syntax") && (emptyPatterns || smallClauses)
   }
 
-  private def ignoreNumberRefinement(clause: Clause, aMap: AMap, nextClauses: List[(Clause, AMap)]): Boolean = {
-    clause match {
-      case Clause(_, List(Guard(List(TestCall(Id("is_integer", 1), List(TestVar(v1)))))), _) =>
-        nextClauses.exists {
-          case (Clause(_, List(Guard(List(TestCall(Id("is_float", 1), List(TestVar(v2)))))), _), aMap2) =>
-            aMap.getOrElse(v1, VarObj(v1)) == aMap2.getOrElse(v2, VarObj(v2))
-          case _ => false
-        }
-      case Clause(_, List(Guard(List(TestCall(Id("is_float", 1), List(TestVar(v1)))))), _) =>
-        nextClauses.exists {
-          case (Clause(_, List(Guard(List(TestCall(Id("is_integer", 1), List(TestVar(v2)))))), _), aMap2) =>
-            aMap.getOrElse(v1, VarObj(v1)) == aMap2.getOrElse(v2, VarObj(v2))
-          case _ => false
-        }
-      case _ => false
-    }
-  }
-
   private def linearVars(clause: Clause): Boolean = {
     val varsL = vars.clausePatVarsL(clause)
     varsL.toSet.size == varsL.size
@@ -327,9 +309,7 @@ final class Occurrence(pipelineContext: PipelineContext) {
         clauseEnvs.addOne(clauseEnv)
         if (accumulateNegProps) {
           propsAcc = {
-            val allNeg1 =
-              if (!ignoreNumberRefinement(clause, aMap, clausesWithAliases)) allNeg.toList ++ testNeg
-              else Nil
+            val allNeg1 = allNeg.toList ++ testNeg
             allNeg1 match {
               case Nil            => propsAcc
               case propNeg :: Nil => propsAcc :+ propNeg
