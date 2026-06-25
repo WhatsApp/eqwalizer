@@ -219,7 +219,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("lists", "keysort", 2) -> { (args, argTys, _, env1, _) =>
         val List(index, tupleList) = args
         val List(indexTy, tupleListTy) = argTys
-        val _ = coerce(index, indexTy, NumberType)
+        val _ = coerce(index, indexTy, IntegerType)
         val tupleListCoercedTy = coerce(tupleList, tupleListTy, ListType(AnyTupleType))
         (tupleListCoercedTy, env1)
       },
@@ -230,7 +230,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("lists", "keystore", 4) -> { (args, argTys, _, env1, _) =>
         val List(key, index, tupleList, replacement) = args
         val List(_keyAny, indexTy, tupleListTy, replacementTy) = argTys
-        val _ = coerce(index, indexTy, NumberType)
+        val _ = coerce(index, indexTy, IntegerType)
         val tupleListCoercedTy = coerce(tupleList, tupleListTy, ListType(AnyTupleType))
         val replacementCoercedTy = coerce(replacement, replacementTy, AnyTupleType)
         val ListType(inTupleTy) = narrow.asListType(tupleListCoercedTy).get
@@ -395,7 +395,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("erlang", "element", 2) -> { (args, argTys, _, env1, callPos) =>
         val List(index, tuple) = args
         val List(indexTy, tupleTy) = argTys
-        val _ = coerce(index, indexTy, NumberType)
+        val _ = coerce(index, indexTy, IntegerType)
         val tupleCoercedTy = coerce(tuple, tupleTy, AnyTupleType)
 
         val elemTy = index match {
@@ -415,7 +415,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
       RemoteId("erlang", "setelement", 3) -> { (args, argTys, _, env1, callPos) =>
         val List(index, tuple, elem) = args
         val List(indexTy, argTy, elemTy) = argTys
-        val _ = coerce(index, indexTy, NumberType)
+        val _ = coerce(index, indexTy, IntegerType)
         val tupleTy = coerce(tuple, argTy, AnyTupleType)
 
         val resTy = index match {
@@ -654,7 +654,7 @@ class ElabApplyCustom(pipelineContext: PipelineContext) {
         val AtomLit(recName) = name: @unchecked
 
         access match {
-          case "size" => (NumberType, env1)
+          case "size" => (IntegerType, env1)
           case "fields" =>
             val record = util.getRecord(pipelineContext.module, recName)
             record match {

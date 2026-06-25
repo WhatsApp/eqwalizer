@@ -17,6 +17,8 @@ import scala.collection.mutable.ListBuffer
 import scala.util.boundary
 
 object Occurrence {
+  private val nType = UnionType(Set(IntegerType, FloatType))
+
   private sealed trait Prop
   private case object Unknown extends Prop
   private case object True extends Prop
@@ -95,11 +97,11 @@ object Occurrence {
       "is_binary" -> BinaryType,
       "is_bitstring" -> BinaryType,
       "is_boolean" -> UnionType(Set(falseType, trueType)),
-      "is_float" -> floatType,
+      "is_float" -> FloatType,
       "is_function" -> AnyFunType,
-      "is_integer" -> NumberType,
+      "is_integer" -> IntegerType,
       "is_list" -> ListType(AnyType),
-      "is_number" -> NumberType,
+      "is_number" -> nType,
       "is_pid" -> PidType,
       "is_port" -> PortType,
       "is_reference" -> ReferenceType,
@@ -108,7 +110,7 @@ object Occurrence {
     )
 
   private enum ValueKind {
-    case Atom, Binary, Fun, List, Map, Number, Pid, Port, Reference, Tuple
+    case Atom, Binary, Fun, List, Map, Integer, Float, Pid, Port, Reference, Tuple
   }
 
   private def kind(t: Type): Option[ValueKind] = t match {
@@ -122,8 +124,10 @@ object Occurrence {
       Some(ValueKind.List)
     case MapType(_, _, _) =>
       Some(ValueKind.Map)
-    case NumberType =>
-      Some(ValueKind.Number)
+    case IntegerType =>
+      Some(ValueKind.Integer)
+    case FloatType =>
+      Some(ValueKind.Float)
     case PidType =>
       Some(ValueKind.Pid)
     case PortType =>
@@ -454,9 +458,10 @@ final class Occurrence(pipelineContext: PipelineContext) {
         .map(_.reverse)
     }
     test match {
-      case TestAtom(s)     => (Some(AtomLitType(s)), Some(AtomLitType(s)))
-      case TestBinaryLit() => (Some(BinaryType), None)
-      case TestNumber(_)   => (Some(NumberType), None)
+      case TestAtom(s)         => (Some(AtomLitType(s)), Some(AtomLitType(s)))
+      case TestBinaryLit()     => (Some(BinaryType), None)
+      case TestNumber(Some(_)) => (Some(IntegerType), None)
+      case TestNumber(_)       => (Some(nType), None)
       case TestTuple(tests) =>
         val (pos, neg) = tests.map(cmpTypes).unzip
         (unzipOpt(pos).map(TupleType(_)), unzipOpt(neg).map(TupleType(_)))
@@ -526,11 +531,11 @@ final class Occurrence(pipelineContext: PipelineContext) {
         Some(pos, neg)
       case PatNumber() =>
         val obj = mkObj(x, path)
-        val pos = Pos(obj, NumberType)
+        val pos = Pos(obj, nType)
         Some(pos, Unknown)
       case PatInt() =>
         val obj = mkObj(x, path)
-        val pos = Pos(obj, NumberType)
+        val pos = Pos(obj, IntegerType)
         Some(pos, Unknown)
       case PatTuple(elems) =>
         val arity = elems.size

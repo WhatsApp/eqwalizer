@@ -43,8 +43,10 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         "atom()"
       case NoneType =>
         "none()"
-      case NumberType =>
-        "number()"
+      case IntegerType =>
+        "integer()"
+      case FloatType =>
+        "float()"
       case PidType =>
         "pid()"
       case PortType =>
@@ -147,8 +149,10 @@ case class Show(pipelineContext: Option[PipelineContext]) {
         "atom()"
       case NoneType =>
         "none()"
-      case NumberType =>
-        "number()"
+      case IntegerType =>
+        "integer()"
+      case FloatType =>
+        "float()"
       case PidType =>
         "pid()"
       case PortType =>

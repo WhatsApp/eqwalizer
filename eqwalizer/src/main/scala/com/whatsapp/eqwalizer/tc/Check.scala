@@ -162,12 +162,12 @@ final class Check(pipelineContext: PipelineContext) {
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
           env
         case FloatLit() =>
-          val litType = NumberType
+          val litType = FloatType
           if (!subtype.subType(litType, resTy))
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
           env
         case IntLit(_) =>
-          val litType = NumberType
+          val litType = IntegerType
           if (!subtype.subType(litType, resTy))
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = litType))
           env
@@ -447,7 +447,7 @@ final class Check(pipelineContext: PipelineContext) {
               env
           }
         case RecordIndex(_, _) =>
-          val indT = NumberType
+          val indT = IntegerType
           if (!subtype.subType(indT, resTy))
             diagnosticsInfo.add(ExpectedSubtype(expr.pos, expr, expected = resTy, got = indT))
           env

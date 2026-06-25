@@ -374,6 +374,9 @@ class Subtype(pipelineContext: PipelineContext) {
   def eqv(t1: Type, t2: Type): Boolean =
     subType(t1, t2) && subType(t2, t1)
 
+  def gradualEqv(t1: Type, t2: Type): Boolean =
+    gradualSubType(t1, t2) && gradualSubType(t2, t1)
+
   def isDynamicType(t: Type): Boolean =
     subType(t, NoneType) && subType(AnyType, t)
 

@@ -46,10 +46,10 @@ final class ElabPat(pipelineContext: PipelineContext) {
         val patType = narrow.meet(t, AtomLitType(s))
         (patType, env)
       case PatInt() =>
-        val patType = narrow.meet(t, NumberType)
+        val patType = narrow.meet(t, IntegerType)
         (patType, env)
       case PatNumber() =>
-        val patType = narrow.meet(t, NumberType)
+        val patType = narrow.meet(t, numberType)
         (patType, env)
       case PatString() =>
         val patType = narrow.meet(t, stringType)
@@ -108,7 +108,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
         }
         (patType, envAcc)
       case PatRecordIndex(_, _) =>
-        val patType = narrow.meet(t, NumberType)
+        val patType = narrow.meet(t, IntegerType)
         (patType, env)
       case PatRecord(recName, namedFields, genFieldOpt) =>
         val recType = narrow.meet(t, RecordType(recName)(module))
@@ -169,7 +169,7 @@ final class ElabPat(pipelineContext: PipelineContext) {
 
   private def elabBinaryElem(elem: PatBinaryElem, env: Env): Env = {
     for (eSize <- elem.size)
-      check.checkExpr(eSize, NumberType, env)
+      check.checkExpr(eSize, IntegerType, env)
     val isStringLiteral = elem.pat.isInstanceOf[PatString]
     val expType = Specifier.expType(elem.specifier, isStringLiteral)
     val (_, env1) = elabPat(elem.pat, expType, env)
@@ -179,9 +179,12 @@ final class ElabPat(pipelineContext: PipelineContext) {
   private def elabUnOp(pat: PatUnOp, t: Type, env: Env): (Type, Env) = {
     val PatUnOp(op, arg) = pat
     op match {
-      case "+" | "-" | "bnot" =>
-        val (_, env1) = elabPat(arg, NumberType, env)
-        (NumberType, env1)
+      case "bnot" =>
+        val (_, env1) = elabPat(arg, IntegerType, env)
+        (IntegerType, env1)
+      case "+" | "-" =>
+        val (_, env1) = elabPat(arg, numberType, env)
+        (numberType, env1)
       case _ => throw UnhandledOp(pat.pos, op)
     }
   }
@@ -189,10 +192,18 @@ final class ElabPat(pipelineContext: PipelineContext) {
   private def elabBinOp(binOp: PatBinOp, t: Type, env: Env): (Type, Env) = {
     val PatBinOp(op, arg1, arg2) = binOp
     op match {
-      case "/" | "*" | "-" | "+" | "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>
-        val (_, env1) = elabPat(arg1, NumberType, env)
-        val (_, env2) = elabPat(arg2, NumberType, env1)
-        (NumberType, env2)
+      case "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>
+        val (_, env1) = elabPat(arg1, IntegerType, env)
+        val (_, env2) = elabPat(arg2, IntegerType, env1)
+        (IntegerType, env2)
+      case "/" =>
+        val (_, env1) = elabPat(arg1, numberType, env)
+        val (_, env2) = elabPat(arg2, numberType, env1)
+        (FloatType, env2)
+      case "*" | "-" | "+" =>
+        val (_, env1) = elabPat(arg1, numberType, env)
+        val (_, env2) = elabPat(arg2, numberType, env1)
+        (numberType, env2)
       case "++" =>
         val asListT = narrow.asListType(t).getOrElse(NoneType)
         val (arg1Ty, env1) = elabPat(arg1, asListT, env)

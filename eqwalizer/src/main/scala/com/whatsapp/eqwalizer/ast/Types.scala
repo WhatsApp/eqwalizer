@@ -80,15 +80,15 @@ object Types {
   case object PidType extends Type
   case object PortType extends Type
   case object ReferenceType extends Type
-  case object NumberType extends Type
+  case object IntegerType extends Type
+  case object FloatType extends Type
 
   private val ioListRid = RemoteId("erlang", "iolist", 0)
 
   val falseType: Type = AtomLitType("false")
   val trueType: Type = AtomLitType("true")
-  val charType: Type = NumberType
-  val byteType: Type = NumberType
-  val floatType: Type = NumberType
+  val charType: Type = IntegerType
+  val byteType: Type = IntegerType
   val undefined: Type = AtomLitType("undefined")
   val exnClassType: Type =
     UnionType(Set(AtomLitType("error"), AtomLitType("exit"), AtomLitType("throw")))
@@ -100,9 +100,10 @@ object Types {
   val builtinTypeAliasBodies: Map[String, Type] = Map(
     "string" -> ListType(charType),
     "boolean" -> UnionType(Set(falseType, trueType)),
-    "timeout" -> UnionType(Set(AtomLitType("infinity"), NumberType)),
+    "number" -> UnionType(Set(IntegerType, FloatType)),
+    "timeout" -> UnionType(Set(AtomLitType("infinity"), IntegerType)),
     "identifier" -> UnionType(Set(PidType, PortType, ReferenceType)),
-    "mfa" -> TupleType(List(AtomType, AtomType, NumberType)),
+    "mfa" -> TupleType(List(AtomType, AtomType, IntegerType)),
     "iolist" -> ListType(UnionType(Set(byteType, BinaryType, RemoteType(ioListRid, Nil)))),
     "iodata" -> UnionType(Set(RemoteType(RemoteId("erlang", "iolist", 0), Nil), BinaryType)),
   )
@@ -112,6 +113,7 @@ object Types {
 
   val stringType: Type = builtinTypeAliases("string")
   val booleanType: Type = builtinTypeAliases("boolean")
+  val numberType: Type = builtinTypeAliases("number")
 
   def join(tys: Set[Type]): Type = {
     def collect(ty: Type): Set[Type] = {
@@ -146,24 +148,23 @@ object Types {
       "nonempty_bitstring" -> BinaryType,
       "byte" -> byteType,
       "char" -> charType,
-      "float" -> floatType,
+      "float" -> FloatType,
       "fun" -> AnyFunType,
       "function" -> AnyFunType,
       "maybe_improper_list" -> ListType(AnyType),
       "nonempty_maybe_improper_list" -> ListType(AnyType),
-      "pos_integer" -> NumberType,
-      "neg_integer" -> NumberType,
-      "non_neg_integer" -> NumberType,
-      "integer" -> NumberType,
+      "pos_integer" -> IntegerType,
+      "neg_integer" -> IntegerType,
+      "non_neg_integer" -> IntegerType,
+      "integer" -> IntegerType,
       "nil" -> NilType,
       "none" -> NoneType,
-      "number" -> NumberType,
       "pid" -> PidType,
       "port" -> PortType,
       "reference" -> ReferenceType,
       "term" -> AnyType,
       "tuple" -> AnyTupleType,
-      "arity" -> NumberType,
+      "arity" -> IntegerType,
       "module" -> AtomType,
       "node" -> AtomType,
       "no_return" -> NoneType,

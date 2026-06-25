@@ -124,9 +124,9 @@ final class Elab(pipelineContext: PipelineContext) {
       case AtomLit(a) =>
         (AtomLitType(a), env)
       case FloatLit() =>
-        (NumberType, env)
+        (FloatType, env)
       case IntLit(_) =>
-        (NumberType, env)
+        (IntegerType, env)
       case Tuple(elems) =>
         var envAcc = env
         val elemTypes = elems.map { elem =>
@@ -223,7 +223,7 @@ final class Elab(pipelineContext: PipelineContext) {
       case DynRemoteFunArity(mod, name, arityExpr) =>
         val env1 = check.checkExpr(mod, AtomType, env)
         val env2 = check.checkExpr(name, AtomType, env1)
-        val env3 = check.checkExpr(arityExpr, NumberType, env2)
+        val env3 = check.checkExpr(arityExpr, IntegerType, env2)
         val funType =
           arityExpr match {
             case IntLit(Some(arity)) =>
@@ -329,9 +329,16 @@ final class Elab(pipelineContext: PipelineContext) {
           case "not" =>
             val env1 = check.checkExpr(arg, booleanType, env)
             (booleanType, env1)
-          case "bnot" | "-" | "+" =>
-            val env1 = check.checkExpr(arg, NumberType, env)
-            (NumberType, env1)
+          case "bnot" =>
+            val env1 = check.checkExpr(arg, IntegerType, env)
+            (IntegerType, env1)
+          case "-" | "+" =>
+            val (argTy, env1) = elabExpr(arg, env)
+            if (subtype.subType(argTy, numberType)) (argTy, env1)
+            else {
+              diagnosticsInfo.add(ExpectedSubtype(arg.pos, arg, expected = numberType, got = argTy))
+              (DynamicType, env1)
+            }
           case _ =>
             throw UnhandledOp(expr.pos, op)
         }
@@ -354,10 +361,31 @@ final class Elab(pipelineContext: PipelineContext) {
         (AtomLitType("false"), env1)
       case BinOp(op, arg1, arg2) =>
         op match {
-          case "+" | "-" | "*" | "/" | "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>
-            val env1 = check.checkExpr(arg1, NumberType, env)
-            val env2 = check.checkExpr(arg2, NumberType, env1)
-            (NumberType, env2)
+          case "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>
+            val env1 = check.checkExpr(arg1, IntegerType, env)
+            val env2 = check.checkExpr(arg2, IntegerType, env1)
+            (IntegerType, env2)
+          case "/" =>
+            val env1 = check.checkExpr(arg1, numberType, env)
+            val env2 = check.checkExpr(arg2, numberType, env1)
+            (FloatType, env2)
+          case "*" | "+" | "-" =>
+            val (arg1Ty, env1) = elabExpr(arg1, env)
+            val (arg2Ty, env2) = elabExpr(arg2, env1)
+            val v1 = subtype.subType(arg1Ty, numberType)
+            val v2 = subtype.subType(arg2Ty, numberType)
+            if (v1 && v2) {
+              if (subtype.gradualEqv(arg1Ty, FloatType) || subtype.gradualEqv(arg2Ty, FloatType))
+                (FloatType, env2)
+              else
+                (subtype.join(arg1Ty, arg2Ty), env2)
+            } else {
+              if (!v1)
+                diagnosticsInfo.add(ExpectedSubtype(arg1.pos, arg1, expected = numberType, got = arg1Ty))
+              if (!v2)
+                diagnosticsInfo.add(ExpectedSubtype(arg2.pos, arg2, expected = numberType, got = arg2Ty))
+              (DynamicType, env2)
+            }
           case "or" | "and" | "xor" =>
             val env1 = check.checkExpr(arg1, booleanType, env)
             val env2 = check.checkExpr(arg2, booleanType, env1)
@@ -521,7 +549,7 @@ final class Elab(pipelineContext: PipelineContext) {
             (DynamicType, env)
         }
       case RecordIndex(_, _) =>
-        (NumberType, env)
+        (IntegerType, env)
       case MapCreate(kvs) =>
         var envAcc = env
         val (props, kts) = kvs.partitionMap { case (kExpr, vExpr) =>
@@ -579,7 +607,7 @@ final class Elab(pipelineContext: PipelineContext) {
 
   def elabBinaryElem(elem: BinaryElem, env: Env): (Type, Env) = {
     val env1 = elem.size match {
-      case Some(s) => check.checkExpr(s, NumberType, env)
+      case Some(s) => check.checkExpr(s, IntegerType, env)
       case None    => env
     }
     val isStringLiteral = elem.expr.isInstanceOf[StringLit]

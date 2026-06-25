@@ -25,11 +25,11 @@ final class ElabGuard(pipelineContext: PipelineContext) {
     case "is_binary"    => BinaryType
     case "is_bitstring" => BinaryType
     case "is_boolean"   => UnionType(Set(falseType, trueType))
-    case "is_float"     => floatType
+    case "is_float"     => FloatType
     case "is_function"  => AnyFunType
-    case "is_integer"   => NumberType
+    case "is_integer"   => IntegerType
     case "is_list"      => ListType(AnyType)
-    case "is_number"    => NumberType
+    case "is_number"    => numberType
     case "is_pid"       => PidType
     case "is_port"      => PortType
     case "is_reference" => ReferenceType
@@ -196,10 +196,9 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case "not" if upper == trueType  => elabTestT(arg, falseType, env)
       case "not" if upper == falseType => elabTestT(arg, trueType, env)
       case "not"                       => elabTestT(arg, booleanType, env)
-      case "bnot" | "+" | "-" =>
-        elabTestT(arg, NumberType, env)
-      case _ =>
-        throw UnhandledOp(unOp.pos, op)
+      case "bnot"                      => elabTestT(arg, IntegerType, env)
+      case "+" | "-"                   => elabTestT(arg, numberType, env)
+      case _                           => throw UnhandledOp(unOp.pos, op)
     }
   }
 
@@ -217,14 +216,14 @@ final class ElabGuard(pipelineContext: PipelineContext) {
       case TestBinOp("=:=" | "==", TestVar(v), NumTest()) if upper == trueType =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> narrow.meet(ty, NumberType))
+            env + (v -> narrow.meet(ty, numberType))
           case None =>
             env
         }
       case TestBinOp("=:=" | "==", NumTest(), TestVar(v)) if upper == trueType =>
         env.get(v) match {
           case Some(ty) =>
-            env + (v -> narrow.meet(ty, NumberType))
+            env + (v -> narrow.meet(ty, numberType))
           case None =>
             env
         }
@@ -294,9 +293,12 @@ final class ElabGuard(pipelineContext: PipelineContext) {
   private def elabBinOp(binOp: TestBinOp, upper: Type, env: Env): Env = {
     val TestBinOp(op, arg1, arg2) = binOp
     op match {
-      case "/" | "*" | "-" | "+" | "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>
-        val env1 = elabTestT(arg1, NumberType, env)
-        elabTestT(arg2, NumberType, env1)
+      case "div" | "rem" | "band" | "bor" | "bxor" | "bsl" | "bsr" =>
+        val env1 = elabTestT(arg1, IntegerType, env)
+        elabTestT(arg2, IntegerType, env1)
+      case "/" | "*" | "-" | "+" =>
+        val env1 = elabTestT(arg1, numberType, env)
+        elabTestT(arg2, numberType, env1)
       case "or" | "xor" | "and" =>
         val env1 = elabTestT(arg1, booleanType, env)
         elabTestT(arg2, booleanType, env1)

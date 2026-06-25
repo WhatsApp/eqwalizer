@@ -17,11 +17,11 @@ object Specifier {
     s match {
       case UnsignedInteger | Utf8 | Utf16 | Utf32 =>
         if (stringLiteral) stringType
-        else NumberType
+        else IntegerType
       case SignedInteger =>
-        NumberType
+        IntegerType
       case Float =>
-        floatType
+        FloatType
       case Binary | Bytes | Bitstring | Bits =>
         BinaryType
     }
