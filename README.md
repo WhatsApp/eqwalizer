@@ -2,6 +2,10 @@
 
 A type-checker for Erlang.
 
+> [!IMPORTANT]
+> The eqWAlizer repository is moving into [ELP (Erlang Language Platform)](https://github.com/whatsapp/erlang-language-platform).
+> Please use the [erlang-language-platform](https://github.com/whatsapp/erlang-language-platform) repository for issues and pull requests.
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./logo/eqWAlizer_final_Full_Logo_White_Text.png">
   <img alt="eqWAlizer logo" src="./logo/eqWAlizer_final_Full__Logo_Black_Text.png" width="100%">
@@ -26,9 +30,9 @@ Adding `eqwalizer_support`:
 {deps, [
   {eqwalizer_support,
     {git_subdir,
-        "https://github.com/whatsapp/eqwalizer.git",
+        "https://github.com/whatsapp/erlang-language-platform.git",
         {branch, "main"},
-        "eqwalizer_support"}}
+        "eqwalizer/eqwalizer_support"}}
 ]}.
 ```
 
